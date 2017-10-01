@@ -35,7 +35,6 @@ public class TerrainController : MonoBehaviour {
 			for (int j=0;j<16;j++)
 			{
 				char c = lines[i][j];
-				Debug.Log(c);
 				int height = int.Parse(c.ToString());
 				heights[i].Add(height);
 			}
@@ -69,7 +68,6 @@ public class TerrainController : MonoBehaviour {
 	private Vector3[] GenerateVerts(Vector3 bl, Vector3 tl, Vector3 tr, Vector3 br)
 	{
 		bool direction = (bl.y == tl.y && bl.y == br.y && bl.y != tr.y) || (tr.y == tl.y && tr.y == br.y && tr.y != bl.y);
-		Debug.Log(direction);
 		Vector3 i0 = bl;
 		Vector3 i1 = direction ? br : tr;
 		Vector3 i2 = tl;

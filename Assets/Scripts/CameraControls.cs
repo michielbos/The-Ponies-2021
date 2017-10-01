@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class CameraControls : MonoBehaviour {
 
+	public Transform holder;
+
 	Vector3 panStart;
 	Vector3 panStartPos;
 
@@ -22,15 +24,16 @@ public class CameraControls : MonoBehaviour {
 		if (Input.GetButtonDown("Fire3"))
 		{
 			panStart = Input.mousePosition;
-			panStartPos = transform.position;
+			panStartPos = holder.transform.position;
 		}
 		if (Input.GetButton("Fire3"))
 		{
-			transform.position = panStartPos + LevelVector(transform.forward) * (Input.mousePosition - panStart).y * 6 * camera.orthographicSize / Screen.height
+			holder.position = panStartPos + LevelVector(transform.forward) * (Input.mousePosition - panStart).y * 6 * camera.orthographicSize / Screen.height
 											 + LevelVector(transform.right) * (Input.mousePosition - panStart).x * 4 * camera.orthographicSize / Screen.width;
 		}
 
-		camera.orthographicSize -= camera.orthographicSize * Input.mouseScrollDelta.y/10;
+		int scrollDir = (int)Mathf.Clamp(Input.mouseScrollDelta.y, -1, 1);
+		camera.orthographicSize *= scrollDir == -1 ? .5f : scrollDir == 1 ? 2 : 1;
 		camera.orthographicSize = Mathf.Clamp(camera.orthographicSize, minSize, maxSize);
 	}
 
@@ -39,5 +42,10 @@ public class CameraControls : MonoBehaviour {
 		Vector3 v2 = v;
 		v2.y = 0;
 		return v2;
+	}
+
+	public void Rotate(bool cc)
+	{
+		holder.Rotate(0, cc ? -90 : 90, 0);
 	}
 }

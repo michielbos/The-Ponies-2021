@@ -15,6 +15,8 @@ public class HUDController : MonoBehaviour {
 		Opt = 4
 	}*/
 
+	public Camera gameCamera;
+	
 	public AudioSource audioSource;
 
 	public List<AudioClip> audioClips;
@@ -68,6 +70,16 @@ public class HUDController : MonoBehaviour {
 	{
 		selectedRoof = r;
 		UpdateRoof();
+	}
+
+	public void Zoom(int dir)
+	{
+		gameCamera.orthographicSize *= dir == -1 ? .5f : dir == 1 ? 2 : 1;
+	}
+
+	public void Rotate(bool cc)
+	{
+		gameCamera.GetComponent<CameraControls>().Rotate(cc);
 	}
 	
 	public void SetFunds(int a)
