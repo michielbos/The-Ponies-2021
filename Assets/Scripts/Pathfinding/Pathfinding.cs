@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Pathfinding : MonoBehaviour {
+public class Pathfinding {
     TileGraph graph;
     List<TileNode> Q = new List<TileNode>();
     List<TileNode> path = new List<TileNode>();
@@ -42,7 +42,7 @@ public class Pathfinding : MonoBehaviour {
         }
         
         gScore[start] = 0;
-        fScore[start] = estimate(start, end);
+        fScore[start] = Estimate(start, end);
         while (opened.Count > 0)
         {
             float smallest = Mathf.Infinity;
@@ -83,14 +83,14 @@ public class Pathfinding : MonoBehaviour {
                     {
                         previous[n] = current;
                         gScore[n] = score;
-                        fScore[n] = gScore[n] + estimate(n, end);
+                        fScore[n] = gScore[n] + Estimate(n, end);
                     }
                 }
             }
         }
         return null;
         }
-    float estimate(TileNode here,TileNode there)
+    float Estimate(TileNode here,TileNode there)
     {
         return Mathf.Sqrt(Mathf.Pow(here.tile.x-there.tile.x,2)+ Mathf.Pow(here.tile.y - there.tile.y, 2));
     }
