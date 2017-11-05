@@ -1,10 +1,11 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class HUDController : MonoBehaviour {
+public class HUDController : MonoBehaviour
+{
 
 	/*public enum Mode
 	{
@@ -16,18 +17,23 @@ public class HUDController : MonoBehaviour {
 	}*/
 
 	public Camera gameCamera;
-	
+
 	public AudioSource audioSource;
 
 	public List<AudioClip> audioClips;
-	
+
 	public List<GameObject> panels;
 	public List<GameObject> toothpicks;
 	public List<GameObject> speedButtons;
 	public List<GameObject> roofButtons;
 
+	public Sprite[] pauseSprites;
+
+	bool paused = false;
+	bool forcePaused = false;
 	int selectedSpeed = 1;
 	int selectedRoof = 1;
+	int selectedPanel = -1;
 
 	public Text fundsText;
 	int funds = 1337;
@@ -39,12 +45,33 @@ public class HUDController : MonoBehaviour {
 		UpdateFunds();
 	}
 
+	float pauseTimer = 0;
+	void Update()
+	{
+		if (forcePaused || selectedPanel > 0)
+		{
+			pauseTimer += Time.deltaTime;
+			speedButtons[0].GetComponent<Image>().overrideSprite = pauseSprites[(int)Mathf.Floor(pauseTimer % 1f * 2) * 2];
+			Debug.Log((int)Mathf.Floor(pauseTimer % 1f * 2));
+		}
+		else if (paused)
+		{
+			pauseTimer += Time.deltaTime;
+			speedButtons[0].GetComponent<Image>().overrideSprite = pauseSprites[(int)Mathf.Floor(pauseTimer % 1f * 2)];
+			Debug.Log((int)Mathf.Floor(pauseTimer % 1f * 2));
+		}
+	}
+
 	public void ActivatePanel(int m)
 	{
 		if (panels[m].activeSelf)
 		{
 			panels[m].SetActive(false);
 			toothpicks[m].SetActive(false);
+			selectedPanel = -1;
+			speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite;
+			pauseTimer = 0f;
+			speedButtons[0].GetComponent<Button>().interactable = true;
 		}
 		else
 		{
@@ -56,14 +83,23 @@ public class HUDController : MonoBehaviour {
 			{
 				g.SetActive(m == toothpicks.IndexOf(g));
 			}
+			selectedPanel = m;
+			if (m > 0) speedButtons[0].GetComponent<Button>().interactable = false;
+			else { speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite; pauseTimer = 0f; speedButtons[0].GetComponent<Button>().interactable = true; }
+
 		}
 	}
 
 	public void SetSpeed(int s)
 	{
-		PlaySpeedSound(selectedSpeed, s);
-		selectedSpeed = s;
-		UpdateSpeed();
+		PlaySpeedSound(paused ? 0 : selectedSpeed, paused ? s == 0 ? selectedSpeed : s : s);
+		if (s > 0)
+		{
+			paused = false;
+			selectedSpeed = s;
+			UpdateSpeed();
+		}
+		else { paused = !paused; pauseTimer = 0f; }
 	}
 
 	public void SetRoof(int r)
@@ -81,7 +117,7 @@ public class HUDController : MonoBehaviour {
 	{
 		gameCamera.GetComponent<CameraControls>().Rotate(cc);
 	}
-	
+
 	public void SetFunds(int a)
 	{
 		funds = a;
@@ -102,6 +138,7 @@ public class HUDController : MonoBehaviour {
 
 	private void UpdateSpeed()
 	{
+		speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite;
 		foreach (GameObject g in speedButtons)
 		{
 			bool active = speedButtons.IndexOf(g) == selectedSpeed;
