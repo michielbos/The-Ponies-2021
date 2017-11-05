@@ -25,8 +25,6 @@ public class TerrainManager : MonoBehaviour {
         mesh.triangles =new int[] { 0,1,2, 3,4,5};
         mesh.uv = new Vector2[] { };
         mesh.RecalculateNormals();
-        g.AddComponent<TerrainTile>();
-        TerrainTile tt = g.GetComponent<TerrainTile>();
         TerrainUpdate(g, i, j);
     }
     public void AddStuff(GameObject t, int i, int j)
@@ -39,18 +37,17 @@ public class TerrainManager : MonoBehaviour {
             mesh.triangles = new int[] { 0, 1, 2, 3, 4, 5 };
             mesh.uv = new Vector2[] { };
             mesh.RecalculateNormals();
-            g.AddComponent<TerrainTile>();
             TerrainUpdate(g, i,j);
         }
     }
-    public void addWall(GameObject t,TerrainTile start, TerrainTile end)
+    public void AddWall(GameObject t,TerrainTile start, TerrainTile end)
     {
         walls.Add(new Wall(start, end));
         GameObject g = Instantiate(t, new Vector3(start.x, 0,start.y), Quaternion.identity, this.transform);
         g.transform.localScale =new Vector3(1,1,Mathf.Sqrt((start.x - end.x)* (start.x - end.x)+ (start.y - end.y)* (start.y - end.y)));
         g.transform.Rotate(new Vector3(0, Mathf.Atan((start.x - end.x) / (start.y - end.y))));
     }
-    public TileNode[] pathfind(TerrainTile start, TerrainTile end)
+    public TileNode[] Pathfind(TerrainTile start, TerrainTile end)
     {
         return path.AStar(graph.nodes[start], graph.nodes[end]);
     }
