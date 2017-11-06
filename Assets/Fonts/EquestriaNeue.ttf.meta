@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: bd3b27df8f3a73d4a883452d3875be1a
+timeCreated: 1509991719
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Equestria Neue
+  fontNames:
+  - Equestria Neue
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

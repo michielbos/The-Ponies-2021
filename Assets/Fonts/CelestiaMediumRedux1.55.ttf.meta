@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: cb1e27bb50f1fa74dba42e53e29a8411
+timeCreated: 1509991719
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: Celestia Redux
+  fontNames:
+  - Celestia Redux
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

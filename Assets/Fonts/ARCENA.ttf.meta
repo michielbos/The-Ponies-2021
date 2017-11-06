@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 59fd9745aa612db4abdd7a27f13fd2fa
+timeCreated: 1509991719
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: AR CENA
+  fontNames:
+  - AR CENA
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
