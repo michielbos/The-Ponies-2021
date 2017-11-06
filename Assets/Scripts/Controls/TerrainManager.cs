@@ -42,6 +42,17 @@ public class TerrainManager : MonoBehaviour {
     }
     public void AddWall(GameObject t,TerrainTile start, TerrainTile end)
     {
+        int direction;
+        TerrainTile s=start;
+        TerrainTile e=end;
+        int xdif = (e.x - s.x);
+        int ydif = Mathf.Abs(e.y - s.y);
+        if (ydif != 0)
+        {
+            direction = 3;
+            if (xdif != 0) direction += (int)Mathf.Sign(xdif);
+        }
+        else if (xdif != 0) direction = 1;
         walls.Add(new Wall(start, end));
         GameObject g = Instantiate(t, new Vector3(start.x, 0,start.y), Quaternion.identity, this.transform);
         g.transform.localScale =new Vector3(1,1,Mathf.Sqrt((start.x - end.x)* (start.x - end.x)+ (start.y - end.y)* (start.y - end.y)));

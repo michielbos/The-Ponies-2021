@@ -59,6 +59,7 @@ public class Pathfinding {
             if (current == end)
             {
                 TileNode n = end;
+                Debug.Log("g" + gScore[end] + "f" + fScore[end]);
                 while (n != start)
                 {
                     path.Add(n);
