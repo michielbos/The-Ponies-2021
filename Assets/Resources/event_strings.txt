@@ -15,3 +15,5 @@ The school bus will arrive in about an hour.
 %pony% has missed work today. It is ok to miss one day, but if %pony% makes it a habit, [he/she] will be fired.
 
 %pony% just made a new family friend!
+
+Uh-oh, looks like you've got a parasprite problem. You can either handle them yourself or call an exterminator.
