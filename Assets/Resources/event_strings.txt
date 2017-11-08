@@ -14,6 +14,10 @@ The school bus will arrive in about an hour.
 
 %pony% has missed work today. It is ok to miss one day, but if %pony% makes it a habit, [he/she] will be fired.
 
+Welcome home, %pony%!. You brought home %currency% today!
+
 %pony% just made a new family friend!
 
-Uh-oh, looks like you've got a parasprite problem. You can either handle them yourself or call an exterminator.
+Uh-oh, looks like you've got a parasprite problem. You can either handle it yourself or call an exterminator.
+
+Thank you for helping us apprehend this wanted criminal! We'll need to take the stolen items to use as evidence, but you will be compensated %currency% by your insurance company. You'll also receive an additional $1000 for the capture of the criminal.
