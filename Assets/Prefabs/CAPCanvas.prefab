@@ -933,20 +933,12 @@ MonoBehaviour:
   m_GameObject: {fileID: 1464397816742814}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dbf3900e2a4d3b14c976347654ec441e, type: 3}
+  m_Script: {fileID: 11500000, guid: 0544b20c1ee030441a1112b60ab0475c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  genderButtons:
-  - {fileID: 114146432826513334}
-  - {fileID: 114700020700895716}
-  raceButtons:
-  - {fileID: 114359694449949342}
-  - {fileID: 114368805220999770}
-  - {fileID: 114548276338682294}
-  - {fileID: 114586182825691936}
-  stageButtons:
-  - {fileID: 114928477848976024}
-  - {fileID: 114436769517175666}
+  genderButtons: []
+  raceButtons: []
+  stageButtons: []
 --- !u!114 &114101043681388522
 MonoBehaviour:
   m_ObjectHideFlags: 1

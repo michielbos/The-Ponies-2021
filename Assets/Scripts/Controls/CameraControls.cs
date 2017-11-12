@@ -54,7 +54,7 @@ public class CameraControls : MonoBehaviour {
             else
             {
                 Vector3 end = camera.ScreenToWorldPoint(Input.mousePosition);
-                TileNode[] path = tm.pathfind(tm.Get((int)start.x, (int)start.z), tm.Get((int)end.x, (int)end.z));
+                TileNode[] path = tm.Pathfind(tm.Get((int)start.x, (int)start.z), tm.Get((int)end.x, (int)end.z));
                 foreach(TileNode p in path)
                 {
                     int i = p.tile.x;
