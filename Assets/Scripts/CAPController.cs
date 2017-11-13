@@ -9,7 +9,7 @@ public class CAPController : MonoBehaviour {
 	public Button[] raceButtons;
 	public Button[] stageButtons;
 
-	public const int MALE=0, FEMALE=1, EARTH=0, UNICORN=1, PEGASUS=2, MARYSUE=3, CHILD=0, ADULT=1;
+	public const int FEMALE=0, MALE=1, EARTH=0, PEGASUS=1, UNICORN=2, MARYSUE=3, ADULT=0, CHILD=1;
 
 	int selectedGender = MALE;
 	int selectedRace = EARTH;
