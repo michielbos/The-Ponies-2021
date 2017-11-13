@@ -5,6 +5,7 @@ using UnityEngine;
 public class CameraControls : MonoBehaviour {
 
 	public Transform holder;
+	[HideInInspector]
     public TerrainManager tm;
     public GameObject g;
     Vector3 panStart;

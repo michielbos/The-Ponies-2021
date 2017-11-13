@@ -87,7 +87,7 @@ MeshRenderer:
   m_LightProbeUsage: 1
   m_ReflectionProbeUsage: 1
   m_Materials:
-  - {fileID: 2100000, guid: 8a1b807c94a851e448bb76314a60d15b, type: 2}
+  - {fileID: 2100000, guid: 80d458efc4b08494fac4912618bfc054, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -122,14 +122,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1775187072077132}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: caa46492b8df8944d9781fc0b0967015, type: 3}
+  m_Script: {fileID: 11500000, guid: 7409dd8ed67ead74caa1222029229bb3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   height: 50
   width: 50
   walls: []
   wall: {fileID: 0}
-  path: {fileID: 0}
 --- !u!114 &114423937068632804
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -138,7 +137,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1375704418475892}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: aa5d934ce64c3cd42a4cde04ae5bca31, type: 3}
+  m_Script: {fileID: 11500000, guid: c8f4d96e300cc3948b7d9dc6d0c4e6c7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   x: 0
@@ -151,8 +150,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1775187072077132}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cc5e295e6496be84386bec1dc450d697, type: 3}
+  m_Script: {fileID: 11500000, guid: cfff28148e46dbb4a8f65eaee58eaf0a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  terrainTile: {fileID: 1336434144001372, guid: 23abfa357f7be634b92d49c3e94402cb,
-    type: 2}
+  terrainTile: {fileID: 1375704418475892}
