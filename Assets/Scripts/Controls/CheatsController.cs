@@ -6,6 +6,7 @@ using UnityEngine.UI;
 public class CheatsController : MonoBehaviour {
 	public InputField cheatField;
 	public RectTransform consolePanel;
+	public Text consoleText;
 	public HUDController hudController;
 	private bool visible = false;
 	private bool expanded = false;
@@ -72,7 +73,14 @@ public class CheatsController : MonoBehaviour {
 		}
 	}
 
+	void addConsoleLine (string text) {
+		consoleText.text += "\n" + text;
+		LayoutRebuilder.ForceRebuildLayoutImmediate(consolePanel);
+		consolePanel.GetComponent<ScrollRect>().verticalNormalizedPosition = 0;
+	}
+
 	bool enterCheat (string cheat) {
+		addConsoleLine(cheat);
 		string[] split = cheat.Split(new char[]{' '}, 2);
 		string[] parameters;
 		if (split.Length > 1) {
@@ -84,7 +92,6 @@ public class CheatsController : MonoBehaviour {
 	}
 
 	bool tryCheat (string command, string[] parameters) {
-		Debug.Log("did " + command);
 		//Money cheats
 		if (command == "rosebud")
 			hudController.ChangeFunds(1000);
@@ -93,9 +100,9 @@ public class CheatsController : MonoBehaviour {
 		else if (command == "filthyrich")
 			hudController.ChangeFunds(1000000);
 		else if (command == "adjustfunds" && parameters.Length == 1)
-			return changeFundsCheat(parameters [0]);
+			return changeFundsCheat(parameters[0]);
 		else if (command == "addfunds" && parameters.Length == 1)
-			return addFundsCheat(parameters [0]);
+			return addFundsCheat(parameters[0]);
 		//Misc cheats
 		else if (command == "expand")
 			setExpanded(!expanded);
