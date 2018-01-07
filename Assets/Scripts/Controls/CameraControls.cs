@@ -27,10 +27,11 @@ public class CameraControls : MonoBehaviour {
         if (Input.GetButtonDown("Fire1"))
         {
             Vector3 click = Input.mousePosition;
-            Debug.Log("" + camera.ScreenToWorldPoint(click));
+            //Debug.Log("" + camera.ScreenToWorldPoint(click));
             int x = (int)(camera.ScreenToWorldPoint(click).x);
             int y = (int)(camera.ScreenToWorldPoint(click).z);
-            if (tm.Get(x, y) == null)
+			//TODO: Fix IndexOutOfRangeException.
+            /*if (tm.Get(x, y) == null)
             {
                 tm.AddStuff(g, x, y);
             }
@@ -39,10 +40,10 @@ public class CameraControls : MonoBehaviour {
                 tm.Get(x, y).GetComponent<MeshRenderer>().material = null;
                 foreach(TileEdge t in tm.graph.nodes[tm.Get(x, y)].edges)
                 {
-                    Debug.Log(t.cost);
+                    //Debug.Log(t.cost);
                 }
                 tm.graph.nodes[tm.Get(x, y)].ChangeCost(1000);
-            }
+            }*/
 
         }
         if (Input.GetButtonDown("Fire3"))
@@ -55,13 +56,14 @@ public class CameraControls : MonoBehaviour {
             else
             {
                 Vector3 end = camera.ScreenToWorldPoint(Input.mousePosition);
-                TileNode[] path = tm.Pathfind(tm.Get((int)start.x, (int)start.z), tm.Get((int)end.x, (int)end.z));
+				//TODO: Fix IndexOutOfRangeException.
+                /*TileNode[] path = tm.Pathfind(tm.Get((int)start.x, (int)start.z), tm.Get((int)end.x, (int)end.z));
                 foreach(TileNode p in path)
                 {
                     int i = p.tile.x;
                     int j = p.tile.y;
                     Instantiate(g, new Vector3(i, 2, j), Quaternion.identity, tm.transform);
-                }
+                }*/
                 //tm.addWall(g, tm.Get((int)start.x, (int)start.z), tm.Get((int)end.x, (int)end.z));
             }
         }
@@ -72,7 +74,7 @@ public class CameraControls : MonoBehaviour {
 		}
         if (Input.GetButton("Fire2"))
 		{
-            Debug.Log("fire");
+            //Debug.Log("fire");
 			holder.position = panStartPos + LevelVector(transform.up) * (Input.mousePosition - panStart).y * 6 * camera.orthographicSize / Screen.height
 											 + LevelVector(transform.right) * (Input.mousePosition - panStart).x * 4 * camera.orthographicSize / Screen.width;
 		}

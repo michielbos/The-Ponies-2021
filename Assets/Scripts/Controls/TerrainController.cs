@@ -58,7 +58,7 @@ public class TerrainController : MonoBehaviour
             }
         }
 
-        Debug.Log("start");
+        //Debug.Log("start");
 
         for (int i = 0; i < 15; i++)
         {
@@ -84,8 +84,8 @@ public class TerrainController : MonoBehaviour
             }
         }
         TileGraph graph = new TileGraph();
-        Debug.Log("graph size: " + graph.getsize());
-        Debug.Log("done");
+        //Debug.Log("graph size: " + graph.getsize());
+        //Debug.Log("done");
     }
 
     private Vector3[] GenerateVerts(Vector3 bl, Vector3 tl, Vector3 tr, Vector3 br)
