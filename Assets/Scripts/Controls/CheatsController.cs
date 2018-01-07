@@ -135,6 +135,7 @@ public class CheatsController : MonoBehaviour {
 
 	void showHelp () {
 		setExpanded(true);
-		//TODO: Display help.
+		TextAsset helpText = Resources.Load<TextAsset>("cheats_help");
+		addConsoleLine(helpText.text);
 	}
 }
