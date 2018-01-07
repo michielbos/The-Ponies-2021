@@ -38,18 +38,38 @@ public class CheatsController : MonoBehaviour {
 	}
 
 	bool enterCheat (string cheat) {
-		return tryCheat(cheat.ToLower());
+		string[] split = cheat.Split(new char[]{' '}, 2);
+		string[] parameters;
+		if (split.Length > 1) {
+			parameters = split[1].Split(new char[]{ ' ' });
+		} else {
+			parameters = new string[0];
+		}
+		return tryCheat(split[0].ToLower(), parameters);
 	}
 
-	bool tryCheat (string cheat) {
-		if (cheat == "rosebud")
+	bool tryCheat (string command, string[] parameters) {
+		if (command == "rosebud")
 			hudController.ChangeFunds(1000);
-		else if (cheat == "motherload")
+		else if (command == "motherload")
 			hudController.ChangeFunds(50000);
-		else if (cheat == "filthyrich")
+		else if (command == "filthyrich")
 			hudController.ChangeFunds(1000000);
-		else if (cheat == "forcequit")
+		else if (command == "forcequit")
 			Application.Quit();
+		else if (command == "changefunds" && parameters.Length == 1)
+			return changeFundsCheat(parameters[0]);
+		else
+			return false;
 		return true;
+	}
+
+	bool changeFundsCheat (string amountString) {
+		int amount;
+		if (int.TryParse(amountString, out amount)) {
+			hudController.SetFunds(amount);
+			return true;
+		} else
+			return false;
 	}
 }
