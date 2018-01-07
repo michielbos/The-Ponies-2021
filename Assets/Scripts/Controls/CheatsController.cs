@@ -18,7 +18,7 @@ public class CheatsController : MonoBehaviour {
 			setCheatFieldVisible(!cheatField.enabled);
 		}
 		if (cheatField.enabled && hadFocus && Input.GetKey(KeyCode.Return)) {
-			enterCheat(cheatField.text);
+			Debug.Log(enterCheat(cheatField.text));
 			setCheatFieldVisible(false);
 		}
 		hadFocus = cheatField.isFocused;
@@ -57,8 +57,10 @@ public class CheatsController : MonoBehaviour {
 			hudController.ChangeFunds(1000000);
 		else if (command == "forcequit")
 			Application.Quit();
-		else if (command == "changefunds" && parameters.Length == 1)
+		else if (command == "adjustfunds" && parameters.Length == 1)
 			return changeFundsCheat(parameters[0]);
+		else if (command == "addfunds" && parameters.Length == 1)
+			return addFundsCheat(parameters[0]);
 		else
 			return false;
 		return true;
@@ -68,6 +70,15 @@ public class CheatsController : MonoBehaviour {
 		int amount;
 		if (int.TryParse(amountString, out amount)) {
 			hudController.SetFunds(amount);
+			return true;
+		} else
+			return false;
+	}
+
+	bool addFundsCheat (string amountString) {
+		int amount;
+		if (int.TryParse(amountString, out amount)) {
+			hudController.ChangeFunds(amount);
 			return true;
 		} else
 			return false;
