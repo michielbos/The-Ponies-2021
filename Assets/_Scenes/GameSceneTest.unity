@@ -112,6 +112,12 @@ NavMeshSettings:
     debug:
       m_Flags: 0
   m_NavMeshData: {fileID: 0}
+--- !u!114 &341457482 stripped
+MonoBehaviour:
+  m_PrefabParentObject: {fileID: 114113357470691672, guid: 02c26d83b35cb374daa65d6918d687d9,
+    type: 2}
+  m_PrefabInternal: {fileID: 1148230368}
+  m_Script: {fileID: 11500000, guid: f990958e10ba2a44b82e5b88bc49cea4, type: 3}
 --- !u!1 &715872384
 GameObject:
   m_ObjectHideFlags: 0
@@ -579,6 +585,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   cheatField: {fileID: 1455071924}
+  hudController: {fileID: 341457482}
 --- !u!4 &1393211166
 Transform:
   m_ObjectHideFlags: 0

@@ -5,6 +5,7 @@ using UnityEngine.UI;
 
 public class CheatsController : MonoBehaviour {
 	public InputField cheatField;
+	public HUDController hudController;
 	private bool hadFocus = false;
 
 	void Start () {
@@ -18,6 +19,7 @@ public class CheatsController : MonoBehaviour {
 		}
 		if (cheatField.enabled && hadFocus && Input.GetKey(KeyCode.Return)) {
 			Debug.Log("Entered cheat: " + cheatField.text);
+			tryCheat(cheatField.text);
 			setCheatFieldVisible(false);
 		}
 		hadFocus = cheatField.isFocused;
@@ -34,5 +36,15 @@ public class CheatsController : MonoBehaviour {
 			cheatField.text = "";
 			cheatField.transform.localScale = new Vector3 (0, 0, 0);
 		}
+	}
+
+	bool tryCheat (string cheat) {
+		if (cheat == "rosebud")
+			hudController.ChangeFunds(1000);
+		else if (cheat == "motherload")
+			hudController.ChangeFunds(50000);
+		else if (cheat == "filthyRich")
+			hudController.ChangeFunds(1000000);
+		return true;
 	}
 }
