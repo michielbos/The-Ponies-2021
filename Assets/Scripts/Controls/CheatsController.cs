@@ -21,8 +21,7 @@ public class CheatsController : MonoBehaviour {
 	}
 
 	void Update () {
-		//It seems Unity doesn't accept the C key while ctrl is pressed...
-		if (Input.GetKey(KeyCode.LeftAlt) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C)) {
+		if ((Application.isEditor || Input.GetKey(KeyCode.LeftControl)) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C)) {
 			setCheatFieldVisible(!visible);
 		}
 		if (visible && hadFocus && (Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter))) {
