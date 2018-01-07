@@ -19,7 +19,7 @@ public class CheatsController : MonoBehaviour {
 		}
 		if (cheatField.enabled && hadFocus && Input.GetKey(KeyCode.Return)) {
 			Debug.Log("Entered cheat: " + cheatField.text);
-			tryCheat(cheatField.text);
+			enterCheat(cheatField.text);
 			setCheatFieldVisible(false);
 		}
 		hadFocus = cheatField.isFocused;
@@ -38,12 +38,16 @@ public class CheatsController : MonoBehaviour {
 		}
 	}
 
+	bool enterCheat (string cheat) {
+		return tryCheat(cheat.ToLower());
+	}
+
 	bool tryCheat (string cheat) {
 		if (cheat == "rosebud")
 			hudController.ChangeFunds(1000);
 		else if (cheat == "motherload")
 			hudController.ChangeFunds(50000);
-		else if (cheat == "filthyRich")
+		else if (cheat == "filthyrich")
 			hudController.ChangeFunds(1000000);
 		return true;
 	}
