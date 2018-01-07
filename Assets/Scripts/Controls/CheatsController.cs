@@ -11,7 +11,6 @@ public class CheatsController : MonoBehaviour {
 	private bool visible = false;
 	private bool expanded = false;
 	private bool hadFocus = false;
-	private string consoleContent = "";
 	private float initialCheatFieldX, initialCheatFieldY, initialCheatFieldWidth;
 
 	void Start () {
@@ -29,7 +28,9 @@ public class CheatsController : MonoBehaviour {
 		if (visible && hadFocus && (Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter))) {
 			bool wasExpanded = expanded;
 			if (cheatField.text.Length > 0) {
-				enterCheat(cheatField.text);
+				if (!enterCheat(cheatField.text)) {
+					addConsoleLine("No such cheat.");
+				}
 			}
 			cheatField.text = "";
 			if (expanded || wasExpanded) {
@@ -75,6 +76,10 @@ public class CheatsController : MonoBehaviour {
 
 	void addConsoleLine (string text) {
 		consoleText.text += "\n" + text;
+		updateConsole();
+	}
+
+	void updateConsole () {
 		LayoutRebuilder.ForceRebuildLayoutImmediate(consolePanel);
 		consolePanel.GetComponent<ScrollRect>().verticalNormalizedPosition = 0;
 	}
@@ -108,6 +113,8 @@ public class CheatsController : MonoBehaviour {
 			setExpanded(!expanded);
 		else if (command == "help")
 			showHelp();
+		else if (command == "clear")
+			clearConsole();
 		else if (command == "forcequit")
 			Application.Quit();
 		else
@@ -137,5 +144,10 @@ public class CheatsController : MonoBehaviour {
 		setExpanded(true);
 		TextAsset helpText = Resources.Load<TextAsset>("cheats_help");
 		addConsoleLine(helpText.text);
+	}
+
+	void clearConsole () {
+		consoleText.text = "";
+		updateConsole();
 	}
 }
