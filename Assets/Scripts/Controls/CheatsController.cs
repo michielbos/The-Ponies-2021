@@ -18,7 +18,6 @@ public class CheatsController : MonoBehaviour {
 			setCheatFieldVisible(!cheatField.enabled);
 		}
 		if (cheatField.enabled && hadFocus && Input.GetKey(KeyCode.Return)) {
-			Debug.Log("Entered cheat: " + cheatField.text);
 			enterCheat(cheatField.text);
 			setCheatFieldVisible(false);
 		}
@@ -49,6 +48,8 @@ public class CheatsController : MonoBehaviour {
 			hudController.ChangeFunds(50000);
 		else if (cheat == "filthyrich")
 			hudController.ChangeFunds(1000000);
+		else if (cheat == "forcequit")
+			Application.Quit();
 		return true;
 	}
 }
