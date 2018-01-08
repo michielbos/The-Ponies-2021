@@ -7,4 +7,6 @@ AddFunds <amount> - Increase/decrease household funds with the given amount.
 --- Misc cheats ---
 Expand - Expands the console.
 Help - Display these commands.
+ShowFPS - Toggles FPS display.
+Clear - Clears all text from the console.
 ForceQuit - Quit the game.

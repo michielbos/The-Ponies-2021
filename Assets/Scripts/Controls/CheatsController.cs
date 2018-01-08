@@ -8,9 +8,11 @@ public class CheatsController : MonoBehaviour {
 	public RectTransform consolePanel;
 	public Text consoleText;
 	public HUDController hudController;
+	public Text fpsText;
 	private bool visible = false;
 	private bool expanded = false;
 	private bool hadFocus = false;
+	private bool showFps = false;
 	private float initialCheatFieldX, initialCheatFieldY, initialCheatFieldWidth;
 	private float lastConsoleHeight = 0;
 
@@ -39,6 +41,9 @@ public class CheatsController : MonoBehaviour {
 			}
 		}
 		hadFocus = cheatField.isFocused;
+		if (showFps) {
+			fpsText.text = "FPS: " + Mathf.RoundToInt(1f / Time.deltaTime);
+		}
 	}
 
 	void LateUpdate () {
@@ -113,6 +118,8 @@ public class CheatsController : MonoBehaviour {
 			setExpanded(!expanded);
 		else if (command == "help")
 			showHelp();
+		else if (command == "showfps")
+			setShowFps(!showFps);
 		else if (command == "clear")
 			clearConsole();
 		else if (command == "forcequit")
@@ -144,6 +151,15 @@ public class CheatsController : MonoBehaviour {
 		setExpanded(true);
 		TextAsset helpText = Resources.Load<TextAsset>("cheats_help");
 		addConsoleLine(helpText.text);
+	}
+
+	void setShowFps (bool showFps) {
+		this.showFps = showFps;
+		if (showFps) {
+			fpsText.rectTransform.localScale = new Vector3(1, 1, 1);
+		} else {
+			fpsText.rectTransform.localScale = new Vector3(0, 0, 0);
+		}
 	}
 
 	void clearConsole () {
