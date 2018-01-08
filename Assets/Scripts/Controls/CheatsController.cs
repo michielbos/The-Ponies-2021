@@ -12,6 +12,7 @@ public class CheatsController : MonoBehaviour {
 	private bool expanded = false;
 	private bool hadFocus = false;
 	private float initialCheatFieldX, initialCheatFieldY, initialCheatFieldWidth;
+	private float lastConsoleHeight = 0;
 
 	void Start () {
 		RectTransform rectTransform = cheatField.GetComponent<RectTransform>();
@@ -23,8 +24,7 @@ public class CheatsController : MonoBehaviour {
 	void Update () {
 		if ((Application.isEditor || Input.GetKey(KeyCode.LeftControl)) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C)) {
 			setCheatFieldVisible(!visible);
-		}
-		if (visible && hadFocus && (Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter))) {
+		} else if (visible && hadFocus && (Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter))) {
 			bool wasExpanded = expanded;
 			if (cheatField.text.Length > 0) {
 				if (!enterCheat(cheatField.text)) {
@@ -39,6 +39,13 @@ public class CheatsController : MonoBehaviour {
 			}
 		}
 		hadFocus = cheatField.isFocused;
+	}
+
+	void LateUpdate () {
+		ScrollRect consoleScrollRect = consolePanel.GetComponent<ScrollRect>();
+		if (consoleScrollRect.verticalNormalizedPosition != lastConsoleHeight) {
+			consoleScrollRect.verticalNormalizedPosition = 0;
+		}
 	}
 		
 	void setCheatFieldVisible (bool visible) {
@@ -75,12 +82,6 @@ public class CheatsController : MonoBehaviour {
 
 	void addConsoleLine (string text) {
 		consoleText.text += "\n" + text;
-		updateConsole();
-	}
-
-	void updateConsole () {
-		LayoutRebuilder.ForceRebuildLayoutImmediate(consolePanel);
-		consolePanel.GetComponent<ScrollRect>().verticalNormalizedPosition = 0;
 	}
 
 	bool enterCheat (string cheat) {
@@ -99,7 +100,7 @@ public class CheatsController : MonoBehaviour {
 		//Money cheats
 		if (command == "rosebud")
 			hudController.ChangeFunds(1000);
-		else if (command == "motherload")
+		else if (command == "motherlode")
 			hudController.ChangeFunds(50000);
 		else if (command == "filthyrich")
 			hudController.ChangeFunds(1000000);
@@ -147,6 +148,5 @@ public class CheatsController : MonoBehaviour {
 
 	void clearConsole () {
 		consoleText.text = "";
-		updateConsole();
 	}
 }
