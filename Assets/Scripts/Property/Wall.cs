@@ -14,8 +14,10 @@ public class Wall : MonoBehaviour
     List<TerrainTile> path;
     TerrainManager tm = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainManager>();
 
-	enum WallDirection {
-		HORIZONTAL, VERTICAL, UP_RIGHT, UP_LEFT
+	public Wall (int x, int y, WallDirection wallDirection) {
+		this.x = x;
+		this.y = y;
+		this.wallDirection = wallDirection;
 	}
 
     public Wall(TerrainTile s, TerrainTile e)
@@ -42,6 +44,7 @@ public class Wall : MonoBehaviour
         y = Mathf.Min(s.y, e.y);
         
     }
+
     public Wall(int coordx,int coordy, int dir)
     {
         x = coordx;
