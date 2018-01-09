@@ -46,7 +46,7 @@ public class TileGraph {
             }
             n.edges = edges.ToArray();
         }
-        Debug.Log(ec);
+        //Debug.Log(ec);
     }
 	
 	public int getsize()
