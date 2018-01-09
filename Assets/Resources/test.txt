@@ -1,0 +1,1 @@
+{"id":4,"name":"asdfas","description":"asadf","streetName":"asdf","propertyType":66}

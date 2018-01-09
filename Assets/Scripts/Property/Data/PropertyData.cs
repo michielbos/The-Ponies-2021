@@ -2,7 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PropertyData : MonoBehaviour {
+[System.Serializable]
+public class PropertyData {
 	public int id;
 	public string name;
 	public string description;
