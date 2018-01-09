@@ -8,10 +8,16 @@ public class Wall : MonoBehaviour
     TerrainTile endTile;
     int length;
     int direction=0;
-    int x;
-    int y;
+    public int x;
+    public int y;
+	public WallDirection wallDirection;
     List<TerrainTile> path;
     TerrainManager tm = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainManager>();
+
+	enum WallDirection {
+		HORIZONTAL, VERTICAL, UP_RIGHT, UP_LEFT
+	}
+
     public Wall(TerrainTile s, TerrainTile e)
     {
         /*start and end should be interchangable
