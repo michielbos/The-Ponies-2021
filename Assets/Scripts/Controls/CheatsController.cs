@@ -26,17 +26,21 @@ public class CheatsController : MonoBehaviour {
 	void Update () {
 		if ((Application.isEditor || Input.GetKey(KeyCode.LeftControl)) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C)) {
 			setCheatFieldVisible(!visible);
-		} else if (visible && hadFocus && (Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter))) {
-			bool wasExpanded = expanded;
-			if (cheatField.text.Length > 0) {
-				if (!enterCheat(cheatField.text)) {
-					addConsoleLine("No such cheat.");
+		} else if (visible) {
+			if (hadFocus && (Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter))) {
+				bool wasExpanded = expanded;
+				if (cheatField.text.Length > 0) {
+					if (!enterCheat(cheatField.text)) {
+						addConsoleLine("No such cheat.");
+					}
 				}
-			}
-			cheatField.text = "";
-			if (expanded || wasExpanded) {
-				cheatField.ActivateInputField();
-			} else {
+				cheatField.text = "";
+				if (expanded || wasExpanded) {
+					cheatField.ActivateInputField();
+				} else {
+					setCheatFieldVisible(false);
+				}
+			} else if (Input.GetKeyDown(KeyCode.Escape)) {
 				setCheatFieldVisible(false);
 			}
 		}
@@ -122,6 +126,8 @@ public class CheatsController : MonoBehaviour {
 			setShowFps(!showFps);
 		else if (command == "clear")
 			clearConsole();
+		else if (command == "close")
+			setCheatFieldVisible(false);
 		else if (command == "forcequit")
 			Application.Quit();
 		else

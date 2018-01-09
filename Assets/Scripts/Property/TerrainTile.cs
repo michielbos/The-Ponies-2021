@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class TerrainTile : IPointerDownHandler
+public class TerrainTile : MonoBehaviour, IPointerDownHandler
 {
 	public int x;
 	public int y;
