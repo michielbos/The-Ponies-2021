@@ -120,39 +120,14 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 534172938}
-  - component: {fileID: 534172937}
+  - component: {fileID: 534172939}
   m_Layer: 0
-  m_Name: GameObject
+  m_Name: PropertyController
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &534172937
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 534172936}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 8d715f42e6c2442b991bcda843b6cb99, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  toSave:
-    id: 0
-    name: 
-    description: 
-    streetName: 
-    propertyType: 0
-  loaded:
-    id: 0
-    name: 
-    description: 
-    streetName: 
-    propertyType: 0
-  writeToFile: 0
-  readFromFile: 0
 --- !u!4 &534172938
 Transform:
   m_ObjectHideFlags: 0
@@ -166,6 +141,17 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &534172939
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_GameObject: {fileID: 534172936}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c72822f0727d417bbe0d86622a2aa72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1 &715872384
 GameObject:
   m_ObjectHideFlags: 0
@@ -626,17 +612,17 @@ Prefab:
     - target: {fileID: 224984338494113252, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: -5
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224984338494113252, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 16
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 224201681386338322, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 26
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 02c26d83b35cb374daa65d6918d687d9, type: 2}

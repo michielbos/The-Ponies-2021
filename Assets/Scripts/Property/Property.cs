@@ -13,25 +13,29 @@ public class Property {
 	public List<Roof> roofs;
 	public List<PropertyObject> propertyObjects;
 
-	Property () {
+	public Property () {
 		terrainTiles = new List<TerrainTile>();
 		walls = new List<Wall>();
 		roofs = new List<Roof>();
 		propertyObjects = new List<PropertyObject>();
 	}
 
-	Property (int id, string name, string description, string streetName, PropertyType propertyType) : this() {
+	public Property (int id, string name, string description, string streetName, PropertyType propertyType) : this() {
 		this.id = id;
 		this.name = name;
 		this.streetName = streetName;
 		this.description = description;
 	}
 
-	Property (PropertyData propertyData) : this(propertyData.id,
+	public Property (PropertyData propertyData) : this(propertyData.id,
 												propertyData.name,
 												propertyData.description,
 												propertyData.streetName,
 												propertyData.propertyType == 0 ? PropertyType.RESIDENTIAL : PropertyType.COMMUNITY) {
 
+	}
+
+	public PropertyData GetPropertyData () {
+		return new PropertyData(id, name, description, streetName, propertyType == PropertyType.RESIDENTIAL ? 0 : 1);
 	}
 }

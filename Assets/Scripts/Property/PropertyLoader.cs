@@ -3,35 +3,40 @@ using System.Collections.Generic;
 using System.IO;
 using UnityEngine;
 
-public class PropertyLoader : MonoBehaviour {
-	public PropertyData toSave;
-	public PropertyData loaded;
-	public bool writeToFile;
-	public bool readFromFile;
+public class PropertyLoader {
+	const string propertyPrefix = "Property";
 	const string dataPath = "Assets/Resources/SaveData/";
 	const string propertyPath = dataPath + "Property/";
 
-	void Start () {
+	public PropertyLoader () {
 		TryCreateDirectory(propertyPath);
 	}
 
-	void Update () {
-		if (writeToFile) {
-			writeToFile = false;
-			SaveProperty(toSave);
-		}
-		if (readFromFile) {
-			readFromFile = false;
-			loaded = LoadProperty(toSave.id);
-		}
+	public bool PropertyExists (int id) {
+		return File.Exists(propertyPath + propertyPrefix + id);
 	}
 
-	void SaveProperty (PropertyData propertyData) {
-		WriteFile(propertyPath + "Property" + toSave.id, JsonUtility.ToJson(toSave));
+	public void SaveProperty (Property property) {
+		SavePropertyData(property.GetPropertyData());
 	}
 
-	PropertyData LoadProperty (int id) {
-		return JsonUtility.FromJson<PropertyData>(ReadFile(propertyPath + "Property" + id));
+	public Property LoadOrCreateProperty (int id) {
+		if (PropertyExists(id))
+			return LoadProperty(id);
+		else
+			return new Property(id, "untitled", "", "untitled street " + id, 0);
+	}
+
+	public Property LoadProperty (int id) {
+		return new Property(LoadPropertyData(id));
+	}
+
+	void SavePropertyData (PropertyData propertyData) {
+		WriteFile(propertyPath + propertyPrefix + propertyData.id, JsonUtility.ToJson(propertyData));
+	}
+
+	PropertyData LoadPropertyData (int id) {
+		return JsonUtility.FromJson<PropertyData>(ReadFile(propertyPath + propertyPrefix + id));
 	}
 		
 	void WriteFile (string path, string data) {
