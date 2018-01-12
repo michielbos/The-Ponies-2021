@@ -19,6 +19,10 @@ public class GameController : MonoBehaviour {
 		SceneManager.LoadScene("GameSceneTest");
 	}
 
+	public void EnterNeighbourhood () {
+		SceneManager.LoadScene("PropertyScene");
+	}
+
 	void OnEnable() {
 		SceneManager.sceneLoaded += OnSceneLoaded;
 	}
@@ -35,7 +39,8 @@ public class GameController : MonoBehaviour {
 	}
 
 	void OnEnteredLot (int lotId) {
-		PropertyController propertyController = GameObject.FindGameObjectWithTag("PropertyController").GetComponent<PropertyController>();
+		GameObject propertyObject = GameObject.FindGameObjectWithTag("PropertyController");
+		PropertyController propertyController = propertyObject.GetComponent<PropertyController>();
 		propertyController.Initialize(lotId);
 	}
 }

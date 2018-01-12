@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class PropertyController : MonoBehaviour {
 	bool loaded = false;
-	Property property;
+	public Property property;
 
 	public void Initialize (int propertyId) {
 		loaded = true;
