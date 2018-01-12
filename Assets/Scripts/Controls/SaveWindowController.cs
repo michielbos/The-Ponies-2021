@@ -19,18 +19,21 @@ public class SaveWindowController : MonoBehaviour {
 		OpenSaveDialog();
 		saveButton.GetComponentInChildren<Text>().text = "Save";
 		saveType = SaveType.SAVE;
+		dontSaveButton.transform.localScale = new Vector3(0, 0, 0);
 	}
 
 	public void OpenSaveAndReturnDialog () {
 		OpenSaveDialog();
 		saveButton.GetComponentInChildren<Text>().text = "Save & Return";
 		saveType = SaveType.SAVE_AND_RETURN;
+		dontSaveButton.transform.localScale = new Vector3(1, 1, 1);
 	}
 
 	public void OpenSaveAndQuitDialog () {
 		OpenSaveDialog();
 		saveButton.GetComponentInChildren<Text>().text = "Save & Quit";
 		saveType = SaveType.SAVE_AND_QUIT;
+		dontSaveButton.transform.localScale = new Vector3(1, 1, 1);
 	}
 
 	private void OpenSaveDialog () {
