@@ -8,10 +8,16 @@ using UnityEngine.SceneManagement;
 /// It will be kept between scene transitions.
 /// </summary>
 public class GameController : MonoBehaviour {
-	int enteringLot = -1;
+	public static GameController instance;
+	private int enteringLot = -1;
 
 	void Awake () {
-		DontDestroyOnLoad(gameObject);
+		if (instance == null) {
+			instance = this;
+			DontDestroyOnLoad(gameObject);
+		} else {
+			Destroy(gameObject);
+		}
 	}
 
 	public void EnterLot (int id) {
@@ -32,7 +38,11 @@ public class GameController : MonoBehaviour {
 	}
 		
 	void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-		if (scene.name == "GameSceneTest" && enteringLot >= 0) {
+		if (scene.name == "GameSceneTest") {
+			if (enteringLot < 0) {
+				Debug.Log("Started directly from scene, loading lot 0.");
+				enteringLot = 0;
+			}
 			OnEnteredLot(enteringLot);
 			enteringLot = -1;
 		}

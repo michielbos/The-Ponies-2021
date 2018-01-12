@@ -11,13 +11,6 @@ public class PropertyController : MonoBehaviour {
 		property = new PropertyLoader().LoadOrCreateProperty(propertyId);
 	}
 
-	void Start () {
-		if (!loaded) {
-			Debug.Log("Started directly from scene, loading lot 0.");
-			Initialize(0);
-		}
-	}
-
 	public void SaveProperty () {
 		new PropertyLoader().SaveProperty(property);
 	}

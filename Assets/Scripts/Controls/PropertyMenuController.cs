@@ -6,7 +6,6 @@ using UnityEngine.SceneManagement;
 
 public class PropertyMenuController : MonoBehaviour {
 	public Button[] lotButtons;
-	public GameController gameController;
 
 	void Start () {
 		PropertyLoader propertyLoader = new PropertyLoader();
@@ -18,5 +17,9 @@ public class PropertyMenuController : MonoBehaviour {
 				lotButtons[i].GetComponentInChildren<Text>().text = "Empty lot (" + i + ")";
 			}
 		}
+	}
+
+	public void enterLot (int id) {
+		GameController.instance.EnterLot(id);
 	}
 }

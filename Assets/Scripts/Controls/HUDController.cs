@@ -29,11 +29,6 @@ public class HUDController : MonoBehaviour
 
 	public Sprite[] pauseSprites;
 
-	public PropertyController propertyController;
-	public GameObject savePanel;
-	public InputField saveNameField;
-	public InputField saveDescriptionField;
-
 	bool paused = false;
 	bool forcePaused = false;
 	int selectedSpeed = 1;
@@ -182,19 +177,4 @@ public class HUDController : MonoBehaviour
 		fundsText.text = "$" + funds.ToString();
 	}
 
-	public void OpenSaveDialog () {
-		savePanel.transform.localScale = new Vector3(1, 1, 1);
-		saveNameField.text = propertyController.property.name;
-		saveDescriptionField.text = propertyController.property.description;
-	}
-
-	public void SaveGame () {
-		propertyController.property.name = saveNameField.text;
-		propertyController.property.description = saveDescriptionField.text;
-		propertyController.SaveProperty();
-	}
-
-	public void CloseSaveDialog () {
-		savePanel.transform.localScale = new Vector3(0, 0, 0);
-	}
 }
