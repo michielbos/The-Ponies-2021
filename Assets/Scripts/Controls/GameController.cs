@@ -20,27 +20,22 @@ public class GameController : MonoBehaviour {
 	}
 
 	void OnEnable() {
-		Debug.Log("OnEnable called");
 		SceneManager.sceneLoaded += OnSceneLoaded;
-	}
-		
-	void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
-		Debug.Log("OnSceneLoaded: " + scene.name);
-		Debug.Log("Mode: " + mode);
-		if (scene.name == "GameSceneTest" && enteringLot >= 0) {
-			OnEnteredLot(enteringLot);
-			enteringLot = 0;
-		}
-	}
-
-	void OnEnteredLot (int lotId) {
-		Debug.Log("ENTERED " + lotId);
-		GameObject gameObject = GameObject.FindGameObjectWithTag("PropertyController");
-		PropertyController propertyController = GameObject.FindGameObjectWithTag("PropertyController").GetComponent<PropertyController>();
-		propertyController.Initialize(lotId);
 	}
 
 	void OnDisable() {
 		SceneManager.sceneLoaded -= OnSceneLoaded;
+	}
+		
+	void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+		if (scene.name == "GameSceneTest" && enteringLot >= 0) {
+			OnEnteredLot(enteringLot);
+			enteringLot = -1;
+		}
+	}
+
+	void OnEnteredLot (int lotId) {
+		PropertyController propertyController = GameObject.FindGameObjectWithTag("PropertyController").GetComponent<PropertyController>();
+		propertyController.Initialize(lotId);
 	}
 }

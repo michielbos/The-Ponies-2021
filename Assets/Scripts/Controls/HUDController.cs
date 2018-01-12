@@ -52,13 +52,11 @@ public class HUDController : MonoBehaviour
 		{
 			pauseTimer += Time.deltaTime;
 			speedButtons[0].GetComponent<Image>().overrideSprite = pauseSprites[(int)Mathf.Floor(pauseTimer % 1f * 2) * 2];
-			Debug.Log((int)Mathf.Floor(pauseTimer % 1f * 2));
 		}
 		else if (paused)
 		{
 			pauseTimer += Time.deltaTime;
 			speedButtons[0].GetComponent<Image>().overrideSprite = pauseSprites[(int)Mathf.Floor(pauseTimer % 1f * 2)];
-			Debug.Log((int)Mathf.Floor(pauseTimer % 1f * 2));
 		}
 	}
 

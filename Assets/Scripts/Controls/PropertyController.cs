@@ -7,17 +7,19 @@ public class PropertyController : MonoBehaviour {
 	Property property;
 
 	public void Initialize (int propertyId) {
-		Debug.Log(propertyId);
 		loaded = true;
 		property = new PropertyLoader().LoadOrCreateProperty(propertyId);
 	}
 
-	// Use this for initialization
 	void Start () {
 		if (!loaded) {
 			Debug.Log("Started directly from scene, loading lot 0.");
 			Initialize(0);
 		}
+	}
+
+	public void SaveProperty () {
+		new PropertyLoader().SaveProperty(property);
 	}
 
 }
