@@ -2,7 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+[System.Serializable]
 public class Property {
+	public static GameObject propertyObjectPrefab;
 	public int id;
 	public string name;
 	public string description;
@@ -32,10 +34,25 @@ public class Property {
 												propertyData.description,
 												propertyData.streetName,
 												propertyData.propertyType == 0 ? PropertyType.RESIDENTIAL : PropertyType.COMMUNITY) {
-
+		foreach (PropertyObjectData pod in propertyData.propertyObjectDatas) {
+			propertyObjects.Add(new PropertyObject(pod));
+		}
 	}
 
 	public PropertyData GetPropertyData () {
-		return new PropertyData(id, name, description, streetName, propertyType == PropertyType.RESIDENTIAL ? 0 : 1);
+		return new PropertyData(id,
+			name,
+			description,
+			streetName,
+			propertyType == PropertyType.RESIDENTIAL ? 0 : 1,
+			CreatePropertyObjectDataArray(propertyObjects));
+	}
+
+	private PropertyObjectData[] CreatePropertyObjectDataArray (List<PropertyObject> propertyObjects) {
+		PropertyObjectData[] propertyObjectDataArr = new PropertyObjectData[propertyObjects.Count];
+		for (int i = 0; i < propertyObjects.Count; i++) {
+			propertyObjectDataArr[i] = propertyObjects[i].GetPropertyObjectData();
+		}
+		return propertyObjectDataArr;
 	}
 }
