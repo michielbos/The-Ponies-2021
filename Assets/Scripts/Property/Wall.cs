@@ -56,7 +56,7 @@ public class Wall : MonoBehaviour
 		return new WallData(x,
 			y,
 			(int)wallDirection,
-			0,
-			0);
+			-1,
+			-1);
 	}
 }

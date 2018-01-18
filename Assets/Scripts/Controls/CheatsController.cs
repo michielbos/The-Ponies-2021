@@ -41,7 +41,7 @@ public class CheatsController : MonoBehaviour {
 				SetCheatFieldVisible(false);
 				}
 			} else if (Input.GetKeyDown(KeyCode.Escape)) {
-				setCheatFieldVisible(false);
+				SetCheatFieldVisible(false);
 			}
 		}
 		hadFocus = cheatField.isFocused;
