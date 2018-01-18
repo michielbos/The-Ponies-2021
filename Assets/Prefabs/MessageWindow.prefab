@@ -248,6 +248,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dab03079e544b4710aceac7ce24a112a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  clickSound: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969, type: 3}
   titleText: {fileID: 114010104581490828}
   contentText: {fileID: 114912008236974436}
   firstButton: {fileID: 114569764555849574}

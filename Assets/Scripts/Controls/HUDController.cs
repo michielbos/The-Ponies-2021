@@ -34,7 +34,7 @@ public class HUDController : MonoBehaviour
 
 	public Sprite[] pauseSprites;
 
-	public BuildController buildController;
+	public BuyController buyController;
 
 	bool paused = false;
 	bool forcePaused = false;
@@ -92,7 +92,7 @@ public class HUDController : MonoBehaviour
 			if (m > 0) speedButtons[0].GetComponent<Button>().interactable = false;
 			else { speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite; pauseTimer = 0f; speedButtons[0].GetComponent<Button>().interactable = true; }
 		}
-		buildController.enabled = selectedPanel == PANEL_BUY || selectedPanel == PANEL_BUILD;
+		buyController.enabled = selectedPanel == PANEL_BUY || selectedPanel == PANEL_BUILD;
 	}
 
 	public void SetSpeed(int s)

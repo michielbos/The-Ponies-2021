@@ -5,10 +5,7 @@ using UnityEngine;
 public class Messages : MonoBehaviour {
 	public MessageWindow messageWindowPrefab;
 	public AudioSource audioSource;
-	public List<MessageWindow> messageWindows;
-	public bool ad = false;
-	public bool rem = false;
-	public int counter = 0;
+	private List<MessageWindow> messageWindows;
 
 	public Messages () {
 		messageWindows = new List<MessageWindow>();
