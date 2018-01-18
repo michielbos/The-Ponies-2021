@@ -9,4 +9,5 @@ Expand - Expands the console.
 Help - Display these commands.
 ShowFPS - Toggles FPS display.
 Clear - Clears all text from the console.
+Close - Closes the console.
 ForceQuit - Quit the game.

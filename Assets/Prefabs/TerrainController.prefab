@@ -22,7 +22,8 @@ GameObject:
   - component: {fileID: 33231416050636526}
   - component: {fileID: 23422795149906662}
   - component: {fileID: 114423937068632804}
-  m_Layer: 0
+  - component: {fileID: 65812029520593692}
+  m_Layer: 8
   m_Name: TerrainTile
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -114,6 +115,18 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1375704418475892}
   m_Mesh: {fileID: 0}
+--- !u!65 &65812029520593692
+BoxCollider:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1375704418475892}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 1
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.1, z: 1}
+  m_Center: {x: 0.5, y: 0, z: 0.5}
 --- !u!114 &114093123695908068
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -142,6 +155,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   x: 0
   y: 0
+  height: 0
+  type: 0
 --- !u!114 &114530702556699984
 MonoBehaviour:
   m_ObjectHideFlags: 1

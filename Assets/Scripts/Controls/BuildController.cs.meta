@@ -1,0 +1,19 @@
+fileFormatVersion: 2
+guid: 7c03b05aa7e4f4abba451b9ecf0f3f76
+timeCreated: 1516217807
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - buildMarkerPrefab: {fileID: 1824389368066718, guid: 82bbdb68d550441a19fcdb842a08311f,
+      type: 2}
+  - buySound: {fileID: 8300000, guid: e8ba0a1d34871f340a3dc4591c80c5f5, type: 3}
+  - denySound: {fileID: 8300000, guid: fffa4f35ce6b4544e8c707bdbfef5f19, type: 3}
+  - propertyController: {instanceID: 0}
+  - audioSource: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class HUDController : MonoBehaviour
 {
+	private const int PANEL_LIVE = 0;
+	private const int PANEL_BUY = 1;
+	private const int PANEL_BUILD = 2;
+	private const int PANEL_CAMERA = 3;
+	private const int PANEL_OPTIONS = 4;
 
 	/*public enum Mode
 	{
@@ -28,6 +33,8 @@ public class HUDController : MonoBehaviour
 	public List<GameObject> roofButtons;
 
 	public Sprite[] pauseSprites;
+
+	public BuildController buildController;
 
 	bool paused = false;
 	bool forcePaused = false;
@@ -52,13 +59,11 @@ public class HUDController : MonoBehaviour
 		{
 			pauseTimer += Time.deltaTime;
 			speedButtons[0].GetComponent<Image>().overrideSprite = pauseSprites[(int)Mathf.Floor(pauseTimer % 1f * 2) * 2];
-			Debug.Log((int)Mathf.Floor(pauseTimer % 1f * 2));
 		}
 		else if (paused)
 		{
 			pauseTimer += Time.deltaTime;
 			speedButtons[0].GetComponent<Image>().overrideSprite = pauseSprites[(int)Mathf.Floor(pauseTimer % 1f * 2)];
-			Debug.Log((int)Mathf.Floor(pauseTimer % 1f * 2));
 		}
 	}
 
@@ -86,8 +91,8 @@ public class HUDController : MonoBehaviour
 			selectedPanel = m;
 			if (m > 0) speedButtons[0].GetComponent<Button>().interactable = false;
 			else { speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite; pauseTimer = 0f; speedButtons[0].GetComponent<Button>().interactable = true; }
-
 		}
+		buildController.enabled = selectedPanel == PANEL_BUY || selectedPanel == PANEL_BUILD;
 	}
 
 	public void SetSpeed(int s)
@@ -178,4 +183,5 @@ public class HUDController : MonoBehaviour
 	{
 		fundsText.text = "$" + funds.ToString();
 	}
+
 }

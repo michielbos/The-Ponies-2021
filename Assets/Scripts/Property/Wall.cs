@@ -8,10 +8,18 @@ public class Wall : MonoBehaviour
     TerrainTile endTile;
     int length;
     int direction=0;
-    int x;
-    int y;
+    public int x;
+    public int y;
+	public WallDirection wallDirection;
     List<TerrainTile> path;
     TerrainManager tm = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainManager>();
+
+	public Wall (int x, int y, WallDirection wallDirection) {
+		this.x = x;
+		this.y = y;
+		this.wallDirection = wallDirection;
+	}
+
     public Wall(TerrainTile s, TerrainTile e)
     {
         /*start and end should be interchangable
@@ -36,10 +44,19 @@ public class Wall : MonoBehaviour
         y = Mathf.Min(s.y, e.y);
         
     }
+
     public Wall(int coordx,int coordy, int dir)
     {
         x = coordx;
         y = coordy;
         direction = dir;
     }
+
+	public WallData GetWallData () {
+		return new WallData(x,
+			y,
+			(int)wallDirection,
+			-1,
+			-1);
+	}
 }
