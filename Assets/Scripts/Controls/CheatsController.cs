@@ -25,20 +25,20 @@ public class CheatsController : MonoBehaviour {
 
 	void Update () {
 		if ((Application.isEditor || Input.GetKey(KeyCode.LeftControl)) && Input.GetKey(KeyCode.LeftShift) && Input.GetKeyDown(KeyCode.C)) {
-			setCheatFieldVisible(!visible);
+			SetCheatFieldVisible(!visible);
 		} else if (visible) {
 			if (hadFocus && (Input.GetKey(KeyCode.Return) || Input.GetKey(KeyCode.KeypadEnter))) {
 				bool wasExpanded = expanded;
 				if (cheatField.text.Length > 0) {
-					if (!enterCheat(cheatField.text)) {
-						addConsoleLine("No such cheat.");
+					if (!EnterCheat(cheatField.text)) {
+					AddConsoleLine("No such cheat.");
 					}
 				}
 				cheatField.text = "";
 				if (expanded || wasExpanded) {
 					cheatField.ActivateInputField();
 				} else {
-					setCheatFieldVisible(false);
+				SetCheatFieldVisible(false);
 				}
 			} else if (Input.GetKeyDown(KeyCode.Escape)) {
 				setCheatFieldVisible(false);
@@ -57,7 +57,7 @@ public class CheatsController : MonoBehaviour {
 		}
 	}
 		
-	void setCheatFieldVisible (bool visible) {
+	void SetCheatFieldVisible (bool visible) {
 		this.visible = visible;
 		cheatField.interactable = visible;
 		//The active/enabled flag won't hide it, so we're just shrinking it to zero for now...
@@ -74,7 +74,7 @@ public class CheatsController : MonoBehaviour {
 		}
 	}
 
-	void setExpanded (bool expanded) {
+	void SetExpanded (bool expanded) {
 		this.expanded = expanded;
 		if (visible) {
 			consolePanel.localScale = new Vector3(1, 1, 1);
@@ -89,12 +89,12 @@ public class CheatsController : MonoBehaviour {
 		}
 	}
 
-	void addConsoleLine (string text) {
+	void AddConsoleLine (string text) {
 		consoleText.text += "\n" + text;
 	}
 
-	bool enterCheat (string cheat) {
-		addConsoleLine(cheat);
+	bool EnterCheat (string cheat) {
+		AddConsoleLine(cheat);
 		string[] split = cheat.Split(new char[]{' '}, 2);
 		string[] parameters;
 		if (split.Length > 1) {
@@ -102,10 +102,10 @@ public class CheatsController : MonoBehaviour {
 		} else {
 			parameters = new string[0];
 		}
-		return tryCheat(split[0].ToLower(), parameters);
+		return TryCheat(split[0].ToLower(), parameters);
 	}
 
-	bool tryCheat (string command, string[] parameters) {
+	bool TryCheat (string command, string[] parameters) {
 		//Money cheats
 		if (command == "rosebud")
 			hudController.ChangeFunds(1000);
@@ -114,20 +114,20 @@ public class CheatsController : MonoBehaviour {
 		else if (command == "filthyrich")
 			hudController.ChangeFunds(1000000);
 		else if (command == "adjustfunds" && parameters.Length == 1)
-			return changeFundsCheat(parameters[0]);
+			return ChangeFundsCheat(parameters[0]);
 		else if (command == "addfunds" && parameters.Length == 1)
-			return addFundsCheat(parameters[0]);
+			return AddFundsCheat(parameters[0]);
 		//Misc cheats
 		else if (command == "expand")
-			setExpanded(!expanded);
+			SetExpanded(!expanded);
 		else if (command == "help")
-			showHelp();
+			ShowHelp();
 		else if (command == "showfps")
-			setShowFps(!showFps);
+			SetShowFps(!showFps);
 		else if (command == "clear")
-			clearConsole();
+			ClearConsole();
 		else if (command == "close")
-			setCheatFieldVisible(false);
+			SetCheatFieldVisible(false);
 		else if (command == "forcequit")
 			Application.Quit();
 		else
@@ -135,7 +135,7 @@ public class CheatsController : MonoBehaviour {
 		return true;
 	}
 
-	bool changeFundsCheat (string amountString) {
+	bool ChangeFundsCheat (string amountString) {
 		int amount;
 		if (int.TryParse(amountString, out amount)) {
 			hudController.SetFunds(amount);
@@ -144,7 +144,7 @@ public class CheatsController : MonoBehaviour {
 			return false;
 	}
 
-	bool addFundsCheat (string amountString) {
+	bool AddFundsCheat (string amountString) {
 		int amount;
 		if (int.TryParse(amountString, out amount)) {
 			hudController.ChangeFunds(amount);
@@ -153,13 +153,13 @@ public class CheatsController : MonoBehaviour {
 			return false;
 	}
 
-	void showHelp () {
-		setExpanded(true);
+	void ShowHelp () {
+		SetExpanded(true);
 		TextAsset helpText = Resources.Load<TextAsset>("cheats_help");
-		addConsoleLine(helpText.text);
+		AddConsoleLine(helpText.text);
 	}
 
-	void setShowFps (bool showFps) {
+	void SetShowFps (bool showFps) {
 		this.showFps = showFps;
 		if (showFps) {
 			fpsText.rectTransform.localScale = new Vector3(1, 1, 1);
@@ -168,7 +168,7 @@ public class CheatsController : MonoBehaviour {
 		}
 	}
 
-	void clearConsole () {
+	void ClearConsole () {
 		consoleText.text = "";
 	}
 }
