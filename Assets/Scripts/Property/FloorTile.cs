@@ -18,4 +18,10 @@ public class FloorTile {
 														floorTileData.type) {
 
 	}
+
+	public FloorTileData GetFloorTileData () {
+		return new FloorTileData(x,
+			y,
+			type);
+	}
 }

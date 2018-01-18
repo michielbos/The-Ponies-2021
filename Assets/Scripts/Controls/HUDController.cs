@@ -6,6 +6,11 @@ using UnityEngine.UI;
 
 public class HUDController : MonoBehaviour
 {
+	private const int PANEL_LIVE = 0;
+	private const int PANEL_BUY = 1;
+	private const int PANEL_BUILD = 2;
+	private const int PANEL_CAMERA = 3;
+	private const int PANEL_OPTIONS = 4;
 
 	/*public enum Mode
 	{
@@ -28,6 +33,8 @@ public class HUDController : MonoBehaviour
 	public List<GameObject> roofButtons;
 
 	public Sprite[] pauseSprites;
+
+	public BuildController buildController;
 
 	bool paused = false;
 	bool forcePaused = false;
@@ -84,8 +91,8 @@ public class HUDController : MonoBehaviour
 			selectedPanel = m;
 			if (m > 0) speedButtons[0].GetComponent<Button>().interactable = false;
 			else { speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite; pauseTimer = 0f; speedButtons[0].GetComponent<Button>().interactable = true; }
-
 		}
+		buildController.enabled = selectedPanel == PANEL_BUY || selectedPanel == PANEL_BUILD;
 	}
 
 	public void SetSpeed(int s)

@@ -22,4 +22,13 @@ public class Roof {
 	public Roof (RoofData roofData) : this(roofData.x1, roofData.y1, roofData.x2, roofData.y2, roofData.height, roofData.skin) {
 
 	}
+
+	public RoofData GetRoofData () {
+		return new RoofData(x1,
+			y1,
+			x2,
+			y2,
+			height,
+			skin);
+	}
 }

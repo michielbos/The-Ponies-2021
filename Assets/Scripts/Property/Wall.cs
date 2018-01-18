@@ -51,4 +51,12 @@ public class Wall : MonoBehaviour
         y = coordy;
         direction = dir;
     }
+
+	public WallData GetWallData () {
+		return new WallData(x,
+			y,
+			(int)wallDirection,
+			0,
+			0);
+	}
 }

@@ -1195,6 +1195,7 @@ GameObject:
   - component: {fileID: 114101825527077996}
   - component: {fileID: 114828761947541350}
   - component: {fileID: 114113357470691672}
+  - component: {fileID: 114353885597896198}
   m_Layer: 8
   m_Name: GameCanvas
   m_TagString: HUD
@@ -2999,6 +3000,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 5ffe9d8f5912e734bb5a55f3a13595d6, type: 3}
   - {fileID: 21300000, guid: 8be847cb2322da64e89726df4487edc4, type: 3}
   - {fileID: 21300000, guid: caef8c13c37db714ba0b615cad6a7018, type: 3}
+  buildController: {fileID: 114353885597896198}
   fundsText: {fileID: 114000812847085396}
 --- !u!114 &114133663594132876
 MonoBehaviour:
@@ -4743,6 +4745,23 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114353885597896198
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1510649578667014}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c03b05aa7e4f4abba451b9ecf0f3f76, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildMarkerPrefab: {fileID: 1824389368066718, guid: 82bbdb68d550441a19fcdb842a08311f,
+    type: 2}
+  buySound: {fileID: 8300000, guid: e8ba0a1d34871f340a3dc4591c80c5f5, type: 3}
+  denySound: {fileID: 8300000, guid: fffa4f35ce6b4544e8c707bdbfef5f19, type: 3}
+  propertyController: {fileID: 0}
+  audioSource: {fileID: 0}
 --- !u!114 &114357872860910610
 MonoBehaviour:
   m_ObjectHideFlags: 1

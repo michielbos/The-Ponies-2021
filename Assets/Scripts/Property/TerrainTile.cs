@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.EventSystems;
 
-public class TerrainTile : MonoBehaviour, IPointerDownHandler
+public class TerrainTile : MonoBehaviour
 {
 	public int x;
 	public int y;
@@ -31,9 +31,10 @@ public class TerrainTile : MonoBehaviour, IPointerDownHandler
 
 	}
 
-	public void OnPointerDown(PointerEventData eventData)
-	{
-		Debug.Log("Wasdf");
-		GetComponent<MeshRenderer>().material = null;
+	public TerrainTileData GetTerrainTileData () {
+		return new TerrainTileData(x,
+			y,
+			height,
+			type);
 	}
 }

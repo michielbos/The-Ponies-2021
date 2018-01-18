@@ -1,3 +1,4 @@
 ﻿public enum PropertyType {
-	RESIDENTIAL, COMMUNITY
+	RESIDENTIAL = 0,
+	COMMUNITY = 1
 }
