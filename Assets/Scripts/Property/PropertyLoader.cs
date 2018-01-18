@@ -43,7 +43,6 @@ public class PropertyLoader {
 		if (File.Exists(path))
 			File.Delete(path);
 		StreamWriter writer = new StreamWriter(path, true);
-		Debug.Log("Writing data: " + data);
 		writer.WriteLine(data);
 		writer.Close();
 	}
@@ -51,7 +50,6 @@ public class PropertyLoader {
 	string ReadFile (string path) {
 		StreamReader reader = new StreamReader(path);
 		string data = reader.ReadToEnd();
-		Debug.Log("Reading data: " + data);
 		reader.Close();
 		return data;
 	}

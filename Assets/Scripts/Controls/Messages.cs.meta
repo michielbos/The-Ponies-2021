@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: 318235ea04aaa4b6cac9f892371758e7
+timeCreated: 1516304469
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - messageWindowPrefab: {fileID: 114746704912265858, guid: 68e414702aacd4c818ec22491e60acd3,
+      type: 2}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

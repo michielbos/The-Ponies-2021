@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class BuildController : MonoBehaviour {
+public class BuyController : MonoBehaviour {
 	public GameObject buildMarkerPrefab;
 	public AudioClip buySound;
 	public AudioClip denySound;
@@ -20,7 +20,7 @@ public class BuildController : MonoBehaviour {
 		if (placingType >= 0) {
 			if (pressedTile == null) {
 				if (Physics.Raycast(ray, out hit, 1000, 1 << 8)) {
-					buildMarker.transform.position = new Vector3(hit.transform.position.x, 0, hit.transform.position.z);
+					buildMarker.transform.position = new Vector3(hit.transform.position.x + 0.5f, 0, hit.transform.position.z + 0.5f);
 					if (Input.GetMouseButtonDown(0)) {
 						pressedTile = hit.collider.GetComponent<TerrainTile>();
 					}
@@ -32,16 +32,23 @@ public class BuildController : MonoBehaviour {
 					audioSource.PlayOneShot(buySound);
 					propertyController.PlacePropertyObject(pressedTile.x, pressedTile.y, ObjectRotation.NORTH, placingType);
 					pressedTile = null;
+					if (!Input.GetKey(KeyCode.LeftShift)) {
+						StopBuying();
+					}
 				}
 			}
 		}
 
 		if (Input.GetKeyDown(KeyCode.Delete)) {
-			placingType = -1;
-			if (buildMarker != null) {
-				Destroy(buildMarker);
-				buildMarker = null;
-			}
+			StopBuying();
+		}
+	}
+
+	private void StopBuying () {
+		placingType = -1;
+		if (buildMarker != null) {
+			Destroy(buildMarker);
+			buildMarker = null;
 		}
 	}
 

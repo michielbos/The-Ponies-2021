@@ -37,6 +37,6 @@ public class PropertyObject {
 	}
 
 	public void PlaceObject (GameObject propertyObjectPrefab) {
-		gameObject = GameObject.Instantiate(propertyObjectPrefab, new Vector3(x, 0, y), Quaternion.Euler(0, 0, 0));
+		gameObject = GameObject.Instantiate(propertyObjectPrefab, new Vector3(x + 0.5f, 0, y + 0.5f), Quaternion.Euler(0, 0, 0));
 	}
 }

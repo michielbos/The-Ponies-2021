@@ -1357,6 +1357,7 @@ GameObject:
   - component: {fileID: 114101825527077996}
   - component: {fileID: 114828761947541350}
   - component: {fileID: 114113357470691672}
+  - component: {fileID: 114542114524124648}
   - component: {fileID: 114549210002137118}
   m_Layer: 8
   m_Name: GameCanvas
@@ -3594,7 +3595,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 5ffe9d8f5912e734bb5a55f3a13595d6, type: 3}
   - {fileID: 21300000, guid: 8be847cb2322da64e89726df4487edc4, type: 3}
   - {fileID: 21300000, guid: caef8c13c37db714ba0b615cad6a7018, type: 3}
-  buildController: {fileID: 114549210002137118}
+  buyController: {fileID: 114549210002137118}
   fundsText: {fileID: 114000812847085396}
 --- !u!114 &114133663594132876
 MonoBehaviour:
@@ -6856,6 +6857,20 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114542114524124648
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1510649578667014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 318235ea04aaa4b6cac9f892371758e7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  messageWindowPrefab: {fileID: 114746704912265858, guid: 68e414702aacd4c818ec22491e60acd3,
+    type: 2}
+  audioSource: {fileID: 0}
 --- !u!114 &114545036191069006
 MonoBehaviour:
   m_ObjectHideFlags: 1
