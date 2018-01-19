@@ -9,7 +9,7 @@ public class PropertyObject {
 	public int y;
 	public ObjectRotation rotation;
 	public int type;
-	public GameObject gameObject;
+	public GameObject dummyObject;
 
 	public PropertyObject (int id, int x, int y, ObjectRotation rotation, int type) {
 		this.id = id;
@@ -37,6 +37,15 @@ public class PropertyObject {
 	}
 
 	public void PlaceObject (GameObject propertyObjectPrefab) {
-		gameObject = GameObject.Instantiate(propertyObjectPrefab, new Vector3(x + 0.5f, 0, y + 0.5f), Quaternion.Euler(0, 0, 0));
+		dummyObject = GameObject.Instantiate(propertyObjectPrefab, new Vector3(x + 0.5f, 0, y + 0.5f), Quaternion.Euler(0, 0, 0));
+		dummyObject.GetComponent<PropertyObjectDummy>().propertyObject = this;
+	}
+
+	public void RefreshDummy () {
+		dummyObject.transform.position = new Vector3(x + 0.5f, 0, y + 0.5f);
+	}
+
+	public void RemoveObject () {
+		MonoBehaviour.Destroy(dummyObject);
 	}
 }

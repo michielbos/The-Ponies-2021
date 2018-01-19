@@ -96,7 +96,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!1 &1932659556806382
 GameObject:
   m_ObjectHideFlags: 0
@@ -258,7 +258,8 @@ MonoBehaviour:
   titleText: {fileID: 114010104581490828}
   contentText: {fileID: 114912008236974436}
   firstButton: {fileID: 114569764555849574}
-  image: {fileID: 0}
+  image: {fileID: 114754837974649898}
+  imageSprite: {fileID: 0}
 --- !u!114 &114748820109713712
 MonoBehaviour:
   m_ObjectHideFlags: 1

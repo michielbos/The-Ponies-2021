@@ -6963,6 +6963,9 @@ MonoBehaviour:
     type: 2}
   buySound: {fileID: 8300000, guid: e8ba0a1d34871f340a3dc4591c80c5f5, type: 3}
   denySound: {fileID: 8300000, guid: fffa4f35ce6b4544e8c707bdbfef5f19, type: 3}
+  sellSound: {fileID: 8300000, guid: a0b53a8b217b905448eeddee1c1d7df3, type: 3}
+  placeSound: {fileID: 8300000, guid: 5ce2733bb014c6b4ba5a9b729766715d, type: 3}
+  rotateSound: {fileID: 8300000, guid: cfbf7c333ebcfe34c9c23976c08200bf, type: 3}
   propertyController: {fileID: 0}
   audioSource: {fileID: 0}
 --- !u!114 &114559038242544528

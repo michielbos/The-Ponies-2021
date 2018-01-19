@@ -31,4 +31,8 @@ public class PropertyController : MonoBehaviour {
 		propertyObject.PlaceObject(propertyObjectPrefab);
 	}
 
+	public void RemovePropertyObject (PropertyObject propertyObject) {
+		propertyObject.RemoveObject();
+		property.propertyObjects.Remove(propertyObject);
+	}
 }
