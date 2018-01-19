@@ -11,6 +11,9 @@ public class MessageWindow : MonoBehaviour {
 	private Messages messages;
 	private AudioSource audioSource;
 
+	public delegate void WindowClosedListener(int button);
+	public WindowClosedListener windowClosedListener;
+
 	public void Initialize (Messages messages, AudioSource audioSource, string title, string content, string[] buttonStrings) {
 		this.messages = messages;
 		this.audioSource = audioSource;
@@ -32,12 +35,15 @@ public class MessageWindow : MonoBehaviour {
 			Vector3 pos = buttonTransform.anchoredPosition;
 			pos.x = widthPerButton * (i + 0.5f) - width / 2; 
 			buttonTransform.anchoredPosition = pos;
+			int buttonId = i;
+			button.onClick.AddListener(delegate{CloseWindow(buttonId);});
 		}
 	}
 
-	public void CloseWindow () {
-		messages.OnMessageClosed(0);
+	public void CloseWindow (int button) {
+		messages.OnMessageClosed();
 		Destroy(gameObject);
 		audioSource.PlayOneShot(clickSound);
+		windowClosedListener(button);
 	}
 }

@@ -29,7 +29,7 @@ public class Messages : MonoBehaviour {
 		return window;
 	}
 
-	public void OnMessageClosed (int button) {
+	public void OnMessageClosed () {
 		messageWindows.RemoveAt(0);
 		if (messageWindows.Count > 0)
 			messageWindows[0].gameObject.SetActive(true);
