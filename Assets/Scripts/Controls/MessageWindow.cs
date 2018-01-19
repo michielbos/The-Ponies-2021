@@ -8,6 +8,8 @@ public class MessageWindow : MonoBehaviour {
 	public Text titleText;
 	public Text contentText;
 	public Button firstButton;
+	public Image image;
+	public Sprite imageSprite;
 	private Messages messages;
 	private AudioSource audioSource;
 
@@ -20,6 +22,20 @@ public class MessageWindow : MonoBehaviour {
 		titleText.text = title;
 		contentText.text = content;
 		SetupButtons(buttonStrings);
+		if (imageSprite != null) {
+			SetupImage();
+		}
+	}
+
+	void SetupImage () {
+		image.gameObject.SetActive(true);
+		image.sprite = imageSprite;
+		RectTransform imageTransform = image.GetComponent<RectTransform>();
+		imageTransform.sizeDelta = new Vector2(imageSprite.texture.width, imageSprite.texture.height);
+		RectTransform contentTransform = contentText.GetComponent<RectTransform>();
+		Vector2 contentOffset = contentTransform.offsetMin;
+		contentOffset.x += imageTransform.anchoredPosition.x + imageSprite.texture.width;
+		contentTransform.offsetMin = contentOffset;
 	}
 
 	void SetupButtons (string[] buttonStrings) {
@@ -44,6 +60,8 @@ public class MessageWindow : MonoBehaviour {
 		messages.OnMessageClosed();
 		Destroy(gameObject);
 		audioSource.PlayOneShot(clickSound);
-		windowClosedListener(button);
+		if (windowClosedListener != null) {
+			windowClosedListener(button);
+		}
 	}
 }
