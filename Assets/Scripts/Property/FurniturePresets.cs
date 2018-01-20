@@ -42,9 +42,7 @@ public class FurniturePresets {
 		List<FurniturePreset> presets = new List<FurniturePreset>();
 		foreach (FurniturePreset preset in presetDictionary.Values) {
 			if (preset.category == category) {
-				for (int i = 0; i < 40; i++) {
-					presets.Add(preset);
-				}
+				presets.Add(preset);
 			}
 		}
 		return presets;

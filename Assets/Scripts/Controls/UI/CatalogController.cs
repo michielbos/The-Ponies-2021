@@ -7,17 +7,37 @@ using UnityEngine.UI;
 /// Controller class for the catalog part of buy and build mode.
 /// </summary>
 public class CatalogController : MonoBehaviour {
+	public AudioClip clickSound;
+	public AudioClip whooshSound;
+	public Button buttonPrefab;
 	public RectTransform catalogBar;
 	public Button catalogPreviousButton;
 	public Button catalogNextButton;
 	public BuyController buyController;
-	public Button buttonPrefab;
+	public ObjectInfoPanel objectInfoPanel;
+	public AudioSource audioSource;
 	private ObjectCategory category = ObjectCategory.None;
 	public int tab;
 	private List<Button> catalogItemButtons;
+	private Button pressedButton;
 
 	public CatalogController () {
 		catalogItemButtons = new List<Button>();
+	}
+
+	private void Update () {
+		if (pressedButton != null) {
+			RectTransform buttonTransform = pressedButton.GetComponent<RectTransform>();
+			Vector3 buttonPos = buttonTransform.position;
+			Vector3 buttonSize = buttonTransform.sizeDelta;
+			Vector3 mousePos = Input.mousePosition;
+			if (mousePos.x < buttonPos.x || mousePos.x > buttonPos.x + buttonSize.x ||
+			    mousePos.y > buttonPos.y || mousePos.y < buttonPos.y - buttonSize.y) {
+				objectInfoPanel.SetVisible(false);
+				pressedButton = null;
+				audioSource.PlayOneShot(whooshSound);
+			}
+		}
 	}
 
 	/// <summary>
@@ -81,7 +101,7 @@ public class CatalogController : MonoBehaviour {
 			if (i >= tab * maxButtons + maxHorizontal)
 				pos.y -= buttonSize.y + buttonMargin;
 			rectTransform.anchoredPosition = pos;
-			button.onClick.AddListener(delegate { buyController.SetPlacingPreset(preset); });
+			button.onClick.AddListener(delegate { OnCatalogItemClicked(button, preset); });
 			catalogItemButtons.Add(button);
 		}
 	}
@@ -90,6 +110,15 @@ public class CatalogController : MonoBehaviour {
 		catalogPreviousButton.transform.localScale = tab <= 0 ? new Vector3(0, 0, 0) : new Vector3(1, 1, 1);
 		int numberOfTabs = Mathf.CeilToInt((float)numberOfButtons / buttonsPerTab);
 		catalogNextButton.transform.localScale = tab >= numberOfTabs - 1 ? new Vector3(0, 0, 0) : new Vector3(1, 1, 1);
+	}
+
+	private void OnCatalogItemClicked (Button button, FurniturePreset preset) {
+		buyController.SetPlacingPreset(preset);
+		objectInfoPanel.DisplayItem(preset);
+		objectInfoPanel.SetVisible(true);
+		audioSource.PlayOneShot(clickSound);
+		audioSource.PlayOneShot(whooshSound);
+		pressedButton = button;
 	}
 
 	/// <summary>
