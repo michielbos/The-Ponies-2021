@@ -8,8 +8,13 @@ public class MessageWindow : MonoBehaviour {
 	public Text titleText;
 	public Text contentText;
 	public Button firstButton;
+	public Image image;
+	public Sprite imageSprite;
 	private Messages messages;
 	private AudioSource audioSource;
+
+	public delegate void WindowClosedListener(int button);
+	public WindowClosedListener windowClosedListener;
 
 	public void Initialize (Messages messages, AudioSource audioSource, string title, string content, string[] buttonStrings) {
 		this.messages = messages;
@@ -17,6 +22,20 @@ public class MessageWindow : MonoBehaviour {
 		titleText.text = title;
 		contentText.text = content;
 		SetupButtons(buttonStrings);
+		if (imageSprite != null) {
+			SetupImage();
+		}
+	}
+
+	void SetupImage () {
+		image.gameObject.SetActive(true);
+		image.sprite = imageSprite;
+		RectTransform imageTransform = image.GetComponent<RectTransform>();
+		imageTransform.sizeDelta = new Vector2(imageSprite.texture.width, imageSprite.texture.height);
+		RectTransform contentTransform = contentText.GetComponent<RectTransform>();
+		Vector2 contentOffset = contentTransform.offsetMin;
+		contentOffset.x += imageTransform.anchoredPosition.x + imageSprite.texture.width;
+		contentTransform.offsetMin = contentOffset;
 	}
 
 	void SetupButtons (string[] buttonStrings) {
@@ -32,12 +51,17 @@ public class MessageWindow : MonoBehaviour {
 			Vector3 pos = buttonTransform.anchoredPosition;
 			pos.x = widthPerButton * (i + 0.5f) - width / 2; 
 			buttonTransform.anchoredPosition = pos;
+			int buttonId = i;
+			button.onClick.AddListener(delegate{CloseWindow(buttonId);});
 		}
 	}
 
-	public void CloseWindow () {
-		messages.OnMessageClosed(0);
+	public void CloseWindow (int button) {
+		messages.OnMessageClosed();
 		Destroy(gameObject);
 		audioSource.PlayOneShot(clickSound);
+		if (windowClosedListener != null) {
+			windowClosedListener(button);
+		}
 	}
 }

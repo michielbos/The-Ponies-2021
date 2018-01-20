@@ -1,0 +1,22 @@
+fileFormatVersion: 2
+guid: 5abd8917fb89c4ba5a0e3b9d087a1278
+timeCreated: 1516459948
+licenseType: Free
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - clickSound: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969, type: 3}
+  - whooshSound: {fileID: 8300000, guid: dc6c82471230c464a9b4f1a9badd449c, type: 3}
+  - buttonPrefab: {instanceID: 0}
+  - catalogBar: {instanceID: 0}
+  - catalogPreviousButton: {instanceID: 0}
+  - catalogNextButton: {instanceID: 0}
+  - buyController: {instanceID: 0}
+  - objectInfoPanel: {instanceID: 0}
+  - audioSource: {instanceID: 0}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
