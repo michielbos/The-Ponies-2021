@@ -21,6 +21,7 @@ public class PropertyObject {
 		this.y = y;
 		this.rotation = rotation;
 		this.preset = preset;
+		value = preset.price;
 	}
 
 	public PropertyObject (PropertyObjectData pod, FurniturePreset preset) {

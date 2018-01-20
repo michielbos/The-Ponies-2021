@@ -12,7 +12,8 @@ public class CatalogController : MonoBehaviour {
 	public Button catalogNextButton;
 	public BuyController buyController;
 	public Button buttonPrefab;
-	private ObjectCategory catalogCategory = ObjectCategory.None;
+	private ObjectCategory category = ObjectCategory.None;
+	public int tab;
 	private List<Button> catalogItemButtons;
 
 	public CatalogController () {
@@ -33,13 +34,14 @@ public class CatalogController : MonoBehaviour {
 	/// </summary>
 	/// <param name="category">The category to open.</param>
 	public void OpenCatalog (ObjectCategory category) {
-		if (catalogCategory == category) {
+		if (this.category == category) {
 			CloseCatalog();
 		} else {
-			catalogCategory = category;
+			this.category = category;
+			tab = 0;
 			catalogBar.gameObject.SetActive(true);
 			catalogBar.localScale = new Vector3(1, 1, 1);
-			CreateCatalogItems();
+			UpdateCatalogButtons();
 		}
 	}
 
@@ -47,7 +49,7 @@ public class CatalogController : MonoBehaviour {
 	/// Close the catalog tab.
 	/// </summary>
 	public void CloseCatalog () {
-		catalogCategory = ObjectCategory.None;
+		category = ObjectCategory.None;
 		catalogBar.gameObject.SetActive(false);
 		catalogBar.localScale = new Vector3(0, 0, 0);
 	}
@@ -59,22 +61,24 @@ public class CatalogController : MonoBehaviour {
 		catalogItemButtons.Clear();
 	}
 
-	private void CreateCatalogItems () {
+	private void UpdateCatalogButtons () {
 		EmptyCatalog();
-		List<FurniturePreset> furniturePresets = FurniturePresets.Instance.GetFurniturePresets(catalogCategory);
+		List<FurniturePreset> furniturePresets = FurniturePresets.Instance.GetFurniturePresets(category);
 		int barMargin = 35;
 		int buttonMargin = 5;
 		Vector2 buttonSize = buttonPrefab.GetComponent<RectTransform>().sizeDelta;
 		float buttonAreaWidth = catalogBar.sizeDelta.x - barMargin * 2;
 		float spareWidth = buttonAreaWidth % (buttonSize.x + buttonMargin);
 		int maxHorizontal = Mathf.FloorToInt(buttonAreaWidth / (buttonSize.x + buttonMargin));
-		for (int i = 0; i < maxHorizontal * 2 && i < furniturePresets.Count; i++) {
+		int maxButtons = maxHorizontal * 2;
+		UpdatePreviousAndNextButtons(furniturePresets.Count, maxButtons);
+		for (int i = tab * maxButtons; i < (tab + 1) * maxButtons && i < furniturePresets.Count; i++) {
 			FurniturePreset preset = furniturePresets[i];
 			Button button = Instantiate(buttonPrefab, transform);
 			RectTransform rectTransform = button.GetComponent<RectTransform>();
 			Vector3 pos = rectTransform.anchoredPosition;
 			pos.x = barMargin + i % maxHorizontal * (buttonSize.x + buttonMargin) + spareWidth / 2;
-			if (i >= maxHorizontal)
+			if (i >= tab * maxButtons + maxHorizontal)
 				pos.y -= buttonSize.y + buttonMargin;
 			rectTransform.anchoredPosition = pos;
 			button.onClick.AddListener(delegate { buyController.SetPlacingPreset(preset); });
@@ -82,17 +86,25 @@ public class CatalogController : MonoBehaviour {
 		}
 	}
 
+	private void UpdatePreviousAndNextButtons (int numberOfButtons, int buttonsPerTab) {
+		catalogPreviousButton.transform.localScale = tab <= 0 ? new Vector3(0, 0, 0) : new Vector3(1, 1, 1);
+		int numberOfTabs = Mathf.CeilToInt((float)numberOfButtons / buttonsPerTab);
+		catalogNextButton.transform.localScale = tab >= numberOfTabs - 1 ? new Vector3(0, 0, 0) : new Vector3(1, 1, 1);
+	}
+
 	/// <summary>
 	/// When the previous button was pressed on the catalog tab.
 	/// </summary>
 	public void CatalogPreviousButton () {
-		
+		tab--;
+		UpdateCatalogButtons();
 	}
 	
 	/// <summary>
 	/// When the next button was pressed on the catalog tab.
 	/// </summary>
 	public void CatalogNextButton () {
-		
+		tab++;
+		UpdateCatalogButtons();
 	}
 }

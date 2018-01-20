@@ -8,8 +8,7 @@ using UnityEngine;
 public class PropertyController : MonoBehaviour {
 	public GameObject propertyObjectPrefab;
 	public Property property;
-	//TODO: Set on load.
-	private int nextObjectId = 0;
+	private int nextObjectId;
 
 	/// <summary>
 	/// Called when the scene is just started and a property should be loaded.
@@ -17,6 +16,11 @@ public class PropertyController : MonoBehaviour {
 	/// <param name="propertyId">The id of the property to load.</param>
 	public void Initialize (int propertyId) {
 		property = new PropertyLoader().LoadOrCreateProperty(propertyId);
+		foreach (PropertyObject propertyObject in property.propertyObjects) {
+			if (propertyObject.id >= nextObjectId) {
+				nextObjectId = propertyObject.id + 1;
+			}
+		}
 		PlacePropertyObjects();
 	}
 
