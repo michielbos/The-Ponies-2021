@@ -36,14 +36,14 @@ public class HUDController : MonoBehaviour
 
 	public BuyController buyController;
 
-	bool paused = false;
-	bool forcePaused = false;
-	int selectedSpeed = 1;
-	int selectedRoof = 1;
-	int selectedPanel = -1;
+	private bool paused = false;
+	private bool forcePaused = false;
+	private int selectedSpeed = 1;
+	private int selectedRoof = 1;
+	private int selectedPanel = -1;
 
 	public Text fundsText;
-	int funds = 1337;
+	private int funds = 1337;
 
 	void Start()
 	{
@@ -52,7 +52,7 @@ public class HUDController : MonoBehaviour
 		UpdateFunds();
 	}
 
-	float pauseTimer = 0;
+	private float pauseTimer = 0;
 	void Update()
 	{
 		if (forcePaused || selectedPanel > 0)
@@ -183,5 +183,4 @@ public class HUDController : MonoBehaviour
 	{
 		fundsText.text = "$" + funds.ToString();
 	}
-
 }

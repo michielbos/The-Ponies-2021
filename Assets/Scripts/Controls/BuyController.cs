@@ -37,7 +37,7 @@ public class BuyController : MonoBehaviour {
 			HandleHovering();
 		}
 
-		if (Input.GetKeyDown(KeyCode.Delete)) {
+		if (Input.GetKey(KeyCode.Delete)) {
 			SellSelection();
 		}
 	}
