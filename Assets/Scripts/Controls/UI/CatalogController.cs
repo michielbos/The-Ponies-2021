@@ -19,10 +19,6 @@ public class CatalogController : MonoBehaviour {
 		catalogItemButtons = new List<Button>();
 	}
 
-	private void Update () {
-		//CreateCatalogItems();
-	}
-
 	/// <summary>
 	/// Open the furniture catalog with the given category.
 	/// Used by the UI event system.
@@ -81,6 +77,7 @@ public class CatalogController : MonoBehaviour {
 			if (i >= maxHorizontal)
 				pos.y -= buttonSize.y + buttonMargin;
 			rectTransform.anchoredPosition = pos;
+			button.onClick.AddListener(delegate { buyController.SetPlacingPreset(preset); });
 			catalogItemButtons.Add(button);
 		}
 	}

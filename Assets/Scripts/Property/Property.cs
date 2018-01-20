@@ -29,6 +29,7 @@ public class Property {
 		this.name = name;
 		this.streetName = streetName;
 		this.description = description;
+		this.propertyType = propertyType;
 	}
 
 	public Property (PropertyData propertyData) : this(propertyData.id,
@@ -39,7 +40,7 @@ public class Property {
 		foreach (PropertyObjectData pod in propertyData.propertyObjectDatas) {
 			FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(pod.type);
 			if (preset != null) {
-				propertyObjects.Add(new PropertyObject(pod));
+				propertyObjects.Add(new PropertyObject(pod, preset));
 			} else {
 				Debug.LogWarning("No furniture preset for id " + pod.type + ". Not loading property object " + pod.id + ".");
 			}
