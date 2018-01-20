@@ -45,9 +45,9 @@ public class PropertyObject {
 	/// <summary>
 	/// Place a dummy of this object in the scene.
 	/// </summary>
-	/// <param name="propertyObjectPrefab">The prefab to instantiate.</param>
-	public void PlaceObject (GameObject propertyObjectPrefab) {
-		dummyObject = Object.Instantiate(propertyObjectPrefab, new Vector3(x + 0.5f, 0, y + 0.5f), Quaternion.Euler(0, 0, 0));
+	/// <param name="prefab">The property object prefab to instantiate.</param>
+	public void PlaceObject (GameObject prefab) {
+		dummyObject = preset.PlaceObject(prefab, new Vector3(x + 0.5f, 0, y + 0.5f));
 		dummyObject.GetComponent<PropertyObjectDummy>().propertyObject = this;
 	}
 

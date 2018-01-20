@@ -1074,8 +1074,8 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224548962055259776}
+  - component: {fileID: 114554091906346210}
   - component: {fileID: 222878626266662208}
-  - component: {fileID: 114431315148716948}
   m_Layer: 0
   m_Name: Preview
   m_TagString: Untagged
@@ -5455,7 +5455,6 @@ MonoBehaviour:
   buyController: {fileID: 114549210002137118}
   objectInfoPanel: {fileID: 114665533597173976}
   audioSource: {fileID: 0}
-  tab: 0
 --- !u!114 &114292303049944002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6314,33 +6313,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114431315148716948
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1360298379393002}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
 --- !u!114 &114431518955277782
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7427,6 +7399,32 @@ MonoBehaviour:
   rotateSound: {fileID: 8300000, guid: cfbf7c333ebcfe34c9c23976c08200bf, type: 3}
   propertyController: {fileID: 0}
   audioSource: {fileID: 0}
+--- !u!114 &114554091906346210
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1360298379393002}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: -98529514, guid: f70555f144d8491a825f0804e09c671c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_Material: {fileID: 0}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_RaycastTarget: 1
+  m_OnCullStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
+      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
+  m_Texture: {fileID: 8400000, guid: aa18449e7678f4ab487f28b28f7241cf, type: 2}
+  m_UVRect:
+    serializedVersion: 2
+    x: 0
+    y: 0
+    width: 1
+    height: 1
 --- !u!114 &114559038242544528
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8395,7 +8393,7 @@ MonoBehaviour:
   descriptionText: {fileID: 114688392384000074}
   priceText: {fileID: 114603100296829368}
   notesText: {fileID: 114239979192838476}
-  previewImage: {fileID: 114431315148716948}
+  previewImage: {fileID: 114554091906346210}
 --- !u!114 &114673556302338332
 MonoBehaviour:
   m_ObjectHideFlags: 1

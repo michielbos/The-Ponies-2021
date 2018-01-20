@@ -11,7 +11,7 @@ public class ObjectInfoPanel : MonoBehaviour {
     public Text descriptionText;
     public Text priceText;
     public Text notesText;
-    public Image previewImage;
+    public RawImage previewImage;
 
     /// <summary>
     /// Update the panel with the information of the given item.
@@ -22,6 +22,7 @@ public class ObjectInfoPanel : MonoBehaviour {
         descriptionText.text = furniturePreset.description;
         priceText.text = "$" + furniturePreset.price;
         notesText.text = "(no notes yet)";
+        previewImage.texture = furniturePreset.GetPreviewTexture();
     }
 
     /// <summary>

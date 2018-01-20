@@ -8,6 +8,7 @@ TagManager:
   - HUD
   - ModePanels
   - PropertyController
+  - PreviewGenerator
   layers:
   - Default
   - TransparentFX
@@ -18,7 +19,7 @@ TagManager:
   - 
   - 
   - Terrain
-  - 
+  - Preview
   - 
   - 
   - 

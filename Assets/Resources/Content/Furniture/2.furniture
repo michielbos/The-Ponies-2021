@@ -1,1 +1,1 @@
-{"id":2,"name":"Expensicube","description":"This cube is so expensive, it's ridiculous.","price":1000,"category":1}
+{"id":2,"name":"Expensicube","description":"This cube is so expensive, it's ridiculous.","price":1000,"category":1,"modelName":"Models/Furniture/Chair", "materialPaths":["Models/Furniture/Materials/Chair.1"]}

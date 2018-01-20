@@ -1,1 +1,1 @@
-{"id":1,"name":"Cube Furniture","description":"The best furniture ever.","price":50,"category":1}
+{"id":1,"name":"Cube Furniture","description":"The best furniture ever.","price":50,"category":1,"modelName":"Models/Furniture/Chair","materialPaths":["Models/Furniture/Materials/Chair.1","Models/Furniture/Materials/Chair.2"]}
