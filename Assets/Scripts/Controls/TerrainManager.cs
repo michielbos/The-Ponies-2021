@@ -87,6 +87,13 @@ public class TerrainManager : MonoBehaviour {
     public TerrainTile Get(int x,int y)
     {
         //Debug.Log("get"+x+y);
-        return terrain[x, y];
+        if (x < 0 || x > terrain.GetLength(0) || y < 0 || y > terrain.GetLength(1))
+        {
+            return null;
+        }
+        else
+        {
+            return terrain[x, y];
+        }
     }
 }
