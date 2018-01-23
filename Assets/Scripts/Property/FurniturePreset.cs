@@ -61,7 +61,7 @@ public class FurniturePreset {
 	}
 
 	public Texture GetPreviewTexture () {
-		if (previewTexture == null) {
+		if (previewTexture == null || !previewTexture.IsCreated()) {
 			GameObject previewGeneratorObj = GameObject.FindGameObjectWithTag("PreviewGenerator");
 			PreviewGenerator previewGenerator = previewGeneratorObj.GetComponent<PreviewGenerator>();
 			previewTexture = previewGenerator.CreatePreview(this);

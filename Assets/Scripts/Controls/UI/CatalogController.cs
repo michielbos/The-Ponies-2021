@@ -40,6 +40,13 @@ public class CatalogController : MonoBehaviour {
 		}
 	}
 
+	private void OnApplicationFocus (bool hasFocus) {
+		if (hasFocus) {
+			//Render textures are wiped when we lose focus. This will reload them.
+			UpdateCatalogButtons();
+		}
+	}
+
 	/// <summary>
 	/// Open the furniture catalog with the given category.
 	/// Used by the UI event system.
