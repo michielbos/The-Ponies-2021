@@ -17,7 +17,7 @@ public class CatalogController : MonoBehaviour {
 	public ObjectInfoPanel objectInfoPanel;
 	public AudioSource audioSource;
 	private ObjectCategory category = ObjectCategory.None;
-	public int tab;
+	private int tab;
 	private List<Button> catalogItemButtons;
 	private Button pressedButton;
 
@@ -37,6 +37,13 @@ public class CatalogController : MonoBehaviour {
 				pressedButton = null;
 				audioSource.PlayOneShot(whooshSound);
 			}
+		}
+	}
+
+	private void OnApplicationFocus (bool hasFocus) {
+		if (hasFocus) {
+			//Render textures are wiped when we lose focus. This will reload them.
+			UpdateCatalogButtons();
 		}
 	}
 
@@ -101,6 +108,7 @@ public class CatalogController : MonoBehaviour {
 			if (i >= tab * maxButtons + maxHorizontal)
 				pos.y -= buttonSize.y + buttonMargin;
 			rectTransform.anchoredPosition = pos;
+			button.GetComponentInChildren<RawImage>().texture = preset.GetPreviewTexture();
 			button.onClick.AddListener(delegate { OnCatalogItemClicked(button, preset); });
 			catalogItemButtons.Add(button);
 		}
