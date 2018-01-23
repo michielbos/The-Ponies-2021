@@ -1,7 +1,10 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using UnityEditor;
 
+/// <summary>
+/// Editor script that adds the "Build AssetBundles" option to the Assets tab.
+/// Builds assetbundles for all our supported platforms.
+/// </summary>
 public class CreateAssetBundles {
 	private const string ASSET_BUNDLE_PATH = "Build/AssetBundles/";
 	private const string BUILD_BUNDLES_MENU = "Assets/Build AssetBundles/";
@@ -45,7 +48,7 @@ public class CreateAssetBundles {
 		BuildBundles(MAC, BuildTarget.StandaloneOSX);
 	}
 
-	private static void BuildBundles (String folder, BuildTarget buildTarget) {
+	private static void BuildBundles (string folder, BuildTarget buildTarget) {
 		if (!Directory.Exists(ASSET_BUNDLE_PATH + folder)) {
 			Directory.CreateDirectory(ASSET_BUNDLE_PATH + folder);
 		}
