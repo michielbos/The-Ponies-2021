@@ -8,6 +8,7 @@ public class CameraControls : MonoBehaviour {
 	[HideInInspector]
     public TerrainManager tm;
     public GameObject g;
+    public GameObject Fire;
     Vector3 panStart;
 	Vector3 panStartPos;
 	Camera camera;
@@ -15,6 +16,8 @@ public class CameraControls : MonoBehaviour {
     const float minSize = 1;
 	const float maxSize = 32;
     bool clicked = false;
+    TerrainTile pathstart;
+    List<GameObject> pathlist=new List<GameObject>();
 	// Use this for initialization
 	void Start () {
         camera = GetComponent<Camera>();
@@ -24,27 +27,60 @@ public class CameraControls : MonoBehaviour {
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetButtonDown("Fire1"))
+        if (Input.GetButtonDown("Fire1") &&Input.GetKey(KeyCode.LeftControl))
         {
-            Vector3 click = Input.mousePosition;
+            /*Vector3 click = Input.mousePosition;
             //Debug.Log("" + camera.ScreenToWorldPoint(click));
             int x = (int)(camera.ScreenToWorldPoint(click).x);
             int y = (int)(camera.ScreenToWorldPoint(click).z);
-			//TODO: Fix IndexOutOfRangeException.
-            /*if (tm.Get(x, y) == null)
+            //TODO: Fix IndexOutOfRangeException.
+            Debug.Log(""+x +" "+ y);*/
+            TerrainTile tile = MousePosTile();
+            if (tile == null)
             {
-                tm.AddStuff(g, x, y);
+                //tm.AddStuff(g, x, y);
             }
-            else
+            else if(tm.graph.nodes[tile].cost==1)
             {
-                tm.Get(x, y).GetComponent<MeshRenderer>().material = null;
-                foreach(TileEdge t in tm.graph.nodes[tm.Get(x, y)].edges)
+                //MousePosTile().GetComponent<MeshRenderer>().material = null;
+                foreach(TileEdge t in tm.graph.nodes[tile].edges)
                 {
-                    //Debug.Log(t.cost);
+                    Debug.Log(t.cost);
                 }
-                tm.graph.nodes[tm.Get(x, y)].ChangeCost(1000);
-            }*/
+                //you don't really want to walk in to a fire.
+                tm.graph.nodes[tile].ChangeCost(1000);
+                GameObject fire =Instantiate(Fire);
+                fire.transform.position = new Vector3(tile.transform.position.x+.5f,0,tile.transform.position.z+.5f);
+            }
 
+        }
+        if (Input.GetButtonDown("Fire1") && Input.GetKey(KeyCode.LeftShift))
+        {
+            TerrainTile tile = MousePosTile();
+            if (tile != null)
+            {
+                if (pathstart == null)
+                {
+                    pathstart = tile;
+                    foreach(GameObject sphere in pathlist)Destroy(sphere);
+                    Debug.Log(pathlist.Count);
+                    pathlist = new List<GameObject>();
+                    
+                }
+                else
+                {
+                    foreach (TileNode node in tm.Pathfind(pathstart, tile))
+                    {
+                        GameObject sphere = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Sphere));
+                        sphere.transform.position=node.tile.transform.position;
+                        sphere.transform.localScale = new Vector3(.3f, .3f, .3f);
+
+                        pathlist.Add(sphere);
+                    }
+                    pathstart = null;
+                }
+
+            }
         }
         if (Input.GetButtonDown("Fire3"))
         {
@@ -95,4 +131,19 @@ public class CameraControls : MonoBehaviour {
 	{
 		holder.Rotate(0, cc ? -90 : 90, 0);
 	}
+    private TerrainTile MousePosTile()
+    {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        TerrainTile Tile=null;
+        if (Physics.Raycast(ray, out hit, 1000))
+        {
+            new Vector3(hit.transform.position.x + 0.5f, 0, hit.transform.position.z + 0.5f);
+            if (Input.GetMouseButtonDown(0))
+            {
+                Tile=hit.collider.GetComponent<TerrainTile>();
+            }
+        }
+        return Tile;
+    }
 }

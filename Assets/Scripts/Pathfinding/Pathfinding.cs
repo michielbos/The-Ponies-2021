@@ -5,7 +5,7 @@ using UnityEngine;
 public class Pathfinding {
     TileGraph graph;
     List<TileNode> Q = new List<TileNode>();
-    List<TileNode> path = new List<TileNode>();
+    List<TileNode> path;
     public Pathfinding(TileGraph graph)
     {
         this.graph = graph;
@@ -31,6 +31,7 @@ public class Pathfinding {
     public TileNode[] AStar(TileNode start, TileNode end){
         List<TileNode> closed = new List<TileNode>();
         List<TileNode> opened = new List<TileNode>();
+        path = new List<TileNode>();
         opened.Add(start);
         Dictionary<TileNode, TileNode> previous = new Dictionary<TileNode, TileNode>();
         Dictionary<TileNode, float> gScore = new Dictionary<TileNode, float>();
@@ -59,7 +60,7 @@ public class Pathfinding {
             if (current == end)
             {
                 TileNode n = end;
-                Debug.Log("g" + gScore[end] + "f" + fScore[end]);
+                //Debug.Log("g" + gScore[end] + "f" + fScore[end]);
                 while (n != start)
                 {
                     path.Add(n);
