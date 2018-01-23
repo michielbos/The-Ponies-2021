@@ -1,1 +1,0 @@
-{"id":7,"name":"Table","description":"This is a table.","price":200,"category":1,"modelName":"Models/Furniture/Table","materialPaths":["Models/Furniture/Materials/Table","Models/Furniture/Materials/Table"],"addRotation":{"x":270.0,"y":0.0,"z":0.0}}

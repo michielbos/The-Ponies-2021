@@ -20,7 +20,7 @@ public class AssetBundleLoader {
 		if (loaded)
 			return;
 		
-		string bundleDirectory = Application.dataPath + "/Mods/AssetBundles/";
+		string bundleDirectory = Application.dataPath + "/Mods/PonyBundles/";
 		if (!Directory.Exists(bundleDirectory)) {
 			Directory.CreateDirectory(bundleDirectory);
 		}
