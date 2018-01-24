@@ -64,7 +64,7 @@ public class TerrainManager : MonoBehaviour {
     }
     public void TerrainUpdate(GameObject t,int i, int j)
     {
-        TerrainTile tt = t.GetComponent<TerrainTile>();
+        TerrainTile tt = t.GetComponent<TerrainTileDummy>().terrainTile;
         tt.x = i;
         tt.y = j;
         terrain[i, j] = tt;

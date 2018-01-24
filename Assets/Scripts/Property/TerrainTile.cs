@@ -1,30 +1,25 @@
-﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-using UnityEngine.EventSystems;
+﻿using UnityEngine;
 
-public class TerrainTile : MonoBehaviour
-{
+/// <summary>
+/// A tile that is part of the terrain.
+/// The physical "dummy" of this object is kept in the dummyTile attribute.
+/// </summary>
+[System.Serializable]
+public class TerrainTile {
 	public int x;
 	public int y;
 	public int height;
 	public int type;
-    Mesh mesh;
+	public GameObject dummyTile;
     
-	TerrainTile (int x, int y, int height, int type) {
+	public TerrainTile (int x, int y, int height, int type) {
         this.x = x;
         this.y = y;
 		this.height = height;
 		this.type = type;
-        mesh = new Mesh();
-        mesh.vertices = new Vector3[] { new Vector3(0, 0, 0), new Vector3(1, 0, 1), new Vector3(1, 0, 0), new Vector3(1, 0, 1), new Vector3(0, 0, 0), new Vector3(0, 0, 1) };
-        mesh.triangles = new int[] { 0, 1, 2, 3, 4, 5 };
-        mesh.uv = new Vector2[] { };
-        mesh.RecalculateNormals();
     }
 
-	TerrainTile (TerrainTileData terrainTileData) : this(terrainTileData.x,
+	public TerrainTile (TerrainTileData terrainTileData) : this(terrainTileData.x,
 														terrainTileData.y,
 														terrainTileData.height,
 														terrainTileData.type) {
@@ -36,5 +31,28 @@ public class TerrainTile : MonoBehaviour
 			y,
 			height,
 			type);
+	}
+	
+	/// <summary>
+	/// Place a dummy of this terrain tile in the scene.
+	/// </summary>
+	/// <param name="prefab">The terrain tile prefab to instantiate.</param>
+	public void PlaceTile (GameObject prefab) {
+		dummyTile = Object.Instantiate(prefab, new Vector3(x, 0, y), Quaternion.identity);
+		dummyTile.GetComponent<TerrainTileDummy>().terrainTile = this;
+	}
+
+	/// <summary>
+	/// Refresh the dummy tile, updating its position to match the real TerrainTile.
+	/// </summary>
+	public void RefreshDummy () {
+		dummyTile.transform.position = new Vector3(x, 0, y);
+	}
+
+	/// <summary>
+	/// Remove the dummy tile from the scene.
+	/// </summary>
+	public void RemoveTile () {
+		Object.Destroy(dummyTile);
 	}
 }

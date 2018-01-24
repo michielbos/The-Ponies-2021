@@ -52,7 +52,7 @@ public class BuyController : MonoBehaviour {
 		if (Physics.Raycast(ray, out hit, 1000, 1 << 8)) {
 			buildMarker.transform.position = new Vector3(hit.transform.position.x + 0.5f, 0, hit.transform.position.z + 0.5f);
 			if (Input.GetMouseButtonDown(0)) {
-				pressedTile = hit.collider.GetComponent<TerrainTile>();
+				pressedTile = hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
 			}
 		} else {
 			buildMarker.transform.position = new Vector3(0, -100, 0);

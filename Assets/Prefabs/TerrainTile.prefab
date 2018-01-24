@@ -9,20 +9,20 @@ Prefab:
     m_Modifications: []
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 0}
-  m_RootGameObject: {fileID: 1775187072077132}
+  m_RootGameObject: {fileID: 1343583355818736}
   m_IsPrefabParent: 1
---- !u!1 &1375704418475892
+--- !u!1 &1343583355818736
 GameObject:
   m_ObjectHideFlags: 0
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   serializedVersion: 5
   m_Component:
-  - component: {fileID: 4131425992174370}
-  - component: {fileID: 33231416050636526}
-  - component: {fileID: 23422795149906662}
-  - component: {fileID: 114423937068632804}
-  - component: {fileID: 65812029520593692}
+  - component: {fileID: 4791941696687648}
+  - component: {fileID: 33549655187601480}
+  - component: {fileID: 23785428367682118}
+  - component: {fileID: 114197052194171436}
+  - component: {fileID: 65482802884583472}
   m_Layer: 8
   m_Name: TerrainTile
   m_TagString: Untagged
@@ -30,56 +30,25 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1775187072077132
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4177792199977304}
-  - component: {fileID: 114530702556699984}
-  - component: {fileID: 114093123695908068}
-  m_Layer: 0
-  m_Name: TerrainController
-  m_TagString: TerrainManager
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &4131425992174370
+--- !u!4 &4791941696687648
 Transform:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1375704418475892}
+  m_GameObject: {fileID: 1343583355818736}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4177792199977304}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4177792199977304
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1775187072077132}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4131425992174370}
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!23 &23422795149906662
+--- !u!23 &23785428367682118
 MeshRenderer:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1375704418475892}
+  m_GameObject: {fileID: 1343583355818736}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -108,46 +77,31 @@ MeshRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
---- !u!33 &33231416050636526
+--- !u!33 &33549655187601480
 MeshFilter:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1375704418475892}
+  m_GameObject: {fileID: 1343583355818736}
   m_Mesh: {fileID: 0}
---- !u!65 &65812029520593692
+--- !u!65 &65482802884583472
 BoxCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1375704418475892}
+  m_GameObject: {fileID: 1343583355818736}
   m_Material: {fileID: 0}
   m_IsTrigger: 1
   m_Enabled: 1
   serializedVersion: 2
   m_Size: {x: 1, y: 0.1, z: 1}
   m_Center: {x: 0.5, y: 0, z: 0.5}
---- !u!114 &114093123695908068
+--- !u!114 &114197052194171436
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1775187072077132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 7409dd8ed67ead74caa1222029229bb3, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  height: 50
-  width: 50
-  walls: []
-  wall: {fileID: 0}
---- !u!114 &114423937068632804
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1375704418475892}
+  m_GameObject: {fileID: 1343583355818736}
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: eb1cd0dd647154e6cb8304b80fad56f8, type: 3}
@@ -159,15 +113,3 @@ MonoBehaviour:
     height: 0
     type: 0
     dummyTile: {fileID: 0}
---- !u!114 &114530702556699984
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1775187072077132}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: cfff28148e46dbb4a8f65eaee58eaf0a, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  terrainTile: {fileID: 1375704418475892}

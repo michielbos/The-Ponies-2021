@@ -1,9 +1,9 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// An object that can be placed on a lot, usually a piece of furniture.
+/// The physical "dummy" of this object is kept in the dummyObject attribute.
 /// </summary>
 [System.Serializable]
 public class PropertyObject {
