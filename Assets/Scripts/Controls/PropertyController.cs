@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Controller for managing the currently loaded lot.
 /// </summary>
 public class PropertyController : MonoBehaviour {
+	public GameObject terrainTilePrefab;
+	public GameObject wallPrefab;
 	public GameObject propertyObjectPrefab;
 	public Property property;
 	private int nextObjectId;
@@ -21,6 +21,8 @@ public class PropertyController : MonoBehaviour {
 				nextObjectId = propertyObject.id + 1;
 			}
 		}
+		PlaceTerrainTiles();
+		PlaceWalls();
 		PlacePropertyObjects();
 	}
 
@@ -30,9 +32,27 @@ public class PropertyController : MonoBehaviour {
 	public void SaveProperty () {
 		new PropertyLoader().SaveProperty(property);
 	}
+	
+	/// <summary>
+	/// Place "dummy" instances of all loaded terrain tiles, so they are visible and interactable.
+	/// </summary>
+	public void PlaceTerrainTiles () {
+		foreach (TerrainTile tt in property.terrainTiles) {
+			tt.PlaceTile(terrainTilePrefab);
+		}
+	}
+	
+	/// <summary>
+	/// Place "dummy" instances of all loaded walls, so they are visible and interactable.
+	/// </summary>
+	public void PlaceWalls () {
+		foreach (Wall w in property.walls) {
+			w.PlaceWall(wallPrefab);
+		}
+	}
 
 	/// <summary>
-	/// Place "dummy" instance of all loaded property objects, so they are visible to the player.
+	/// Place "dummy" instances of all loaded property objects, so they are visible and interactable.
 	/// </summary>
 	public void PlacePropertyObjects () {
 		foreach (PropertyObject po in property.propertyObjects) {
@@ -41,7 +61,7 @@ public class PropertyController : MonoBehaviour {
 	}
 
 	/// <summary>
-	/// Add a new property object to the property. This will also instantiate a dummy to make the object visible.
+	/// Add a new property object to the property. This will also instantiate a dummy to make the object visible and interactable.
 	/// </summary>
 	/// <param name="x">The X position of the object.</param>
 	/// <param name="y">The Y position of the object.</param>

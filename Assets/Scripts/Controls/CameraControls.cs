@@ -5,8 +5,6 @@ using UnityEngine;
 public class CameraControls : MonoBehaviour {
 
 	public Transform holder;
-	[HideInInspector]
-    public TerrainManager tm;
     public GameObject g;
     public GameObject Fire;
     Vector3 panStart;
@@ -22,19 +20,20 @@ public class CameraControls : MonoBehaviour {
 	void Start () {
         camera = GetComponent<Camera>();
         holder = camera.transform;
-        tm = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainManager>();
 	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (Input.GetButtonDown("Fire1") &&Input.GetKey(KeyCode.LeftControl))
+	    //I guess this is debugging code.
+		//Remove or fix & refactor.
+        /*if (Input.GetButtonDown("Fire1") &&Input.GetKey(KeyCode.LeftControl))
         {
             /*Vector3 click = Input.mousePosition;
             //Debug.Log("" + camera.ScreenToWorldPoint(click));
             int x = (int)(camera.ScreenToWorldPoint(click).x);
             int y = (int)(camera.ScreenToWorldPoint(click).z);
             //TODO: Fix IndexOutOfRangeException.
-            Debug.Log(""+x +" "+ y);*/
+            Debug.Log(""+x +" "+ y);*//*
             TerrainTile tile = MousePosTile();
             if (tile == null)
             {
@@ -50,7 +49,7 @@ public class CameraControls : MonoBehaviour {
                 //you don't really want to walk in to a fire.
                 tm.graph.nodes[tile].ChangeCost(1000);
                 GameObject fire =Instantiate(Fire);
-                fire.transform.position = new Vector3(tile.transform.position.x+.5f,0,tile.transform.position.z+.5f);
+                fire.transform.position = new Vector3(tile.dummyTile.transform.position.x+.5f,0,tile.dummyTile.transform.position.z+.5f);
             }
 
         }
@@ -72,7 +71,7 @@ public class CameraControls : MonoBehaviour {
                     foreach (TileNode node in tm.Pathfind(pathstart, tile))
                     {
                         GameObject sphere = Instantiate(GameObject.CreatePrimitive(PrimitiveType.Sphere));
-                        sphere.transform.position=node.tile.transform.position;
+                        sphere.transform.position=node.tile.dummyTile.transform.position;
                         sphere.transform.localScale = new Vector3(.3f, .3f, .3f);
 
                         pathlist.Add(sphere);
@@ -81,7 +80,7 @@ public class CameraControls : MonoBehaviour {
                 }
 
             }
-        }
+        }*/
         if (Input.GetButtonDown("Fire3"))
         {
             clicked = !clicked;
@@ -141,7 +140,7 @@ public class CameraControls : MonoBehaviour {
             new Vector3(hit.transform.position.x + 0.5f, 0, hit.transform.position.z + 0.5f);
             if (Input.GetMouseButtonDown(0))
             {
-                Tile=hit.collider.GetComponent<TerrainTile>();
+                Tile=hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
             }
         }
         return Tile;

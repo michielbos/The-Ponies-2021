@@ -23,8 +23,18 @@ public class PropertyLoader {
 	public Property LoadOrCreateProperty (int id) {
 		if (PropertyExists(id))
 			return LoadProperty(id);
-		else
-			return new Property(id, "untitled", "", "untitled street " + id, 0);
+		return CreateEmptyProperty(id, 40, 30);
+	}
+
+	private Property CreateEmptyProperty (int id, int width, int height) {
+		Property property = new Property(id, "untitled", "", "untitled street " + id, 0);
+		property.terrainTiles = new TerrainTile[height, width];
+		for (int y = 0; y < height; y++) {
+			for (int x = 0; x < width; x++) {
+				property.terrainTiles[y, x] = new TerrainTile(x, y, 0, 0);
+			}
+		}
+		return property;
 	}
 
 	public Property LoadProperty (int id) {

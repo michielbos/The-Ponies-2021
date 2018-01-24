@@ -1,11 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 /// <summary>
 /// Preset for furniture items. These are the objects that are displayed in the catalog.
 /// </summary>
-[System.Serializable]
+[Serializable]
 public class FurniturePreset {
 	public int id;
 	public string name;
@@ -15,6 +15,7 @@ public class FurniturePreset {
 	public string modelName;
 	public string[] materialPaths;
 	public Vector3 addRotation;
+	public AssetBundle assetBundle;
 	private Mesh mesh;
 	private Material[] materials;
 	private RenderTexture previewTexture;
@@ -45,7 +46,11 @@ public class FurniturePreset {
 
 	public Mesh GetMesh () {
 		if (mesh == null) {
-			mesh = Resources.Load<Mesh>(modelName);
+			if (assetBundle != null) {
+				mesh = assetBundle.LoadAsset<Mesh>("assets/" + assetBundle.name + "/" + modelName);
+			} else {
+				mesh = Resources.Load<Mesh>(modelName);
+			}
 		}
 		return mesh;
 	}
@@ -54,7 +59,11 @@ public class FurniturePreset {
 		if (materials == null) {
 			materials = new Material[materialPaths.Length];
 			for (int i = 0; i < materialPaths.Length; i++) {
-				materials[i] = Resources.Load<Material>(materialPaths[i]);
+				if (assetBundle != null) {
+					materials[i] = assetBundle.LoadAsset<Material>("assets/" + assetBundle.name + "/" + materialPaths[i]);
+				} else {
+					materials[i] = Resources.Load<Material>(materialPaths[i]);
+				}
 			}
 		}
 		return materials;

@@ -4,20 +4,18 @@ using UnityEngine;
 
 [System.Serializable]
 public class Property {
-	public static GameObject propertyObjectPrefab;
 	public int id;
 	public string name;
 	public string description;
 	public string streetName;
 	public PropertyType propertyType;
-	public List<TerrainTile> terrainTiles;
+	public TerrainTile[,] terrainTiles;
 	public List<FloorTile> floorTiles;
 	public List<Wall> walls;
 	public List<Roof> roofs;
 	public List<PropertyObject> propertyObjects;
 
 	public Property () {
-		terrainTiles = new List<TerrainTile>();
 		floorTiles = new List<FloorTile>();
 		walls = new List<Wall>();
 		roofs = new List<Roof>();
@@ -37,7 +35,40 @@ public class Property {
 												propertyData.description,
 												propertyData.streetName,
 												propertyData.propertyType == 0 ? PropertyType.RESIDENTIAL : PropertyType.COMMUNITY) {
-		foreach (PropertyObjectData pod in propertyData.propertyObjectDatas) {
+		LoadTerrainTiles(propertyData.terrainTileDatas);
+		LoadWalls(propertyData.wallDatas);
+		LoadPropertyObjects(propertyData.propertyObjectDatas);
+	}
+
+	private void LoadTerrainTiles (TerrainTileData[] terrainTileDatas) {
+		int width = 0;
+		int height = 0;
+		foreach (TerrainTileData ttd in terrainTileDatas) {
+			if (ttd.x >= width) {
+				width = ttd.x + 1;
+			}
+			if (ttd.y >= height) {
+				height = ttd.y + 1;
+			}
+		}
+		terrainTiles = new TerrainTile[height,width];
+		foreach (TerrainTileData ttd in terrainTileDatas) {
+			if (terrainTiles[ttd.y, ttd.x] == null) {
+				terrainTiles[ttd.y, ttd.x] = new TerrainTile(ttd);
+			} else {
+				Debug.LogWarning("There is already a terrain tile for (" + ttd.x + ", " + ttd.y + "). Not loading another one.");
+			}
+		}
+	}
+
+	private void LoadWalls (WallData[] wallDatas) {
+		foreach (WallData wd in wallDatas) {
+			walls.Add(new Wall(wd));
+		}
+	}
+
+	private void LoadPropertyObjects (PropertyObjectData[] propertyObjectDatas) {
+		foreach (PropertyObjectData pod in propertyObjectDatas) {
 			FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(pod.type);
 			if (preset != null) {
 				propertyObjects.Add(new PropertyObject(pod, preset));
@@ -60,10 +91,12 @@ public class Property {
 			CreatePropertyObjectDataArray(propertyObjects));
 	}
 
-	private TerrainTileData[] CreateTerrainTileDataArray (List<TerrainTile> terrainTiles) {
-		TerrainTileData[] terrainTileDataArr = new TerrainTileData[terrainTiles.Count];
-		for (int i = 0; i < terrainTiles.Count; i++) {
-			terrainTileDataArr[i] = terrainTiles[i].GetTerrainTileData();
+	private TerrainTileData[] CreateTerrainTileDataArray (TerrainTile[,] terrainTiles) {
+		TerrainTileData[] terrainTileDataArr = new TerrainTileData[terrainTiles.Length];
+		for (int y = 0; y < terrainTiles.GetLength(0); y++) {
+			for (int x = 0; x < terrainTiles.GetLength(1); x++) {
+				terrainTileDataArr[y * terrainTiles.GetLength(1) + x] = terrainTiles[y, x].GetTerrainTileData();
+			}
 		}
 		return terrainTileDataArr;
 	}

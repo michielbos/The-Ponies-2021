@@ -1,56 +1,27 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
-public class Wall : MonoBehaviour
-{
-    TerrainTile startTile;
-    TerrainTile endTile;
-    int length;
-    int direction=0;
+/// <summary>
+/// A wall that can be placed on the border of a tile.
+/// The physical "dummy" of this wall is kept in the dummyWall attribute.
+/// </summary>
+[System.Serializable]
+public class Wall {
     public int x;
     public int y;
 	public WallDirection wallDirection;
-    List<TerrainTile> path;
-    TerrainManager tm = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainManager>();
+	public GameObject dummyWall;
 
 	public Wall (int x, int y, WallDirection wallDirection) {
 		this.x = x;
 		this.y = y;
 		this.wallDirection = wallDirection;
 	}
+	
+	public Wall (WallData wallData) : this(wallData.x,
+		wallData.y,
+		(WallDirection) wallData.direction) {
 
-    public Wall(TerrainTile s, TerrainTile e)
-    {
-        /*start and end should be interchangable
-          assume that gven tiles are right
-          direction 0:・,1:-,2:\,3:|,4:/
-         */
-        startTile = s;
-        endTile = e;
-        int xdif = (e.x - s.x);
-        int ydif = Mathf.Abs( e.y - s.y);
-        if (ydif != 0)
-        {
-            direction = 3;
-            if (xdif != 0) direction += (int)Mathf.Sign(xdif);
-        }
-        else if (xdif != 0) direction = 1;
-        if (xdif == 0 || ydif == 0)
-        {
-            length =Mathf.Abs( xdif + ydif);
-        }else length=ydif;
-        x = Mathf.Min(s.x, e.x);
-        y = Mathf.Min(s.y, e.y);
-        
-    }
-
-    public Wall(int coordx,int coordy, int dir)
-    {
-        x = coordx;
-        y = coordy;
-        direction = dir;
-    }
+	}
 
 	public WallData GetWallData () {
 		return new WallData(x,
@@ -58,5 +29,30 @@ public class Wall : MonoBehaviour
 			(int)wallDirection,
 			-1,
 			-1);
+	}
+	
+	/// <summary>
+	/// Place a dummy of this object in the scene.
+	/// </summary>
+	/// <param name="prefab">The wall dummy prefab to instantiate.</param>
+	public void PlaceWall (GameObject prefab) {
+		//TODO: Put the wall in the right position and rotation.
+		dummyWall = Object.Instantiate(prefab, new Vector3(x, 0, y), Quaternion.identity);
+		dummyWall.GetComponent<WallDummy>().wall = this;
+	}
+
+	/// <summary>
+	/// Refresh the dummy wall, updating its position to match the real Wall.
+	/// </summary>
+	public void RefreshDummy () {
+		//TODO: Put the wall in the right position and rotation.
+		dummyWall.transform.position = new Vector3(x, 0, y);
+	}
+
+	/// <summary>
+	/// Remove the dummy wall from the scene.
+	/// </summary>
+	public void RemoveWall () {
+		Object.Destroy(dummyWall);
 	}
 }
