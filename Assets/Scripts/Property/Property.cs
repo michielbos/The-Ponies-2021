@@ -4,7 +4,6 @@ using UnityEngine;
 
 [System.Serializable]
 public class Property {
-	public static GameObject propertyObjectPrefab;
 	public int id;
 	public string name;
 	public string description;
@@ -36,19 +35,9 @@ public class Property {
 												propertyData.description,
 												propertyData.streetName,
 												propertyData.propertyType == 0 ? PropertyType.RESIDENTIAL : PropertyType.COMMUNITY) {
-		LoadPropertyObjects(propertyData.propertyObjectDatas);
 		LoadTerrainTiles(propertyData.terrainTileDatas);
-	}
-
-	private void LoadPropertyObjects (PropertyObjectData[] propertyObjectDatas) {
-		foreach (PropertyObjectData pod in propertyObjectDatas) {
-			FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(pod.type);
-			if (preset != null) {
-				propertyObjects.Add(new PropertyObject(pod, preset));
-			} else {
-				Debug.LogWarning("No furniture preset for id " + pod.type + ". Not loading property object " + pod.id + ".");
-			}
-		}
+		LoadWalls(propertyData.wallDatas);
+		LoadPropertyObjects(propertyData.propertyObjectDatas);
 	}
 
 	private void LoadTerrainTiles (TerrainTileData[] terrainTileDatas) {
@@ -72,6 +61,23 @@ public class Property {
 		}
 	}
 
+	private void LoadWalls (WallData[] wallDatas) {
+		foreach (WallData wd in wallDatas) {
+			walls.Add(new Wall(wd));
+		}
+	}
+
+	private void LoadPropertyObjects (PropertyObjectData[] propertyObjectDatas) {
+		foreach (PropertyObjectData pod in propertyObjectDatas) {
+			FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(pod.type);
+			if (preset != null) {
+				propertyObjects.Add(new PropertyObject(pod, preset));
+			} else {
+				Debug.LogWarning("No furniture preset for id " + pod.type + ". Not loading property object " + pod.id + ".");
+			}
+		}
+	}
+
 	public PropertyData GetPropertyData () {
 		return new PropertyData(id,
 			name,
@@ -86,7 +92,6 @@ public class Property {
 	}
 
 	private TerrainTileData[] CreateTerrainTileDataArray (TerrainTile[,] terrainTiles) {
-		//TODO: .Length might work too
 		TerrainTileData[] terrainTileDataArr = new TerrainTileData[terrainTiles.Length];
 		for (int y = 0; y < terrainTiles.GetLength(0); y++) {
 			for (int x = 0; x < terrainTiles.GetLength(1); x++) {

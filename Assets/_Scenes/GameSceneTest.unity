@@ -570,9 +570,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9c72822f0727d417bbe0d86622a2aa72, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  propertyObjectPrefab: {fileID: 1459735444399992, guid: be8404b2751774904bd936ec878fbe03,
-    type: 2}
   terrainTilePrefab: {fileID: 1343583355818736, guid: 91be4d9b445d64ce5b7717588a1f0445,
+    type: 2}
+  wallPrefab: {fileID: 1459735444399992, guid: a5d2bd43000624114a063d361f8774eb, type: 2}
+  propertyObjectPrefab: {fileID: 1459735444399992, guid: be8404b2751774904bd936ec878fbe03,
     type: 2}
   property:
     id: 0

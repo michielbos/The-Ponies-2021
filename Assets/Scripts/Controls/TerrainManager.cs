@@ -27,7 +27,9 @@ public class TerrainManager : MonoBehaviour {
         mesh.RecalculateNormals();
         TerrainUpdate(g, i, j);
     }
-    public void AddStuff(GameObject t, int i, int j)
+    //Unused methods.
+    //Can these be cleaned up?
+    /*public void AddStuff(GameObject t, int i, int j)
     {
         if (i<width&&j<height&&0<=j&&0<=i&&terrain[i, j] == null) { 
             Mesh mesh = new Mesh();
@@ -61,7 +63,7 @@ public class TerrainManager : MonoBehaviour {
     public TileNode[] Pathfind(TerrainTile start, TerrainTile end)
     {
         return path.AStar(graph.nodes[start], graph.nodes[end]);
-    }
+    }*/
     public void TerrainUpdate(GameObject t,int i, int j)
     {
         TerrainTile tt = t.GetComponent<TerrainTileDummy>().terrainTile;

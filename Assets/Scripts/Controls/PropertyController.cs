@@ -1,13 +1,12 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Controller for managing the currently loaded lot.
 /// </summary>
 public class PropertyController : MonoBehaviour {
-	public GameObject propertyObjectPrefab;
 	public GameObject terrainTilePrefab;
+	public GameObject wallPrefab;
+	public GameObject propertyObjectPrefab;
 	public Property property;
 	private int nextObjectId;
 
@@ -23,6 +22,7 @@ public class PropertyController : MonoBehaviour {
 			}
 		}
 		PlaceTerrainTiles();
+		PlaceWalls();
 		PlacePropertyObjects();
 	}
 
@@ -39,6 +39,15 @@ public class PropertyController : MonoBehaviour {
 	public void PlaceTerrainTiles () {
 		foreach (TerrainTile tt in property.terrainTiles) {
 			tt.PlaceTile(terrainTilePrefab);
+		}
+	}
+	
+	/// <summary>
+	/// Place "dummy" instances of all loaded walls, so they are visible and interactable.
+	/// </summary>
+	public void PlaceWalls () {
+		foreach (Wall w in property.walls) {
+			w.PlaceWall(wallPrefab);
 		}
 	}
 

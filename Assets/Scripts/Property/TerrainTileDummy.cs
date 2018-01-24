@@ -1,5 +1,9 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// The "dummy" of a terrain tile, used for displaying and interaction.
+/// It should only be controlled by its owner, which is in the terrainTile attribute.
+/// </summary>
 public class TerrainTileDummy : MonoBehaviour {
 	public TerrainTile terrainTile;
     
