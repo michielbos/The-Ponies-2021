@@ -73,7 +73,7 @@ public class BuyController : MonoBehaviour {
 			ClearSelection();
 		} else {
 			audioSource.PlayOneShot(buySound);
-			propertyController.PlacePropertyObject(pressedTile.x, pressedTile.y, ObjectRotation.NORTH, placingPreset);
+			propertyController.PlacePropertyObject(pressedTile.x, pressedTile.y, ObjectRotation.SouthEast, placingPreset);
 			if (!Input.GetKey(KeyCode.LeftShift)) {
 				ClearSelection();
 			}
