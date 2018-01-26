@@ -19,14 +19,14 @@ public class FurniturePresetLoader {
 	/// Load all furniture presets, from both the resources and the mod packages.
 	/// </summary>
 	/// <returns>A dictionary with all loaded furniture presets.</returns>
-	public Dictionary<int, FurniturePreset> LoadAllPresets () {
-		Dictionary<int, FurniturePreset> presets = new Dictionary<int, FurniturePreset>();
+	public Dictionary<Guid, FurniturePreset> LoadAllPresets () {
+		Dictionary<Guid, FurniturePreset> presets = new Dictionary<Guid, FurniturePreset>();
 		LoadResourcePresets(presets);
 		LoadModPresets(presets);
 		return presets;
 	}
 
-	private void LoadResourcePresets (Dictionary<int, FurniturePreset> presets) {
+	private void LoadResourcePresets (Dictionary<Guid, FurniturePreset> presets) {
 		string[] files = Directory.GetFiles(furniturePath);
 		foreach (string s in files) {
 			if (!s.EndsWith(furnitureExtension))
@@ -35,7 +35,7 @@ public class FurniturePresetLoader {
 		}
 	}
 
-	private void LoadModPresets (Dictionary<int, FurniturePreset> presets) {
+	private void LoadModPresets (Dictionary<Guid, FurniturePreset> presets) {
 		AssetBundleLoader.LoadAllBundles();
 		foreach (AssetBundle bundle in AssetBundle.GetAllLoadedAssetBundles()) {
 			string basePath = "assets/" + bundle.name + "/";
@@ -54,11 +54,11 @@ public class FurniturePresetLoader {
 		}
 	}
 	
-	private void AddFurniturePreset (Dictionary<int, FurniturePreset> presets, string file, FurniturePreset preset) {
-		if (!presets.ContainsKey(preset.id)) {
-			presets.Add(preset.id, preset);
+	private void AddFurniturePreset (Dictionary<Guid, FurniturePreset> presets, string file, FurniturePreset preset) {
+		if (!presets.ContainsKey(preset.guid)) {
+			presets.Add(preset.guid, preset);
 		} else {
-			Debug.LogWarning("Furniture item with id " + preset.id + " already exists. Not loading file " + file + ".");
+			Debug.LogWarning("Furniture item with GUID " + preset.guid + " already exists. Not loading file " + file + ".");
 		}
 	}
 

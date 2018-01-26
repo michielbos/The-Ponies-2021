@@ -1,4 +1,4 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -7,7 +7,7 @@ using UnityEngine;
 /// </summary>
 public class FurniturePresets {
 	private static FurniturePresets instance;
-	private Dictionary<int, FurniturePreset> presetDictionary;
+	private Dictionary<Guid, FurniturePreset> presetDictionary;
 
 	private FurniturePresets () {
 		presetDictionary = new FurniturePresetLoader().LoadAllPresets();
@@ -25,11 +25,11 @@ public class FurniturePresets {
 	/// <summary>
 	/// Get the FurniturePreset with the given id.
 	/// </summary>
-	/// <param name="id">The id to get a FurniturePreset for.</param>
+	/// <param name="guid">The GUID to get a FurniturePreset for.</param>
 	/// <returns>The FurniturePreset matching the id. Returns null if none was found.</returns>
-	public FurniturePreset GetFurniturePreset (int id) {
-		if (presetDictionary.ContainsKey(id))
-			return presetDictionary[id];
+	public FurniturePreset GetFurniturePreset (Guid guid) {
+		if (presetDictionary.ContainsKey(guid))
+			return presetDictionary[guid];
 		return null;
 	}
 

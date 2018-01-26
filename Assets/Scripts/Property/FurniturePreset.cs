@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 /// </summary>
 [Serializable]
 public class FurniturePreset {
-	public int id;
+	public Guid guid;
 	public string name;
 	public string description;
 	public int price;
@@ -20,9 +20,9 @@ public class FurniturePreset {
 	private Material[] materials;
 	private RenderTexture previewTexture;
 
-	public FurniturePreset (int id, string name, string description, int price, ObjectCategory category, 
+	public FurniturePreset (Guid guid, string name, string description, int price, ObjectCategory category, 
 		string modelName, string[] materialPaths, Vector3 addRotation) {
-		this.id = id;
+		this.guid = guid;
 		this.name = name;
 		this.description = description;
 		this.price = price;
@@ -33,7 +33,7 @@ public class FurniturePreset {
 	}
 
 	public FurniturePreset (FurniturePresetData fpd) 
-		: this(fpd.id,
+		: this(new Guid(fpd.guid),
 			fpd.name,
 			fpd.description,
 			fpd.price,
