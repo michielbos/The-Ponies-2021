@@ -31,25 +31,34 @@ public class FurniturePresetLoader {
 		foreach (string s in files) {
 			if (!s.EndsWith(furnitureExtension))
 				continue;
-			AddFurniturePreset(presets, s, LoadPreset(s));
+			FurniturePreset preset = LoadPreset(s);
+			int packIdentifier = GuidUtil.GetPackIdentifier(preset.guid);
+			if (packIdentifier != 0) {
+				Debug.LogWarning("Furniture preset in file " + s + " has pack identifier " + packIdentifier + " instead of 0.");
+			}
+			AddFurniturePreset(presets, s, preset);
 		}
 	}
 
 	private void LoadModPresets (Dictionary<Guid, FurniturePreset> presets) {
 		AssetBundleLoader.LoadAllBundles();
 		foreach (AssetBundle bundle in AssetBundle.GetAllLoadedAssetBundles()) {
-			string basePath = "assets/" + bundle.name + "/";
 			foreach (string assetName in bundle.GetAllAssetNames()) {
-				if (!assetName.StartsWith(basePath + "furniture/"))
+				if (!assetName.StartsWith("assets/furniture/"))
 					continue;
 				TextAsset textAsset = bundle.LoadAsset<TextAsset>(assetName);
 				if (textAsset == null) {
 					Debug.Log(assetName + " is not a furniture asset. Skipping.");
 					continue;
 				}
-				FurniturePreset preset =
-					new FurniturePreset(JsonUtility.FromJson<FurniturePresetData>(textAsset.text)) {assetBundle = bundle};
-				AddFurniturePreset(presets, assetName, preset);
+				try {
+					FurniturePreset preset =
+						new FurniturePreset(JsonUtility.FromJson<FurniturePresetData>(textAsset.text)) {assetBundle = bundle};
+					AddFurniturePreset(presets, assetName, preset);
+				} catch (Exception e) {
+					Debug.LogError("Exception when trying to load furniture item " + assetName + " from " + bundle.name + "! Not loading furniture item.");
+					Debug.LogException(e);
+				}
 			}
 		}
 	}
