@@ -32,7 +32,7 @@ public class FurniturePresetLoader {
 			if (!s.EndsWith(furnitureExtension))
 				continue;
 			FurniturePreset preset = LoadPreset(s);
-			int packIdentifier = GuidUtil.GetPackIdentifier(preset.guid);
+			uint packIdentifier = GuidUtil.GetPackIdentifier(preset.guid);
 			if (packIdentifier != 0) {
 				Debug.LogWarning("Furniture preset in file " + s + " has pack identifier " + packIdentifier + " instead of 0.");
 			}
@@ -41,8 +41,8 @@ public class FurniturePresetLoader {
 	}
 
 	private void LoadModPresets (Dictionary<Guid, FurniturePreset> presets) {
-		AssetBundleLoader.LoadAllBundles();
-		foreach (AssetBundle bundle in AssetBundle.GetAllLoadedAssetBundles()) {
+		foreach (Mod mod in ModLoader.GetLoadedMods()) {
+			AssetBundle bundle = mod.assetBundle;
 			foreach (string assetName in bundle.GetAllAssetNames()) {
 				if (!assetName.StartsWith("assets/furniture/"))
 					continue;
@@ -54,7 +54,12 @@ public class FurniturePresetLoader {
 				try {
 					FurniturePreset preset =
 						new FurniturePreset(JsonUtility.FromJson<FurniturePresetData>(textAsset.text)) {assetBundle = bundle};
-					AddFurniturePreset(presets, assetName, preset);
+					uint packId = GuidUtil.GetPackIdentifier(preset.guid);
+					if (packId == mod.modInfoData.packId) {
+						AddFurniturePreset(presets, assetName, preset);
+					} else {
+						Debug.LogWarning("Furniture item " + assetName + " in " + bundle.name + " has packId " + packId + " while the mod has packId " + mod.modInfoData.packId + ". Skipping.");
+					}
 				} catch (Exception e) {
 					Debug.LogError("Exception when trying to load furniture item " + assetName + " from " + bundle.name + "! Not loading furniture item.");
 					Debug.LogException(e);
