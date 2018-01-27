@@ -50,6 +50,8 @@ public static class ModLoader {
 				ModInfoData modInfo = LoadModInfo(loadedBundle);
 				if (ValidateMod(loadedBundle, modInfo, mods)) {
 					mods.Add(new Mod(loadedBundle, modInfo));
+				} else {
+					loadedBundle.Unload(true);
 				}
 			} else {
 				Debug.LogWarning("Failed to load AssetBundle from " + file + ".");
