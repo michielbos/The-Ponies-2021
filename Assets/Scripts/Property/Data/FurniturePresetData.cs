@@ -10,10 +10,11 @@ public class FurniturePresetData {
 	public int category;
 	public string modelName;
 	public string[] materialPaths;
-	public Vector3 addRotation;
+	public Vector3 rotationOffset;
+	public Vector3 positionOffset;
 
 	public FurniturePresetData (string guid, string name, string description, int price, int category, string modelName, 
-		string[] materialPaths, Vector3 addRotation) {
+		string[] materialPaths, Vector3 rotationOffset, Vector3 positionOffset) {
 		this.guid = guid;
 		this.name = name;
 		this.description = description;
@@ -21,6 +22,7 @@ public class FurniturePresetData {
 		this.category = category;
 		this.modelName = modelName;
 		this.materialPaths = materialPaths;
-		this.addRotation = addRotation;
+		this.rotationOffset = rotationOffset;
+		this.positionOffset = positionOffset;
 	}
 }

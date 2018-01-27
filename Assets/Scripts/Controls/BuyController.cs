@@ -18,6 +18,7 @@ public class BuyController : MonoBehaviour {
 	private FurniturePreset placingPreset = null;
 	private PropertyObject movingObject = null;
 	private GameObject buildMarker;
+	private ObjectRotation markerRotation = ObjectRotation.SouthEast;
 	private TerrainTile pressedTile = null;
 
 	public void OnDisable () {
@@ -44,13 +45,17 @@ public class BuyController : MonoBehaviour {
 		ClearSelection();
 		placingPreset = furniturePreset;
 		buildMarker = Instantiate(buildMarkerPrefab);
+		placingPreset.ApplyToGameObject(buildMarker, buildMarker.transform.position, buildMarker.transform.eulerAngles);
 	}
 
 	private void UpdateBuildMarker () {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
 		if (Physics.Raycast(ray, out hit, 1000, 1 << 8)) {
+			FurniturePreset preset = placingPreset ?? movingObject.preset;
 			buildMarker.transform.position = new Vector3(hit.transform.position.x + 0.5f, 0, hit.transform.position.z + 0.5f);
+			buildMarker.transform.eulerAngles = ObjectRotationUtil.GetRotationVector(markerRotation);
+			preset.ApplyOffsets(buildMarker.transform);
 			if (Input.GetMouseButtonDown(0)) {
 				pressedTile = hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
 			}
@@ -66,8 +71,8 @@ public class BuyController : MonoBehaviour {
 	}
 
 	private void PlaceObject () {
+		audioSource.PlayOneShot(placeSound);
 		if (movingObject != null) {
-			audioSource.PlayOneShot(placeSound);
 			movingObject.x = Mathf.FloorToInt(buildMarker.transform.position.x);
 			movingObject.y = Mathf.FloorToInt(buildMarker.transform.position.z);
 			ClearSelection();

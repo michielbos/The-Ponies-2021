@@ -37,7 +37,8 @@ public class FurnitureFileInspector : Editor {
 		presetData.modelName = EditorGUILayout.TextField("Model name", presetData.modelName);
 		EditorGUILayout.LabelField("Material paths");
 		presetData.materialPaths = StringArrayGuiField(presetData.materialPaths);
-		presetData.addRotation = EditorGUILayout.Vector3Field("Add rotation", presetData.addRotation);
+		presetData.rotationOffset = EditorGUILayout.Vector3Field("Rotation offset", presetData.rotationOffset);
+		presetData.positionOffset = EditorGUILayout.Vector3Field("Position offset", presetData.positionOffset);
 		if (GUILayout.Button("Apply changes")) {
 			SetContent(presetData);
 		}

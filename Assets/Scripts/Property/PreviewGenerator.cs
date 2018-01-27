@@ -1,11 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Class for generating preview images for furniture. 
 /// </summary>
 public class PreviewGenerator : MonoBehaviour {
+    public Vector3 previewPosition;
     public GameObject previewObject;
 
     /// <summary>
@@ -15,7 +14,7 @@ public class PreviewGenerator : MonoBehaviour {
     /// <returns>A RenderTexture that contains the generated preview.</returns>
     public RenderTexture CreatePreview (FurniturePreset furniturePreset) {
         Camera camera = GetComponent<Camera>();
-        furniturePreset.ApplyToGameObject(previewObject);
+        furniturePreset.ApplyToGameObject(previewObject, previewPosition, Vector3.zero);
         RenderTexture renderTexture = new RenderTexture(180, 180, 24, RenderTextureFormat.ARGB32);
         camera.enabled = true;
         camera.targetTexture = renderTexture;
