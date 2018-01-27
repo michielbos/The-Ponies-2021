@@ -12,13 +12,14 @@ public class BuyController : MonoBehaviour {
 	public AudioClip rotateSound;
 	public PropertyController propertyController;
 	public HUDController hudController;
+	public CheatsController cheatsController;
 	public AudioSource audioSource;
 
-	private FurniturePreset placingPreset = null;
-	private PropertyObject movingObject = null;
+	private FurniturePreset placingPreset;
+	private PropertyObject movingObject;
 	private GameObject buildMarker;
 	private ObjectRotation markerRotation = ObjectRotation.SouthEast;
-	private TerrainTile pressedTile = null;
+	private TerrainTile pressedTile;
 
 	public void OnDisable () {
 		ClearSelection();
@@ -92,25 +93,33 @@ public class BuyController : MonoBehaviour {
 	private void HandleHovering () {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (Physics.Raycast(ray, out hit, 1000)) {
-			//TODO: Highlight object if it can be picked up.
-			if (Input.GetMouseButtonDown(0)) {
-				PropertyObjectDummy dummy = hit.collider.GetComponent<PropertyObjectDummy>();
-				if (dummy != null) {
-					movingObject = dummy.propertyObject;
-					buildMarker = movingObject.dummyObject;
-				}
-			}
+		if (!Physics.Raycast(ray, out hit, 1000))
+			return;
+		PropertyObjectDummy dummy = hit.collider.GetComponent<PropertyObjectDummy>();
+		if (dummy == null)
+			return;
+		//TODO: Highlight object if it can be picked up.
+		if (!Input.GetMouseButtonDown(0))
+			return;
+		if (dummy.propertyObject.preset.pickupable  || cheatsController.moveObjectsMode) {
+			movingObject = dummy.propertyObject;
+			buildMarker = movingObject.dummyObject;
+		} else {
+			audioSource.PlayOneShot(denySound);
 		}
 	}
 
 	private void SellSelection () {
-		if (movingObject != null) {
+		if (movingObject == null) {
+			ClearSelection();
+		} else if (movingObject.preset.sellable || cheatsController.moveObjectsMode) {
 			audioSource.PlayOneShot(sellSound);
 			propertyController.RemovePropertyObject(movingObject);
 			hudController.ChangeFunds(movingObject.value);
+			ClearSelection();
+		} else {
+			audioSource.PlayOneShot(denySound);
 		}
-		ClearSelection();
 	}
 
 	private void ClearSelection () {

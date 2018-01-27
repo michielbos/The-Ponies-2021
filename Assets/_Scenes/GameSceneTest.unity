@@ -593,6 +593,8 @@ MonoBehaviour:
         description: 
         price: 0
         category: 0
+        pickupable: 0
+        sellable: 0
         modelName: 
         materialPaths: []
         rotationOffset: {x: 0, y: 0, z: 0}

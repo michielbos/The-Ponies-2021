@@ -12,6 +12,8 @@ public class FurniturePreset {
 	public string description;
 	public int price;
 	public ObjectCategory category;
+	public bool pickupable;
+	public bool sellable;
 	public string modelName;
 	public string[] materialPaths;
 	public Vector3 rotationOffset;
@@ -21,30 +23,18 @@ public class FurniturePreset {
 	private Material[] materials;
 	private RenderTexture previewTexture;
 
-	public FurniturePreset (Guid guid, string name, string description, int price, ObjectCategory category, 
-		string modelName, string[] materialPaths, Vector3 rotationOffset, Vector3 positionOffset) {
-		this.guid = guid;
-		this.name = name;
-		this.description = description;
-		this.price = price;
-		this.category = category;
-		this.modelName = modelName;
-		this.materialPaths = materialPaths;
-		this.rotationOffset = rotationOffset;
-		this.positionOffset = positionOffset;
-	}
-
-	public FurniturePreset (FurniturePresetData fpd) 
-		: this(new Guid(fpd.guid),
-			fpd.name,
-			fpd.description,
-			fpd.price,
-			(ObjectCategory) fpd.category,
-			fpd.modelName,
-			fpd.materialPaths,
-			fpd.rotationOffset,
-			fpd.positionOffset) {
-
+	public FurniturePreset (FurniturePresetData fpd) {
+		guid = new Guid(fpd.guid);
+		name = fpd.name;
+		description = fpd.description;
+		price = fpd.price;
+		category = (ObjectCategory) fpd.category;
+		pickupable = fpd.pickupable;
+		sellable = fpd.sellable;
+		modelName = fpd.modelName;
+		materialPaths = fpd.materialPaths;
+		rotationOffset = fpd.rotationOffset;
+		positionOffset = fpd.positionOffset;
 	}
 
 	public Mesh GetMesh () {

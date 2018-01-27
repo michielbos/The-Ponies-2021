@@ -34,6 +34,10 @@ public class FurnitureFileInspector : Editor {
 		presetData.description = EditorGUILayout.TextField("Description", presetData.description);
 		presetData.price = EditorGUILayout.IntField("Price", presetData.price);
 		presetData.category = (int)(ObjectCategory) EditorGUILayout.EnumPopup("Category", (ObjectCategory) presetData.category);
+		presetData.pickupable = EditorGUILayout.Toggle("Pickupable", presetData.pickupable);
+		GUI.enabled = presetData.pickupable;
+		presetData.sellable = EditorGUILayout.Toggle("Sellable", presetData.pickupable && presetData.sellable);
+		GUI.enabled = true;
 		presetData.modelName = EditorGUILayout.TextField("Model name", presetData.modelName);
 		EditorGUILayout.LabelField("Material paths");
 		presetData.materialPaths = StringArrayGuiField(presetData.materialPaths);

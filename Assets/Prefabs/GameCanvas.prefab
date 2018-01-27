@@ -3645,6 +3645,7 @@ MonoBehaviour:
   consoleText: {fileID: 114975309147753538}
   hudController: {fileID: 114113357470691672}
   fpsText: {fileID: 114682606751967440}
+  moveObjectsMode: 0
 --- !u!114 &114101825527077996
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7399,6 +7400,7 @@ MonoBehaviour:
   rotateSound: {fileID: 8300000, guid: cfbf7c333ebcfe34c9c23976c08200bf, type: 3}
   propertyController: {fileID: 0}
   hudController: {fileID: 114113357470691672}
+  cheatsController: {fileID: 114100364566045644}
   audioSource: {fileID: 0}
 --- !u!114 &114554091906346210
 MonoBehaviour:
