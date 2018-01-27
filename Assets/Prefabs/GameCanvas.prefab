@@ -3775,6 +3775,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: caef8c13c37db714ba0b615cad6a7018, type: 3}
   catalogController: {fileID: 114289265587149008}
   buyController: {fileID: 114549210002137118}
+  musicController: {fileID: 0}
   fundsText: {fileID: 114000812847085396}
 --- !u!114 &114133663594132876
 MonoBehaviour:
