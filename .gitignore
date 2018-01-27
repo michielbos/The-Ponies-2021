@@ -45,3 +45,5 @@ Thumbs.db
 # ============= #
 Build/
 .vs/
+# While we are keeping saves in the resources, might as well exclude them.
+Assets/Resources/SaveData/

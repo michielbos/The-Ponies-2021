@@ -5,15 +5,16 @@ using Random = UnityEngine.Random;
 /// <summary>
 /// Utility class for generating and reading Guids.
 /// </summary>
-public class GuidUtil : MonoBehaviour {
+public static class GuidUtil {
 
 	/// <summary>
 	/// Generate a GUID for an asset, with the given pack identifier.
 	/// </summary>
 	/// <param name="packIdentifier">The pack identifier for the start of the GUID.</param>
 	/// <returns>The generated GUID.</returns>
-	public static Guid GenerateAssetGuid (int packIdentifier) {
-		return new Guid(packIdentifier, RandomShort(), RandomShort(), RandomByteSegment());
+	public static Guid GenerateAssetGuid (uint packIdentifier) {
+		return new Guid(packIdentifier, RandomShort(), RandomShort(), RandomByte(), RandomByte(), RandomByte(),
+			RandomByte(), RandomByte(), RandomByte(), RandomByte(), RandomByte());
 	}
 
 	/// <summary>
@@ -21,20 +22,16 @@ public class GuidUtil : MonoBehaviour {
 	/// </summary>
 	/// <param name="guid">The GUID to get the pack identifier from.</param>
 	/// <returns>The pack identifier from the GUID.</returns>
-	public static int GetPackIdentifier (Guid guid) {
-		return BitConverter.ToInt32(guid.ToByteArray(), 0);
+	public static uint GetPackIdentifier (Guid guid) {
+		return BitConverter.ToUInt32(guid.ToByteArray(), 0);
 	}
 
-	private static short RandomShort () {
-		return (short) Random.Range(short.MinValue, short.MaxValue);
+	private static ushort RandomShort () {
+		return (ushort) Random.Range(ushort.MinValue, ushort.MaxValue);
 	}
 
-	private static byte[] RandomByteSegment () {
-		byte[] bytes = new byte[8];
-		for (int i = 0; i < bytes.Length; i++) {
-			bytes[i] = (byte) Random.Range(byte.MinValue, byte.MaxValue);
-		}
-		return bytes;
+	private static byte RandomByte () {
+		return (byte) Random.Range(byte.MinValue, byte.MaxValue);;
 	}
 	
 }

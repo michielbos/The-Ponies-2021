@@ -1,8 +1,8 @@
-﻿using System.Collections;
+﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class Property {
 	public int id;
 	public string name;
@@ -69,11 +69,16 @@ public class Property {
 
 	private void LoadPropertyObjects (PropertyObjectData[] propertyObjectDatas) {
 		foreach (PropertyObjectData pod in propertyObjectDatas) {
-			FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(pod.type);
-			if (preset != null) {
-				propertyObjects.Add(new PropertyObject(pod, preset));
-			} else {
-				Debug.LogWarning("No furniture preset for id " + pod.type + ". Not loading property object " + pod.id + ".");
+			try {
+				FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(new Guid(pod.furnitureGuid));
+				if (preset != null) {
+					propertyObjects.Add(new PropertyObject(pod, preset));
+				} else {
+					Debug.LogWarning("No furniture preset for GUID " + pod.furnitureGuid + ". Not loading property object " + pod.id + ".");
+				}
+			} catch (Exception e) {
+				Debug.LogError("Exception when trying to load property object with GUID " + pod.furnitureGuid + "! Not loading property object.");
+				Debug.LogException(e);
 			}
 		}
 	}

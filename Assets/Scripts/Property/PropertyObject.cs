@@ -38,7 +38,7 @@ public class PropertyObject {
 			x,
 			y,
 			(int) rotation,
-			preset.id,
+			preset.guid.ToString(),
 			value);
 	}
 

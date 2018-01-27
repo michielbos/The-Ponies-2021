@@ -1,10 +1,9 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System;
 using UnityEngine;
 
-[System.Serializable]
+[Serializable]
 public class FurniturePresetData {
-	public int id;
+	public string guid;
 	public string name;
 	public string description;
 	public int price;
@@ -13,9 +12,9 @@ public class FurniturePresetData {
 	public string[] materialPaths;
 	public Vector3 addRotation;
 
-	public FurniturePresetData (int id, string name, string description, int price, int category, string modelName, 
+	public FurniturePresetData (string guid, string name, string description, int price, int category, string modelName, 
 		string[] materialPaths, Vector3 addRotation) {
-		this.id = id;
+		this.guid = guid;
 		this.name = name;
 		this.description = description;
 		this.price = price;

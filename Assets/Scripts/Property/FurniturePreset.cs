@@ -7,7 +7,7 @@ using Object = UnityEngine.Object;
 /// </summary>
 [Serializable]
 public class FurniturePreset {
-	public int id;
+	public Guid guid;
 	public string name;
 	public string description;
 	public int price;
@@ -20,9 +20,9 @@ public class FurniturePreset {
 	private Material[] materials;
 	private RenderTexture previewTexture;
 
-	public FurniturePreset (int id, string name, string description, int price, ObjectCategory category, 
+	public FurniturePreset (Guid guid, string name, string description, int price, ObjectCategory category, 
 		string modelName, string[] materialPaths, Vector3 addRotation) {
-		this.id = id;
+		this.guid = guid;
 		this.name = name;
 		this.description = description;
 		this.price = price;
@@ -33,7 +33,7 @@ public class FurniturePreset {
 	}
 
 	public FurniturePreset (FurniturePresetData fpd) 
-		: this(fpd.id,
+		: this(new Guid(fpd.guid),
 			fpd.name,
 			fpd.description,
 			fpd.price,
@@ -47,7 +47,7 @@ public class FurniturePreset {
 	public Mesh GetMesh () {
 		if (mesh == null) {
 			if (assetBundle != null) {
-				mesh = assetBundle.LoadAsset<Mesh>("assets/" + assetBundle.name + "/" + modelName);
+				mesh = assetBundle.LoadAsset<Mesh>("assets/" + modelName);
 			} else {
 				mesh = Resources.Load<Mesh>(modelName);
 			}
@@ -60,7 +60,7 @@ public class FurniturePreset {
 			materials = new Material[materialPaths.Length];
 			for (int i = 0; i < materialPaths.Length; i++) {
 				if (assetBundle != null) {
-					materials[i] = assetBundle.LoadAsset<Material>("assets/" + assetBundle.name + "/" + materialPaths[i]);
+					materials[i] = assetBundle.LoadAsset<Material>("assets/" + materialPaths[i]);
 				} else {
 					materials[i] = Resources.Load<Material>(materialPaths[i]);
 				}
