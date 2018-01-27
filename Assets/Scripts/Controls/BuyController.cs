@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Controller for buy mode that deals with buying, moving and selling furniture.
@@ -13,6 +11,7 @@ public class BuyController : MonoBehaviour {
 	public AudioClip placeSound;
 	public AudioClip rotateSound;
 	public PropertyController propertyController;
+	public HUDController hudController;
 	public AudioSource audioSource;
 
 	private FurniturePreset placingPreset = null;
@@ -71,13 +70,17 @@ public class BuyController : MonoBehaviour {
 	}
 
 	private void PlaceObject () {
-		audioSource.PlayOneShot(placeSound);
 		if (movingObject != null) {
+			audioSource.PlayOneShot(placeSound);
 			movingObject.x = Mathf.FloorToInt(buildMarker.transform.position.x);
 			movingObject.y = Mathf.FloorToInt(buildMarker.transform.position.z);
 			ClearSelection();
+		} else if (placingPreset.price > hudController.GetFunds()) {
+			audioSource.PlayOneShot(denySound);
 		} else {
+			audioSource.PlayOneShot(placeSound);
 			audioSource.PlayOneShot(buySound);
+			hudController.ChangeFunds(-placingPreset.price);
 			propertyController.PlacePropertyObject(pressedTile.x, pressedTile.y, ObjectRotation.SouthEast, placingPreset);
 			if (!Input.GetKey(KeyCode.LeftShift)) {
 				ClearSelection();
@@ -105,7 +108,7 @@ public class BuyController : MonoBehaviour {
 		if (movingObject != null) {
 			audioSource.PlayOneShot(sellSound);
 			propertyController.RemovePropertyObject(movingObject);
-			//TODO: Refund
+			hudController.ChangeFunds(movingObject.value);
 		}
 		ClearSelection();
 	}

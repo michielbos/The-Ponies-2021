@@ -44,7 +44,7 @@ public class HUDController : MonoBehaviour
 	private int selectedPanel = -1;
 
 	public Text fundsText;
-	private int funds = 1337;
+	private int funds = 20000;
 
 	void Start()
 	{
@@ -134,6 +134,15 @@ public class HUDController : MonoBehaviour
 	{
 		funds = a;
 		UpdateFunds();
+	}
+
+	/// <summary>
+	/// Get the current amount of funds.
+	/// If this is an unoccuppied lot, this will return a large amount. (to be implemented)
+	/// </summary>
+	/// <returns>The current amount of funds.</returns>
+	public int GetFunds () {
+		return funds;
 	}
 
 	/**
