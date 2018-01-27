@@ -12,7 +12,17 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: Pottet_Plant
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Pottet_Plant_Plant
+    second: {fileID: 2100000, guid: 328332875fade47da9dd4db38a71f438, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Pottet_Plant_Pot
+    second: {fileID: 2100000, guid: f43760ae8c26a4842998183aa58dd4ca, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -42,7 +52,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 50
     meshCompression: 0
     addColliders: 0
     importVisibility: 1
