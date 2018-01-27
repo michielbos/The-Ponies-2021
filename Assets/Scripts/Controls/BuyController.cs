@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Controller for buy mode that deals with buying, moving and selling furniture.
@@ -13,12 +11,15 @@ public class BuyController : MonoBehaviour {
 	public AudioClip placeSound;
 	public AudioClip rotateSound;
 	public PropertyController propertyController;
+	public HUDController hudController;
+	public CheatsController cheatsController;
 	public AudioSource audioSource;
 
-	private FurniturePreset placingPreset = null;
-	private PropertyObject movingObject = null;
+	private FurniturePreset placingPreset;
+	private PropertyObject movingObject;
 	private GameObject buildMarker;
-	private TerrainTile pressedTile = null;
+	private ObjectRotation markerRotation = ObjectRotation.SouthEast;
+	private TerrainTile pressedTile;
 
 	public void OnDisable () {
 		ClearSelection();
@@ -44,13 +45,17 @@ public class BuyController : MonoBehaviour {
 		ClearSelection();
 		placingPreset = furniturePreset;
 		buildMarker = Instantiate(buildMarkerPrefab);
+		placingPreset.ApplyToGameObject(buildMarker, buildMarker.transform.position, buildMarker.transform.eulerAngles);
 	}
 
 	private void UpdateBuildMarker () {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
 		if (Physics.Raycast(ray, out hit, 1000, 1 << 8)) {
+			FurniturePreset preset = placingPreset ?? movingObject.preset;
 			buildMarker.transform.position = new Vector3(hit.transform.position.x + 0.5f, 0, hit.transform.position.z + 0.5f);
+			buildMarker.transform.eulerAngles = ObjectRotationUtil.GetRotationVector(markerRotation);
+			preset.ApplyOffsets(buildMarker.transform);
 			if (Input.GetMouseButtonDown(0)) {
 				pressedTile = hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
 			}
@@ -71,8 +76,12 @@ public class BuyController : MonoBehaviour {
 			movingObject.x = Mathf.FloorToInt(buildMarker.transform.position.x);
 			movingObject.y = Mathf.FloorToInt(buildMarker.transform.position.z);
 			ClearSelection();
+		} else if (placingPreset.price > hudController.GetFunds()) {
+			audioSource.PlayOneShot(denySound);
 		} else {
+			audioSource.PlayOneShot(placeSound);
 			audioSource.PlayOneShot(buySound);
+			hudController.ChangeFunds(-placingPreset.price);
 			propertyController.PlacePropertyObject(pressedTile.x, pressedTile.y, ObjectRotation.SouthEast, placingPreset);
 			if (!Input.GetKey(KeyCode.LeftShift)) {
 				ClearSelection();
@@ -84,25 +93,33 @@ public class BuyController : MonoBehaviour {
 	private void HandleHovering () {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (Physics.Raycast(ray, out hit, 1000)) {
-			//TODO: Highlight object if it can be picked up.
-			if (Input.GetMouseButtonDown(0)) {
-				PropertyObjectDummy dummy = hit.collider.GetComponent<PropertyObjectDummy>();
-				if (dummy != null) {
-					movingObject = dummy.propertyObject;
-					buildMarker = movingObject.dummyObject;
-				}
-			}
+		if (!Physics.Raycast(ray, out hit, 1000))
+			return;
+		PropertyObjectDummy dummy = hit.collider.GetComponent<PropertyObjectDummy>();
+		if (dummy == null)
+			return;
+		//TODO: Highlight object if it can be picked up.
+		if (!Input.GetMouseButtonDown(0))
+			return;
+		if (dummy.propertyObject.preset.pickupable  || cheatsController.moveObjectsMode) {
+			movingObject = dummy.propertyObject;
+			buildMarker = movingObject.dummyObject;
+		} else {
+			audioSource.PlayOneShot(denySound);
 		}
 	}
 
 	private void SellSelection () {
-		if (movingObject != null) {
+		if (movingObject == null) {
+			ClearSelection();
+		} else if (movingObject.preset.sellable || cheatsController.moveObjectsMode) {
 			audioSource.PlayOneShot(sellSound);
 			propertyController.RemovePropertyObject(movingObject);
-			//TODO: Refund
+			hudController.ChangeFunds(movingObject.value);
+			ClearSelection();
+		} else {
+			audioSource.PlayOneShot(denySound);
 		}
-		ClearSelection();
 	}
 
 	private void ClearSelection () {

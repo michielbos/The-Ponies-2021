@@ -36,6 +36,7 @@ public class HUDController : MonoBehaviour
 
 	public CatalogController catalogController;
 	public BuyController buyController;
+	public MusicController musicController;
 
 	private bool paused = false;
 	private bool forcePaused = false;
@@ -44,7 +45,7 @@ public class HUDController : MonoBehaviour
 	private int selectedPanel = -1;
 
 	public Text fundsText;
-	private int funds = 1337;
+	private int funds = 20000;
 
 	void Start()
 	{
@@ -95,8 +96,10 @@ public class HUDController : MonoBehaviour
 		}
 
 		if (selectedPanel == PANEL_BUY) {
+			musicController.SwitchMusic(MusicType.BuyMode);
 			buyController.enabled = true;
 		} else {
+			musicController.SwitchMusic(selectedPanel == PANEL_BUILD ? MusicType.BuildMode : MusicType.NoMusic);
 			catalogController.CloseCatalog();
 			buyController.enabled = false;
 		}
@@ -134,6 +137,15 @@ public class HUDController : MonoBehaviour
 	{
 		funds = a;
 		UpdateFunds();
+	}
+
+	/// <summary>
+	/// Get the current amount of funds.
+	/// If this is an unoccuppied lot, this will return a large amount. (to be implemented)
+	/// </summary>
+	/// <returns>The current amount of funds.</returns>
+	public int GetFunds () {
+		return funds;
 	}
 
 	/**

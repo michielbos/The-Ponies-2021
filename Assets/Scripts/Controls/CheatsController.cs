@@ -9,6 +9,7 @@ public class CheatsController : MonoBehaviour {
 	public Text consoleText;
 	public HUDController hudController;
 	public Text fpsText;
+	public bool moveObjectsMode;
 	private bool visible = false;
 	private bool expanded = false;
 	private bool hadFocus = false;
@@ -98,7 +99,7 @@ public class CheatsController : MonoBehaviour {
 		string[] split = cheat.Split(new char[]{' '}, 2);
 		string[] parameters;
 		if (split.Length > 1) {
-			parameters = split[1].Split(new char[]{' '});
+			parameters = split[1].Split(' ');
 		} else {
 			parameters = new string[0];
 		}
@@ -117,6 +118,9 @@ public class CheatsController : MonoBehaviour {
 			return ChangeFundsCheat(parameters[0]);
 		else if (command == "addfunds" && parameters.Length == 1)
 			return AddFundsCheat(parameters[0]);
+		//Buying/building cheats
+		else if (command == "moveobjects" && parameters.Length == 1)
+			return MoveObjectsCheat(parameters[0]);
 		//Misc cheats
 		else if (command == "expand")
 			SetExpanded(!expanded);
@@ -151,6 +155,16 @@ public class CheatsController : MonoBehaviour {
 			return true;
 		} else
 			return false;
+	}
+
+	bool MoveObjectsCheat (string parameter) {
+		if (parameter.ToLower() == "on") {
+			moveObjectsMode = true;
+		} else if (parameter.ToLower() == "off") {
+			moveObjectsMode = false;
+		} else
+			return false;
+		return true;
 	}
 
 	void ShowHelp () {

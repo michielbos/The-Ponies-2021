@@ -14,7 +14,27 @@ ModelImporter:
     2300000: //RootNode
     3300000: //RootNode
     4300000: Sofa2
-  externalObjects: {}
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sofa2_1
+    second: {fileID: 2100000, guid: 90f2840666a5047058674556e8a69af2, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sofa2_2
+    second: {fileID: 2100000, guid: e85497ca8607447aa9ea5751722aea67, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sofa2_3
+    second: {fileID: 2100000, guid: d5887e059ca5247e2aef97ad6567ddcf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Sofa2_4
+    second: {fileID: 2100000, guid: 965d1cd4cb54d47e4bc440ebc012b447, type: 2}
   materials:
     importMaterials: 1
     materialName: 0
@@ -44,7 +64,7 @@ ModelImporter:
     isReadable: 1
   meshes:
     lODScreenPercentages: []
-    globalScale: 1
+    globalScale: 25
     meshCompression: 0
     addColliders: 0
     importVisibility: 1
