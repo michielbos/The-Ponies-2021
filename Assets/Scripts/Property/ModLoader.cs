@@ -64,7 +64,7 @@ public static class ModLoader {
 
 	private static ModInfoData LoadModInfo (AssetBundle assetBundle) {
 		foreach (string assetName in assetBundle.GetAllAssetNames()) {
-			if (assetName != "assets/modinfo.txt")
+			if (assetName != "assets/modinfo.json")
 				continue;
 			TextAsset textAsset = assetBundle.LoadAsset<TextAsset>(assetName);
 			return JsonUtility.FromJson<ModInfoData>(textAsset.text);
