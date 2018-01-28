@@ -28,7 +28,7 @@ public class MusicController : MonoBehaviour {
             return;
         }
         audioSource.clip = songs[Random.Range(0, songs.Length)];
-        audioSource.Play();
+        audioSource.PlayDelayed(2);
     }
 
     private AudioClip[] GetSongsForType (MusicType musicType) {
