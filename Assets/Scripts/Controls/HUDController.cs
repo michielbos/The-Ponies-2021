@@ -6,20 +6,28 @@ using UnityEngine.UI;
 
 public class HUDController : MonoBehaviour
 {
+	/* Leaving this here in case it was needed after all... 
+	 * Who the hell uses const ints instead of a proper 
+	 * enum anyways? I don't want to see anything like that in 
+	 * this codebase ever akain, understood? :P
+	 *   - Ebunix 
+
 	private const int PANEL_LIVE = 0;
 	private const int PANEL_BUY = 1;
 	private const int PANEL_BUILD = 2;
 	private const int PANEL_CAMERA = 3;
 	private const int PANEL_OPTIONS = 4;
+	*/
 
-	/*public enum Mode
+	public enum HudPanel
 	{
+		None = -1,
 		Live = 0,
 		Buy = 1,
 		Build = 2,
-		Cam = 3,
-		Opt = 4
-	}*/
+		Camera = 3,
+		Options = 4
+	}
 
 	public Camera gameCamera;
 
@@ -28,6 +36,7 @@ public class HUDController : MonoBehaviour
 	public List<AudioClip> audioClips;
 
 	public List<GameObject> panels;
+	public List<GameObject> modeButtons;
 	public List<GameObject> toothpicks;
 	public List<GameObject> speedButtons;
 	public List<GameObject> roofButtons;
@@ -42,10 +51,11 @@ public class HUDController : MonoBehaviour
 	private bool forcePaused = false;
 	private int selectedSpeed = 1;
 	private int selectedRoof = 1;
-	private int selectedPanel = -1;
+	private HudPanel selectedPanel = HudPanel.None;
 
 	public Text fundsText;
 	private int funds = 20000;
+	private float pauseTimer = 0;
 
 	void Start()
 	{
@@ -54,7 +64,6 @@ public class HUDController : MonoBehaviour
 		UpdateFunds();
 	}
 
-	private float pauseTimer = 0;
 	void Update()
 	{
 		if (forcePaused || selectedPanel > 0)
@@ -69,37 +78,68 @@ public class HUDController : MonoBehaviour
 		}
 	}
 
-	public void ActivatePanel(int m)
+	public void ActivatePanel(int id)
 	{
-		if (panels[m].activeSelf)
+		ActivatePanel((HudPanel)id);
+	}
+
+	public void ActivatePanel(HudPanel panel)
+	{
+		int panelId = (int)panel;
+
+		// Keep the game paused when building/buying
+		forcePaused = panelId > 0;
+
+		if (panels[panelId].activeSelf)
 		{
-			panels[m].SetActive(false);
-			toothpicks[m].SetActive(false);
-			selectedPanel = -1;
+			panels[panelId].SetActive(false);
+			toothpicks[panelId].SetActive(false);
+			selectedPanel = HudPanel.None;
+
+			var button = modeButtons[panelId].GetComponent<Button>();
+			ColorBlock block = button.colors;
+			block.normalColor = Color.white;
+			button.colors = block;
+
 			speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite;
-			pauseTimer = 0f;
 			speedButtons[0].GetComponent<Button>().interactable = true;
+			pauseTimer = 0f;
 		}
 		else
 		{
 			foreach (GameObject g in panels)
 			{
-				g.SetActive(m == panels.IndexOf(g));
+				g.SetActive(panelId == panels.IndexOf(g));
+			}
+			foreach (GameObject g in modeButtons)
+			{
+				var button = g.GetComponent<Button>();
+				ColorBlock block = button.colors;
+				block.normalColor = panelId == modeButtons.IndexOf(g) ? block.highlightedColor : Color.white;
+				button.colors = block;
 			}
 			foreach (GameObject g in toothpicks)
 			{
-				g.SetActive(m == toothpicks.IndexOf(g));
+				g.SetActive(panelId == toothpicks.IndexOf(g));
 			}
-			selectedPanel = m;
-			if (m > 0) speedButtons[0].GetComponent<Button>().interactable = false;
-			else { speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite; pauseTimer = 0f; speedButtons[0].GetComponent<Button>().interactable = true; }
+			selectedPanel = panel;
+			if (panel > 0) speedButtons[0].GetComponent<Button>().interactable = false;
+			else
+			{
+				speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite;
+				speedButtons[0].GetComponent<Button>().interactable = true;
+				pauseTimer = 0f;
+			}
 		}
 
-		if (selectedPanel == PANEL_BUY) {
+		if (selectedPanel == HudPanel.Buy)
+		{
 			musicController.SwitchMusic(MusicType.BuyMode);
 			buyController.enabled = true;
-		} else {
-			musicController.SwitchMusic(selectedPanel == PANEL_BUILD ? MusicType.BuildMode : MusicType.NoMusic);
+		}
+		else
+		{
+			musicController.SwitchMusic(selectedPanel == HudPanel.Build ? MusicType.BuildMode : MusicType.NoMusic);
 			catalogController.CloseCatalog();
 			buyController.enabled = false;
 		}
@@ -107,6 +147,9 @@ public class HUDController : MonoBehaviour
 
 	public void SetSpeed(int s)
 	{
+		if (forcePaused)
+			return;
+
 		PlaySpeedSound(paused ? 0 : selectedSpeed, paused ? s == 0 ? selectedSpeed : s : s);
 		if (s > 0)
 		{
@@ -114,7 +157,11 @@ public class HUDController : MonoBehaviour
 			selectedSpeed = s;
 			UpdateSpeed();
 		}
-		else { paused = !paused; pauseTimer = 0f; }
+		else
+		{
+			paused = !paused;
+			pauseTimer = 0f;
+		}
 	}
 
 	public void SetRoof(int r)
@@ -144,7 +191,8 @@ public class HUDController : MonoBehaviour
 	/// If this is an unoccuppied lot, this will return a large amount. (to be implemented)
 	/// </summary>
 	/// <returns>The current amount of funds.</returns>
-	public int GetFunds () {
+	public int GetFunds()
+	{
 		return funds;
 	}
 
