@@ -14,9 +14,11 @@ public class FurniturePresetData {
 	public string[] materialPaths;
 	public Vector3 rotationOffset;
 	public Vector3 positionOffset;
+	public Vector2Int[] occupiedTiles;
 
 	public FurniturePresetData (string guid, string name, string description, int price, int category, bool pickupable,
-		bool sellable, string modelName, string[] materialPaths, Vector3 rotationOffset, Vector3 positionOffset) {
+		bool sellable, string modelName, string[] materialPaths, Vector3 rotationOffset, Vector3 positionOffset,
+		Vector2Int[] occupiedTiles) {
 		this.guid = guid;
 		this.name = name;
 		this.description = description;
@@ -28,5 +30,6 @@ public class FurniturePresetData {
 		this.materialPaths = materialPaths;
 		this.rotationOffset = rotationOffset;
 		this.positionOffset = positionOffset;
+		this.occupiedTiles = occupiedTiles;
 	}
 }

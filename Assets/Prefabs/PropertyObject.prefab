@@ -20,7 +20,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4323488344731888}
   - component: {fileID: 33343616545654322}
-  - component: {fileID: 65262594026256680}
+  - component: {fileID: 64839505712330638}
   - component: {fileID: 23002091760516838}
   - component: {fileID: 114923574588537928}
   m_Layer: 0
@@ -84,18 +84,20 @@ MeshFilter:
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1459735444399992}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
---- !u!65 &65262594026256680
-BoxCollider:
+--- !u!64 &64839505712330638
+MeshCollider:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1459735444399992}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
+  serializedVersion: 3
+  m_Convex: 1
+  m_CookingOptions: 14
+  m_SkinWidth: 0.01
+  m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
 --- !u!114 &114923574588537928
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -112,5 +114,18 @@ MonoBehaviour:
     x: 0
     y: 0
     rotation: 0
-    type: 0
+    preset:
+      name: 
+      description: 
+      price: 0
+      category: 0
+      pickupable: 0
+      sellable: 0
+      modelName: 
+      materialPaths: []
+      rotationOffset: {x: 0, y: 0, z: 0}
+      positionOffset: {x: 0, y: 0, z: 0}
+      occupiedTiles: []
+      assetBundle: {fileID: 0}
     dummyObject: {fileID: 0}
+    value: 0

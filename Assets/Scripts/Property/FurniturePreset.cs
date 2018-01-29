@@ -18,6 +18,7 @@ public class FurniturePreset {
 	public string[] materialPaths;
 	public Vector3 rotationOffset;
 	public Vector3 positionOffset;
+	public Vector2Int[] occupiedTiles;
 	public AssetBundle assetBundle;
 	private Mesh mesh;
 	private Material[] materials;
@@ -35,6 +36,7 @@ public class FurniturePreset {
 		materialPaths = fpd.materialPaths;
 		rotationOffset = fpd.rotationOffset;
 		positionOffset = fpd.positionOffset;
+		occupiedTiles = fpd.occupiedTiles;
 	}
 
 	public Mesh GetMesh () {
@@ -90,9 +92,14 @@ public class FurniturePreset {
 	/// <param name="rotation">The rotation of the item, to which the offset will be added.</param>
 	public void ApplyToGameObject (GameObject gameObject, Vector3 position, Vector3 rotation) {
 		ApplyOffsets(gameObject.transform, position, rotation);
+		AdjustToTiles(gameObject.transform);
 		if (GetMesh() != null) {
 			gameObject.GetComponent<MeshFilter>().mesh = GetMesh();
 			gameObject.GetComponent<MeshRenderer>().materials = GetMaterials();
+			MeshCollider meshCollider = gameObject.GetComponent<MeshCollider>();
+			if (meshCollider != null) {
+				meshCollider.sharedMesh = GetMesh();
+			}
 		}
 	}
 
@@ -113,5 +120,24 @@ public class FurniturePreset {
 	public void ApplyOffsets (Transform transform, Vector3 position, Vector3 rotation) {
 		transform.rotation = Quaternion.Euler(rotation + rotationOffset);
 		transform.position = position + positionOffset;
+	}
+
+	/// <summary>
+	/// Adjust the given transform to this preset's occupied tiles.
+	/// This will move the lower-left tile of this object to the current center position.
+	/// </summary>
+	/// <param name="transform">The transform to adjust.</param>
+	public void AdjustToTiles (Transform transform) {
+		int widthTiles = 0;
+		int heightTiles = 0;
+		foreach (Vector2Int tile in occupiedTiles) {
+			if (tile.x >= widthTiles) {
+				widthTiles = tile.x + 1;
+			}
+			if (tile.y >= heightTiles) {
+				heightTiles = tile.y + 1;
+			}
+		}
+		transform.position += new Vector3((widthTiles - 1) * 0.5f, 0, (heightTiles - 1) * 0.5f);
 	}
 }

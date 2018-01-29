@@ -40,9 +40,11 @@ public class FurnitureFileInspector : Editor {
 		GUI.enabled = true;
 		presetData.modelName = EditorGUILayout.TextField("Model name", presetData.modelName);
 		EditorGUILayout.LabelField("Material paths");
-		presetData.materialPaths = StringArrayGuiField(presetData.materialPaths);
+		presetData.materialPaths = ArrayGuiField(presetData.materialPaths, StringGuiField);
 		presetData.rotationOffset = EditorGUILayout.Vector3Field("Rotation offset", presetData.rotationOffset);
 		presetData.positionOffset = EditorGUILayout.Vector3Field("Position offset", presetData.positionOffset);
+		EditorGUILayout.LabelField("Occupied tiles");
+		presetData.occupiedTiles = ArrayGuiField(presetData.occupiedTiles, Vector2IntGuiField);
 		if (GUILayout.Button("Apply changes")) {
 			SetContent(presetData);
 		}
@@ -50,17 +52,28 @@ public class FurnitureFileInspector : Editor {
 		GUILayout.Box(GetContent());
 	}
 
-	private string[] StringArrayGuiField (string[] arr) {
+	private T[] ArrayGuiField <T> (T[] arr, Func<int, T, T> fieldFunc) {
+		if (arr == null) {
+			arr = new T[0];
+		}
 		int length = Mathf.Clamp(EditorGUILayout.IntField("Length", arr.Length), 0, 100);
 		if (arr.Length != length) {
-			string[] oldArr = arr;
-			arr = new string[length];
+			T[] oldArr = arr;
+			arr = new T[length];
 			Array.Copy(oldArr, arr, Mathf.Min(oldArr.Length, arr.Length));
 		}
 		for (int i = 0; i < arr.Length; i++) {
-			arr[i] = EditorGUILayout.TextField("element " + i, arr[i]);
+			arr[i] = fieldFunc(i, arr[i]);
 		}
 		return arr;
+	}
+
+	private string StringGuiField (int i, string str) {
+		return EditorGUILayout.TextField("material " + i, str);
+	}
+	
+	private Vector2Int Vector2IntGuiField (int i, Vector2Int vector2Int) {
+		return EditorGUILayout.Vector2IntField("tile " + i, vector2Int);
 	}
 	
 	private string GetContent () {

@@ -58,6 +58,7 @@ public class PropertyObject {
 		dummyObject.transform.position = new Vector3(x + 0.5f, 0, y + 0.5f);
 		dummyObject.transform.eulerAngles = ObjectRotationUtil.GetRotationVector(rotation);
 		preset.ApplyOffsets(dummyObject.transform);
+		preset.AdjustToTiles(dummyObject.transform);
 	}
 
 	/// <summary>
