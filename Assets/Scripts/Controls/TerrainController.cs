@@ -83,7 +83,7 @@ public class TerrainController : MonoBehaviour
                 */
             }
         }
-        TileGraph graph = new TileGraph();
+        //TileGraph graph = new TileGraph();
         //Debug.Log("graph size: " + graph.getsize());
         //Debug.Log("done");
     }

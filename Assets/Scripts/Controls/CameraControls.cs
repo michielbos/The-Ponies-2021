@@ -9,13 +9,13 @@ public class CameraControls : MonoBehaviour {
     public GameObject Fire;
     Vector3 panStart;
 	Vector3 panStartPos;
-	Camera camera;
-    Vector3 start = new Vector3();
+	new Camera camera;
+    //Vector3 start = new Vector3();
     const float minSize = 1;
 	const float maxSize = 32;
     bool clicked = false;
     TerrainTile pathstart;
-    List<GameObject> pathlist=new List<GameObject>();
+    //List<GameObject> pathlist=new List<GameObject>();
 	// Use this for initialization
 	void Start () {
         camera = GetComponent<Camera>();
@@ -86,11 +86,11 @@ public class CameraControls : MonoBehaviour {
             clicked = !clicked;
             if (clicked)
             {
-                start=camera.ScreenToWorldPoint(Input.mousePosition);
+                //start=camera.ScreenToWorldPoint(Input.mousePosition);
             }
             else
             {
-                Vector3 end = camera.ScreenToWorldPoint(Input.mousePosition);
+                //Vector3 end = camera.ScreenToWorldPoint(Input.mousePosition);
 				//TODO: Fix IndexOutOfRangeException.
                 /*TileNode[] path = tm.Pathfind(tm.Get((int)start.x, (int)start.z), tm.Get((int)end.x, (int)end.z));
                 foreach(TileNode p in path)

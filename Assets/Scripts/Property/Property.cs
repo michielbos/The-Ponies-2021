@@ -137,4 +137,41 @@ public class Property {
 		}
 		return propertyObjectDataArr;
 	}
+	
+	/// <summary>
+	/// Get all property objects that have a tile overlapping the given position.
+	/// </summary>
+	/// <param name="x">The X coordinate of the tile.</param>
+	/// <param name="y">The Y coordinate of the tile.</param>
+	/// <returns>A list of all PropertyObjects with a tile overlapping the given X and Y.</returns>
+	public List<PropertyObject> GetObjectsOnTile (int x, int y) {
+		return GetObjectsOnTiles(new Vector2Int[] {new Vector2Int(x, y)});
+	}
+	
+	/// <summary>
+	/// Get all property objects that have a tile overlapping one of the given positions.
+	/// </summary>
+	/// <param name="tiles">The coordinates of the tiles.</param>
+	/// <returns>A list of all PropertyObjects with a tile overlapping at least one of the given positions.</returns>
+	public List<PropertyObject> GetObjectsOnTiles (Vector2Int[] tiles) {
+		//This might come with a performance overhead when there are a lot of objects.
+		//If performance becomes an issue, we could remember all overlapping objects inside each terrain tile.
+		List<PropertyObject> objectsOnTiles = new List<PropertyObject>();
+		foreach (PropertyObject propertyObject in propertyObjects) {
+			foreach (Vector2Int occupiedTile in propertyObject.GetOccupiedTiles()) {
+				bool overlaps = false;
+				foreach (Vector2Int tile in tiles) {
+					if (occupiedTile.x == tile.x && occupiedTile.y == tile.y) {
+						objectsOnTiles.Add(propertyObject);
+						overlaps = true;
+						break;
+					}
+				}
+				if (overlaps)
+					break;
+			}
+		}
+		return objectsOnTiles;
+	}
 }
+

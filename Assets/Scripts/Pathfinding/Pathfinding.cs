@@ -10,7 +10,7 @@ public class Pathfinding {
     {
         this.graph = graph;
         Dictionary<TileNode, float> distance = new Dictionary<TileNode, float>();
-        Dictionary<TileNode, TileNode> previous = new Dictionary<TileNode, TileNode>();
+        //Dictionary<TileNode, TileNode> previous = new Dictionary<TileNode, TileNode>();
         foreach (TileNode n in graph.nodes.Values)
         {
             distance[n] = int.MaxValue;
@@ -21,7 +21,7 @@ public class Pathfinding {
     {
         graph = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainManager>().graph;
         Dictionary<TileNode, float> distance = new Dictionary<TileNode, float>();
-        Dictionary<TileNode, TileNode> previous = new Dictionary<TileNode, TileNode>();
+        //Dictionary<TileNode, TileNode> previous = new Dictionary<TileNode, TileNode>();
         foreach (TileNode n in graph.nodes.Values)
         {
             distance[n] = int.MaxValue;
