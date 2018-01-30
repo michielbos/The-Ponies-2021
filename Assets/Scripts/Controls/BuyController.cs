@@ -150,7 +150,9 @@ public class BuyController : MonoBehaviour {
 			audioSource.PlayOneShot(buySound);
 			hudController.ChangeFunds(-placingPreset.price);
 			propertyController.PlacePropertyObject(targetTile.x, targetTile.y, ObjectRotation.SouthEast, placingPreset);
-			if (!Input.GetKey(KeyCode.LeftShift)) {
+			if (Input.GetKey(KeyCode.LeftShift)) {
+				BuildMarkerMoved(targetTile);
+			} else {
 				ClearSelection();
 			}
 		}
