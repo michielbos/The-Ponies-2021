@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// An object that can be placed on a lot, usually a piece of furniture.
@@ -58,6 +57,7 @@ public class PropertyObject {
 		dummyObject.transform.position = new Vector3(x + 0.5f, 0, y + 0.5f);
 		dummyObject.transform.eulerAngles = ObjectRotationUtil.GetRotationVector(rotation);
 		preset.ApplyOffsets(dummyObject.transform);
+		preset.AdjustToTiles(dummyObject.transform);
 	}
 
 	/// <summary>
@@ -65,5 +65,13 @@ public class PropertyObject {
 	/// </summary>
 	public void RemoveObject () {
 		Object.Destroy(dummyObject);
+	}
+
+	/// <summary>
+	/// Get the coordinates of the tiles occupied by this PropertyObject.
+	/// </summary>
+	/// <returns>A Vector2Int array of all occupied coordinates.</returns>
+	public Vector2Int[] GetOccupiedTiles () {
+		return preset.GetOccupiedTiles(new Vector2Int(x, y));
 	}
 }

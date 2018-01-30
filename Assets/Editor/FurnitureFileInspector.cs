@@ -9,20 +9,28 @@ using UnityEngine;
 /// </summary>
 [CustomEditor(typeof(DefaultAsset))]
 public class FurnitureFileInspector : Editor {
+	private const string RESOURCE_FOLDER = "Assets/Resources/";
 	private string path;
 	private DefaultAsset furnitureFile;
 	private FurniturePresetData presetData;
+	private Mesh presetModel;
+	private Material[] presetMaterials;
 
 	private void OnEnable () {
 		furnitureFile = (DefaultAsset)target;
 		path = AssetDatabase.GetAssetPath(furnitureFile);
 		if (path.ToLower().EndsWith(".furniture")) {
 			presetData = GetFurniturePresetData();
+			presetModel = Resources.Load<Mesh>(presetData.modelName);
+			presetMaterials = new Material[presetData.materialPaths.Length];
+			for (int i = 0; i < presetMaterials.Length; i++) {
+				presetMaterials[i] = Resources.Load<Material>(presetData.materialPaths[i]);
+			}
 		}
 	}
 
 	public override void OnInspectorGUI() {
-		if (!path.ToLower().EndsWith(".furniture"))
+		if (presetData == null)
 			return;
 		GUI.enabled = true;
 		GUILayout.Label("Furniture file: " + furnitureFile);
@@ -38,29 +46,42 @@ public class FurnitureFileInspector : Editor {
 		GUI.enabled = presetData.pickupable;
 		presetData.sellable = EditorGUILayout.Toggle("Sellable", presetData.pickupable && presetData.sellable);
 		GUI.enabled = true;
-		presetData.modelName = EditorGUILayout.TextField("Model name", presetData.modelName);
-		EditorGUILayout.LabelField("Material paths");
-		presetData.materialPaths = StringArrayGuiField(presetData.materialPaths);
+		presetModel = (Mesh) EditorGUILayout.ObjectField("Model", presetModel, typeof(Mesh), false);
+		EditorGUILayout.LabelField("Materials");
+		presetMaterials = ArrayGuiField(presetMaterials, MaterialGuiField);
 		presetData.rotationOffset = EditorGUILayout.Vector3Field("Rotation offset", presetData.rotationOffset);
 		presetData.positionOffset = EditorGUILayout.Vector3Field("Position offset", presetData.positionOffset);
+		EditorGUILayout.LabelField("Occupied tiles");
+		presetData.occupiedTiles = ArrayGuiField(presetData.occupiedTiles, Vector2IntGuiField);
 		if (GUILayout.Button("Apply changes")) {
-			SetContent(presetData);
+			ApplyChanges();
 		}
 		GUILayout.Label("Content:");
 		GUILayout.Box(GetContent());
 	}
 
-	private string[] StringArrayGuiField (string[] arr) {
+	private T[] ArrayGuiField <T> (T[] arr, Func<int, T, T> fieldFunc) {
+		if (arr == null) {
+			arr = new T[0];
+		}
 		int length = Mathf.Clamp(EditorGUILayout.IntField("Length", arr.Length), 0, 100);
 		if (arr.Length != length) {
-			string[] oldArr = arr;
-			arr = new string[length];
+			T[] oldArr = arr;
+			arr = new T[length];
 			Array.Copy(oldArr, arr, Mathf.Min(oldArr.Length, arr.Length));
 		}
 		for (int i = 0; i < arr.Length; i++) {
-			arr[i] = EditorGUILayout.TextField("element " + i, arr[i]);
+			arr[i] = fieldFunc(i, arr[i]);
 		}
 		return arr;
+	}
+
+	private Material MaterialGuiField (int i, Material material) {
+		return (Material) EditorGUILayout.ObjectField("material " + i, material, typeof(Material), false);
+	}
+	
+	private Vector2Int Vector2IntGuiField (int i, Vector2Int vector2Int) {
+		return EditorGUILayout.Vector2IntField("tile " + i, vector2Int);
 	}
 	
 	private string GetContent () {
@@ -75,7 +96,24 @@ public class FurnitureFileInspector : Editor {
 		File.WriteAllText(path, content);
 	}
 
-	private void SetContent (FurniturePresetData furniturePresetData) {
-		SetContent(JsonUtility.ToJson(furniturePresetData));
+	private void ApplyChanges () {
+		presetData.modelName = ToResourcePath(AssetDatabase.GetAssetPath(presetModel));
+		presetData.materialPaths = new string[presetMaterials.Length];
+		for (int i = 0; i < presetMaterials.Length; i++) {
+			presetData.materialPaths[i] = ToResourcePath(AssetDatabase.GetAssetPath(presetMaterials[i]));
+		}
+		SetContent(JsonUtility.ToJson(presetData));
+	}
+	
+	private string ToResourcePath (string path) {
+		if (!path.Contains(".")) {
+			Debug.LogWarning("Resource path is wrong or not set. Saving empty string.");
+			return "";
+		} 
+		if (path.StartsWith(RESOURCE_FOLDER)) {
+			return path.Substring(RESOURCE_FOLDER.Length, path.LastIndexOf('.') - RESOURCE_FOLDER.Length);
+		} 
+		Debug.LogWarning("Resource was not in resource path. Saved link might be wrong.");
+		return path.Substring(0, path.LastIndexOf('.'));
 	}
 }

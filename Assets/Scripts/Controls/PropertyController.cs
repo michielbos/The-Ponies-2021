@@ -76,7 +76,7 @@ public class PropertyController : MonoBehaviour {
 	/// <summary>
 	/// Remove a property object from the property. This will also clean up the dummy object in the scene.
 	/// </summary>
-	/// <param name="propertyObject"></param>
+	/// <param name="propertyObject">The PropertyObject to remove.</param>
 	public void RemovePropertyObject (PropertyObject propertyObject) {
 		propertyObject.RemoveObject();
 		property.propertyObjects.Remove(propertyObject);

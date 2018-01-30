@@ -7400,6 +7400,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buildMarkerPrefab: {fileID: 1824389368066718, guid: 82bbdb68d550441a19fcdb842a08311f,
     type: 2}
+  buyMarkingPrefab: {fileID: 1526158950045368, guid: 6a23cafba1dd24e5092c1de645542670,
+    type: 2}
+  buyMarkingNormalMaterial: {fileID: 2100000, guid: 70ca19e7a23ef4b6396c738d3b4b889d,
+    type: 2}
+  buyMarkingDisallowedMaterial: {fileID: 2100000, guid: e1865fdd2071b4a548cd3aef30074851,
+    type: 2}
   buySound: {fileID: 8300000, guid: e8ba0a1d34871f340a3dc4591c80c5f5, type: 3}
   denySound: {fileID: 8300000, guid: fffa4f35ce6b4544e8c707bdbfef5f19, type: 3}
   sellSound: {fileID: 8300000, guid: a0b53a8b217b905448eeddee1c1d7df3, type: 3}
