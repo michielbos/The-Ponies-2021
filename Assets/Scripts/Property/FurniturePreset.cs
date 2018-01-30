@@ -140,4 +140,16 @@ public class FurniturePreset {
 		}
 		transform.position += new Vector3((widthTiles - 1) * 0.5f, 0, (heightTiles - 1) * 0.5f);
 	}
+	
+	/// <summary>
+	/// Get the coordinates of the tiles that would be occupied by this PropertyObject if it was on the given position.
+	/// </summary>
+	/// <returns>A Vector2Int array of all coordinates that would be occupied.</returns>
+	public Vector2Int[] GetOccupiedTiles (Vector2Int position) {
+		Vector2Int[] occupied = new Vector2Int[occupiedTiles.Length];
+		for (int i = 0; i < occupied.Length; i++) {
+			occupied[i] = position + occupiedTiles[i];
+		}
+		return occupied;
+	}
 }

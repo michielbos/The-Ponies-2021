@@ -7,6 +7,8 @@ using UnityEngine;
 public class BuyController : MonoBehaviour {
 	public GameObject buildMarkerPrefab;
 	public GameObject buyMarkingPrefab;
+	public Material buyMarkingNormalMaterial;
+	public Material buyMarkingDisallowedMaterial;
 	public AudioClip buySound;
 	public AudioClip denySound;
 	public AudioClip sellSound;
@@ -22,7 +24,9 @@ public class BuyController : MonoBehaviour {
 	private GameObject buildMarker;
 	private ObjectRotation markerRotation = ObjectRotation.SouthEast;
 	private List<GameObject> buyMarkings;
-	private TerrainTile pressedTile;
+	private TerrainTile targetTile;
+	private bool pressingTile;
+	private bool canPlace;
 
 	public BuyController () {
 		buyMarkings = new List<GameObject>();
@@ -34,10 +38,10 @@ public class BuyController : MonoBehaviour {
 
 	public void Update () {
 		if (GetMovingPreset() != null) {
-			if (pressedTile == null) {
-				UpdateBuildMarker();
-			} else {
+			if (pressingTile) {
 				HandlePlacementHolding();
+			} else {
+				UpdateBuildMarker();
 			}
 		} else {
 			HandleHovering();
@@ -85,13 +89,37 @@ public class BuyController : MonoBehaviour {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
 		if (Physics.Raycast(ray, out hit, 1000, 1 << 8)) {
-			SetBuildMarkerPosition((int) hit.transform.position.x, (int) hit.transform.position.z);
-			if (Input.GetMouseButtonDown(0)) {
-				pressedTile = hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
+			TerrainTile newTargetTile = hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
+			if (newTargetTile != targetTile) {
+				BuildMarkerMoved(newTargetTile);
 			}
-		} else {
+			if (Input.GetMouseButtonDown(0)) {
+				pressingTile = true;
+			}
+		} else if (targetTile != null) {
 			buildMarker.transform.position = new Vector3(0, -100, 0);
+			targetTile = null;
 		}
+	}
+
+	private void BuildMarkerMoved (TerrainTile newTile) {
+		targetTile = newTile;
+		Vector2Int[] requiredTiles = GetMovingPreset().GetOccupiedTiles(new Vector2Int(targetTile.x, targetTile.y));
+		List<PropertyObject> occupyingObjects = propertyController.property.GetObjectsOnTiles(requiredTiles);
+		canPlace = placingPreset == null || placingPreset.price <= hudController.GetFunds();
+		if (canPlace && !cheatsController.moveObjectsMode) {
+			foreach (PropertyObject occupyingObject in occupyingObjects) {
+				if (occupyingObject == movingObject)
+					continue;
+				canPlace = false;
+				break;
+			}
+		}
+		foreach (GameObject buyMarking in buyMarkings) {
+			buyMarking.GetComponent<Renderer>().material =
+				canPlace ? buyMarkingNormalMaterial : buyMarkingDisallowedMaterial;
+		}
+		SetBuildMarkerPosition(targetTile.x, targetTile.y);
 	}
 
 	private void SetBuildMarkerPosition (int x, int y) {
@@ -105,27 +133,27 @@ public class BuyController : MonoBehaviour {
 	private void HandlePlacementHolding () {
 		if (Input.GetMouseButtonUp(0)) {
 			PlaceObject();
+			pressingTile = false;
 		}
 	}
 
 	private void PlaceObject () {
-		if (movingObject != null) {
-			audioSource.PlayOneShot(placeSound);
-			movingObject.x = pressedTile.x;
-			movingObject.y = pressedTile.y;
-			ClearSelection();
-		} else if (placingPreset.price > hudController.GetFunds()) {
+		if (!canPlace) {
 			audioSource.PlayOneShot(denySound);
+		} else if (movingObject != null) {
+			audioSource.PlayOneShot(placeSound);
+			movingObject.x = targetTile.x;
+			movingObject.y = targetTile.y;
+			ClearSelection();
 		} else {
 			audioSource.PlayOneShot(placeSound);
 			audioSource.PlayOneShot(buySound);
 			hudController.ChangeFunds(-placingPreset.price);
-			propertyController.PlacePropertyObject(pressedTile.x, pressedTile.y, ObjectRotation.SouthEast, placingPreset);
+			propertyController.PlacePropertyObject(targetTile.x, targetTile.y, ObjectRotation.SouthEast, placingPreset);
 			if (!Input.GetKey(KeyCode.LeftShift)) {
 				ClearSelection();
 			}
 		}
-		pressedTile = null;
 	}
 
 	private void HandleHovering () {
