@@ -6,30 +6,21 @@ using Object = UnityEngine.Object;
 /// Preset for furniture items. These are the objects that are displayed in the catalog.
 /// </summary>
 [Serializable]
-public class FurniturePreset {
-	public Guid guid;
-	public string name;
-	public string description;
-	public int price;
-	public ObjectCategory category;
-	public bool pickupable;
-	public bool sellable;
-	public string modelName;
-	public string[] materialPaths;
-	public Vector3 rotationOffset;
-	public Vector3 positionOffset;
-	public Vector2Int[] occupiedTiles;
+public class FurniturePreset : CatalogItem {
+	public readonly bool pickupable;
+	public readonly bool sellable;
+	public readonly string modelName;
+	public readonly string[] materialPaths;
+	public readonly Vector3 rotationOffset;
+	public readonly Vector3 positionOffset;
+	public readonly Vector2Int[] occupiedTiles;
 	public AssetBundle assetBundle;
 	private Mesh mesh;
 	private Material[] materials;
 	private RenderTexture previewTexture;
 
-	public FurniturePreset (FurniturePresetData fpd) {
-		guid = new Guid(fpd.guid);
-		name = fpd.name;
-		description = fpd.description;
-		price = fpd.price;
-		category = (ObjectCategory) fpd.category;
+	public FurniturePreset (FurniturePresetData fpd) : 
+		base(new Guid(fpd.guid), fpd.name, fpd.description, fpd.price, (ObjectCategory) fpd.category) {
 		pickupable = fpd.pickupable;
 		sellable = fpd.sellable;
 		modelName = fpd.modelName;
@@ -64,7 +55,7 @@ public class FurniturePreset {
 		return materials;
 	}
 
-	public Texture GetPreviewTexture () {
+	public override Texture GetPreviewTexture () {
 		if (previewTexture == null || !previewTexture.IsCreated()) {
 			GameObject previewGeneratorObj = GameObject.FindGameObjectWithTag("PreviewGenerator");
 			PreviewGenerator previewGenerator = previewGeneratorObj.GetComponent<PreviewGenerator>();
