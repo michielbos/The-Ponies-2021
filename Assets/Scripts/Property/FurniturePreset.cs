@@ -71,7 +71,7 @@ public class FurniturePreset : CatalogItem {
 	/// <param name="position">The position to place the object.</param>
 	public GameObject PlaceObject (GameObject prefab, Vector3 position) {
 		GameObject gameObject = Object.Instantiate(prefab);
-		ApplyToGameObject(gameObject, position, Vector3.zero);
+		ApplyToGameObject(gameObject, position, Vector3.zero, true);
 		return gameObject;
 	}
 
@@ -81,9 +81,13 @@ public class FurniturePreset : CatalogItem {
 	/// <param name="gameObject">The GameObject to apply the update to.</param>
 	/// <param name="position">The position of the item, to which the offset will be added.</param>
 	/// <param name="rotation">The rotation of the item, to which the offset will be added.</param>
-	public void ApplyToGameObject (GameObject gameObject, Vector3 position, Vector3 rotation) {
+	/// <param name="adjustToTiles">Whether AdjustToTiles should be called.
+	/// If true, the object will be positioned with its lowest tile on the given position, instead of its center point.</param>
+	public void ApplyToGameObject (GameObject gameObject, Vector3 position, Vector3 rotation, bool adjustToTiles) {
 		ApplyOffsets(gameObject.transform, position, rotation);
-		AdjustToTiles(gameObject.transform);
+		if (adjustToTiles) {
+			AdjustToTiles(gameObject.transform);
+		}
 		if (GetMesh() != null) {
 			gameObject.GetComponent<MeshFilter>().mesh = GetMesh();
 			gameObject.GetComponent<MeshRenderer>().materials = GetMaterials();
