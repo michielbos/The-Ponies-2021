@@ -1,4 +1,7 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Linq;
+using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class MusicController : MonoBehaviour {
     public AudioClip[] neighbourhoodSongs;
@@ -9,26 +12,64 @@ public class MusicController : MonoBehaviour {
     public AudioSource audioSource;
     private MusicType currentMusicType = MusicType.NoMusic;
 
+    private AudioClip[][] playingClips;
+    private int[] playingIndex;
+
+    private void Start () {
+        int numberOfTypes = Enum.GetNames(typeof(MusicType)).Length;
+        playingClips = new AudioClip[numberOfTypes][];
+        playingIndex = new int[numberOfTypes];
+        for (int i = 0; i < numberOfTypes; i++) {
+            ShufflePlayingList((MusicType) i);
+        }
+    }
+
     private void Update () {
         if (audioSource.clip != null && !audioSource.isPlaying) {
-            PlayRandomSong();
+            PlayNextSong();
         }
     }
     
     public void SwitchMusic (MusicType musicType) {
         currentMusicType = musicType;
-        PlayRandomSong();
+        PlayNextSong();
     }
 
-    private void PlayRandomSong () {
+    private void PlayNextSong () {
         AudioClip[] songs = GetSongsForType(currentMusicType);
         if (songs.Length <= 0) {
             audioSource.Stop();
             audioSource.clip = null;
             return;
         }
-        audioSource.clip = songs[Random.Range(0, songs.Length)];
+        int musicType = (int) currentMusicType;
+        if (playingIndex[musicType] >= songs.Length) {
+            ShufflePlayingList(currentMusicType);
+        }
+        AudioClip[] playing = playingClips[musicType];
+        audioSource.clip = playing[playingIndex[musicType]++];
         audioSource.PlayDelayed(2);
+    }
+
+    private void ShufflePlayingList (MusicType musicType) {
+        AudioClip[] songs = GetSongsForType(musicType);
+        int musicTypeIndex = (int) musicType;
+        AudioClip[] playing = playingClips[musicTypeIndex];
+        AudioClip lastSong = null;
+        
+        if (playing != null && playing.Length > 1) {
+            lastSong = playing[playing.Length - 1];
+        }
+        playing = ((AudioClip[]) songs.Clone()).OrderBy(x => Random.value).ToArray();
+        if (playing.Length > 1 && playing[0] == lastSong) {
+            int switchIndex = Random.Range(1, playing.Length);
+            playing[0] = playing[switchIndex];
+            playing[switchIndex] = lastSong;
+        }
+        playingClips[musicTypeIndex] = playing;
+        playingIndex[musicTypeIndex] = 0;
+        
+        
     }
 
     private AudioClip[] GetSongsForType (MusicType musicType) {

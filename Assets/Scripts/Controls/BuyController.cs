@@ -60,7 +60,7 @@ public class BuyController : MonoBehaviour {
 
 	private void CreateBuildMarker () {
 		buildMarker = Instantiate(buildMarkerPrefab);
-		placingPreset.ApplyToGameObject(buildMarker, buildMarker.transform.position, buildMarker.transform.eulerAngles);
+		placingPreset.ApplyToGameObject(buildMarker, buildMarker.transform.position, buildMarker.transform.eulerAngles, true);
 		SetBuildMarkerPosition(0, 0);
 		PlaceBuyMarkings(0, 0);
 	}

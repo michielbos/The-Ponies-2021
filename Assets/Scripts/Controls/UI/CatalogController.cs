@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -90,7 +89,7 @@ public class CatalogController : MonoBehaviour {
 
 	private void UpdateCatalogButtons () {
 		EmptyCatalog();
-		List<FurniturePreset> furniturePresets = FurniturePresets.Instance.GetFurniturePresets(category);
+		List<CatalogItem> catalogItems = CatalogItemProvider.GetCatalogItems(category);
 		int barMargin = 35;
 		int buttonMargin = 5;
 		Vector2 buttonSize = buttonPrefab.GetComponent<RectTransform>().sizeDelta;
@@ -98,9 +97,9 @@ public class CatalogController : MonoBehaviour {
 		float spareWidth = buttonAreaWidth % (buttonSize.x + buttonMargin);
 		int maxHorizontal = Mathf.FloorToInt(buttonAreaWidth / (buttonSize.x + buttonMargin));
 		int maxButtons = maxHorizontal * 2;
-		UpdatePreviousAndNextButtons(furniturePresets.Count, maxButtons);
-		for (int i = tab * maxButtons; i < (tab + 1) * maxButtons && i < furniturePresets.Count; i++) {
-			FurniturePreset preset = furniturePresets[i];
+		UpdatePreviousAndNextButtons(catalogItems.Count, maxButtons);
+		for (int i = tab * maxButtons; i < (tab + 1) * maxButtons && i < catalogItems.Count; i++) {
+			CatalogItem catalogItem = catalogItems[i];
 			Button button = Instantiate(buttonPrefab, transform);
 			RectTransform rectTransform = button.GetComponent<RectTransform>();
 			Vector3 pos = rectTransform.anchoredPosition;
@@ -108,8 +107,8 @@ public class CatalogController : MonoBehaviour {
 			if (i >= tab * maxButtons + maxHorizontal)
 				pos.y -= buttonSize.y + buttonMargin;
 			rectTransform.anchoredPosition = pos;
-			button.GetComponentInChildren<RawImage>().texture = preset.GetPreviewTexture();
-			button.onClick.AddListener(delegate { OnCatalogItemClicked(button, preset); });
+			button.GetComponentInChildren<RawImage>().texture = catalogItem.GetPreviewTexture();
+			button.onClick.AddListener(delegate { OnCatalogItemClicked(button, catalogItem); });
 			catalogItemButtons.Add(button);
 		}
 	}
@@ -120,9 +119,13 @@ public class CatalogController : MonoBehaviour {
 		catalogNextButton.transform.localScale = tab >= numberOfTabs - 1 ? new Vector3(0, 0, 0) : new Vector3(1, 1, 1);
 	}
 
-	private void OnCatalogItemClicked (Button button, FurniturePreset preset) {
-		buyController.SetPlacingPreset(preset);
-		objectInfoPanel.DisplayItem(preset);
+	private void OnCatalogItemClicked (Button button, CatalogItem catalogItem) {
+		//Not exactly clean, but it works for now.
+		FurniturePreset furniturePreset = catalogItem as FurniturePreset;
+		if (furniturePreset != null) {
+			buyController.SetPlacingPreset(furniturePreset);
+		}
+		objectInfoPanel.DisplayItem(catalogItem);
 		objectInfoPanel.SetVisible(true);
 		audioSource.PlayOneShot(clickSound);
 		audioSource.PlayOneShot(whooshSound);

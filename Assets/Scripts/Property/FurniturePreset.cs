@@ -6,30 +6,21 @@ using Object = UnityEngine.Object;
 /// Preset for furniture items. These are the objects that are displayed in the catalog.
 /// </summary>
 [Serializable]
-public class FurniturePreset {
-	public Guid guid;
-	public string name;
-	public string description;
-	public int price;
-	public ObjectCategory category;
-	public bool pickupable;
-	public bool sellable;
-	public string modelName;
-	public string[] materialPaths;
-	public Vector3 rotationOffset;
-	public Vector3 positionOffset;
-	public Vector2Int[] occupiedTiles;
+public class FurniturePreset : CatalogItem {
+	public readonly bool pickupable;
+	public readonly bool sellable;
+	public readonly string modelName;
+	public readonly string[] materialPaths;
+	public readonly Vector3 rotationOffset;
+	public readonly Vector3 positionOffset;
+	public readonly Vector2Int[] occupiedTiles;
 	public AssetBundle assetBundle;
 	private Mesh mesh;
 	private Material[] materials;
 	private RenderTexture previewTexture;
 
-	public FurniturePreset (FurniturePresetData fpd) {
-		guid = new Guid(fpd.guid);
-		name = fpd.name;
-		description = fpd.description;
-		price = fpd.price;
-		category = (ObjectCategory) fpd.category;
+	public FurniturePreset (FurniturePresetData fpd) : 
+		base(new Guid(fpd.guid), fpd.name, fpd.description, fpd.price, (ObjectCategory) fpd.category) {
 		pickupable = fpd.pickupable;
 		sellable = fpd.sellable;
 		modelName = fpd.modelName;
@@ -64,7 +55,7 @@ public class FurniturePreset {
 		return materials;
 	}
 
-	public Texture GetPreviewTexture () {
+	public override Texture GetPreviewTexture () {
 		if (previewTexture == null || !previewTexture.IsCreated()) {
 			GameObject previewGeneratorObj = GameObject.FindGameObjectWithTag("PreviewGenerator");
 			PreviewGenerator previewGenerator = previewGeneratorObj.GetComponent<PreviewGenerator>();
@@ -80,7 +71,7 @@ public class FurniturePreset {
 	/// <param name="position">The position to place the object.</param>
 	public GameObject PlaceObject (GameObject prefab, Vector3 position) {
 		GameObject gameObject = Object.Instantiate(prefab);
-		ApplyToGameObject(gameObject, position, Vector3.zero);
+		ApplyToGameObject(gameObject, position, Vector3.zero, true);
 		return gameObject;
 	}
 
@@ -90,9 +81,13 @@ public class FurniturePreset {
 	/// <param name="gameObject">The GameObject to apply the update to.</param>
 	/// <param name="position">The position of the item, to which the offset will be added.</param>
 	/// <param name="rotation">The rotation of the item, to which the offset will be added.</param>
-	public void ApplyToGameObject (GameObject gameObject, Vector3 position, Vector3 rotation) {
+	/// <param name="adjustToTiles">Whether AdjustToTiles should be called.
+	/// If true, the object will be positioned with its lowest tile on the given position, instead of its center point.</param>
+	public void ApplyToGameObject (GameObject gameObject, Vector3 position, Vector3 rotation, bool adjustToTiles) {
 		ApplyOffsets(gameObject.transform, position, rotation);
-		AdjustToTiles(gameObject.transform);
+		if (adjustToTiles) {
+			AdjustToTiles(gameObject.transform);
+		}
 		if (GetMesh() != null) {
 			gameObject.GetComponent<MeshFilter>().mesh = GetMesh();
 			gameObject.GetComponent<MeshRenderer>().materials = GetMaterials();

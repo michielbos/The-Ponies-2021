@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 /// <summary>
@@ -16,13 +14,13 @@ public class ObjectInfoPanel : MonoBehaviour {
     /// <summary>
     /// Update the panel with the information of the given item.
     /// </summary>
-    /// <param name="furniturePreset">The FurniturePreset to display.</param>
-    public void DisplayItem (FurniturePreset furniturePreset) {
-        titleText.text = furniturePreset.name;
-        descriptionText.text = furniturePreset.description;
-        priceText.text = "$" + furniturePreset.price;
+    /// <param name="catalogItem">The FurniturePreset to display.</param>
+    public void DisplayItem (CatalogItem catalogItem) {
+        titleText.text = catalogItem.name;
+        descriptionText.text = catalogItem.description;
+        priceText.text = "$" + catalogItem.price;
         notesText.text = "(no notes yet)";
-        previewImage.texture = furniturePreset.GetPreviewTexture();
+        previewImage.texture = catalogItem.GetPreviewTexture();
     }
 
     /// <summary>
