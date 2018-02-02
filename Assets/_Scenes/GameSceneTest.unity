@@ -636,17 +636,6 @@ MonoBehaviour:
       y: 0
       rotation: 0
       preset:
-        name: 
-        description: 
-        price: 0
-        category: 0
-        pickupable: 0
-        sellable: 0
-        modelName: 
-        materialPaths: []
-        rotationOffset: {x: 0, y: 0, z: 0}
-        positionOffset: {x: 0, y: 0, z: 0}
-        occupiedTiles: []
         assetBundle: {fileID: 0}
       dummyObject: {fileID: 0}
       value: 0
