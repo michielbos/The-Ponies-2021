@@ -60,7 +60,8 @@ public class BuyController : MonoBehaviour {
 
 	private void CreateBuildMarker () {
 		buildMarker = Instantiate(buildMarkerPrefab);
-		placingPreset.ApplyToGameObject(buildMarker, buildMarker.transform.position, buildMarker.transform.eulerAngles, true);
+		//TODO: Set skin
+		placingPreset.ApplyToGameObject(buildMarker, buildMarker.transform.position, buildMarker.transform.eulerAngles, 0, true);
 		SetBuildMarkerPosition(0, 0);
 		PlaceBuyMarkings(0, 0);
 	}
@@ -149,7 +150,9 @@ public class BuyController : MonoBehaviour {
 			audioSource.PlayOneShot(placeSound);
 			audioSource.PlayOneShot(buySound);
 			hudController.ChangeFunds(-placingPreset.price);
-			propertyController.PlacePropertyObject(targetTile.x, targetTile.y, ObjectRotation.SouthEast, placingPreset);
+			//TODO: Set skin
+			int tempSkin = Random.Range(0, placingPreset.furnitureSkins.Length);
+			propertyController.PlacePropertyObject(targetTile.x, targetTile.y, ObjectRotation.SouthEast, placingPreset, tempSkin);
 			if (Input.GetKey(KeyCode.LeftShift)) {
 				BuildMarkerMoved(targetTile);
 			} else {

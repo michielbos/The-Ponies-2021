@@ -10,13 +10,13 @@ public class FurniturePreset : CatalogItem {
 	public readonly bool pickupable;
 	public readonly bool sellable;
 	public readonly string modelName;
-	public readonly string[] materialPaths;
+	public readonly FurnitureSkinData[] furnitureSkins;
 	public readonly Vector3 rotationOffset;
 	public readonly Vector3 positionOffset;
 	public readonly Vector2Int[] occupiedTiles;
 	public AssetBundle assetBundle;
 	private Mesh mesh;
-	private Material[] materials;
+	private Material[][] materials;
 	private RenderTexture previewTexture;
 
 	public FurniturePreset (FurniturePresetData fpd) : 
@@ -24,10 +24,11 @@ public class FurniturePreset : CatalogItem {
 		pickupable = fpd.pickupable;
 		sellable = fpd.sellable;
 		modelName = fpd.modelName;
-		materialPaths = fpd.materialPaths;
+		furnitureSkins = fpd.furnitureSkins;
 		rotationOffset = fpd.rotationOffset;
 		positionOffset = fpd.positionOffset;
 		occupiedTiles = fpd.occupiedTiles;
+		materials = new Material[furnitureSkins.Length][];
 	}
 
 	public Mesh GetMesh () {
@@ -41,18 +42,24 @@ public class FurniturePreset : CatalogItem {
 		return mesh;
 	}
 
-	public Material[] GetMaterials () {
-		if (materials == null) {
-			materials = new Material[materialPaths.Length];
-			for (int i = 0; i < materialPaths.Length; i++) {
+	/// <summary>
+	/// Get the materials for the given skin.
+	/// </summary>
+	/// <param name="skin"></param>
+	/// <returns></returns>
+	public Material[] GetMaterials (int skin) {
+		if (materials[skin] == null) {
+			string[] materialPaths = furnitureSkins[skin].materialPaths;
+			materials[skin] = new Material[materialPaths.Length];
+			for (int i = 0; i < materials[skin].Length; i++) {
 				if (assetBundle != null) {
-					materials[i] = assetBundle.LoadAsset<Material>("assets/" + materialPaths[i]);
+					materials[skin][i] = assetBundle.LoadAsset<Material>("assets/" + materialPaths[i]);
 				} else {
-					materials[i] = Resources.Load<Material>(materialPaths[i]);
+					materials[skin][i] = Resources.Load<Material>(materialPaths[i]);
 				}
 			}
 		}
-		return materials;
+		return materials[skin];
 	}
 
 	public override Texture GetPreviewTexture () {
@@ -69,9 +76,9 @@ public class FurniturePreset : CatalogItem {
 	/// </summary>
 	/// <param name="prefab">The prefab to instantiate. It needs to have a MeshFilter and MeshRenderer.</param>
 	/// <param name="position">The position to place the object.</param>
-	public GameObject PlaceObject (GameObject prefab, Vector3 position) {
+	public GameObject PlaceObject (GameObject prefab, Vector3 position, int skin) {
 		GameObject gameObject = Object.Instantiate(prefab);
-		ApplyToGameObject(gameObject, position, Vector3.zero, true);
+		ApplyToGameObject(gameObject, position, Vector3.zero, skin, true);
 		return gameObject;
 	}
 
@@ -81,16 +88,17 @@ public class FurniturePreset : CatalogItem {
 	/// <param name="gameObject">The GameObject to apply the update to.</param>
 	/// <param name="position">The position of the item, to which the offset will be added.</param>
 	/// <param name="rotation">The rotation of the item, to which the offset will be added.</param>
+	/// <param name="skin">The skin of the furniture item.</param>
 	/// <param name="adjustToTiles">Whether AdjustToTiles should be called.
 	/// If true, the object will be positioned with its lowest tile on the given position, instead of its center point.</param>
-	public void ApplyToGameObject (GameObject gameObject, Vector3 position, Vector3 rotation, bool adjustToTiles) {
+	public void ApplyToGameObject (GameObject gameObject, Vector3 position, Vector3 rotation, int skin, bool adjustToTiles) {
 		ApplyOffsets(gameObject.transform, position, rotation);
 		if (adjustToTiles) {
 			AdjustToTiles(gameObject.transform);
 		}
 		if (GetMesh() != null) {
 			gameObject.GetComponent<MeshFilter>().mesh = GetMesh();
-			gameObject.GetComponent<MeshRenderer>().materials = GetMaterials();
+			gameObject.GetComponent<MeshRenderer>().materials = GetMaterials(skin);
 			MeshCollider meshCollider = gameObject.GetComponent<MeshCollider>();
 			if (meshCollider != null) {
 				meshCollider.sharedMesh = GetMesh();

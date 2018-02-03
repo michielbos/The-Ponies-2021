@@ -14,7 +14,7 @@ public class PreviewGenerator : MonoBehaviour {
     /// <returns>A RenderTexture that contains the generated preview.</returns>
     public RenderTexture CreatePreview (FurniturePreset furniturePreset) {
         Camera camera = GetComponent<Camera>();
-        furniturePreset.ApplyToGameObject(previewObject, previewPosition, Vector3.zero, false);
+        furniturePreset.ApplyToGameObject(previewObject, previewPosition, Vector3.zero, 0, false);
         RenderTexture renderTexture = new RenderTexture(180, 180, 24, RenderTextureFormat.ARGB32);
         camera.enabled = true;
         camera.targetTexture = renderTexture;

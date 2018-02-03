@@ -67,8 +67,9 @@ public class PropertyController : MonoBehaviour {
 	/// <param name="y">The Y position of the object.</param>
 	/// <param name="objectRotation">The rotation of the object.</param>
 	/// <param name="preset">The FurniturePreset that this object is based on.</param>
-	public void PlacePropertyObject (int x, int y, ObjectRotation objectRotation, FurniturePreset preset) {
-		PropertyObject propertyObject = new PropertyObject(nextObjectId++, x, y, objectRotation, preset);
+	/// <param name="skin">The number of the skin to apply to this object.</param>
+	public void PlacePropertyObject (int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
+		PropertyObject propertyObject = new PropertyObject(nextObjectId++, x, y, objectRotation, preset, skin);
 		property.propertyObjects.Add(propertyObject);
 		propertyObject.PlaceObject(propertyObjectPrefab);
 	}

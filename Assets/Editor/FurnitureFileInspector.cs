@@ -14,7 +14,7 @@ public class FurnitureFileInspector : Editor {
 	private DefaultAsset furnitureFile;
 	private FurniturePresetData presetData;
 	private Mesh presetModel;
-	private Material[] presetMaterials;
+	private Material[][] presetMaterials;
 
 	private void OnEnable () {
 		furnitureFile = (DefaultAsset)target;
@@ -22,9 +22,13 @@ public class FurnitureFileInspector : Editor {
 		if (path.ToLower().EndsWith(".furniture")) {
 			presetData = GetFurniturePresetData();
 			presetModel = Resources.Load<Mesh>(presetData.modelName);
-			presetMaterials = new Material[presetData.materialPaths.Length];
-			for (int i = 0; i < presetMaterials.Length; i++) {
-				presetMaterials[i] = Resources.Load<Material>(presetData.materialPaths[i]);
+			presetMaterials = new Material[presetData.furnitureSkins.Length][];
+			for (int skin = 0; skin < presetMaterials.Length; skin++) {
+				string[] materialPaths = presetData.furnitureSkins[skin].materialPaths;
+				presetMaterials[skin] = new Material[materialPaths.Length];
+				for (int i = 0; i < presetMaterials[skin].Length; i++) {
+					presetMaterials[skin][i] = Resources.Load<Material>(presetData.furnitureSkins[skin].materialPaths[i]);
+				}
 			}
 		}
 	}
@@ -47,8 +51,8 @@ public class FurnitureFileInspector : Editor {
 		presetData.sellable = EditorGUILayout.Toggle("Sellable", presetData.pickupable && presetData.sellable);
 		GUI.enabled = true;
 		presetModel = (Mesh) EditorGUILayout.ObjectField("Model", presetModel, typeof(Mesh), false);
-		EditorGUILayout.LabelField("Materials");
-		presetMaterials = ArrayGuiField(presetMaterials, MaterialGuiField);
+		EditorGUILayout.LabelField("Skins");
+		presetMaterials = JaggedArrayGuiField(presetMaterials, MaterialGuiField);
 		presetData.rotationOffset = EditorGUILayout.Vector3Field("Rotation offset", presetData.rotationOffset);
 		presetData.positionOffset = EditorGUILayout.Vector3Field("Position offset", presetData.positionOffset);
 		EditorGUILayout.LabelField("Occupied tiles");
@@ -75,13 +79,30 @@ public class FurnitureFileInspector : Editor {
 		}
 		return arr;
 	}
-
-	private Material MaterialGuiField (int i, Material material) {
-		return (Material) EditorGUILayout.ObjectField("material " + i, material, typeof(Material), false);
+	
+	private T[][] JaggedArrayGuiField <T> (T[][] arr, Func<int, T, T> fieldFunc) {
+		if (arr == null) {
+			arr = new T[0][];
+		}
+		int height = Mathf.Clamp(EditorGUILayout.IntField("Height", arr.Length), 0, 100);
+		if (arr.Length != height) {
+			T[][] oldArr = arr;
+			arr = new T[height][];
+			Array.Copy(oldArr, arr, Mathf.Min(oldArr.Length, arr.Length));
+		}
+		for (int h = 0; h < arr.Length; h++) {
+			EditorGUILayout.LabelField("Array " + h);
+			arr[h] = ArrayGuiField(arr[h], fieldFunc);
+		}
+		return arr;
 	}
 	
-	private Vector2Int Vector2IntGuiField (int i, Vector2Int vector2Int) {
-		return EditorGUILayout.Vector2IntField("tile " + i, vector2Int);
+	private Material MaterialGuiField (int index, Material material) {
+		return (Material) EditorGUILayout.ObjectField("Material " + index, material, typeof(Material), false);
+	}
+	
+	private Vector2Int Vector2IntGuiField (int index, Vector2Int vector2Int) {
+		return EditorGUILayout.Vector2IntField("Tile " + index, vector2Int);
 	}
 	
 	private string GetContent () {
@@ -98,9 +119,12 @@ public class FurnitureFileInspector : Editor {
 
 	private void ApplyChanges () {
 		presetData.modelName = ToResourcePath(AssetDatabase.GetAssetPath(presetModel));
-		presetData.materialPaths = new string[presetMaterials.Length];
-		for (int i = 0; i < presetMaterials.Length; i++) {
-			presetData.materialPaths[i] = ToResourcePath(AssetDatabase.GetAssetPath(presetMaterials[i]));
+		presetData.furnitureSkins = new FurnitureSkinData[presetMaterials.Length];
+		for (int skin = 0; skin < presetMaterials.Length; skin++) {
+			presetData.furnitureSkins[skin] = new FurnitureSkinData(new string[presetMaterials[skin].Length]); 
+			for (int i = 0; i < presetMaterials[skin].Length; i++) {
+				presetData.furnitureSkins[skin].materialPaths[i] = ToResourcePath(AssetDatabase.GetAssetPath(presetMaterials[skin][i]));
+			}
 		}
 		SetContent(JsonUtility.ToJson(presetData));
 	}

@@ -70,10 +70,23 @@ public class FurniturePresetLoader {
 	
 	private void AddFurniturePreset (Dictionary<Guid, FurniturePreset> presets, string file, FurniturePreset preset) {
 		if (!presets.ContainsKey(preset.guid)) {
-			presets.Add(preset.guid, preset);
+			if (ValidateFurniturePreset(preset)) {
+				presets.Add(preset.guid, preset);
+			} else {
+				Debug.LogWarning("Furniture item " + preset.guid + " (" + file + ") didn't validate. Not loading.");
+			}
 		} else {
 			Debug.LogWarning("Furniture item with GUID " + preset.guid + " already exists. Not loading file " + file + ".");
 		}
+	}
+
+	private bool ValidateFurniturePreset (FurniturePreset preset) {
+		//We are probably still missing a lot of checks.
+		if (preset.furnitureSkins == null || preset.furnitureSkins.Length <= 0) {
+			Debug.LogWarning("Preset has no furniture skins.");
+			return false;
+		}
+		return true;
 	}
 
 	private FurniturePreset LoadPreset (string path) {
