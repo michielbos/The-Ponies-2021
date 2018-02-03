@@ -1,1 +1,0 @@
-{"guid":"00000000-39f6-4dab-82fb-afab6586c228","name":"Blue chair","description":"This is a chair. It is blue.","price":350,"category":1,"pickupable":true,"sellable":true,"modelName":"Models/Furniture/Chair","furnitureSkins":[],"rotationOffset":{"x":270.0,"y":180.0,"z":0.0},"positionOffset":{"x":0.0,"y":0.0,"z":0.0},"occupiedTiles":[{"x":0,"y":0}]}
