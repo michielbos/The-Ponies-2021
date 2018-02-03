@@ -17,7 +17,7 @@ public class FurniturePreset : CatalogItem {
 	public AssetBundle assetBundle;
 	private Mesh mesh;
 	private Material[][] materials;
-	private RenderTexture previewTexture;
+	private RenderTexture[] previewTextures;
 
 	public FurniturePreset (FurniturePresetData fpd) : 
 		base(new Guid(fpd.guid), fpd.name, fpd.description, fpd.price, (ObjectCategory) fpd.category) {
@@ -62,15 +62,22 @@ public class FurniturePreset : CatalogItem {
 		return materials[skin];
 	}
 
-	public override Texture GetPreviewTexture () {
-		if (previewTexture == null || !previewTexture.IsCreated()) {
-			GameObject previewGeneratorObj = GameObject.FindGameObjectWithTag("PreviewGenerator");
-			PreviewGenerator previewGenerator = previewGeneratorObj.GetComponent<PreviewGenerator>();
-			previewTexture = previewGenerator.CreatePreview(this);
+	public override Texture[] GetPreviewTextures () {
+		if (previewTextures == null) {
+			previewTextures = new RenderTexture[furnitureSkins.Length];
 		}
-		return previewTexture;
+		Texture[] textures = new Texture[furnitureSkins.Length];
+		for (int i = 0; i < previewTextures.Length; i++) {
+			if (previewTextures[i] == null || !previewTextures[i].IsCreated()) {
+				GameObject previewGeneratorObj = GameObject.FindGameObjectWithTag("PreviewGenerator");
+				PreviewGenerator previewGenerator = previewGeneratorObj.GetComponent<PreviewGenerator>();
+				previewTextures[i] = previewGenerator.CreatePreview(this, i);
+			}
+			textures[i] = previewTextures[i];
+		}
+		return textures;
 	}
-	
+
 	/// <summary>
 	/// Place a GameObject with the base rotation, model and materials of this furniture preset.
 	/// </summary>

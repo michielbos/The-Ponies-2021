@@ -20,8 +20,11 @@ public abstract class CatalogItem {
     }
 
     /// <summary>
-    /// This should return a preview texture for this catalog item, which will be displayed on the buttons and in the preview popup.
+    /// This should return an array of textures with the previews of this catalog item with its skins, to be displayed
+    /// on the catalog button, preview popup and (if more than 1 is provided) the skin selection buttons.
+    /// If this catalog item has no skins, this should return an array with the normal preview texture as only element.
+    /// Keep in mind that this should never return an array longer than the number of skins an item has.
     /// </summary>
-    /// <returns>A preview Texture for this CatalogItem.</returns>
-    public abstract Texture GetPreviewTexture ();
+    /// <returns>An array of preview Textures for this CatalogItem with its various skins.</returns>
+    public abstract Texture[] GetPreviewTextures ();
 }

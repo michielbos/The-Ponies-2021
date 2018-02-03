@@ -11,10 +11,11 @@ public class PreviewGenerator : MonoBehaviour {
     /// Create a preview for the given furniture preset.
     /// </summary>
     /// <param name="furniturePreset">The preset to create a preview from.</param>
+    /// <param name="skin">The skin to create a preview for.</param>
     /// <returns>A RenderTexture that contains the generated preview.</returns>
-    public RenderTexture CreatePreview (FurniturePreset furniturePreset) {
+    public RenderTexture CreatePreview (FurniturePreset furniturePreset, int skin) {
         Camera camera = GetComponent<Camera>();
-        furniturePreset.ApplyToGameObject(previewObject, previewPosition, Vector3.zero, 0, false);
+        furniturePreset.ApplyToGameObject(previewObject, previewPosition, Vector3.zero, skin, false);
         RenderTexture renderTexture = new RenderTexture(180, 180, 24, RenderTextureFormat.ARGB32);
         camera.enabled = true;
         camera.targetTexture = renderTexture;

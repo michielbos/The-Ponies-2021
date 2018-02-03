@@ -8405,6 +8405,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ea1b63d16061e4cb28934777a5618e0b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buttonPrefab: {fileID: 114391662634794322, guid: 02e9743a88ad84636a37c8b055df867f,
+    type: 2}
+  catalogController: {fileID: 114289265587149008}
   titleText: {fileID: 114178938528215124}
   descriptionText: {fileID: 114688392384000074}
   priceText: {fileID: 114603100296829368}
@@ -15286,7 +15289,7 @@ RectTransform:
   m_AnchorMin: {x: 0, y: 1}
   m_AnchorMax: {x: 0, y: 1}
   m_AnchoredPosition: {x: 200, y: -35}
-  m_SizeDelta: {x: 380, y: 120}
+  m_SizeDelta: {x: 380, y: 105}
   m_Pivot: {x: 0, y: 1}
 --- !u!224 &224819322462001620
 RectTransform:

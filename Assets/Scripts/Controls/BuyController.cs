@@ -20,6 +20,7 @@ public class BuyController : MonoBehaviour {
 	public AudioSource audioSource;
 
 	private FurniturePreset placingPreset;
+	private int placingSkin;
 	private PropertyObject movingObject;
 	private GameObject buildMarker;
 	private ObjectRotation markerRotation = ObjectRotation.SouthEast;
@@ -52,16 +53,21 @@ public class BuyController : MonoBehaviour {
 		}
 	}
 	
-	public void SetPlacingPreset (FurniturePreset furniturePreset) {
+	/// <summary>
+	/// Set the furniture preset that is being placed.
+	/// </summary>
+	/// <param name="furniturePreset">The FurniturePreset that is being placed.</param>
+	/// <param name="skin">The skin that should be applied to the preset.</param>
+	public void SetPlacingPreset (FurniturePreset furniturePreset, int skin) {
 		ClearSelection();
 		placingPreset = furniturePreset;
+		placingSkin = skin;
 		CreateBuildMarker();
 	}
 
 	private void CreateBuildMarker () {
 		buildMarker = Instantiate(buildMarkerPrefab);
-		//TODO: Set skin
-		placingPreset.ApplyToGameObject(buildMarker, buildMarker.transform.position, buildMarker.transform.eulerAngles, 0, true);
+		placingPreset.ApplyToGameObject(buildMarker, buildMarker.transform.position, buildMarker.transform.eulerAngles, placingSkin, true);
 		SetBuildMarkerPosition(0, 0);
 		PlaceBuyMarkings(0, 0);
 	}
@@ -150,9 +156,7 @@ public class BuyController : MonoBehaviour {
 			audioSource.PlayOneShot(placeSound);
 			audioSource.PlayOneShot(buySound);
 			hudController.ChangeFunds(-placingPreset.price);
-			//TODO: Set skin
-			int tempSkin = Random.Range(0, placingPreset.furnitureSkins.Length);
-			propertyController.PlacePropertyObject(targetTile.x, targetTile.y, ObjectRotation.SouthEast, placingPreset, tempSkin);
+			propertyController.PlacePropertyObject(targetTile.x, targetTile.y, ObjectRotation.SouthEast, placingPreset, placingSkin);
 			if (Input.GetKey(KeyCode.LeftShift)) {
 				BuildMarkerMoved(targetTile);
 			} else {
