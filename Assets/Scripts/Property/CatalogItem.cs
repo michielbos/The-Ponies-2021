@@ -10,13 +10,25 @@ public abstract class CatalogItem {
     public readonly string description;
     public readonly int price;
     public readonly ObjectCategory category;
+    public readonly NeedStats needStats;
+    public readonly SkillStats skillStats;
+    public readonly PonyAge? requiredAge;
 
-    public CatalogItem (Guid guid, string name, string description, int price, ObjectCategory category) {
+    public CatalogItem (Guid guid, string name, string description, int price, ObjectCategory category, NeedStats needStats, 
+        SkillStats skillStats, PonyAge? requiredAge) {
         this.guid = guid;
         this.name = name;
         this.description = description;
         this.price = price;
         this.category = category;
+        this.needStats = needStats;
+        this.skillStats = skillStats;
+        this.requiredAge = requiredAge;
+    }
+    
+    public CatalogItem (Guid guid, string name, string description, int price, ObjectCategory category)
+        : this(guid, name, description, price, category, new NeedStats(), new SkillStats(), null) {
+        
     }
 
     /// <summary>

@@ -20,7 +20,7 @@ public class FurniturePreset : CatalogItem {
 	private RenderTexture[] previewTextures;
 
 	public FurniturePreset (FurniturePresetData fpd) : 
-		base(new Guid(fpd.guid), fpd.name, fpd.description, fpd.price, (ObjectCategory) fpd.category) {
+		base(new Guid(fpd.guid), fpd.name, fpd.description, fpd.price, (ObjectCategory) fpd.category, fpd.needStats, fpd.skillStats, fpd.requiredAge) {
 		pickupable = fpd.pickupable;
 		sellable = fpd.sellable;
 		modelName = fpd.modelName;
