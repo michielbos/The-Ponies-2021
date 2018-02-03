@@ -5,6 +5,8 @@ using UnityEngine;
 /// Controller for buy mode that deals with buying, moving and selling furniture.
 /// </summary>
 public class BuyController : MonoBehaviour {
+	private const int LAYER_TERRAIN = 8;
+	
 	public GameObject buildMarkerPrefab;
 	public GameObject buyMarkingPrefab;
 	public Material buyMarkingNormalMaterial;
@@ -95,7 +97,7 @@ public class BuyController : MonoBehaviour {
 	private void UpdateBuildMarker () {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (Physics.Raycast(ray, out hit, 1000, 1 << 8)) {
+		if (!hudController.IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN)) {
 			TerrainTile newTargetTile = hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
 			if (newTargetTile != targetTile) {
 				BuildMarkerMoved(newTargetTile);
@@ -168,7 +170,7 @@ public class BuyController : MonoBehaviour {
 	private void HandleHovering () {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (!Physics.Raycast(ray, out hit, 1000))
+		if (hudController.IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000))
 			return;
 		PropertyObjectDummy dummy = hit.collider.GetComponent<PropertyObjectDummy>();
 		if (dummy == null)
