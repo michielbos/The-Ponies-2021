@@ -15,6 +15,9 @@ public class FurnitureFileInspector : Editor {
 	private FurniturePresetData presetData;
 	private Mesh presetModel;
 	private Material[][] presetMaterials;
+	private bool skinsFoldout;
+	private bool needStatsFoldout;
+	private bool skillStatsFoldout;
 
 	private void OnEnable () {
 		furnitureFile = (DefaultAsset)target;
@@ -51,8 +54,10 @@ public class FurnitureFileInspector : Editor {
 		presetData.sellable = EditorGUILayout.Toggle("Sellable", presetData.pickupable && presetData.sellable);
 		GUI.enabled = true;
 		presetModel = (Mesh) EditorGUILayout.ObjectField("Model", presetModel, typeof(Mesh), false);
-		EditorGUILayout.LabelField("Skins");
-		presetMaterials = JaggedArrayGuiField(presetMaterials, MaterialGuiField);
+		skinsFoldout = EditorGUILayout.Foldout(skinsFoldout, "Skins");
+		if (skinsFoldout) {
+			presetMaterials = JaggedArrayGuiField(presetMaterials, MaterialGuiField);
+		}
 		presetData.rotationOffset = EditorGUILayout.Vector3Field("Rotation offset", presetData.rotationOffset);
 		presetData.positionOffset = EditorGUILayout.Vector3Field("Position offset", presetData.positionOffset);
 		EditorGUILayout.LabelField("Occupied tiles");
@@ -70,8 +75,10 @@ public class FurnitureFileInspector : Editor {
 
 	//This actually kind of belongs in NeedStats, but for the sake of separating editor code...
 	private void CreateNeedStatsFields (FurniturePresetData fpd) {
+		needStatsFoldout = EditorGUILayout.Foldout(needStatsFoldout, "Need stats");
+		if (!needStatsFoldout) 
+			return;
 		NeedStats needStats = fpd.needStats;
-		EditorGUILayout.LabelField("Need stats");
 		needStats.hunger = EditorGUILayout.IntField("Hunger", needStats.hunger);
 		needStats.energy = EditorGUILayout.IntField("Energy", needStats.energy);
 		needStats.comfort = EditorGUILayout.IntField("Comfort", needStats.comfort);
@@ -84,8 +91,10 @@ public class FurnitureFileInspector : Editor {
 	
 	//Same here for SkillStats...
 	private void CreateSkillStatsFields (FurniturePresetData fpd) {
+		skillStatsFoldout = EditorGUILayout.Foldout(skillStatsFoldout, "Skill stats");
+		if (!skillStatsFoldout) 
+			return;
 		SkillStats skillStats = fpd.skillStats;
-		EditorGUILayout.LabelField("Skill stats");
 		//The spaghetti of 0's and 1's really just means we're converting between ints and booleans.
 		skillStats.cooking = EditorGUILayout.Toggle("Cooking", skillStats.cooking != 0) ? 1 : 0;
 		skillStats.mechanical = EditorGUILayout.Toggle("Mechanical", skillStats.mechanical != 0) ? 1 : 0;
