@@ -16,11 +16,11 @@ public class FurniturePresetData {
 	public Vector2Int[] occupiedTiles;
 	public NeedStats needStats;
 	public SkillStats skillStats;
-	public PonyAge? requiredAge;
+	public RequiredAge requiredAge;
 
 	public FurniturePresetData (string guid, string name, string description, int price, int category, bool pickupable,
 		bool sellable, string modelName, FurnitureSkinData[] furnitureSkins, Vector3 rotationOffset, Vector3 positionOffset,
-		Vector2Int[] occupiedTiles, NeedStats needStats, SkillStats skillStats, PonyAge? requiredAge) {
+		Vector2Int[] occupiedTiles, NeedStats needStats, SkillStats skillStats, RequiredAge requiredAge) {
 		this.guid = guid;
 		this.name = name;
 		this.description = description;
