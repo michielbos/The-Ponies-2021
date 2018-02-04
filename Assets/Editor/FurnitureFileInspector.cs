@@ -16,6 +16,8 @@ public class FurnitureFileInspector : Editor {
 	private Mesh presetModel;
 	private Material[][] presetMaterials;
 	private bool skinsFoldout;
+	private bool occupiedTilesFoldout;
+	private bool placementRestrictionsFoldout;
 	private bool needStatsFoldout;
 	private bool skillStatsFoldout;
 
@@ -60,8 +62,11 @@ public class FurnitureFileInspector : Editor {
 		}
 		presetData.rotationOffset = EditorGUILayout.Vector3Field("Rotation offset", presetData.rotationOffset);
 		presetData.positionOffset = EditorGUILayout.Vector3Field("Position offset", presetData.positionOffset);
-		EditorGUILayout.LabelField("Occupied tiles");
-		presetData.occupiedTiles = ArrayGuiField(presetData.occupiedTiles, Vector2IntGuiField);
+		occupiedTilesFoldout = EditorGUILayout.Foldout(occupiedTilesFoldout, "Occupied tiles");
+		if (occupiedTilesFoldout) {
+			presetData.occupiedTiles = ArrayGuiField(presetData.occupiedTiles, Vector2IntGuiField);
+		}
+		CreatePlacementRestrictionsFields(presetData);
 		CreateNeedStatsFields(presetData);
 		CreateSkillStatsFields(presetData);
 		presetData.requiredAge = (RequiredAge) EditorGUILayout.EnumPopup("Required age", presetData.requiredAge);
@@ -71,6 +76,46 @@ public class FurnitureFileInspector : Editor {
 		EditorGUILayout.Space();
 		EditorGUILayout.LabelField("Content:");
 		GUILayout.Box(GetContent());
+	}
+	
+	private void CreatePlacementRestrictionsFields (FurniturePresetData fpd) {
+		placementRestrictionsFoldout = EditorGUILayout.Foldout(placementRestrictionsFoldout, "Placement restrictions");
+		if (!placementRestrictionsFoldout) 
+			return;
+		if (fpd.placementRestrictions == null) {
+			fpd.placementRestrictions = new PlacementRestriction[0];
+		}
+		string[] enumNames = Enum.GetNames(typeof(PlacementRestriction));
+		string[] options = new string[enumNames.Length + 1];
+		int[] values = new int[options.Length];
+		options[0] = "Remove";
+		values[0] = -1;
+		Array.Copy(enumNames, 0, options, 1, enumNames.Length);
+		Array.Copy(Enum.GetValues(typeof(PlacementRestriction)), 0, values, 1, enumNames.Length);
+		for (int i = 0; i < fpd.placementRestrictions.Length; i++) {
+			int value = EditorGUILayout.IntPopup("Option " + i, (int) fpd.placementRestrictions[i], options, values);
+			if (value != -1) {
+				fpd.placementRestrictions[i] = (PlacementRestriction) value;
+			} else {
+				//Shift all elements after the removed element left.
+				for (int r = 0; r < fpd.placementRestrictions.Length; r++) {
+					if (r > i) {
+						fpd.placementRestrictions[r - 1] = fpd.placementRestrictions[r];
+					}
+				}
+				PlacementRestriction[] oldRestrictions = fpd.placementRestrictions;
+				fpd.placementRestrictions = new PlacementRestriction[oldRestrictions.Length - 1];
+				Array.Copy(oldRestrictions, fpd.placementRestrictions, fpd.placementRestrictions.Length);
+			}
+		}
+		options[0] = "Select to add...";
+		int addValue = EditorGUILayout.IntPopup("New", -1, options, values);
+		if (addValue != -1) {
+			PlacementRestriction[] tempArr = fpd.placementRestrictions;
+			fpd.placementRestrictions = new PlacementRestriction[tempArr.Length + 1];
+			Array.Copy(tempArr, fpd.placementRestrictions, tempArr.Length);
+			fpd.placementRestrictions[tempArr.Length] = (PlacementRestriction) addValue;
+		}
 	}
 
 	//This actually kind of belongs in NeedStats, but for the sake of separating editor code...

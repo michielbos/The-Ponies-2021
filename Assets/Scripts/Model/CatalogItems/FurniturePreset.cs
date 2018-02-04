@@ -14,6 +14,7 @@ public class FurniturePreset : CatalogItem {
 	public readonly Vector3 rotationOffset;
 	public readonly Vector3 positionOffset;
 	public readonly Vector2Int[] occupiedTiles;
+	public readonly PlacementRestriction[] placementRestrictions;
 	public AssetBundle assetBundle;
 	private Mesh mesh;
 	private Material[][] materials;
@@ -28,6 +29,7 @@ public class FurniturePreset : CatalogItem {
 		rotationOffset = fpd.rotationOffset;
 		positionOffset = fpd.positionOffset;
 		occupiedTiles = fpd.occupiedTiles;
+		placementRestrictions = fpd.placementRestrictions;
 		materials = new Material[furnitureSkins.Length][];
 	}
 
@@ -161,5 +163,18 @@ public class FurniturePreset : CatalogItem {
 			occupied[i] = position + occupiedTiles[i];
 		}
 		return occupied;
+	}
+
+	/// <summary>
+	/// Check whether the furniture preset supports the given type of placement.
+	/// </summary>
+	/// <param name="placementRestriction">The PlacementRestriction to check</param>
+	/// <returns>Whether the given PlacementRestriction is allowed.</returns>
+	public bool AllowsPlacement (PlacementRestriction placementRestriction) {
+		foreach (PlacementRestriction pr in placementRestrictions) {
+			if (placementRestriction == pr)
+				return true;
+		}
+		return false;
 	}
 }

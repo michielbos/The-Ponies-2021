@@ -113,22 +113,27 @@ public class BuyController : MonoBehaviour {
 
 	private void BuildMarkerMoved (TerrainTile newTile) {
 		targetTile = newTile;
-		Vector2Int[] requiredTiles = GetMovingPreset().GetOccupiedTiles(new Vector2Int(targetTile.x, targetTile.y));
-		List<PropertyObject> occupyingObjects = propertyController.property.GetObjectsOnTiles(requiredTiles);
-		canPlace = placingPreset == null || placingPreset.price <= hudController.GetFunds();
-		if (canPlace && !cheatsController.moveObjectsMode) {
-			foreach (PropertyObject occupyingObject in occupyingObjects) {
-				if (occupyingObject == movingObject)
-					continue;
-				canPlace = false;
-				break;
-			}
-		}
+		canPlace = CanPlaceObject();
 		foreach (GameObject buyMarking in buyMarkings) {
 			buyMarking.GetComponent<Renderer>().material =
 				canPlace ? buyMarkingNormalMaterial : buyMarkingDisallowedMaterial;
 		}
 		SetBuildMarkerPosition(targetTile.x, targetTile.y);
+	}
+
+	private bool CanPlaceObject () {
+		FurniturePreset movingPreset = GetMovingPreset();
+		Vector2Int[] requiredTiles = movingPreset.GetOccupiedTiles(new Vector2Int(targetTile.x, targetTile.y));
+		List<PropertyObject> occupyingObjects = propertyController.property.GetObjectsOnTiles(requiredTiles);
+		bool canPlace = placingPreset == null || placingPreset.price <= hudController.GetFunds();
+		if (canPlace && !cheatsController.moveObjectsMode) {
+			foreach (PropertyObject occupyingObject in occupyingObjects) {
+				if (occupyingObject != movingObject)
+					return false;
+			}
+		}
+		//TODO: Check for floors, walls, tables, etc.
+		return movingPreset.AllowsPlacement(PlacementRestriction.Terrain);
 	}
 
 	private void SetBuildMarkerPosition (int x, int y) {
