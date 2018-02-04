@@ -5,6 +5,8 @@ using UnityEngine;
 /// Controller for buy mode that deals with buying, moving and selling furniture.
 /// </summary>
 public class BuyController : MonoBehaviour {
+	private const int LAYER_TERRAIN = 8;
+	
 	public GameObject buildMarkerPrefab;
 	public GameObject buyMarkingPrefab;
 	public Material buyMarkingNormalMaterial;
@@ -20,6 +22,7 @@ public class BuyController : MonoBehaviour {
 	public AudioSource audioSource;
 
 	private FurniturePreset placingPreset;
+	private int placingSkin;
 	private PropertyObject movingObject;
 	private GameObject buildMarker;
 	private ObjectRotation markerRotation = ObjectRotation.SouthEast;
@@ -52,15 +55,21 @@ public class BuyController : MonoBehaviour {
 		}
 	}
 	
-	public void SetPlacingPreset (FurniturePreset furniturePreset) {
+	/// <summary>
+	/// Set the furniture preset that is being placed.
+	/// </summary>
+	/// <param name="furniturePreset">The FurniturePreset that is being placed.</param>
+	/// <param name="skin">The skin that should be applied to the preset.</param>
+	public void SetPlacingPreset (FurniturePreset furniturePreset, int skin) {
 		ClearSelection();
 		placingPreset = furniturePreset;
+		placingSkin = skin;
 		CreateBuildMarker();
 	}
 
 	private void CreateBuildMarker () {
 		buildMarker = Instantiate(buildMarkerPrefab);
-		placingPreset.ApplyToGameObject(buildMarker, buildMarker.transform.position, buildMarker.transform.eulerAngles, true);
+		placingPreset.ApplyToGameObject(buildMarker, buildMarker.transform.position, buildMarker.transform.eulerAngles, placingSkin, true);
 		SetBuildMarkerPosition(0, 0);
 		PlaceBuyMarkings(0, 0);
 	}
@@ -88,7 +97,7 @@ public class BuyController : MonoBehaviour {
 	private void UpdateBuildMarker () {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (Physics.Raycast(ray, out hit, 1000, 1 << 8)) {
+		if (!hudController.IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN)) {
 			TerrainTile newTargetTile = hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
 			if (newTargetTile != targetTile) {
 				BuildMarkerMoved(newTargetTile);
@@ -149,7 +158,7 @@ public class BuyController : MonoBehaviour {
 			audioSource.PlayOneShot(placeSound);
 			audioSource.PlayOneShot(buySound);
 			hudController.ChangeFunds(-placingPreset.price);
-			propertyController.PlacePropertyObject(targetTile.x, targetTile.y, ObjectRotation.SouthEast, placingPreset);
+			propertyController.PlacePropertyObject(targetTile.x, targetTile.y, ObjectRotation.SouthEast, placingPreset, placingSkin);
 			if (Input.GetKey(KeyCode.LeftShift)) {
 				BuildMarkerMoved(targetTile);
 			} else {
@@ -161,7 +170,7 @@ public class BuyController : MonoBehaviour {
 	private void HandleHovering () {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (!Physics.Raycast(ray, out hit, 1000))
+		if (hudController.IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000))
 			return;
 		PropertyObjectDummy dummy = hit.collider.GetComponent<PropertyObjectDummy>();
 		if (dummy == null)

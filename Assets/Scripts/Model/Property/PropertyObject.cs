@@ -11,15 +11,17 @@ public class PropertyObject {
 	public int y;
 	public ObjectRotation rotation;
 	public FurniturePreset preset;
+	public int skin;
 	public GameObject dummyObject;
 	public int value;
 
-	public PropertyObject (int id, int x, int y, ObjectRotation rotation, FurniturePreset preset) {
+	public PropertyObject (int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin) {
 		this.id = id;
 		this.x = x;
 		this.y = y;
 		this.rotation = rotation;
 		this.preset = preset;
+		this.skin = skin;
 		value = preset.price;
 	}
 
@@ -27,7 +29,8 @@ public class PropertyObject {
 		id = pod.id;
 		x = pod.x;
 		y = pod.y;
-		this.preset = preset; 
+		this.preset = preset;
+		skin = pod.skin;
 		rotation = (ObjectRotation) pod.rotation;
 		value = pod.value;
 	}
@@ -38,6 +41,7 @@ public class PropertyObject {
 			y,
 			(int) rotation,
 			preset.guid.ToString(),
+			skin,
 			value);
 	}
 
@@ -46,7 +50,7 @@ public class PropertyObject {
 	/// </summary>
 	/// <param name="prefab">The property object prefab to instantiate.</param>
 	public void PlaceObject (GameObject prefab) {
-		dummyObject = preset.PlaceObject(prefab, new Vector3(x + 0.5f, 0, y + 0.5f));
+		dummyObject = preset.PlaceObject(prefab, new Vector3(x + 0.5f, 0, y + 0.5f), skin);
 		dummyObject.GetComponent<PropertyObjectDummy>().propertyObject = this;
 	}
 

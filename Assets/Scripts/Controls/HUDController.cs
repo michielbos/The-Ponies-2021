@@ -1,10 +1,9 @@
-using System;
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class HUDController : MonoBehaviour
+public class HUDController : MonoBehaviour, IPointerEnterHandler, IPointerExitHandler
 {
 	/* Leaving this here in case it was needed after all... 
 	 * Who the hell uses const ints instead of a proper 
@@ -56,6 +55,7 @@ public class HUDController : MonoBehaviour
 	public Text fundsText;
 	private int funds = 20000;
 	private float pauseTimer = 0;
+	private bool touchingGui = false;
 
 	void Start()
 	{
@@ -249,5 +249,18 @@ public class HUDController : MonoBehaviour
 	private void UpdateFunds()
 	{
 		fundsText.text = "$" + funds.ToString();
+	}
+
+	public void OnPointerEnter (PointerEventData eventData) {
+		touchingGui = true;
+	}
+
+	public void OnPointerExit (PointerEventData eventData) {
+		touchingGui = false;
+	}
+
+	public bool IsMouseOverGui () {
+		//I doubt how reliable this is, but it's not like we have anything better at the moment.
+		return touchingGui;
 	}
 }

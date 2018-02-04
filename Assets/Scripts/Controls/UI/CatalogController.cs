@@ -25,18 +25,26 @@ public class CatalogController : MonoBehaviour {
 	}
 
 	private void Update () {
-		if (pressedButton != null) {
-			RectTransform buttonTransform = pressedButton.GetComponent<RectTransform>();
-			Vector3 buttonPos = buttonTransform.position;
-			Vector3 buttonSize = buttonTransform.sizeDelta;
-			Vector3 mousePos = Input.mousePosition;
-			if (mousePos.x < buttonPos.x || mousePos.x > buttonPos.x + buttonSize.x ||
-			    mousePos.y > buttonPos.y || mousePos.y < buttonPos.y - buttonSize.y) {
-				objectInfoPanel.SetVisible(false);
-				pressedButton = null;
-				audioSource.PlayOneShot(whooshSound);
-			}
+		if (pressedButton != null && ShouldCloseInfoPanel()) {
+			objectInfoPanel.SetVisible(false);
+			pressedButton = null;
+			audioSource.PlayOneShot(whooshSound);
 		}
+	}
+
+	private bool ShouldCloseInfoPanel () {
+		RectTransform catalogTransform = GetComponent<RectTransform>();
+		RectTransform objectInfoTransform = objectInfoPanel.GetComponent<RectTransform>();
+		Vector2 catalogPos = catalogTransform.position;
+		Vector2 objectInfoPos = objectInfoTransform.position;
+		Vector2 catalogSize = catalogTransform.sizeDelta;
+		Vector2 objectInfoSize = objectInfoTransform.sizeDelta;
+		Vector3 mousePos = Input.mousePosition;
+			
+		float left = Mathf.Min(catalogPos.x, objectInfoPos.x);
+		float top = objectInfoPos.y + objectInfoSize.y;
+		float right = Mathf.Max(catalogPos.x + catalogSize.x, objectInfoPos.x + objectInfoSize.x);
+		return mousePos.x < left || mousePos.x > right || mousePos.y > top;
 	}
 
 	private void OnApplicationFocus (bool hasFocus) {
@@ -107,7 +115,7 @@ public class CatalogController : MonoBehaviour {
 			if (i >= tab * maxButtons + maxHorizontal)
 				pos.y -= buttonSize.y + buttonMargin;
 			rectTransform.anchoredPosition = pos;
-			button.GetComponentInChildren<RawImage>().texture = catalogItem.GetPreviewTexture();
+			button.GetComponentInChildren<RawImage>().texture = catalogItem.GetPreviewTextures()[0];
 			button.onClick.AddListener(delegate { OnCatalogItemClicked(button, catalogItem); });
 			catalogItemButtons.Add(button);
 		}
@@ -120,16 +128,25 @@ public class CatalogController : MonoBehaviour {
 	}
 
 	private void OnCatalogItemClicked (Button button, CatalogItem catalogItem) {
-		//Not exactly clean, but it works for now.
-		FurniturePreset furniturePreset = catalogItem as FurniturePreset;
-		if (furniturePreset != null) {
-			buyController.SetPlacingPreset(furniturePreset);
-		}
+		SelectCatalogItem(catalogItem, 0);
 		objectInfoPanel.DisplayItem(catalogItem);
 		objectInfoPanel.SetVisible(true);
 		audioSource.PlayOneShot(clickSound);
 		audioSource.PlayOneShot(whooshSound);
 		pressedButton = button;
+	}
+
+	/// <summary>
+	/// Select an item from the catalog. This will notify the relevant tool/controller.
+	/// </summary>
+	/// <param name="catalogItem">The CatalogItem that was selected</param>
+	/// <param name="skin">The skin that was selected. If none was explicitly selected, this is 0.</param>
+	public void SelectCatalogItem (CatalogItem catalogItem, int skin) {
+		//Not exactly clean, but it works for now.
+		FurniturePreset furniturePreset = catalogItem as FurniturePreset;
+		if (furniturePreset != null) {
+			buyController.SetPlacingPreset(furniturePreset, skin);
+		}
 	}
 
 	/// <summary>
