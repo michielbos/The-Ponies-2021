@@ -15,6 +15,11 @@ public class FurnitureFileInspector : Editor {
 	private FurniturePresetData presetData;
 	private Mesh presetModel;
 	private Material[][] presetMaterials;
+	private bool skinsFoldout;
+	private bool occupiedTilesFoldout;
+	private bool placementRestrictionsFoldout;
+	private bool needStatsFoldout;
+	private bool skillStatsFoldout;
 
 	private void OnEnable () {
 		furnitureFile = (DefaultAsset)target;
@@ -51,17 +56,97 @@ public class FurnitureFileInspector : Editor {
 		presetData.sellable = EditorGUILayout.Toggle("Sellable", presetData.pickupable && presetData.sellable);
 		GUI.enabled = true;
 		presetModel = (Mesh) EditorGUILayout.ObjectField("Model", presetModel, typeof(Mesh), false);
-		EditorGUILayout.LabelField("Skins");
-		presetMaterials = JaggedArrayGuiField(presetMaterials, MaterialGuiField);
+		skinsFoldout = EditorGUILayout.Foldout(skinsFoldout, "Skins");
+		if (skinsFoldout) {
+			presetMaterials = JaggedArrayGuiField(presetMaterials, MaterialGuiField);
+		}
 		presetData.rotationOffset = EditorGUILayout.Vector3Field("Rotation offset", presetData.rotationOffset);
 		presetData.positionOffset = EditorGUILayout.Vector3Field("Position offset", presetData.positionOffset);
-		EditorGUILayout.LabelField("Occupied tiles");
-		presetData.occupiedTiles = ArrayGuiField(presetData.occupiedTiles, Vector2IntGuiField);
+		occupiedTilesFoldout = EditorGUILayout.Foldout(occupiedTilesFoldout, "Occupied tiles");
+		if (occupiedTilesFoldout) {
+			presetData.occupiedTiles = ArrayGuiField(presetData.occupiedTiles, Vector2IntGuiField);
+		}
+		CreatePlacementRestrictionsFields(presetData);
+		CreateNeedStatsFields(presetData);
+		CreateSkillStatsFields(presetData);
+		presetData.requiredAge = (RequiredAge) EditorGUILayout.EnumPopup("Required age", presetData.requiredAge);
 		if (GUILayout.Button("Apply changes")) {
 			ApplyChanges();
 		}
-		GUILayout.Label("Content:");
+		EditorGUILayout.Space();
+		EditorGUILayout.LabelField("Content:");
 		GUILayout.Box(GetContent());
+	}
+	
+	private void CreatePlacementRestrictionsFields (FurniturePresetData fpd) {
+		placementRestrictionsFoldout = EditorGUILayout.Foldout(placementRestrictionsFoldout, "Placement restrictions");
+		if (!placementRestrictionsFoldout) 
+			return;
+		if (fpd.placementRestrictions == null) {
+			fpd.placementRestrictions = new PlacementRestriction[0];
+		}
+		string[] enumNames = Enum.GetNames(typeof(PlacementRestriction));
+		string[] options = new string[enumNames.Length + 1];
+		int[] values = new int[options.Length];
+		options[0] = "Remove";
+		values[0] = -1;
+		Array.Copy(enumNames, 0, options, 1, enumNames.Length);
+		Array.Copy(Enum.GetValues(typeof(PlacementRestriction)), 0, values, 1, enumNames.Length);
+		for (int i = 0; i < fpd.placementRestrictions.Length; i++) {
+			int value = EditorGUILayout.IntPopup("Option " + i, (int) fpd.placementRestrictions[i], options, values);
+			if (value != -1) {
+				fpd.placementRestrictions[i] = (PlacementRestriction) value;
+			} else {
+				//Shift all elements after the removed element left.
+				for (int r = 0; r < fpd.placementRestrictions.Length; r++) {
+					if (r > i) {
+						fpd.placementRestrictions[r - 1] = fpd.placementRestrictions[r];
+					}
+				}
+				PlacementRestriction[] oldRestrictions = fpd.placementRestrictions;
+				fpd.placementRestrictions = new PlacementRestriction[oldRestrictions.Length - 1];
+				Array.Copy(oldRestrictions, fpd.placementRestrictions, fpd.placementRestrictions.Length);
+			}
+		}
+		options[0] = "Select to add...";
+		int addValue = EditorGUILayout.IntPopup("New", -1, options, values);
+		if (addValue != -1) {
+			PlacementRestriction[] tempArr = fpd.placementRestrictions;
+			fpd.placementRestrictions = new PlacementRestriction[tempArr.Length + 1];
+			Array.Copy(tempArr, fpd.placementRestrictions, tempArr.Length);
+			fpd.placementRestrictions[tempArr.Length] = (PlacementRestriction) addValue;
+		}
+	}
+
+	//This actually kind of belongs in NeedStats, but for the sake of separating editor code...
+	private void CreateNeedStatsFields (FurniturePresetData fpd) {
+		needStatsFoldout = EditorGUILayout.Foldout(needStatsFoldout, "Need stats");
+		if (!needStatsFoldout) 
+			return;
+		NeedStats needStats = fpd.needStats;
+		needStats.hunger = EditorGUILayout.IntField("Hunger", needStats.hunger);
+		needStats.energy = EditorGUILayout.IntField("Energy", needStats.energy);
+		needStats.comfort = EditorGUILayout.IntField("Comfort", needStats.comfort);
+		needStats.fun = EditorGUILayout.IntField("Fun", needStats.fun);
+		needStats.hygiene = EditorGUILayout.IntField("Hygiene", needStats.hygiene);
+		needStats.social = EditorGUILayout.IntField("Social", needStats.social);
+		needStats.bladder = EditorGUILayout.IntField("Bladder", needStats.bladder);
+		needStats.room = EditorGUILayout.IntField("Room", needStats.room);
+	}
+	
+	//Same here for SkillStats...
+	private void CreateSkillStatsFields (FurniturePresetData fpd) {
+		skillStatsFoldout = EditorGUILayout.Foldout(skillStatsFoldout, "Skill stats");
+		if (!skillStatsFoldout) 
+			return;
+		SkillStats skillStats = fpd.skillStats;
+		//The spaghetti of 0's and 1's really just means we're converting between ints and booleans.
+		skillStats.cooking = EditorGUILayout.Toggle("Cooking", skillStats.cooking != 0) ? 1 : 0;
+		skillStats.mechanical = EditorGUILayout.Toggle("Mechanical", skillStats.mechanical != 0) ? 1 : 0;
+		skillStats.charisma = EditorGUILayout.Toggle("Charisma", skillStats.charisma != 0) ? 1 : 0;
+		skillStats.logic = EditorGUILayout.Toggle("Logic", skillStats.logic != 0) ? 1 : 0;
+		skillStats.body = EditorGUILayout.Toggle("Body", skillStats.body != 0) ? 1 : 0;
+		skillStats.creativity = EditorGUILayout.Toggle("Creativity", skillStats.creativity != 0) ? 1 : 0;
 	}
 
 	private T[] ArrayGuiField <T> (T[] arr, Func<int, T, T> fieldFunc) {

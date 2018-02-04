@@ -10,7 +10,7 @@ public class ObjectInfoPanel : MonoBehaviour {
     public Text titleText;
     public Text descriptionText;
     public Text priceText;
-    public Text notesText;
+    public RectTransform notesPanel;
     public RawImage previewImage;
     private CatalogItem catalogItem;
     private Button[] skinButtons;
@@ -24,9 +24,42 @@ public class ObjectInfoPanel : MonoBehaviour {
         titleText.text = catalogItem.name;
         descriptionText.text = catalogItem.description;
         priceText.text = "$" + catalogItem.price;
-        notesText.text = "(no notes yet)";
+        UpdateNotes();
         PlaceSkinButtons();
         SetSelectedSkin(0);
+    }
+
+    private void UpdateNotes () {
+        Text notesText = notesPanel.GetComponentInChildren<Text>();
+        notesText.text = GetNotesText();
+        int notesHeight = 0;
+        foreach (char c in notesText.text) {
+            if (c == '\n') {
+                notesHeight += notesText.fontSize + 3;
+            }
+        }
+        if (notesText.text.Length > 0) {
+            notesHeight += notesText.fontSize + 13;
+        }
+        notesPanel.sizeDelta = new Vector2(notesPanel.sizeDelta.x, notesHeight);
+    }
+
+    private string GetNotesText () {
+        string text = "";
+        text = AddText(text, catalogItem.needStats.GetDisplayText());
+        text = AddText(text, catalogItem.skillStats.GetDisplayText());
+        if (catalogItem.requiredAge != RequiredAge.Any) {
+            text = AddText(text, catalogItem.requiredAge + "s only");
+        }
+        return text;
+    }
+
+    private string AddText (string text, string add) {
+        if (add.Length <= 0)
+            return text;
+        if (text.Length > 0)
+            return text + "\n" + add;
+        return add;
     }
 
     /// <summary>
