@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -14,8 +13,14 @@ public static class CatalogItemProvider {
 	/// <param name="objectCategory">The ObjectCategory to get the items for.</param>
 	/// <returns>A List with all matching CatalogItems.</returns>
 	public static List<CatalogItem> GetCatalogItems (ObjectCategory objectCategory) {
+		//I wish we could somehow squeeze the casting and sorting into a nice method.
 		if (ObjectCategoryUtil.IsFurnitureCategory(objectCategory)) {
 			List<CatalogItem> catalogItems = FurniturePresets.Instance.GetFurniturePresets(objectCategory).Cast<CatalogItem>().ToList();
+			catalogItems.Sort((a, b) => a.price.CompareTo(b.price));
+			return catalogItems;
+		}
+		if (objectCategory == ObjectCategory.Floors) {
+			List<CatalogItem> catalogItems = FloorPresets.Instance.GetFloorPresets().Cast<CatalogItem>().ToList();
 			catalogItems.Sort((a, b) => a.price.CompareTo(b.price));
 			return catalogItems;
 		}
