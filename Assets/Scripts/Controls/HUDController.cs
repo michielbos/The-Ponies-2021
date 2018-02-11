@@ -132,15 +132,15 @@ public class HUDController : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 			}
 		}
 
-		if (selectedPanel == HudPanel.Buy)
-		{
+		catalogController.CloseCatalog();
+		if (selectedPanel == HudPanel.Buy) {
 			musicController.SwitchMusic(MusicType.BuyMode);
 			buyController.enabled = true;
-		}
-		else
-		{
-			musicController.SwitchMusic(selectedPanel == HudPanel.Build ? MusicType.BuildMode : MusicType.NoMusic);
-			catalogController.CloseCatalog();
+		} else if (selectedPanel == HudPanel.Build) {
+			musicController.SwitchMusic(MusicType.BuildMode);
+			buyController.enabled = true;
+		} else {
+			musicController.SwitchMusic(MusicType.NoMusic);
 			buyController.enabled = false;
 		}
 	}
