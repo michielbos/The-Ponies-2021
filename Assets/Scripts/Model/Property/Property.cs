@@ -221,5 +221,10 @@ public class Property {
 		}
 		return objectsOnTiles;
 	}
+
+	public FloorTile GetFloorTile (int x, int y) {
+		//TODO: Add floor level
+		return floorTiles[0, y, x];
+	}
 }
 

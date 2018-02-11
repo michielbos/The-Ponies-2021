@@ -47,6 +47,6 @@ public class FloorTile {
 	/// Remove the dummy floor from the scene.
 	/// </summary>
 	public void RemoveFloor () {
-		Object.Destroy(dummyObject);
+		Object.Destroy(dummyObject.gameObject);
 	}
 }

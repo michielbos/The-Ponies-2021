@@ -105,8 +105,11 @@ public class PropertyController : MonoBehaviour {
 	/// <param name="y">The Y position of the floor.</param>
 	/// <param name="preset">The FloorPreset that this floor is based on.</param>
 	public void PlaceFloor (int x, int y, FloorPreset preset) {
-		FloorTile floorTile = new FloorTile(x, y, preset);
 		//TODO: Floor level
+		if (property.floorTiles[0, y, x] != null) {
+			RemoveFloor(property.floorTiles[0, y, x]);
+		}
+		FloorTile floorTile = new FloorTile(x, y, preset);
 		property.floorTiles[0, y, x] = floorTile;
 		floorTile.PlaceFloor(floorTilePrefab);
 	}

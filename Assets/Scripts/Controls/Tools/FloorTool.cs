@@ -91,10 +91,23 @@ public class FloorTool : Tool {
 		if (!canPlace) {
 			audioSource.PlayOneShot(denySound);
 		} else {
+			FloorTile currentTile = propertyController.property.GetFloorTile(targetTile.x, targetTile.y);
+			if (currentTile != null) {
+				if (currentTile.preset != placingPreset) {
+					SellFloor(currentTile);
+				} else {
+					return;
+				}
+			}
 			audioSource.PlayOneShot(placeSound);
 			hudController.ChangeFunds(-placingPreset.price);
 			propertyController.PlaceFloor(targetTile.x, targetTile.y, placingPreset);
 			BuildMarkerMoved(targetTile);
 		}
+	}
+
+	private void SellFloor (FloorTile floorTile) {
+		hudController.ChangeFunds(floorTile.preset.GetSellValue());
+		propertyController.RemoveFloor(floorTile);
 	}
 }

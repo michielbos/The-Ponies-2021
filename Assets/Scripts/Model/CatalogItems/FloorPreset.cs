@@ -19,6 +19,10 @@ public class FloorPreset : Preset {
 	public override Texture[] GetPreviewTextures () {
 		return new Texture[] {GetTexture()};
 	}
+
+	public int GetSellValue () {
+		return Mathf.FloorToInt(price * 0.75f);
+	}
 	
 	private Texture GetTexture () {
 		if (texture == null) {
