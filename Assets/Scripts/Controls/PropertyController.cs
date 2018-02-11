@@ -40,7 +40,9 @@ public class PropertyController : MonoBehaviour {
 	/// </summary>
 	public void PlaceTerrainTiles () {
 		foreach (TerrainTile tt in property.terrainTiles) {
-			tt.PlaceTile(terrainTilePrefab);
+			if (tt != null) {
+				tt.PlaceTile(terrainTilePrefab);
+			}
 		}
 	}
 	
@@ -58,7 +60,9 @@ public class PropertyController : MonoBehaviour {
 	/// </summary>
 	public void PlaceFloors () {
 		foreach (FloorTile ft in property.floorTiles) {
-			ft.PlaceFloor(floorTilePrefab);
+			if (ft != null) {
+				ft.PlaceFloor(floorTilePrefab);
+			}
 		}
 	}
 
@@ -102,7 +106,8 @@ public class PropertyController : MonoBehaviour {
 	/// <param name="preset">The FloorPreset that this floor is based on.</param>
 	public void PlaceFloor (int x, int y, FloorPreset preset) {
 		FloorTile floorTile = new FloorTile(x, y, preset);
-		property.floorTiles.Add(floorTile);
+		//TODO: Floor level
+		property.floorTiles[0, y, x] = floorTile;
 		floorTile.PlaceFloor(floorTilePrefab);
 	}
 
@@ -112,6 +117,7 @@ public class PropertyController : MonoBehaviour {
 	/// <param name="floorTile">The FloorTile to remove.</param>
 	public void RemoveFloor (FloorTile floorTile) {
 		floorTile.RemoveFloor();
-		property.floorTiles.Remove(floorTile);
+		//TODO: Floor level
+		property.floorTiles[0, floorTile.y, floorTile.x] = floorTile;
 	}
 }
