@@ -9,6 +9,8 @@ public class CatalogController : MonoBehaviour {
 	public AudioClip clickSound;
 	public AudioClip whooshSound;
 	public Button buttonPrefab;
+	public int buyModeX;
+	public int buildModeX;
 	public RectTransform catalogBar;
 	public Button catalogPreviousButton;
 	public Button catalogNextButton;
@@ -75,8 +77,18 @@ public class CatalogController : MonoBehaviour {
 			tab = 0;
 			catalogBar.gameObject.SetActive(true);
 			catalogBar.localScale = new Vector3(1, 1, 1);
+			if (ObjectCategoryUtil.IsBuildCategory(category)) {
+				ResizeCatalog(buildModeX);
+			} else {
+				ResizeCatalog(buyModeX);
+			}
 			UpdateCatalogButtons();
 		}
+	}
+
+	private void ResizeCatalog (int startX) {
+		catalogBar.anchoredPosition = new Vector2(startX, catalogBar.anchoredPosition.y);
+		catalogBar.sizeDelta = new Vector2(Screen.width - startX, catalogBar.sizeDelta.y);
 	}
 
 	/// <summary>
