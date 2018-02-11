@@ -5,7 +5,6 @@ using UnityEngine;
 /// Abstract class for items that can be displayed in the catalog.
 /// </summary>
 public abstract class CatalogItem {
-    public readonly Guid guid;
     public readonly string name;
     public readonly string description;
     public readonly int price;
@@ -14,9 +13,8 @@ public abstract class CatalogItem {
     public readonly SkillStats skillStats;
     public readonly RequiredAge requiredAge;
 
-    public CatalogItem (Guid guid, string name, string description, int price, ObjectCategory category, NeedStats needStats, 
+    protected CatalogItem (string name, string description, int price, ObjectCategory category, NeedStats needStats, 
         SkillStats skillStats, RequiredAge requiredAge) {
-        this.guid = guid;
         this.name = name;
         this.description = description;
         this.price = price;
@@ -26,8 +24,8 @@ public abstract class CatalogItem {
         this.requiredAge = requiredAge;
     }
     
-    public CatalogItem (Guid guid, string name, string description, int price, ObjectCategory category)
-        : this(guid, name, description, price, category, new NeedStats(), new SkillStats(), RequiredAge.Any) {
+    protected CatalogItem (string name, string description, int price, ObjectCategory category)
+        : this(name, description, price, category, new NeedStats(), new SkillStats(), RequiredAge.Any) {
         
     }
 

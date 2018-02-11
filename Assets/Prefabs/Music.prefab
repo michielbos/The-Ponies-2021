@@ -137,10 +137,11 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 48c117849bf334a32b67eff0168d5b6b, type: 3}
   buyModeSongs:
   - {fileID: 8300000, guid: 53730b3f58d534cf3a66545359d3cdca, type: 3}
+  - {fileID: 8300000, guid: 3d227763a05824de09982ac3049381c3, type: 3}
   - {fileID: 8300000, guid: 158243298415b4c0da76e688c5b414d7, type: 3}
   buildModeSongs:
   - {fileID: 8300000, guid: 4282e99576c91432492f46b0389b494b, type: 3}
-  - {fileID: 8300000, guid: bc1a1d2ca5c124d0fa02c5c94ccce326, type: 3}
+  - {fileID: 8300000, guid: 75bc836a512cd4c2892109a1a7ab908c, type: 3}
   - {fileID: 8300000, guid: 254dc766629b74a6e99c429ac82c47a0, type: 3}
   - {fileID: 8300000, guid: bd29c604f55f4490bbe7a8822342ed67, type: 3}
   communityBuildSongs: []

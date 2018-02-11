@@ -6,7 +6,7 @@ using Object = UnityEngine.Object;
 /// Preset for furniture items. These are the objects that are displayed in the catalog.
 /// </summary>
 [Serializable]
-public class FurniturePreset : CatalogItem {
+public class FurniturePreset : Preset {
 	public readonly bool pickupable;
 	public readonly bool sellable;
 	public readonly string modelName;
@@ -15,7 +15,6 @@ public class FurniturePreset : CatalogItem {
 	public readonly Vector3 positionOffset;
 	public readonly Vector2Int[] occupiedTiles;
 	public readonly PlacementRestriction[] placementRestrictions;
-	public AssetBundle assetBundle;
 	private Mesh mesh;
 	private Material[][] materials;
 	private RenderTexture[] previewTextures;
@@ -32,7 +31,7 @@ public class FurniturePreset : CatalogItem {
 		placementRestrictions = fpd.placementRestrictions;
 		materials = new Material[furnitureSkins.Length][];
 	}
-
+	
 	public Mesh GetMesh () {
 		if (mesh == null) {
 			if (assetBundle != null) {
