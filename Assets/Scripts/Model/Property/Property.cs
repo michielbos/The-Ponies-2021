@@ -37,6 +37,7 @@ public class Property {
 												propertyData.propertyType == 0 ? PropertyType.RESIDENTIAL : PropertyType.COMMUNITY) {
 		LoadTerrainTiles(propertyData.terrainTileDatas);
 		LoadWalls(propertyData.wallDatas);
+		LoadFloorTiles(propertyData.floorTileDatas);
 		LoadPropertyObjects(propertyData.propertyObjectDatas);
 	}
 
@@ -66,6 +67,22 @@ public class Property {
 			walls.Add(new Wall(wd));
 		}
 	}
+	
+	private void LoadFloorTiles (FloorTileData[] floorTileDatas) {
+		foreach (FloorTileData ftd in floorTileDatas) {
+			try {
+				FloorPreset preset = FloorPresets.Instance.GetFloorPreset(new Guid(ftd.floorGuid));
+				if (preset != null) {
+					floorTiles.Add(new FloorTile(ftd, preset));
+				} else {
+					Debug.LogWarning("No floor preset for GUID " + ftd.floorGuid + ". Not loading floor at " + ftd.x + ", " + ftd.y + ".");
+				}
+			} catch (Exception e) {
+				Debug.LogError("Exception when trying to load floor at " + ftd.x + ", " + ftd.y + "! Not loading floor.");
+				Debug.LogException(e);
+			}
+		}
+	}
 
 	private void LoadPropertyObjects (PropertyObjectData[] propertyObjectDatas) {
 		foreach (PropertyObjectData pod in propertyObjectDatas) {
@@ -77,7 +94,7 @@ public class Property {
 					Debug.LogWarning("No furniture preset for GUID " + pod.furnitureGuid + ". Not loading property object " + pod.id + ".");
 				}
 			} catch (Exception e) {
-				Debug.LogError("Exception when trying to load property object with GUID " + pod.furnitureGuid + "! Not loading property object.");
+				Debug.LogError("Exception when trying to load property object with id " + pod.id + "! Not loading property object.");
 				Debug.LogException(e);
 			}
 		}

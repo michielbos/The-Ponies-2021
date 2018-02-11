@@ -24,6 +24,7 @@ public class PropertyController : MonoBehaviour {
 		}
 		PlaceTerrainTiles();
 		PlaceWalls();
+		PlaceFloors();
 		PlacePropertyObjects();
 	}
 
@@ -49,6 +50,15 @@ public class PropertyController : MonoBehaviour {
 	public void PlaceWalls () {
 		foreach (Wall w in property.walls) {
 			w.PlaceWall(wallPrefab);
+		}
+	}
+	
+	/// <summary>
+	/// Place "dummy" instances of all loaded floors, so they are visible and interactable.
+	/// </summary>
+	public void PlaceFloors () {
+		foreach (FloorTile ft in property.floorTiles) {
+			ft.PlaceFloor(floorTilePrefab);
 		}
 	}
 
