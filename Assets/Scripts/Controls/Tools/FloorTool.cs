@@ -82,7 +82,15 @@ public class FloorTool : Tool {
 
 	private void HandlePlacementHolding () {
 		if (Input.GetMouseButtonUp(0)) {
-			PlaceObject();
+			if (Input.GetKey(KeyCode.LeftControl)) {
+				FloorTile selectedTile = propertyController.property.GetFloorTile(targetTile.x, targetTile.y);
+				if (selectedTile != null) {
+					audioSource.PlayOneShot(placeSound);
+					SellFloor(selectedTile);
+				}
+			} else {
+				PlaceObject();
+			}
 			pressingTile = false;
 		}
 	}

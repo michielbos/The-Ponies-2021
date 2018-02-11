@@ -121,6 +121,6 @@ public class PropertyController : MonoBehaviour {
 	public void RemoveFloor (FloorTile floorTile) {
 		floorTile.RemoveFloor();
 		//TODO: Floor level
-		property.floorTiles[0, floorTile.y, floorTile.x] = floorTile;
+		property.floorTiles[0, floorTile.y, floorTile.x] = null;
 	}
 }
