@@ -14,7 +14,7 @@ public class CatalogController : MonoBehaviour {
 	public RectTransform catalogBar;
 	public Button catalogPreviousButton;
 	public Button catalogNextButton;
-	public BuyController buyController;
+	public ToolController toolController;
 	public ObjectInfoPanel objectInfoPanel;
 	public AudioSource audioSource;
 	private ObjectCategory category = ObjectCategory.None;
@@ -73,15 +73,12 @@ public class CatalogController : MonoBehaviour {
 		if (this.category == category) {
 			CloseCatalog();
 		} else {
+			toolController.SetToolForCategory(category);
 			this.category = category;
 			tab = 0;
 			catalogBar.gameObject.SetActive(true);
 			catalogBar.localScale = new Vector3(1, 1, 1);
-			if (ObjectCategoryUtil.IsBuildCategory(category)) {
-				ResizeCatalog(buildModeX);
-			} else {
-				ResizeCatalog(buyModeX);
-			}
+			ResizeCatalog(ObjectCategoryUtil.IsBuildCategory(category) ? buildModeX : buyModeX);
 			UpdateCatalogButtons();
 		}
 	}
@@ -140,7 +137,6 @@ public class CatalogController : MonoBehaviour {
 	}
 
 	private void OnCatalogItemClicked (Button button, CatalogItem catalogItem) {
-		SelectCatalogItem(catalogItem, 0);
 		objectInfoPanel.DisplayItem(catalogItem);
 		objectInfoPanel.SetVisible(true);
 		audioSource.PlayOneShot(clickSound);
@@ -154,10 +150,8 @@ public class CatalogController : MonoBehaviour {
 	/// <param name="catalogItem">The CatalogItem that was selected</param>
 	/// <param name="skin">The skin that was selected. If none was explicitly selected, this is 0.</param>
 	public void SelectCatalogItem (CatalogItem catalogItem, int skin) {
-		//Not exactly clean, but it works for now.
-		FurniturePreset furniturePreset = catalogItem as FurniturePreset;
-		if (furniturePreset != null) {
-			buyController.SetPlacingPreset(furniturePreset, skin);
+		if (toolController.HasActiveTool()) {
+			toolController.GetTool().SetSelectedPreset(catalogItem, skin);
 		}
 	}
 

@@ -10,13 +10,12 @@ public class Property {
 	public string streetName;
 	public PropertyType propertyType;
 	public TerrainTile[,] terrainTiles;
-	public List<FloorTile> floorTiles;
+	public FloorTile[,,] floorTiles;
 	public List<Wall> walls;
 	public List<Roof> roofs;
 	public List<PropertyObject> propertyObjects;
 
 	public Property () {
-		floorTiles = new List<FloorTile>();
 		walls = new List<Wall>();
 		roofs = new List<Roof>();
 		propertyObjects = new List<PropertyObject>();
@@ -37,6 +36,7 @@ public class Property {
 												propertyData.propertyType == 0 ? PropertyType.RESIDENTIAL : PropertyType.COMMUNITY) {
 		LoadTerrainTiles(propertyData.terrainTileDatas);
 		LoadWalls(propertyData.wallDatas);
+		LoadFloorTiles(propertyData.floorTileDatas);
 		LoadPropertyObjects(propertyData.propertyObjectDatas);
 	}
 
@@ -66,6 +66,30 @@ public class Property {
 			walls.Add(new Wall(wd));
 		}
 	}
+	
+	private void LoadFloorTiles (FloorTileData[] floorTileDatas) {
+		int width = terrainTiles.GetLength(1);
+		int height = terrainTiles.GetLength(0);
+		floorTiles = new FloorTile[1,height,width];
+		//TODO: Floor levels
+		foreach (FloorTileData ftd in floorTileDatas) {
+			if (floorTiles[0, ftd.y, ftd.x] == null) {
+				try {
+					FloorPreset preset = FloorPresets.Instance.GetFloorPreset(new Guid(ftd.floorGuid));
+					if (preset != null) {
+						floorTiles[0, ftd.y, ftd.x] = new FloorTile(ftd, preset);
+					} else {
+						Debug.LogWarning("No floor preset for GUID " + ftd.floorGuid + ". Not loading floor at (" + ftd.x + ", " + ftd.y + ").");
+					}
+				} catch (Exception e) {
+					Debug.LogError("Exception when trying to load floor at (" + ftd.x + ", " + ftd.y + ")! Not loading floor.");
+					Debug.LogException(e);
+				}
+			} else {
+				Debug.LogWarning("There is already a floor tile for (" + ftd.x + ", " + ftd.y + "). Not loading another one.");
+			}
+		}
+	}
 
 	private void LoadPropertyObjects (PropertyObjectData[] propertyObjectDatas) {
 		foreach (PropertyObjectData pod in propertyObjectDatas) {
@@ -77,7 +101,7 @@ public class Property {
 					Debug.LogWarning("No furniture preset for GUID " + pod.furnitureGuid + ". Not loading property object " + pod.id + ".");
 				}
 			} catch (Exception e) {
-				Debug.LogError("Exception when trying to load property object with GUID " + pod.furnitureGuid + "! Not loading property object.");
+				Debug.LogError("Exception when trying to load property object with id " + pod.id + "! Not loading property object.");
 				Debug.LogException(e);
 			}
 		}
@@ -100,18 +124,42 @@ public class Property {
 		TerrainTileData[] terrainTileDataArr = new TerrainTileData[terrainTiles.Length];
 		for (int y = 0; y < terrainTiles.GetLength(0); y++) {
 			for (int x = 0; x < terrainTiles.GetLength(1); x++) {
-				terrainTileDataArr[y * terrainTiles.GetLength(1) + x] = terrainTiles[y, x].GetTerrainTileData();
+				if (terrainTiles[y, x] != null) {
+					terrainTileDataArr[y * terrainTiles.GetLength(1) + x] = terrainTiles[y, x].GetTerrainTileData();
+				}
 			}
 		}
 		return terrainTileDataArr;
 	}
 
-	private FloorTileData[] CreateFloorTileDataArray (List<FloorTile> floorTiles) {
-		FloorTileData[] floorTileDataArr = new FloorTileData[floorTiles.Count];
-		for (int i = 0; i < floorTiles.Count; i++) {
-			floorTileDataArr[i] = floorTiles[i].GetFloorTileData();
+	private FloorTileData[] CreateFloorTileDataArray (FloorTile[,,] floorTiles) {
+		int floorCount = GetNumberOfFloors();
+		FloorTileData[] floorTileDataArr = new FloorTileData[floorCount];
+		int index = 0;
+		for (int h = 0; h < floorTiles.GetLength(0); h++) {
+			for (int y = 0; y < floorTiles.GetLength(1); y++) {
+				for (int x = 0; x < floorTiles.GetLength(2); x++) {
+					if (floorTiles[h, y, x] != null) {
+						floorTileDataArr[index++] = floorTiles[h, y, x].GetFloorTileData();
+					}
+				}
+			}
 		}
 		return floorTileDataArr;
+	}
+
+	private int GetNumberOfFloors () {
+		int floorCount = 0;
+		for (int h = 0; h < floorTiles.GetLength(0); h++) {
+			for (int y = 0; y < floorTiles.GetLength(1); y++) {
+				for (int x = 0; x < floorTiles.GetLength(2); x++) {
+					if (floorTiles[h, y, x] != null) {
+						floorCount++;
+					}
+				}
+			}
+		}
+		return floorCount;
 	}
 
 	private WallData[] CreateWallDataArray (List<Wall> walls) {
@@ -172,6 +220,11 @@ public class Property {
 			}
 		}
 		return objectsOnTiles;
+	}
+
+	public FloorTile GetFloorTile (int x, int y) {
+		//TODO: Add floor level
+		return floorTiles[0, y, x];
 	}
 }
 

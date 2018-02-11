@@ -2,9 +2,9 @@
 using UnityEngine;
 
 /// <summary>
-/// Controller for buy mode that deals with buying, moving and selling furniture.
+/// Tool for buy/build mode that deals with buying, moving and selling furniture.
 /// </summary>
-public class BuyController : MonoBehaviour {
+public class BuyTool : Tool {
 	private const int LAYER_TERRAIN = 8;
 	
 	public GameObject buildMarkerPrefab;
@@ -31,7 +31,7 @@ public class BuyController : MonoBehaviour {
 	private bool pressingTile;
 	private bool canPlace;
 
-	public BuyController () {
+	public BuyTool () {
 		buyMarkings = new List<GameObject>();
 	}
 
@@ -58,9 +58,14 @@ public class BuyController : MonoBehaviour {
 	/// <summary>
 	/// Set the furniture preset that is being placed.
 	/// </summary>
-	/// <param name="furniturePreset">The FurniturePreset that is being placed.</param>
+	/// <param name="catalogItem">The FurniturePreset that is being placed.</param>
 	/// <param name="skin">The skin that should be applied to the preset.</param>
-	public void SetPlacingPreset (FurniturePreset furniturePreset, int skin) {
+	public override void SetSelectedPreset (CatalogItem catalogItem, int skin) {
+		FurniturePreset furniturePreset = catalogItem as FurniturePreset;
+		if (furniturePreset == null) {
+			Debug.LogWarning(catalogItem + " is not a FurniturePreset, cannot be set to BuyTool.");
+			return;
+		}
 		ClearSelection();
 		placingPreset = furniturePreset;
 		placingSkin = skin;

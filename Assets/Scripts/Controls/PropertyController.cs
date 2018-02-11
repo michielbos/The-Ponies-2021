@@ -7,6 +7,7 @@ public class PropertyController : MonoBehaviour {
 	public GameObject terrainTilePrefab;
 	public GameObject wallPrefab;
 	public GameObject propertyObjectPrefab;
+	public GameObject floorTilePrefab;
 	public Property property;
 	private int nextObjectId;
 
@@ -23,6 +24,7 @@ public class PropertyController : MonoBehaviour {
 		}
 		PlaceTerrainTiles();
 		PlaceWalls();
+		PlaceFloors();
 		PlacePropertyObjects();
 	}
 
@@ -38,7 +40,9 @@ public class PropertyController : MonoBehaviour {
 	/// </summary>
 	public void PlaceTerrainTiles () {
 		foreach (TerrainTile tt in property.terrainTiles) {
-			tt.PlaceTile(terrainTilePrefab);
+			if (tt != null) {
+				tt.PlaceTile(terrainTilePrefab);
+			}
 		}
 	}
 	
@@ -48,6 +52,17 @@ public class PropertyController : MonoBehaviour {
 	public void PlaceWalls () {
 		foreach (Wall w in property.walls) {
 			w.PlaceWall(wallPrefab);
+		}
+	}
+	
+	/// <summary>
+	/// Place "dummy" instances of all loaded floors, so they are visible and interactable.
+	/// </summary>
+	public void PlaceFloors () {
+		foreach (FloorTile ft in property.floorTiles) {
+			if (ft != null) {
+				ft.PlaceFloor(floorTilePrefab);
+			}
 		}
 	}
 
@@ -81,5 +96,31 @@ public class PropertyController : MonoBehaviour {
 	public void RemovePropertyObject (PropertyObject propertyObject) {
 		propertyObject.RemoveObject();
 		property.propertyObjects.Remove(propertyObject);
+	}
+	
+	/// <summary>
+	/// Add a new floor tile to the property. This will also instantiate a dummy to make it visible and interactable.
+	/// </summary>
+	/// <param name="x">The X position of the floor.</param>
+	/// <param name="y">The Y position of the floor.</param>
+	/// <param name="preset">The FloorPreset that this floor is based on.</param>
+	public void PlaceFloor (int x, int y, FloorPreset preset) {
+		//TODO: Floor level
+		if (property.floorTiles[0, y, x] != null) {
+			RemoveFloor(property.floorTiles[0, y, x]);
+		}
+		FloorTile floorTile = new FloorTile(x, y, preset);
+		property.floorTiles[0, y, x] = floorTile;
+		floorTile.PlaceFloor(floorTilePrefab);
+	}
+
+	/// <summary>
+	/// Remove a floor tile from the property. This will also clean up the dummy floor in the scene.
+	/// </summary>
+	/// <param name="floorTile">The FloorTile to remove.</param>
+	public void RemoveFloor (FloorTile floorTile) {
+		floorTile.RemoveFloor();
+		//TODO: Floor level
+		property.floorTiles[0, floorTile.y, floorTile.x] = null;
 	}
 }

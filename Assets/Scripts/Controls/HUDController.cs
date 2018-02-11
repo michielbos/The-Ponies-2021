@@ -43,7 +43,7 @@ public class HUDController : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 	public Sprite[] pauseSprites;
 
 	public CatalogController catalogController;
-	public BuyController buyController;
+	public ToolController toolController;
 	public MusicController musicController;
 
 	private bool paused = false;
@@ -135,13 +135,13 @@ public class HUDController : MonoBehaviour, IPointerEnterHandler, IPointerExitHa
 		catalogController.CloseCatalog();
 		if (selectedPanel == HudPanel.Buy) {
 			musicController.SwitchMusic(MusicType.BuyMode);
-			buyController.enabled = true;
+			toolController.SetTool(ToolType.Buy);
 		} else if (selectedPanel == HudPanel.Build) {
 			musicController.SwitchMusic(MusicType.BuildMode);
-			buyController.enabled = true;
+			toolController.SetTool(ToolType.Buy);
 		} else {
 			musicController.SwitchMusic(MusicType.NoMusic);
-			buyController.enabled = false;
+			toolController.SetTool(ToolType.None);
 		}
 	}
 

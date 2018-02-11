@@ -84,6 +84,7 @@ public class FurniturePreset : Preset {
 	/// </summary>
 	/// <param name="prefab">The prefab to instantiate. It needs to have a MeshFilter and MeshRenderer.</param>
 	/// <param name="position">The position to place the object.</param>
+	/// <param name="skin">The skin to apply to the object to place.</param>
 	public GameObject PlaceObject (GameObject prefab, Vector3 position, int skin) {
 		GameObject gameObject = Object.Instantiate(prefab);
 		ApplyToGameObject(gameObject, position, Vector3.zero, skin, true);

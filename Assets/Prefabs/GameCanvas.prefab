@@ -1461,7 +1461,9 @@ GameObject:
   - component: {fileID: 114828761947541350}
   - component: {fileID: 114113357470691672}
   - component: {fileID: 114542114524124648}
+  - component: {fileID: 114307939235352258}
   - component: {fileID: 114549210002137118}
+  - component: {fileID: 114642453364382960}
   m_Layer: 0
   m_Name: GameCanvas
   m_TagString: HUD
@@ -3831,7 +3833,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8be847cb2322da64e89726df4487edc4, type: 3}
   - {fileID: 21300000, guid: caef8c13c37db714ba0b615cad6a7018, type: 3}
   catalogController: {fileID: 114289265587149008}
-  buyController: {fileID: 114549210002137118}
+  toolController: {fileID: 114307939235352258}
   musicController: {fileID: 0}
   fundsText: {fileID: 114000812847085396}
 --- !u!114 &114133663594132876
@@ -5552,7 +5554,7 @@ MonoBehaviour:
   catalogBar: {fileID: 224749356546174896}
   catalogPreviousButton: {fileID: 114431518955277782}
   catalogNextButton: {fileID: 114523557342383612}
-  buyController: {fileID: 114549210002137118}
+  toolController: {fileID: 114307939235352258}
   objectInfoPanel: {fileID: 114332638682188552}
   audioSource: {fileID: 0}
 --- !u!114 &114292303049944002
@@ -5747,6 +5749,21 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114307939235352258
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1510649578667014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5972ca0570aa45a69e5421aa91f1aaf7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  tools:
+  - {fileID: 0}
+  - {fileID: 114549210002137118}
+  - {fileID: 114642453364382960}
 --- !u!114 &114312787899144532
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8261,6 +8278,24 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114642453364382960
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1510649578667014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: dcf7c7816d5e4ba58145054f1ca52c54, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildMarkerPrefab: {fileID: 1824389368066718, guid: 9b9ec0e23a2064468bba7635c86e9ad9,
+    type: 2}
+  denySound: {fileID: 8300000, guid: fffa4f35ce6b4544e8c707bdbfef5f19, type: 3}
+  placeSound: {fileID: 8300000, guid: 5ce2733bb014c6b4ba5a9b729766715d, type: 3}
+  propertyController: {fileID: 0}
+  hudController: {fileID: 114113357470691672}
+  audioSource: {fileID: 0}
 --- !u!114 &114644746141678708
 MonoBehaviour:
   m_ObjectHideFlags: 1
