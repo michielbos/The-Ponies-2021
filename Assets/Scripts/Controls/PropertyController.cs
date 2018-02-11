@@ -7,6 +7,7 @@ public class PropertyController : MonoBehaviour {
 	public GameObject terrainTilePrefab;
 	public GameObject wallPrefab;
 	public GameObject propertyObjectPrefab;
+	public GameObject floorTilePrefab;
 	public Property property;
 	private int nextObjectId;
 
@@ -81,5 +82,26 @@ public class PropertyController : MonoBehaviour {
 	public void RemovePropertyObject (PropertyObject propertyObject) {
 		propertyObject.RemoveObject();
 		property.propertyObjects.Remove(propertyObject);
+	}
+	
+	/// <summary>
+	/// Add a new floor tile to the property. This will also instantiate a dummy to make it visible and interactable.
+	/// </summary>
+	/// <param name="x">The X position of the floor.</param>
+	/// <param name="y">The Y position of the floor.</param>
+	/// <param name="preset">The FloorPreset that this floor is based on.</param>
+	public void PlaceFloor (int x, int y, FloorPreset preset) {
+		FloorTile floorTile = new FloorTile(x, y, preset);
+		property.floorTiles.Add(floorTile);
+		floorTile.PlaceFloor(floorTilePrefab);
+	}
+
+	/// <summary>
+	/// Remove a floor tile from the property. This will also clean up the dummy floor in the scene.
+	/// </summary>
+	/// <param name="floorTile">The FloorTile to remove.</param>
+	public void RemoveFloor (FloorTile floorTile) {
+		floorTile.RemoveFloor();
+		property.floorTiles.Remove(floorTile);
 	}
 }

@@ -35,7 +35,8 @@ public class FloorPreset : Preset {
 	private Material GetMaterial () {
 		if (material == null) {
 			//TODO: Use the right shader or use a source material.
-			material = new Material(Shader.Find("Diffuse"));
+			material = new Material(Shader.Find("Standard"));
+			material.mainTexture = GetTexture();
 		}
 		return material;
 	}
@@ -44,11 +45,18 @@ public class FloorPreset : Preset {
 	/// Place a floor GameObject with the texture of this floor preset.
 	/// </summary>
 	/// <param name="prefab">The floor prefab to instantiate.</param>
-	/// <param name="x">The X coordinate of the floor tile.</param>
-	/// <param name="y">The Y coordinate of the floor tile.</param>
-	public GameObject PlaceFloor (GameObject prefab, int x, int y) {
-		GameObject gameObject = Object.Instantiate(prefab);
-		return gameObject;
+	/// <param name="position">The position of the floor tile.</param>
+	public FloorTileDummy PlaceFloor (GameObject prefab, Vector3 position) {
+		GameObject gameObject = Object.Instantiate(prefab, position, Quaternion.identity);
+		return gameObject.GetComponent<FloorTileDummy>();
+	}
+
+	/// <summary>
+	/// Apply this floor preset's material to the given GameObject.
+	/// </summary>
+	/// <param name="gameObject">The GameObject to apply to. It must have a renderer.</param>
+	public void ApplyToGameObject (GameObject gameObject) {
+		gameObject.GetComponent<Renderer>().material = GetMaterial();
 	}
 
 }
