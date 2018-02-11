@@ -21,7 +21,6 @@ public class FloorPreset : Preset {
 	}
 	
 	private Texture GetTexture () {
-		Debug.Log(textureName);
 		if (texture == null) {
 			if (assetBundle != null) {
 				texture = assetBundle.LoadAsset<Texture>("assets/" + textureName);
