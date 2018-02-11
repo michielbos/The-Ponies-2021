@@ -133,7 +133,7 @@ public class BuyController : MonoBehaviour {
 			}
 		}
 		//TODO: Check for floors, walls, tables, etc.
-		return movingPreset.AllowsPlacement(PlacementRestriction.Terrain);
+		return canPlace && movingPreset.AllowsPlacement(PlacementRestriction.Terrain);
 	}
 
 	private void SetBuildMarkerPosition (int x, int y) {
