@@ -19,7 +19,6 @@ public class CameraControls : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
         camera = GetComponent<Camera>();
-        holder = camera.transform;
 	}
 	
 	// Update is called once per frame
