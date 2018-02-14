@@ -9,11 +9,16 @@ public class CAPController : MonoBehaviour {
 	public Button[] raceButtons;
 	public Button[] stageButtons;
 
-	public const int FEMALE=0, MALE=1, EARTH=0, PEGASUS=1, UNICORN=2, MARYSUE=3, ADULT=0, CHILD=1;
+	public GameObject baseEditor;
+	public GameObject appearanceEditor;
 
-	int selectedGender = MALE;
+	public const int FEMALE=0, MALE=1, EARTH=0, PEGASUS=1, UNICORN=2, MARYSUE=3, ADULT=0, CHILD=1; // This could probably be changed to enum?
+
+	int selectedGender = MALE; // This is not sexism.
 	int selectedRace = EARTH;
 	int selectedStage = ADULT;
+
+	bool customizeMode = false;
 
 	// Use this for initialization
 	void Start () {
@@ -45,7 +50,7 @@ public class CAPController : MonoBehaviour {
 
 	void UpdateButtons()
 	{
-		int bi = -1;
+		int bi = -1; // Button index
 		foreach (Button b in genderButtons)
 		{
 			bi++;
@@ -65,5 +70,11 @@ public class CAPController : MonoBehaviour {
 			bi++;
 			b.interactable = bi != selectedStage;
 		}
+	}
+
+	public void ToggleCustomize() {
+		customizeMode = !customizeMode;
+		baseEditor.SetActive (!customizeMode);
+		appearanceEditor.SetActive (customizeMode);
 	}
 }
