@@ -1,9 +1,16 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Assets.Scripts.Util;
 using UnityEngine;
 
-public class TerrainController : MonoBehaviour
+/* ==> Ebunix <==
+ * Maybe expand the functionality of this class to include changing
+ * the terrain height for something like hills/pools. Currently this
+ * class is more or less justa a placeholder. 
+ * */
+
+public class TerrainController : SingletonMonoBehaviour<TerrainController>
 {
 
     public GameObject terrainTile;

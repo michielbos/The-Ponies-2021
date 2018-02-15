@@ -46,7 +46,7 @@ public class SaveWindowController : MonoBehaviour {
 		CloseSaveDialog();
 		SaveProperty();
 		if (saveType == SaveType.SAVE_AND_RETURN) {
-			GameController.instance.EnterNeighbourhood();
+			GameController.Instance.EnterNeighbourhood();
 		} else if (saveType == SaveType.SAVE_AND_QUIT) {
 			Application.Quit();
 		}
@@ -61,7 +61,7 @@ public class SaveWindowController : MonoBehaviour {
 	public void DontSaveButton () {
 		CloseSaveDialog();
 		if (saveType == SaveType.SAVE_AND_RETURN) {
-			GameController.instance.EnterNeighbourhood();
+			GameController.Instance.EnterNeighbourhood();
 		} else if (saveType == SaveType.SAVE_AND_QUIT) {
 			Application.Quit();
 		}

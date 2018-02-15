@@ -20,6 +20,6 @@ public class PropertyMenuController : MonoBehaviour {
 	}
 
 	public void enterLot (int id) {
-		GameController.instance.EnterLot(id);
+		GameController.Instance.EnterLot(id);
 	}
 }
