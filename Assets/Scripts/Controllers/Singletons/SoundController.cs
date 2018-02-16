@@ -34,11 +34,12 @@ namespace Assets.Scripts.Controllers
 
 		public void PlaySound(SoundType type)
 		{
-			if (clips.Count == 0)
+			if (clips.Count == 0 || type == SoundType.Undefined)
 				return;
-			SoundValuePair pair = clips.FirstOrDefault(c => c.type == type);
-			if (pair == null)
+			SoundValuePair[] pairs = clips.Where(c => c.type == type).ToArray();
+			if (pairs.Length == 0)
 				return;
+			SoundValuePair pair = pairs[UnityEngine.Random.Range(0, pairs.Length)];
 			PlaySound(pair.clip);
 		}
 
@@ -46,9 +47,10 @@ namespace Assets.Scripts.Controllers
 		{
 			if (clips.Count == 0)
 				return;
-			SoundValuePair pair = clips.FirstOrDefault(c => c.clip != null && c.clip.name == name);
-			if (pair == null)
+			SoundValuePair[] pairs = clips.Where(c => c.clip != null && c.clip.name == name).ToArray();
+			if (pairs.Length == 0)
 				return;
+			SoundValuePair pair = pairs[UnityEngine.Random.Range(0, pairs.Length)];
 			PlaySound(pair.clip);
 		}
 
