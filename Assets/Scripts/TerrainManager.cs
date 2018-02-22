@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TerrainManager : MonoBehaviour {
+public class TerrainGenerator : MonoBehaviour {
     public int height;
     public int width;
     public TerrainTile[,] terrain;
@@ -10,7 +10,8 @@ public class TerrainManager : MonoBehaviour {
     public Wall wall;
     public TileGraph graph;
     public Pathfinding path;
-    public TerrainManager()
+
+    public TerrainGenerator()
     {
         height = 50;
         width = 50;
@@ -27,43 +28,14 @@ public class TerrainManager : MonoBehaviour {
         mesh.RecalculateNormals();
         TerrainUpdate(g, i, j);
     }
-    //Unused methods.
-    //Can these be cleaned up?
-    /*public void AddStuff(GameObject t, int i, int j)
-    {
-        if (i<width&&j<height&&0<=j&&0<=i&&terrain[i, j] == null) { 
-            Mesh mesh = new Mesh();
-            GameObject g = Instantiate(t, new Vector3(i, 0, j), Quaternion.identity, this.transform);
-            g.GetComponent<MeshFilter>().mesh = mesh;
-            mesh.vertices = new Vector3[] { new Vector3(0, 0, 0), new Vector3(1, 0, 1), new Vector3(1, 0, 0), new Vector3(1, 0, 1), new Vector3(0, 0, 0),new Vector3(0, 0, 1) };
-            mesh.triangles = new int[] { 0, 1, 2, 3, 4, 5 };
-            mesh.uv = new Vector2[] { };
-            mesh.RecalculateNormals();
-            TerrainUpdate(g, i,j);
-        }
-    }
-    public void AddWall(GameObject t,TerrainTile start, TerrainTile end)
-    {
-        int direction;
-        TerrainTile s=start;
-        TerrainTile e=end;
-        int xdif = (e.x - s.x);
-        int ydif = Mathf.Abs(e.y - s.y);
-        if (ydif != 0)
-        {
-            direction = 3;
-            if (xdif != 0) direction += (int)Mathf.Sign(xdif);
-        }
-        else if (xdif != 0) direction = 1;
-        walls.Add(new Wall(start, end));
-        GameObject g = Instantiate(t, new Vector3(start.x, 0,start.y), Quaternion.identity, this.transform);
-        g.transform.localScale =new Vector3(1,1,Mathf.Sqrt((start.x - end.x)* (start.x - end.x)+ (start.y - end.y)* (start.y - end.y)));
-        g.transform.Rotate(new Vector3(0, Mathf.Atan((start.x - end.x) / (start.y - end.y))));
-    }
+
+    /*
     public TileNode[] Pathfind(TerrainTile start, TerrainTile end)
     {
         return path.AStar(graph.nodes[start], graph.nodes[end]);
-    }*/
+    }
+    */
+
     public void TerrainUpdate(GameObject t,int i, int j)
     {
         TerrainTile tt = t.GetComponent<TerrainTileDummy>().terrainTile;

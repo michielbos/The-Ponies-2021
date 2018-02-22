@@ -53,7 +53,7 @@ public class TerrainController : SingletonMonoBehaviour<TerrainController>
     void Start()
     {
         string[] lines = heightmap.Split('\n');
-        TerrainManager tm = GetComponent<TerrainManager>() ;
+        TerrainGenerator tm = GetComponent<TerrainGenerator>() ;
         for (int i = 0; i < 16; i++)
         {
             heights.Add(new List<int>());

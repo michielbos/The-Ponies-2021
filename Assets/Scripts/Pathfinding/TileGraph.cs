@@ -6,11 +6,11 @@ public class TileGraph {
     public Dictionary<TerrainTile, TileNode> nodes;
     public TileGraph()
     {
-        TerrainManager q = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainManager>();
+        TerrainGenerator q = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainGenerator>();
         TileGraph t=new TileGraph(q);
         nodes = t.nodes;
     }
-        public TileGraph(TerrainManager terrainmanager)
+        public TileGraph(TerrainGenerator terrainmanager)
     {
         nodes=new Dictionary<TerrainTile, TileNode>();
         for(int x = 0; x < terrainmanager.width; x++)
