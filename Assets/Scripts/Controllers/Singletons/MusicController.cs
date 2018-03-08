@@ -4,6 +4,19 @@ using Assets.Scripts.Util;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
+/// <summary>
+/// Enum with all the music types.
+/// </summary>
+public enum MusicType
+{
+    NoMusic,
+    Neighbourhood,
+    CreateAPony,
+    BuyMode,
+    BuildMode,
+    CommunityBuildMode
+}
+
 public class MusicController : SingletonMonoBehaviour<MusicController>
 {
 	public AudioClip[] neighbourhoodSongs;

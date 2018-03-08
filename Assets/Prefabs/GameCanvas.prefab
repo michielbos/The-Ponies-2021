@@ -1143,6 +1143,7 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 4112304002539738}
+  - component: {fileID: 114401643927788930}
   - component: {fileID: 114856338473800514}
   - component: {fileID: 114530567689701740}
   - component: {fileID: 114824142946384944}
@@ -1152,8 +1153,8 @@ GameObject:
   - component: {fileID: 114315203990206404}
   - component: {fileID: 114000624313239220}
   - component: {fileID: 114223302282688168}
-  - component: {fileID: 114401643927788930}
   - component: {fileID: 114486188290150994}
+  - component: {fileID: 114586363656697466}
   m_Layer: 5
   m_Name: GameController
   m_TagString: GameController
@@ -3107,7 +3108,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1646141380953286}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d07e2f868ee784ea590bcbfab8aae37a, type: 3}
+  m_Script: {fileID: 11500000, guid: 54c446f5a435ccc459b3afe8e0a666b3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   propertyController: {fileID: 0}
@@ -7727,6 +7728,40 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114586363656697466
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1383177691709652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 9c72822f0727d417bbe0d86622a2aa72, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrainTilePrefab: {fileID: 1343583355818736, guid: 91be4d9b445d64ce5b7717588a1f0445,
+    type: 2}
+  wallPrefab: {fileID: 1459735444399992, guid: a5d2bd43000624114a063d361f8774eb, type: 2}
+  propertyObjectPrefab: {fileID: 1459735444399992, guid: be8404b2751774904bd936ec878fbe03,
+    type: 2}
+  floorTilePrefab: {fileID: 0}
+  property:
+    id: 0
+    name: 
+    description: 
+    streetName: 
+    propertyType: 0
+    walls: []
+    propertyObjects:
+    - id: 0
+      x: 0
+      y: 0
+      rotation: 0
+      preset:
+        assetBundle: {fileID: 0}
+      skin: 0
+      dummyObject: {fileID: 0}
+      value: 0
 --- !u!114 &114586367092800788
 MonoBehaviour:
   m_ObjectHideFlags: 1
