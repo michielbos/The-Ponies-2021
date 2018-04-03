@@ -34,7 +34,7 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController>
 
 	private bool ShouldCloseInfoPanel()
 	{
-		RectTransform catalogTransform = GetComponent<RectTransform>();
+		RectTransform catalogTransform = catalogBar;
 		RectTransform objectInfoTransform = objectInfoPanel.GetComponent<RectTransform>();
 		Vector2 catalogPos = catalogTransform.position;
 		Vector2 objectInfoPos = objectInfoTransform.position;
@@ -129,7 +129,7 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController>
 		for (int i = tab * maxButtons; i < (tab + 1) * maxButtons && i < catalogItems.Count; i++)
 		{
 			CatalogItem catalogItem = catalogItems[i];
-			Button button = Instantiate(buttonPrefab, transform);
+			Button button = Instantiate(buttonPrefab, catalogBar);
 			RectTransform rectTransform = button.GetComponent<RectTransform>();
 			Vector3 pos = rectTransform.anchoredPosition;
 			pos.x = barMargin + i % maxHorizontal * (buttonSize.x + buttonMargin) + spareWidth / 2;
@@ -170,9 +170,9 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController>
 	/// <param name="skin">The skin that was selected. If none was explicitly selected, this is 0.</param>
 	public void SelectCatalogItem(CatalogItem catalogItem, int skin)
 	{
-		if (toolController.HasActiveTool())
+		if (toolController.HasActiveTool)
 		{
-			toolController.GetTool().SetSelectedPreset(catalogItem, skin);
+            toolController.ActiveTool.OnCatalogSelect(catalogItem, skin);
 		}
 	}
 

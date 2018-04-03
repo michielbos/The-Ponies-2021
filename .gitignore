@@ -20,6 +20,9 @@ ExportedObj/
 *.unityproj
 *.booproj
 
+*.sln
+*.csproj 
+
 # ===== #
 # Rider #
 # ===== #

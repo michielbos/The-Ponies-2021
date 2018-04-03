@@ -6,7 +6,6 @@ using UnityEngine.UI;
 /// </summary>
 public class ObjectInfoPanel : MonoBehaviour {
     public Button buttonPrefab;
-    public CatalogController catalogController;
     public Text titleText;
     public Text descriptionText;
     public Text priceText;
@@ -69,7 +68,7 @@ public class ObjectInfoPanel : MonoBehaviour {
     /// <param name="skin">The skin to select.</param>
     public void SetSelectedSkin (int skin) {
         previewImage.texture = catalogItem.GetPreviewTextures()[skin];
-        catalogController.SelectCatalogItem(catalogItem, skin);
+        CatalogController.Instance.SelectCatalogItem(catalogItem, skin);
     }
     
     private void PlaceSkinButtons () {

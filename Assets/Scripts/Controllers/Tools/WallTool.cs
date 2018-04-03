@@ -1,13 +1,29 @@
-﻿namespace Assets.Scripts.Controls.Tools
+﻿using UnityEngine;
+using UnityEngine.Experimental.UIElements;
+
+namespace Assets.Scripts.Controls.Tools
 {
-	public class WallTool : Tool
+    [CreateAssetMenu(fileName = "WallTool", menuName = "Tools/Wall Tool", order = 10)]
+	public class WallTool : ScriptableObject, ITool
 	{
-		public override void SetSelectedPreset(CatalogItem catalogItem, int skin)
-		{
-			//TODO
-			throw new System.NotImplementedException();
-		}
+	    public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex)
+	    {
+	    }
 
+	    public void OnCatalogSelect(CatalogItem item, int skin)
+	    {
+	    }
 
+	    public void Enable()
+	    {
+	    }
+
+	    public void Disable()
+	    {
+	    }
+
+	    public void OnClicked(MouseButton button)
+	    {
+	    }
 	}
 }

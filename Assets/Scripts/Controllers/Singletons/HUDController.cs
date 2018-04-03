@@ -25,14 +25,19 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
 
 	// Called from Unity GUI Button
 	public void ActivatePanel(int index)
-	{
-		SoundController.Instance.PlaySound(SoundType.Click);
-		SoundController.Instance.PlaySound(SoundType.Woosh);
-		ModeController.Instance.SwitchMode((HudPanel)index);
-	}
+    {
+        ActivatePanel((HudPanel)index);
+    }
 
-	// Called from Unity GUI Button
-	public void SetRoofButton(int index)
+    private static void ActivatePanel(HudPanel panel)
+    {
+        SoundController.Instance.PlaySound(SoundType.Click);
+        SoundController.Instance.PlaySound(SoundType.Woosh);
+        ModeController.Instance.SwitchMode(panel);
+    }
+
+    // Called from Unity GUI Button
+    public void SetRoofButton(int index)
 	{
 		// TODO: Implement a proper controller for this
 		SoundController.Instance.PlaySound(SoundType.Click);

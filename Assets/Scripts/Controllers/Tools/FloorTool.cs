@@ -1,10 +1,13 @@
 ﻿using Assets.Scripts.Controllers;
 using UnityEngine;
+using UnityEngine.Experimental.UIElements;
 
 /// <summary>
 /// Tool for build mode that deals with placing and removing floors.
 /// </summary>
-public class FloorTool : Tool {
+[CreateAssetMenu(fileName = "FloorTool", menuName = "Tools/Floor Tool", order = 10)]
+public class FloorTool : ScriptableObject, ITool
+{
 	private const int LAYER_TERRAIN = 8;
 	
 	public GameObject buildMarkerPrefab;
@@ -33,19 +36,9 @@ public class FloorTool : Tool {
 			}
 		}
 	}
-	
-	public override void SetSelectedPreset (CatalogItem catalogItem, int skin) {
-		FloorPreset floorPreset = catalogItem as FloorPreset;
-		if (floorPreset == null) {
-			Debug.LogWarning(catalogItem + " is not a FloorPreset, cannot be set to FloorTool.");
-			return;
-		}
-		placingPreset = floorPreset;
-		CreateBuildMarker();
-	}
 
 	private void CreateBuildMarker () {
-		buildMarker = Instantiate(buildMarkerPrefab);
+		buildMarker = Object.Instantiate(buildMarkerPrefab);
 		placingPreset.ApplyToGameObject(buildMarker);
 		SetBuildMarkerPosition(0, 0);
 	}
@@ -119,4 +112,32 @@ public class FloorTool : Tool {
 		MoneyController.Instance.ChangeFunds(floorTile.preset.GetSellValue());
 		propertyController.RemoveFloor(floorTile);
 	}
+
+    public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex)
+    {
+    }
+
+    public void OnCatalogSelect(CatalogItem item, int skin)
+    {
+        FloorPreset floorPreset = item as FloorPreset;
+        if (floorPreset == null)
+        {
+            Debug.LogWarning(item + " is not a FloorPreset, cannot be set to FloorTool.");
+            return;
+        }
+        placingPreset = floorPreset;
+        CreateBuildMarker();
+    }
+
+    public void Enable()
+    {
+    }
+
+    public void Disable()
+    {
+    }
+
+    public void OnClicked(MouseButton button)
+    {
+    }
 }

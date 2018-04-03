@@ -1,11 +1,15 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.Controllers;
+using Assets.Scripts.Util;
 using UnityEngine;
+using UnityEngine.Experimental.UIElements;
 
 /// <summary>
 /// Tool for buy/build mode that deals with buying, moving and selling furniture.
 /// </summary>
-public class BuyTool : Tool
+/// 
+[CreateAssetMenu(fileName = "BuyTool", menuName = "Tools/Buy Tool", order = 10)]
+public class BuyTool : ScriptableObject, ITool
 {
 	private const int LAYER_TERRAIN = 8;
 
@@ -13,13 +17,12 @@ public class BuyTool : Tool
 	public GameObject buyMarkingPrefab;
 	public Material buyMarkingNormalMaterial;
 	public Material buyMarkingDisallowedMaterial;
-	public PropertyController propertyController;
-	public HUDController hudController;
-	public CheatsController cheatsController;
 
 	private FurniturePreset placingPreset;
 	private int placingSkin;
-	private PropertyObject movingObject;
+
+    private PropertyObject movingObject;
+
 	private GameObject buildMarker;
 	private ObjectRotation markerRotation = ObjectRotation.SouthEast;
 	private List<GameObject> buyMarkings;
@@ -37,48 +40,11 @@ public class BuyTool : Tool
 		ClearSelection();
 	}
 
-	public void Update()
-	{
-		if (GetMovingPreset() != null)
-		{
-			if (pressingTile)
-			{
-				HandlePlacementHolding();
-			}
-			else
-			{
-				UpdateBuildMarker();
-			}
-		}
-		else
-		{
-			HandleHovering();
-		}
-
-		if (Input.GetKey(KeyCode.Delete))
-		{
-			SellSelection();
-		}
-	}
-
 	/// <summary>
 	/// Set the furniture preset that is being placed.
 	/// </summary>
 	/// <param name="catalogItem">The FurniturePreset that is being placed.</param>
 	/// <param name="skin">The skin that should be applied to the preset.</param>
-	public override void SetSelectedPreset(CatalogItem catalogItem, int skin)
-	{
-		FurniturePreset furniturePreset = catalogItem as FurniturePreset;
-		if (furniturePreset == null)
-		{
-			Debug.LogWarning(catalogItem + " is not a FurniturePreset, cannot be set to BuyTool.");
-			return;
-		}
-		ClearSelection();
-		placingPreset = furniturePreset;
-		placingSkin = skin;
-		CreateBuildMarker();
-	}
 
 	private void CreateBuildMarker()
 	{
@@ -117,7 +83,7 @@ public class BuyTool : Tool
 	{
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (!hudController.IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN))
+		if (!HUDController.Instance.IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN))
 		{
 			TerrainTile newTargetTile = hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
 			if (newTargetTile != targetTile)
@@ -152,9 +118,9 @@ public class BuyTool : Tool
 	{
 		FurniturePreset movingPreset = GetMovingPreset();
 		Vector2Int[] requiredTiles = movingPreset.GetOccupiedTiles(new Vector2Int(targetTile.x, targetTile.y));
-		List<PropertyObject> occupyingObjects = propertyController.property.GetObjectsOnTiles(requiredTiles);
+		List<PropertyObject> occupyingObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
 		bool canPlace = placingPreset == null || placingPreset.price <= MoneyController.Instance.Funds;
-		if (canPlace && !cheatsController.moveObjectsMode)
+		if (canPlace && !CheatsController.Instance.moveObjectsMode)
 		{
 			foreach (PropertyObject occupyingObject in occupyingObjects)
 			{
@@ -201,7 +167,7 @@ public class BuyTool : Tool
 		{
 			SoundController.Instance.PlaySound(SoundType.Buy);
 			MoneyController.Instance.ChangeFunds(-placingPreset.price);
-			propertyController.PlacePropertyObject(targetTile.x, targetTile.y, ObjectRotation.SouthEast, placingPreset, placingSkin);
+			PropertyController.Instance.PlacePropertyObject(targetTile.x, targetTile.y, ObjectRotation.SouthEast, placingPreset, placingSkin);
 			if (Input.GetKey(KeyCode.LeftShift))
 			{
 				BuildMarkerMoved(targetTile);
@@ -217,7 +183,7 @@ public class BuyTool : Tool
 	{
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (hudController.IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000))
+		if (HUDController.Instance.IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000))
 			return;
 		PropertyObjectDummy dummy = hit.collider.GetComponent<PropertyObjectDummy>();
 		if (dummy == null)
@@ -225,7 +191,7 @@ public class BuyTool : Tool
 		//TODO: Highlight object if it can be picked up.
 		if (!Input.GetMouseButtonDown(0))
 			return;
-		if (dummy.propertyObject.preset.pickupable || cheatsController.moveObjectsMode)
+		if (dummy.propertyObject.preset.pickupable || CheatsController.Instance.moveObjectsMode)
 		{
 			PickUpObject(dummy.propertyObject);
 		}
@@ -248,10 +214,10 @@ public class BuyTool : Tool
 		{
 			ClearSelection();
 		}
-		else if (movingObject.preset.sellable || cheatsController.moveObjectsMode)
+		else if (movingObject.preset.sellable || CheatsController.Instance.moveObjectsMode)
 		{
 			SoundController.Instance.PlaySound(SoundType.Sell);
-			propertyController.RemovePropertyObject(movingObject);
+			PropertyController.Instance.RemovePropertyObject(movingObject);
 			MoneyController.Instance.ChangeFunds(movingObject.value);
 			ClearSelection();
 		}
@@ -264,7 +230,7 @@ public class BuyTool : Tool
 	private void ClearSelection()
 	{
 		placingPreset = null;
-		if (movingObject != null)
+		if (movingObject != null && movingObject.dummyObject.Exists())
 		{
 			movingObject.RefreshDummy();
 			movingObject = null;
@@ -277,4 +243,58 @@ public class BuyTool : Tool
 		}
 		RemoveBuyMarkings();
 	}
+
+    public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex)
+    {
+        if (GetMovingPreset() != null)
+        {
+            if (pressingTile)
+            {
+                HandlePlacementHolding();
+            }
+            else
+            {
+                UpdateBuildMarker();
+            }
+        }
+        else
+        {
+            HandleHovering();
+        }
+
+        if (Input.GetKey(KeyCode.Delete))
+        {
+            SellSelection();
+        }
+    }
+
+    public void OnCatalogSelect(CatalogItem item, int skin)
+    {
+        FurniturePreset furniturePreset = item as FurniturePreset;
+        if (furniturePreset == null)
+        {
+            Debug.LogWarning(item + " is not a FurniturePreset, cannot be set to BuyTool.");
+            return;
+        }
+        ClearSelection();
+        placingPreset = furniturePreset;
+        placingSkin = skin;
+        CreateBuildMarker();
+    }
+
+    public void Enable()
+    {
+        pressingTile = false;
+        movingObject = null;
+        buildMarker = null;
+        placingPreset = null;
+    }
+
+    public void Disable()
+    {
+    }
+
+    public void OnClicked(MouseButton button)
+    {
+    }
 }

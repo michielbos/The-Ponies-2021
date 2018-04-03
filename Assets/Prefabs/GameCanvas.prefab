@@ -1510,6 +1510,22 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
+--- !u!1 &1513744544404568
+GameObject:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  serializedVersion: 5
+  m_Component:
+  - component: {fileID: 4978779594315630}
+  - component: {fileID: 114457216864774266}
+  m_Layer: 5
+  m_Name: Tools
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
 --- !u!1 &1514434072766498
 GameObject:
   m_ObjectHideFlags: 1
@@ -2820,8 +2836,22 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -602, y: -298, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
+  m_Children:
+  - {fileID: 4978779594315630}
   m_Father: {fileID: 224396480729214902}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!4 &4978779594315630
+Transform:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1513744544404568}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 4112304002539738}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114000624313239220
@@ -5415,8 +5445,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonPrefab: {fileID: 114391662634794322, guid: 02e9743a88ad84636a37c8b055df867f,
     type: 2}
-  buyModeX: 0
-  buildModeX: 0
+  buyModeX: 555
+  buildModeX: 675
   catalogBar: {fileID: 224749356546174896}
   catalogPreviousButton: {fileID: 114431518955277782}
   catalogNextButton: {fileID: 114523557342383612}
@@ -6512,6 +6542,17 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Enter description...
+--- !u!114 &114457216864774266
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1513744544404568}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 0}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114457684174737298
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6724,8 +6765,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tools:
-  - type: 0
-    tool: {fileID: 0}
+  - type: 1
+    tool: {fileID: 11400000, guid: 8336efb26a370ab4d89efe2a5f45d66f, type: 2}
+  - type: 2
+    tool: {fileID: 11400000, guid: 3f2c2fa57c0bd0c47b000457157b6bc3, type: 2}
+  - type: 3
+    tool: {fileID: 11400000, guid: a84a9ee9c1a9d8a4b8cf8f2104ef4cb8, type: 2}
+  - type: 4
+    tool: {fileID: 11400000, guid: db9b8f83fa19ba74a8d2f027ea868d3d, type: 2}
 --- !u!114 &114487068118122478
 MonoBehaviour:
   m_ObjectHideFlags: 1
