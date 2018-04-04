@@ -29,14 +29,15 @@ public class FloorTool : ScriptableObject, ITool
 	}
 	
 	public void Enable() {
-		CreateBuildMarker();
-	}
-
-	public void Disable() {
 		placingPreset = null;
 	}
 
+	public void Disable() {
+		
+	}
+
 	public void OnClicked(MouseButton button) {
+		
 	}
 
 	private void CreateBuildMarker () {
