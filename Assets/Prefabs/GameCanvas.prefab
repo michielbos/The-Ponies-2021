@@ -3629,7 +3629,6 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 254dc766629b74a6e99c429ac82c47a0, type: 3}
   - {fileID: 8300000, guid: bd29c604f55f4490bbe7a8822342ed67, type: 3}
   communityBuildSongs: []
-  audioSource: {fileID: 0}
 --- !u!114 &114099412846582776
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -3641,7 +3640,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b5b3e3f905a6cda4183a896beff9f4fd, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  audioSource: {fileID: 0}
+  chanelCount: 5
   clips:
   - type: 0
     clip: {fileID: 8300000, guid: 0b950602cff86794a8e24092422d6da0, type: 3}
@@ -6390,13 +6389,12 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: CatalogPreviousButton
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -7128,13 +7126,12 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: CatalogNextButton
+        m_Mode: 1
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
