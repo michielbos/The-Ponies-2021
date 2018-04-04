@@ -1139,6 +1139,8 @@ GameObject:
   - component: {fileID: 114486188290150994}
   - component: {fileID: 114586363656697466}
   - component: {fileID: 114544127686149074}
+  - component: {fileID: 114099412846582776}
+  - component: {fileID: 114086576077371470}
   m_Layer: 5
   m_Name: GameController
   m_TagString: GameController
@@ -3604,6 +3606,81 @@ MonoBehaviour:
   m_FillAmount: 1
   m_FillClockwise: 1
   m_FillOrigin: 0
+--- !u!114 &114086576077371470
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1383177691709652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 65d7b2ea989f9d945a5eb0ce8feca703, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  neighbourhoodSongs: []
+  capSongs: []
+  buyModeSongs:
+  - {fileID: 8300000, guid: 53730b3f58d534cf3a66545359d3cdca, type: 3}
+  - {fileID: 8300000, guid: 3d227763a05824de09982ac3049381c3, type: 3}
+  - {fileID: 8300000, guid: 158243298415b4c0da76e688c5b414d7, type: 3}
+  buildModeSongs:
+  - {fileID: 8300000, guid: 4282e99576c91432492f46b0389b494b, type: 3}
+  - {fileID: 8300000, guid: 75bc836a512cd4c2892109a1a7ab908c, type: 3}
+  - {fileID: 8300000, guid: 254dc766629b74a6e99c429ac82c47a0, type: 3}
+  - {fileID: 8300000, guid: bd29c604f55f4490bbe7a8822342ed67, type: 3}
+  communityBuildSongs: []
+  audioSource: {fileID: 0}
+--- !u!114 &114099412846582776
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1383177691709652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b5b3e3f905a6cda4183a896beff9f4fd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  audioSource: {fileID: 0}
+  clips:
+  - type: 0
+    clip: {fileID: 8300000, guid: 0b950602cff86794a8e24092422d6da0, type: 3}
+  - type: 0
+    clip: {fileID: 8300000, guid: 6c4d327f810183041b11ee0cdb25d249, type: 3}
+  - type: 0
+    clip: {fileID: 8300000, guid: 6fb5a616fc85c6540946e97f45b1a89a, type: 3}
+  - type: 0
+    clip: {fileID: 8300000, guid: fe211daef6100ee4ebb2789cd4d15f8d, type: 3}
+  - type: 0
+    clip: {fileID: 8300000, guid: d5772d802c6ec3447ac310855b728399, type: 3}
+  - type: 0
+    clip: {fileID: 8300000, guid: 43b199e5c7be3ca4ebd50397edaa5292, type: 3}
+  - type: 0
+    clip: {fileID: 8300000, guid: c05ed973a20f9d54a804d0fb5b8556e6, type: 3}
+  - type: 0
+    clip: {fileID: 8300000, guid: 712cf37ff1a41044ca97cc98ed50bf05, type: 3}
+  - type: 0
+    clip: {fileID: 8300000, guid: 49b1de40b445f8a468977500cabd7c18, type: 3}
+  - type: 0
+    clip: {fileID: 8300000, guid: 458fab6e80c9d8f4f85e8b04f01d3481, type: 3}
+  - type: 0
+    clip: {fileID: 8300000, guid: cab7625483e9de2498dca342d5f10434, type: 3}
+  - type: 0
+    clip: {fileID: 8300000, guid: 6c34584ebbe45d64ebfa04f236d0a80d, type: 3}
+  - type: 1
+    clip: {fileID: 8300000, guid: a0b53a8b217b905448eeddee1c1d7df3, type: 3}
+  - type: 2
+    clip: {fileID: 8300000, guid: e8ba0a1d34871f340a3dc4591c80c5f5, type: 3}
+  - type: 3
+    clip: {fileID: 8300000, guid: fffa4f35ce6b4544e8c707bdbfef5f19, type: 3}
+  - type: 4
+    clip: {fileID: 8300000, guid: 5ce2733bb014c6b4ba5a9b729766715d, type: 3}
+  - type: 5
+    clip: {fileID: 8300000, guid: cfbf7c333ebcfe34c9c23976c08200bf, type: 3}
+  - type: 6
+    clip: {fileID: 8300000, guid: dc6c82471230c464a9b4f1a9badd449c, type: 3}
+  - type: 7
+    clip: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969, type: 3}
 --- !u!114 &114100364566045644
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6665,7 +6742,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1383177691709652}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5972ca0570aa45a69e5421aa91f1aaf7, type: 3}
+  m_Script: {fileID: 11500000, guid: 575406f322444074dad0b53c3bf16618, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   tools:
@@ -7715,7 +7792,8 @@ MonoBehaviour:
   wallPrefab: {fileID: 1459735444399992, guid: a5d2bd43000624114a063d361f8774eb, type: 2}
   propertyObjectPrefab: {fileID: 1459735444399992, guid: be8404b2751774904bd936ec878fbe03,
     type: 2}
-  floorTilePrefab: {fileID: 0}
+  floorTilePrefab: {fileID: 1459735444399992, guid: cb1634ccb17b94d54bd8592812aaba3a,
+    type: 2}
   property:
     id: 0
     name: 
