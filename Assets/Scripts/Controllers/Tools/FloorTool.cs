@@ -11,11 +11,6 @@ public class FloorTool : ScriptableObject, ITool
 	private const int LAYER_TERRAIN = 8;
 	
 	public GameObject buildMarkerPrefab;
-	public AudioClip denySound;
-	public AudioClip placeSound;
-	public PropertyController propertyController;
-	public HUDController hudController;
-	public AudioSource audioSource;
 
 	private FloorPreset placingPreset;
 	private GameObject buildMarker;
@@ -23,11 +18,7 @@ public class FloorTool : ScriptableObject, ITool
 	private bool pressingTile;
 	private bool canPlace;
 
-	public void OnDisable () {
-		placingPreset = null;
-	}
-
-	public void Update () {
+	public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex) {
 		if (placingPreset != null) {
 			if (pressingTile) {
 				HandlePlacementHolding();
@@ -36,9 +27,20 @@ public class FloorTool : ScriptableObject, ITool
 			}
 		}
 	}
+	
+	public void Enable() {
+		CreateBuildMarker();
+	}
+
+	public void Disable() {
+		placingPreset = null;
+	}
+
+	public void OnClicked(MouseButton button) {
+	}
 
 	private void CreateBuildMarker () {
-		buildMarker = Object.Instantiate(buildMarkerPrefab);
+		buildMarker = Instantiate(buildMarkerPrefab);
 		placingPreset.ApplyToGameObject(buildMarker);
 		SetBuildMarkerPosition(0, 0);
 	}
@@ -46,7 +48,7 @@ public class FloorTool : ScriptableObject, ITool
 	private void UpdateBuildMarker () {
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (!hudController.IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN)) {
+		if (!HUDController.Instance.IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN)) {
 			TerrainTile newTargetTile = hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
 			if (newTargetTile != targetTile) {
 				BuildMarkerMoved(newTargetTile);
@@ -77,9 +79,9 @@ public class FloorTool : ScriptableObject, ITool
 	private void HandlePlacementHolding () {
 		if (Input.GetMouseButtonUp(0)) {
 			if (Input.GetKey(KeyCode.LeftControl)) {
-				FloorTile selectedTile = propertyController.property.GetFloorTile(targetTile.x, targetTile.y);
+				FloorTile selectedTile = PropertyController.Instance.property.GetFloorTile(targetTile.x, targetTile.y);
 				if (selectedTile != null) {
-					audioSource.PlayOneShot(placeSound);
+					SoundController.Instance.PlaySound(SoundType.Place);
 					SellFloor(selectedTile);
 				}
 			} else {
@@ -91,9 +93,9 @@ public class FloorTool : ScriptableObject, ITool
 
 	private void PlaceObject () {
 		if (!canPlace) {
-			audioSource.PlayOneShot(denySound);
+			SoundController.Instance.PlaySound(SoundType.Deny);
 		} else {
-			FloorTile currentTile = propertyController.property.GetFloorTile(targetTile.x, targetTile.y);
+			FloorTile currentTile = PropertyController.Instance.property.GetFloorTile(targetTile.x, targetTile.y);
 			if (currentTile != null) {
 				if (currentTile.preset != placingPreset) {
 					SellFloor(currentTile);
@@ -101,21 +103,17 @@ public class FloorTool : ScriptableObject, ITool
 					return;
 				}
 			}
-			audioSource.PlayOneShot(placeSound);
+			SoundController.Instance.PlaySound(SoundType.Place);
 			MoneyController.Instance.ChangeFunds(-placingPreset.price);
-			propertyController.PlaceFloor(targetTile.x, targetTile.y, placingPreset);
+			PropertyController.Instance.PlaceFloor(targetTile.x, targetTile.y, placingPreset);
 			BuildMarkerMoved(targetTile);
 		}
 	}
 
 	private void SellFloor (FloorTile floorTile) {
 		MoneyController.Instance.ChangeFunds(floorTile.preset.GetSellValue());
-		propertyController.RemoveFloor(floorTile);
+		PropertyController.Instance.RemoveFloor(floorTile);
 	}
-
-    public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex)
-    {
-    }
 
     public void OnCatalogSelect(CatalogItem item, int skin)
     {
@@ -127,17 +125,5 @@ public class FloorTool : ScriptableObject, ITool
         }
         placingPreset = floorPreset;
         CreateBuildMarker();
-    }
-
-    public void Enable()
-    {
-    }
-
-    public void Disable()
-    {
-    }
-
-    public void OnClicked(MouseButton button)
-    {
     }
 }

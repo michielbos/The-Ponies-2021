@@ -11,9 +11,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dcf7c7816d5e4ba58145054f1ca52c54, type: 3}
   m_Name: FloorTool
   m_EditorClassIdentifier: 
-  buildMarkerPrefab: {fileID: 0}
-  denySound: {fileID: 0}
-  placeSound: {fileID: 0}
-  propertyController: {fileID: 0}
-  hudController: {fileID: 0}
-  audioSource: {fileID: 0}
+  buildMarkerPrefab: {fileID: 1824389368066718, guid: 9b9ec0e23a2064468bba7635c86e9ad9,
+    type: 2}
