@@ -576,23 +576,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!1 &1242395490545034
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 224907849156277170}
-  - component: {fileID: 222515859415125004}
-  - component: {fileID: 114990052357117040}
-  m_Layer: 5
-  m_Name: Panel_LargeRes
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 0
 --- !u!1 &1252656863585654
 GameObject:
   m_ObjectHideFlags: 1
@@ -1155,6 +1138,7 @@ GameObject:
   - component: {fileID: 114223302282688168}
   - component: {fileID: 114486188290150994}
   - component: {fileID: 114586363656697466}
+  - component: {fileID: 114544127686149074}
   m_Layer: 5
   m_Name: GameController
   m_TagString: GameController
@@ -1465,7 +1449,6 @@ GameObject:
   serializedVersion: 5
   m_Component:
   - component: {fileID: 224749356546174896}
-  - component: {fileID: 114289265587149008}
   m_Layer: 5
   m_Name: Catalog
   m_TagString: Untagged
@@ -1506,22 +1489,6 @@ GameObject:
   m_Layer: 0
   m_Name: GameCanvas
   m_TagString: HUD
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!1 &1513744544404568
-GameObject:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 4978779594315630}
-  - component: {fileID: 114457216864774266}
-  m_Layer: 5
-  m_Name: Tools
-  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -2836,22 +2803,8 @@ Transform:
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: -602, y: -298, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children:
-  - {fileID: 4978779594315630}
-  m_Father: {fileID: 224396480729214902}
-  m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &4978779594315630
-Transform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1513744544404568}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
-  m_Father: {fileID: 4112304002539738}
+  m_Father: {fileID: 224396480729214902}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &114000624313239220
@@ -2939,7 +2892,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
+        m_MethodName: 
         m_Mode: 2
         m_Arguments:
           m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
@@ -2950,7 +2903,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 114544127686149074}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -3036,7 +2989,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 1
+          m_IntArgument: -1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -3200,7 +3153,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 114544127686149074}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -3328,19 +3281,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: OpenCatalog
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 0}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -3483,19 +3435,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: OpenCatalog
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 0}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -3575,19 +3526,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: OpenCatalog
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 0}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -3647,7 +3597,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 8d819773cf3ee514a89a61acbcdc7142, type: 3}
-  m_Type: 0
+  m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -4779,13 +4729,12 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: OpenCatalog
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -5207,19 +5156,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: OpenCatalog
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 0}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -5432,26 +5380,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114289265587149008
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1501811578415924}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5abd8917fb89c4ba5a0e3b9d087a1278, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  buttonPrefab: {fileID: 114391662634794322, guid: 02e9743a88ad84636a37c8b055df867f,
-    type: 2}
-  buyModeX: 555
-  buildModeX: 675
-  catalogBar: {fileID: 224749356546174896}
-  catalogPreviousButton: {fileID: 114431518955277782}
-  catalogNextButton: {fileID: 114523557342383612}
-  toolController: {fileID: 114486188290150994}
-  objectInfoPanel: {fileID: 114332638682188552}
 --- !u!114 &114292303049944002
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -5556,7 +5484,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 12163b1556495384f93666ccee19010b, type: 3}
-  m_Type: 0
+  m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -5726,7 +5654,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   buttonPrefab: {fileID: 114391662634794322, guid: 02e9743a88ad84636a37c8b055df867f,
     type: 2}
-  catalogController: {fileID: 114289265587149008}
   titleText: {fileID: 114178938528215124}
   descriptionText: {fileID: 114688392384000074}
   priceText: {fileID: 114603100296829368}
@@ -6409,7 +6336,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 0}
         m_MethodName: CatalogPreviousButton
         m_Mode: 1
         m_Arguments:
@@ -6542,17 +6469,6 @@ MonoBehaviour:
     m_VerticalOverflow: 0
     m_LineSpacing: 1
   m_Text: Enter description...
---- !u!114 &114457216864774266
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1513744544404568}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 0}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114457684174737298
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -6600,7 +6516,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 8d819773cf3ee514a89a61acbcdc7142, type: 3}
-  m_Type: 0
+  m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -6647,19 +6563,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: OpenCatalog
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 0}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -6874,7 +6789,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 8d819773cf3ee514a89a61acbcdc7142, type: 3}
-  m_Type: 0
+  m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -7014,7 +6929,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 114544127686149074}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -7159,7 +7074,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 0}
         m_MethodName: CatalogNextButton
         m_Mode: 1
         m_Arguments:
@@ -7381,6 +7296,26 @@ MonoBehaviour:
   messageWindowPrefab: {fileID: 114746704912265858, guid: 68e414702aacd4c818ec22491e60acd3,
     type: 2}
   audioSource: {fileID: 0}
+--- !u!114 &114544127686149074
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1383177691709652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5abd8917fb89c4ba5a0e3b9d087a1278, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buttonPrefab: {fileID: 114391662634794322, guid: 02e9743a88ad84636a37c8b055df867f,
+    type: 2}
+  buyModeX: 555
+  buildModeX: 675
+  catalogBar: {fileID: 224749356546174896}
+  catalogPreviousButton: {fileID: 114431518955277782}
+  catalogNextButton: {fileID: 114523557342383612}
+  toolController: {fileID: 114486188290150994}
+  objectInfoPanel: {fileID: 114332638682188552}
 --- !u!114 &114545036191069006
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -7799,16 +7734,7 @@ MonoBehaviour:
     streetName: 
     propertyType: 0
     walls: []
-    propertyObjects:
-    - id: 0
-      x: 0
-      y: 0
-      rotation: 0
-      preset:
-        assetBundle: {fileID: 0}
-      skin: 0
-      dummyObject: {fileID: 0}
-      value: 0
+    propertyObjects: []
 --- !u!114 &114586367092800788
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -8450,7 +8376,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   buttonPrefab: {fileID: 0}
-  catalogController: {fileID: 0}
   titleText: {fileID: 0}
   descriptionText: {fileID: 0}
   priceText: {fileID: 0}
@@ -8929,7 +8854,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 114544127686149074}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -9220,13 +9145,12 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: OpenCatalog
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
@@ -9286,7 +9210,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 114544127686149074}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -9558,19 +9482,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: OpenCatalog
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 0}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -9731,19 +9654,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: OpenCatalog
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 0}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -9823,19 +9745,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: OpenCatalog
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 0}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -10018,7 +9939,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 114544127686149074}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -10472,7 +10393,7 @@ MonoBehaviour:
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: -1
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -10589,7 +10510,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 114544127686149074}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -11351,7 +11272,7 @@ MonoBehaviour:
     m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
       Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
   m_Sprite: {fileID: 21300000, guid: 8d819773cf3ee514a89a61acbcdc7142, type: 3}
-  m_Type: 0
+  m_Type: 2
   m_PreserveAspect: 0
   m_FillCenter: 1
   m_FillMethod: 4
@@ -11641,7 +11562,7 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 114544127686149074}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -11886,19 +11807,18 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 0}
-        m_MethodName: PlayOneShot
-        m_Mode: 2
+      - m_Target: {fileID: 114544127686149074}
+        m_MethodName: OpenCatalog
+        m_Mode: 3
         m_Arguments:
-          m_ObjectArgument: {fileID: 8300000, guid: cc2d5fb39de026742b7239824aeb0969,
-            type: 3}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.AudioClip, UnityEngine
+          m_ObjectArgument: {fileID: 0}
+          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
           m_IntArgument: 0
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 114289265587149008}
+      - m_Target: {fileID: 0}
         m_MethodName: OpenCatalog
         m_Mode: 3
         m_Arguments:
@@ -11911,33 +11831,6 @@ MonoBehaviour:
         m_CallState: 2
     m_TypeName: UnityEngine.UI.Button+ButtonClickedEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
---- !u!114 &114990052357117040
-MonoBehaviour:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1242395490545034}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: -765806418, guid: f70555f144d8491a825f0804e09c671c, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Material: {fileID: 0}
-  m_Color: {r: 0.03529412, g: 0.027450982, b: 0.3137255, a: 1}
-  m_RaycastTarget: 1
-  m_OnCullStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-    m_TypeName: UnityEngine.UI.MaskableGraphic+CullStateChangedEvent, UnityEngine.UI,
-      Version=1.0.0.0, Culture=neutral, PublicKeyToken=null
-  m_Sprite: {fileID: 0}
-  m_Type: 0
-  m_PreserveAspect: 0
-  m_FillCenter: 1
-  m_FillMethod: 4
-  m_FillAmount: 1
-  m_FillClockwise: 1
-  m_FillOrigin: 0
 --- !u!114 &114991725123362980
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -12508,12 +12401,6 @@ CanvasRenderer:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 100100000}
   m_GameObject: {fileID: 1620558748894506}
---- !u!222 &222515859415125004
-CanvasRenderer:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1242395490545034}
 --- !u!222 &222516167577055346
 CanvasRenderer:
   m_ObjectHideFlags: 1
@@ -12988,9 +12875,9 @@ RectTransform:
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 213, y: 0}
-  m_SizeDelta: {x: 1067, y: 129}
+  m_SizeDelta: {x: -213, y: 129}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &224006763926820382
 RectTransform:
@@ -13206,9 +13093,9 @@ RectTransform:
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 213, y: 0}
-  m_SizeDelta: {x: 1067, y: 129}
+  m_SizeDelta: {x: -213, y: 129}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &224080388755846700
 RectTransform:
@@ -14504,9 +14391,9 @@ RectTransform:
   m_RootOrder: 4
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 213, y: 0}
-  m_SizeDelta: {x: 1067, y: 129}
+  m_SizeDelta: {x: -213, y: 129}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &224543871702590178
 RectTransform:
@@ -14921,9 +14808,9 @@ RectTransform:
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 213, y: 0}
-  m_SizeDelta: {x: 1067, y: 129}
+  m_SizeDelta: {x: -213, y: 129}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &224692227753370068
 RectTransform:
@@ -14940,7 +14827,6 @@ RectTransform:
   - {fileID: 224885619948219566}
   - {fileID: 224687229095700714}
   - {fileID: 224530609870845374}
-  - {fileID: 224907849156277170}
   - {fileID: 224749356546174896}
   - {fileID: 224915574203110040}
   m_Father: {fileID: 224276144353645192}
@@ -15146,7 +15032,7 @@ RectTransform:
   - {fileID: 224045706305403526}
   - {fileID: 224379269583454642}
   m_Father: {fileID: 224692227753370068}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}
@@ -15617,9 +15503,9 @@ RectTransform:
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 0, y: 0}
+  m_AnchorMax: {x: 1, y: 0}
   m_AnchoredPosition: {x: 213, y: 0}
-  m_SizeDelta: {x: 1067, y: 129}
+  m_SizeDelta: {x: -213, y: 129}
   m_Pivot: {x: 0, y: 0}
 --- !u!224 &224889411104848210
 RectTransform:
@@ -15656,24 +15542,6 @@ RectTransform:
   m_AnchorMax: {x: 0.5, y: 0.5}
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 20, y: 20}
-  m_Pivot: {x: 0.5, y: 0.5}
---- !u!224 &224907849156277170
-RectTransform:
-  m_ObjectHideFlags: 1
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 100100000}
-  m_GameObject: {fileID: 1242395490545034}
-  m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 224692227753370068}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
-  m_AnchorMin: {x: 0, y: 0}
-  m_AnchorMax: {x: 1, y: 0}
-  m_AnchoredPosition: {x: 583.24976, y: -275.7}
-  m_SizeDelta: {x: -242.48999, y: 114.600006}
   m_Pivot: {x: 0.5, y: 0.5}
 --- !u!224 &224909085368135694
 RectTransform:
@@ -15745,7 +15613,7 @@ RectTransform:
   - {fileID: 224548962055259776}
   - {fileID: 224076481740684372}
   m_Father: {fileID: 224692227753370068}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
   m_AnchorMax: {x: 0, y: 0}

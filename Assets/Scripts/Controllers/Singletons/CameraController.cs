@@ -11,6 +11,7 @@ namespace Assets.Scripts.Controllers
 		private bool clicked;
 		private Vector3 panStartMouse;
 		private Vector3 panStartPos;
+	    private bool draging;
 
 		public void Rotate(bool cc)
 		{
@@ -19,7 +20,11 @@ namespace Assets.Scripts.Controllers
 
 		public void Zoom(int zoomDir)
 		{
-			Camera.main.orthographicSize *= zoomDir < 0 ? .5f : zoomDir > 0 ? 2 : 1;
+		    float zoom = 1;
+		    if (zoomDir > 0) zoom = 0.5f;
+		    if (zoomDir < 0) zoom = 2;
+
+			Camera.main.orthographicSize *= zoom;
 			Camera.main.orthographicSize = Mathf.Clamp(Camera.main.orthographicSize, minSize, maxSize);
 		}
 
@@ -33,20 +38,31 @@ namespace Assets.Scripts.Controllers
 			{
 				panStartMouse = Input.mousePosition;
 				panStartPos = holder.transform.position;
+			    draging = true;
 			}
-			if (Input.GetButton("Fire2"))
+			if (Input.GetButtonUp("Fire2"))
 			{
-				holder.position = panStartPos + LevelVector(Camera.main.transform.forward) * (Input.mousePosition - panStartMouse).y * 6 * Camera.main.orthographicSize / Screen.height
-				                  + LevelVector(Camera.main.transform.right) * (Input.mousePosition - panStartMouse).x * 4 * Camera.main.orthographicSize / Screen.width;
+			    draging = false;
 			}
 
-			int scrollDir = (int)Mathf.Clamp(Input.mouseScrollDelta.y, -1, 1);
+            if (draging)
+            {
+
+                Vector3 camForward = LevelVector(Camera.main.transform.forward);
+                Vector3 camRight = LevelVector(Camera.main.transform.right);
+
+                holder.position = holder.position 
+                    + camForward * (Input.mousePosition - panStartMouse).y * Camera.main.orthographicSize / Screen.height
+                    + camRight * (Input.mousePosition - panStartMouse).x * Camera.main.orthographicSize / Screen.width;
+            }
+
+            int scrollDir = (int)Mathf.Clamp(Input.mouseScrollDelta.y, -1, 1);
 			Zoom(scrollDir);
 		}
 
 		private Vector3 LevelVector(Vector3 v)
 		{
-			return Vector3.ProjectOnPlane(v, Vector3.up);
+			return Vector3.ProjectOnPlane(v, Vector3.up).normalized;
 		}
 	}
 }

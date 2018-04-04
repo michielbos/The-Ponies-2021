@@ -42,4 +42,17 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 	void OnEnteredLot (int lotId) {
 		PropertyController.Instance.Initialize(lotId);
 	}
+
+    private void Update()
+    {
+#if UNITY_EDITOR
+        // Allow breaking (pausing) the game in edit mode.
+        // Usefull when wanting to check something in the 
+        // hierarchy that is not persistent. Press Ctrl + Esc
+        if (Input.GetKeyDown(KeyCode.Escape) && Input.GetKey(KeyCode.LeftControl))
+        {
+            Debug.Break();
+        }
+#endif
+    }
 }
