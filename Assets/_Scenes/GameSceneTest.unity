@@ -838,6 +838,11 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 114753827027449316, guid: 02c26d83b35cb374daa65d6918d687d9,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
+      value: 
+      objectReference: {fileID: 1315714953}
     - target: {fileID: 114642453364382960, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: propertyController
@@ -853,16 +858,11 @@ Prefab:
       propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 1315714953}
-    - target: {fileID: 114431518955277782, guid: 02c26d83b35cb374daa65d6918d687d9,
+    - target: {fileID: 114562911744505934, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
       value: 
       objectReference: {fileID: 1315714953}
-    - target: {fileID: 114022543238446686, guid: 02c26d83b35cb374daa65d6918d687d9,
-        type: 2}
-      propertyPath: propertyController
-      value: 
-      objectReference: {fileID: 1323900539}
     - target: {fileID: 114549210002137118, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: propertyController
@@ -874,6 +874,21 @@ Prefab:
       value: 
       objectReference: {fileID: 1315714953}
     - target: {fileID: 114542114524124648, guid: 02c26d83b35cb374daa65d6918d687d9,
+        type: 2}
+      propertyPath: audioSource
+      value: 
+      objectReference: {fileID: 1315714953}
+    - target: {fileID: 114523557342383612, guid: 02c26d83b35cb374daa65d6918d687d9,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1315714953}
+    - target: {fileID: 114431518955277782, guid: 02c26d83b35cb374daa65d6918d687d9,
+        type: 2}
+      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      value: 
+      objectReference: {fileID: 1315714953}
+    - target: {fileID: 114289265587149008, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: audioSource
       value: 
@@ -893,26 +908,11 @@ Prefab:
       propertyPath: musicController
       value: 
       objectReference: {fileID: 1928936945}
-    - target: {fileID: 114523557342383612, guid: 02c26d83b35cb374daa65d6918d687d9,
+    - target: {fileID: 114022543238446686, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[0].m_Target
+      propertyPath: propertyController
       value: 
-      objectReference: {fileID: 1315714953}
-    - target: {fileID: 114289265587149008, guid: 02c26d83b35cb374daa65d6918d687d9,
-        type: 2}
-      propertyPath: audioSource
-      value: 
-      objectReference: {fileID: 1315714953}
-    - target: {fileID: 114562911744505934, guid: 02c26d83b35cb374daa65d6918d687d9,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
-      value: 
-      objectReference: {fileID: 1315714953}
-    - target: {fileID: 114753827027449316, guid: 02c26d83b35cb374daa65d6918d687d9,
-        type: 2}
-      propertyPath: m_OnClick.m_PersistentCalls.m_Calls.Array.data[1].m_Target
-      value: 
-      objectReference: {fileID: 1315714953}
+      objectReference: {fileID: 1323900539}
     - target: {fileID: 224716657532521198, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: m_AnchorMax.x
@@ -952,22 +952,6 @@ Prefab:
         type: 2}
       propertyPath: m_SizeDelta.y
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 114648543712285558, guid: 02c26d83b35cb374daa65d6918d687d9,
-        type: 2}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 21300000, guid: 2f33c34617ac4cf409c5b98617e4eeca,
-        type: 3}
-    - target: {fileID: 224857111674797680, guid: 02c26d83b35cb374daa65d6918d687d9,
-        type: 2}
-      propertyPath: m_SizeDelta.x
-      value: 764
-      objectReference: {fileID: 0}
-    - target: {fileID: 224857111674797680, guid: 02c26d83b35cb374daa65d6918d687d9,
-        type: 2}
-      propertyPath: m_SizeDelta.y
-      value: 615
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 02c26d83b35cb374daa65d6918d687d9, type: 2}
