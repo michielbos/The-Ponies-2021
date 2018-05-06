@@ -19,7 +19,8 @@ public class Pathfinding {
     }
     public Pathfinding()
     {
-        graph = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainManager>().graph;
+    // TODO: Make the line below work with the new tile system (to be implemented)
+    //    graph = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainManager>().graph;
         Dictionary<TileNode, float> distance = new Dictionary<TileNode, float>();
         //Dictionary<TileNode, TileNode> previous = new Dictionary<TileNode, TileNode>();
         foreach (TileNode n in graph.nodes.Values)

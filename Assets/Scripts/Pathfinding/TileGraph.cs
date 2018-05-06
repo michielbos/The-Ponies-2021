@@ -6,11 +6,15 @@ public class TileGraph {
     public Dictionary<TerrainTile, TileNode> nodes;
     public TileGraph()
     {
-        TerrainManager q = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainManager>();
-        TileGraph t=new TileGraph(q);
-        nodes = t.nodes;
+        // TODO: Make the lines below work with the new tile system (to be implemented)
+        //    TerrainManager q = GameObject.FindGameObjectWithTag("TerrainManager").GetComponent<TerrainManager>();
+        //    TileGraph t=new TileGraph(q);
+        //    nodes = t.nodes;
     }
-        public TileGraph(TerrainManager terrainmanager)
+    
+    // TODO: Make the method below work with the new tile system (to be implemented)
+    /*
+    public TileGraph(TerrainManager terrainmanager)
     {
         nodes=new Dictionary<TerrainTile, TileNode>();
         for(int x = 0; x < terrainmanager.width; x++)
@@ -48,8 +52,9 @@ public class TileGraph {
         }
         //Debug.Log(ec);
     }
-	
-	public int getsize()
+    */
+
+    public int getsize()
     {
         return nodes.Keys.Count;
     }

@@ -82,6 +82,11 @@ public static class ModLoader {
 			                 " which is not allowed (id 0-255 are reserved). Not loading mod.");
 			return false;
 		}
+		if (modInfo.packId <= 65535) {
+			Debug.LogWarning("Mod " + assetBundle.name + " has packId " + modInfo.packId +
+			                 " which is not allowed (id 256-65535 are used by PoneCrafter). Not loading mod.");
+			return false;
+		}
 		foreach (Mod mod in mods) {
 			if (modInfo.packId != mod.modInfoData.packId)
 				continue;
