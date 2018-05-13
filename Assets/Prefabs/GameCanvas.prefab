@@ -3617,17 +3617,20 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 65d7b2ea989f9d945a5eb0ce8feca703, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  neighbourhoodSongs: []
-  capSongs: []
+  neighbourhoodSongs:
+  - {fileID: 8300000, guid: dd7d4eed8dbc34230ba84530143a8a7b, type: 3}
+  capSongs:
+  - {fileID: 8300000, guid: f5ddd12ff37714e2a9146d6c92792b9e, type: 3}
   buyModeSongs:
-  - {fileID: 8300000, guid: 53730b3f58d534cf3a66545359d3cdca, type: 3}
-  - {fileID: 8300000, guid: 3d227763a05824de09982ac3049381c3, type: 3}
-  - {fileID: 8300000, guid: 158243298415b4c0da76e688c5b414d7, type: 3}
+  - {fileID: 8300000, guid: a5a029a864f20402e98ddf82ca0478d7, type: 3}
+  - {fileID: 8300000, guid: 189675ecd41e9446987ae4db7feb3556, type: 3}
+  - {fileID: 8300000, guid: fd704d23a78134983ac3f7f65f7029ed, type: 3}
+  - {fileID: 8300000, guid: 5cf7a6fd0e4684f4a9c8f791d90d3095, type: 3}
   buildModeSongs:
-  - {fileID: 8300000, guid: 4282e99576c91432492f46b0389b494b, type: 3}
-  - {fileID: 8300000, guid: 75bc836a512cd4c2892109a1a7ab908c, type: 3}
-  - {fileID: 8300000, guid: 254dc766629b74a6e99c429ac82c47a0, type: 3}
-  - {fileID: 8300000, guid: bd29c604f55f4490bbe7a8822342ed67, type: 3}
+  - {fileID: 8300000, guid: aa0a137b546e94c299bd0ec6013d225d, type: 3}
+  - {fileID: 8300000, guid: 9fb5a66cb7f314217ae48c74289c5c3d, type: 3}
+  - {fileID: 8300000, guid: 7c0ab740a6d0b4c71996775cf6f91d9f, type: 3}
+  - {fileID: 8300000, guid: ec30f828d65c0409e8c03654ee94030d, type: 3}
   communityBuildSongs: []
 --- !u!114 &114099412846582776
 MonoBehaviour:
