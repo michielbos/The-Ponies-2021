@@ -6,15 +6,12 @@ namespace Assets.Scripts.Controllers
     {
         public int Funds { get; private set; }
 
-#if UNITY_EDITOR
-        // Playing in edit mode, are we? 
-        // You get infinite meney! Yay!
         private void Start()
         {
-            Funds = int.MaxValue; 
+            //TODO: Allocate the moneys in the proper place when we have one.
+            Funds = 50000; 
             HUDController.Instance.UpdateFunds();
         }
-#endif
 
         public void ChangeFunds(int change)
         {
@@ -22,9 +19,9 @@ namespace Assets.Scripts.Controllers
             HUDController.Instance.UpdateFunds();
         }
 
-        public void SetFunds(int ammount)
+        public void SetFunds(int amount)
         {
-            Funds = ammount;
+            Funds = amount;
             HUDController.Instance.UpdateFunds();
         }
     }
