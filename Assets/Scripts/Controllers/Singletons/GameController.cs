@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Assets.Scripts.Util;
+﻿using Assets.Scripts.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -9,7 +7,17 @@ using UnityEngine.SceneManagement;
 /// It will be kept between scene transitions.
 /// </summary>
 public class GameController : SingletonMonoBehaviour<GameController> {
+	private static GameController instance;
 	private int enteringLot = -1;
+
+	private void Awake() {
+		if (instance == null) {
+			DontDestroyOnLoad(gameObject);
+			instance = this;
+		} else if (instance != this) {
+			Destroy(gameObject);
+		}
+	}
 
 	public void EnterLot (int id) {
 		enteringLot = id;

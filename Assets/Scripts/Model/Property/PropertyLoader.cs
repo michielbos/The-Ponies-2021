@@ -29,6 +29,7 @@ public class PropertyLoader {
 	private Property CreateEmptyProperty (int id, int width, int height) {
 		Property property = new Property(id, "untitled", "", "untitled street " + id, 0);
 		property.terrainTiles = new TerrainTile[height, width];
+		property.floorTiles = new FloorTile[1,height,width];
 		for (int y = 0; y < height; y++) {
 			for (int x = 0; x < width; x++) {
 				property.terrainTiles[y, x] = new TerrainTile(x, y, 0, 0);

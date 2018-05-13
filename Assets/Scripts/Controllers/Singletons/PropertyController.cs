@@ -39,7 +39,7 @@ public class PropertyController : SingletonMonoBehaviour<PropertyController> {
 	/// <summary>
 	/// Place "dummy" instances of all loaded terrain tiles, so they are visible and interactable.
 	/// </summary>
-	public void PlaceTerrainTiles () {
+	private void PlaceTerrainTiles () {
 		foreach (TerrainTile tt in property.terrainTiles) {
 			if (tt != null) {
 				tt.PlaceTile(terrainTilePrefab);
@@ -50,7 +50,7 @@ public class PropertyController : SingletonMonoBehaviour<PropertyController> {
 	/// <summary>
 	/// Place "dummy" instances of all loaded walls, so they are visible and interactable.
 	/// </summary>
-	public void PlaceWalls () {
+	private void PlaceWalls () {
 		foreach (Wall w in property.walls) {
 			w.PlaceWall(wallPrefab);
 		}
@@ -59,7 +59,7 @@ public class PropertyController : SingletonMonoBehaviour<PropertyController> {
 	/// <summary>
 	/// Place "dummy" instances of all loaded floors, so they are visible and interactable.
 	/// </summary>
-	public void PlaceFloors () {
+	private void PlaceFloors () {
 		foreach (FloorTile ft in property.floorTiles) {
 			if (ft != null) {
 				ft.PlaceFloor(floorTilePrefab);
@@ -70,7 +70,7 @@ public class PropertyController : SingletonMonoBehaviour<PropertyController> {
 	/// <summary>
 	/// Place "dummy" instances of all loaded property objects, so they are visible and interactable.
 	/// </summary>
-	public void PlacePropertyObjects () {
+	private void PlacePropertyObjects () {
 		foreach (PropertyObject po in property.propertyObjects) {
 			po.PlaceObject(propertyObjectPrefab);
 		}
