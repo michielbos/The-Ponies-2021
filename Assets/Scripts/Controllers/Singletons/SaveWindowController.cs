@@ -1,10 +1,8 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 using UnityEngine.UI;
 
 public class SaveWindowController : MonoBehaviour {
-	public PropertyController propertyController;
+	private PropertyController propertyController;
 	public GameObject savePanel;
 	public InputField saveNameField;
 	public InputField saveDescriptionField;
@@ -14,6 +12,10 @@ public class SaveWindowController : MonoBehaviour {
 	private SaveType saveType;
 
 	enum SaveType {SAVE, SAVE_AND_RETURN, SAVE_AND_QUIT};
+
+	private void Start() {
+		propertyController = PropertyController.Instance;
+	}
 
 	public void OpenNormalSaveDialog () {
 		OpenSaveDialog();

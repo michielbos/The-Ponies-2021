@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Util;
-using UnityEditor;
 using UnityEngine;
 
 namespace Assets.Scripts.Controllers {
@@ -24,18 +23,18 @@ namespace Assets.Scripts.Controllers {
     }
 
     public class SoundController : SingletonMonoBehaviour<SoundController> {
-        [SerializeField] protected int chanelCount = 5;
+        [SerializeField] protected int channelCount = 5;
         [SerializeField] protected List<SoundValuePair> clips;
 
         private AudioSource[] sources;
         private int currentSource = 0;
 
         public void Start() {
-            if (chanelCount < 2)
-                chanelCount = 2;
+            if (channelCount < 2)
+                channelCount = 2;
 
-            sources = new AudioSource[chanelCount];
-            for (int i = 0; i < chanelCount; i++) {
+            sources = new AudioSource[channelCount];
+            for (int i = 0; i < channelCount; i++) {
                 sources[i] = Camera.main.gameObject.AddComponent<AudioSource>();
             }
         }
@@ -64,7 +63,7 @@ namespace Assets.Scripts.Controllers {
             if (clip == null)
                 return;
             sources[currentSource].PlayOneShot(clip);
-            currentSource = (currentSource + 1) % chanelCount;
+            currentSource = (currentSource + 1) % channelCount;
         }
     }
 }

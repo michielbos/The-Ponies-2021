@@ -176,7 +176,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 6
+  m_RootOrder: 5
   m_LocalEulerAnglesHint: {x: 30, y: 45, z: 0}
 --- !u!114 &238970508
 MonoBehaviour:
@@ -264,7 +264,7 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 7
+  m_RootOrder: 6
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &343503516
 Prefab:
@@ -367,7 +367,7 @@ Prefab:
         type: 2}
       propertyPath: propertyController
       value: 
-      objectReference: {fileID: 1323900539}
+      objectReference: {fileID: 0}
     - target: {fileID: 224716657532521198, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: m_AnchorMax.x
@@ -396,21 +396,26 @@ Prefab:
     - target: {fileID: 224984338494113252, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: m_AnchoredPosition.y
-      value: 0
+      value: -5
       objectReference: {fileID: 0}
     - target: {fileID: 224984338494113252, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 16
       objectReference: {fileID: 0}
     - target: {fileID: 224201681386338322, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: m_SizeDelta.y
-      value: 0
+      value: 26
       objectReference: {fileID: 0}
     - target: {fileID: 1383177691709652, guid: 02c26d83b35cb374daa65d6918d687d9, type: 2}
       propertyPath: m_Name
       value: HouseGameController
+      objectReference: {fileID: 0}
+    - target: {fileID: 114099412846582776, guid: 02c26d83b35cb374daa65d6918d687d9,
+        type: 2}
+      propertyPath: channelCount
+      value: 5
       objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 114856338473800514, guid: 02c26d83b35cb374daa65d6918d687d9, type: 2}
@@ -585,69 +590,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 27.86, y: -187.7, z: 0}
---- !u!1 &1323900538
-GameObject:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  serializedVersion: 5
-  m_Component:
-  - component: {fileID: 1323900540}
-  - component: {fileID: 1323900539}
-  m_Layer: 0
-  m_Name: PropertyController
-  m_TagString: PropertyController
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &1323900539
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1323900538}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9c72822f0727d417bbe0d86622a2aa72, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  terrainTilePrefab: {fileID: 1343583355818736, guid: 91be4d9b445d64ce5b7717588a1f0445,
-    type: 2}
-  wallPrefab: {fileID: 1459735444399992, guid: a5d2bd43000624114a063d361f8774eb, type: 2}
-  propertyObjectPrefab: {fileID: 1459735444399992, guid: be8404b2751774904bd936ec878fbe03,
-    type: 2}
-  floorTilePrefab: {fileID: 0}
-  property:
-    id: 0
-    name: 
-    description: 
-    streetName: 
-    propertyType: 0
-    walls: []
-    propertyObjects:
-    - id: 0
-      x: 0
-      y: 0
-      rotation: 0
-      preset:
-        assetBundle: {fileID: 0}
-      skin: 0
-      dummyObject: {fileID: 0}
-      value: 0
---- !u!4 &1323900540
-Transform:
-  m_ObjectHideFlags: 0
-  m_PrefabParentObject: {fileID: 0}
-  m_PrefabInternal: {fileID: 0}
-  m_GameObject: {fileID: 1323900538}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_RootOrder: 5
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1931555353
 Prefab:
   m_ObjectHideFlags: 0
