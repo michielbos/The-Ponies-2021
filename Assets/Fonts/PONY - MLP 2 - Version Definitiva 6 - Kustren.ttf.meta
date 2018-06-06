@@ -1,0 +1,23 @@
+fileFormatVersion: 2
+guid: dba239c8b56ed5945a8bb893af25d85c
+timeCreated: 1528261978
+licenseType: Free
+TrueTypeFontImporter:
+  externalObjects: {}
+  serializedVersion: 4
+  fontSize: 16
+  forceTextureCase: -2
+  characterSpacing: 0
+  characterPadding: 1
+  includeFontData: 1
+  fontName: MLP - Magic is Friendship
+  fontNames:
+  - MLP - Magic is Friendship
+  fallbackFontReferences: []
+  customCharacters: 
+  fontRenderingMode: 0
+  ascentCalculationMode: 1
+  useLegacyBoundsCalculation: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
