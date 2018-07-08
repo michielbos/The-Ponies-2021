@@ -16,9 +16,8 @@ public class FloorTool : ScriptableObject, ITool
 	private FloorPreset placingPreset;
 	private GameObject buildMarker;
 	private TerrainTile targetTile;
-	private Vector2Int dragPosition;
+	private RectInt dragRect;
 	private bool pressingTile;
-	private bool canPlace;
 
 	public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex) {
 		if (placingPreset != null) {
@@ -77,12 +76,11 @@ public class FloorTool : ScriptableObject, ITool
 
 	private void BuildMarkerMoved (TerrainTile newTile) {
 		targetTile = newTile;
-		canPlace = CanPlaceFloor();
 		SetBuildMarkerPosition(targetTile.x, targetTile.y);
 	}
 
-	private bool CanPlaceFloor () {
-		return placingPreset.price <= MoneyController.Instance.Funds;
+	private bool CanPlaceFloors (RectInt floorRect) {
+		return floorRect.width > 0 && floorRect.height > 0;
 	}
 
 	private void SetBuildMarkerPosition (int x, int y) {
@@ -90,60 +88,73 @@ public class FloorTool : ScriptableObject, ITool
 	}
 
 	private void HandlePlacementHolding () {
+		dragRect = HandleFloorDragging();
+		int costs = CalculateCosts(dragRect, placingPreset);
+		bool canPlace = CanPlaceFloors(dragRect);
+		buildMarker.SetActive(canPlace);
 		if (Input.GetMouseButtonUp(0)) {
-			if (Input.GetKey(KeyCode.LeftControl)) {
-				FloorTile selectedTile = PropertyController.Instance.property.GetFloorTile(targetTile.x, targetTile.y);
-				if (selectedTile != null) {
+			if (dragRect.width > 0) {
+				if (Input.GetKey(KeyCode.LeftControl)) {
+					FloorTile selectedTile = PropertyController.Instance.property.GetFloorTile(targetTile.x, targetTile.y);
+					if (selectedTile != null) {
+						SoundController.Instance.PlaySound(SoundType.Place);
+						SellFloor(selectedTile);
+					}
+				} else if (canPlace && costs <= MoneyController.Instance.Funds) {
+					MoneyController.Instance.ChangeFunds(-costs);
 					SoundController.Instance.PlaySound(SoundType.Place);
-					SellFloor(selectedTile);
+					PlaceFloors(dragRect, placingPreset);
+				} else {
+					SoundController.Instance.PlaySound(SoundType.Deny);
 				}
-			} else {
-				PlaceObject();
-				CreateBuildMarker();
 			}
+			CreateBuildMarker();
 			pressingTile = false;
-		} else {
-			HandleFloorDragging();
 		}
 	}
 
-	private void HandleFloorDragging() {
+	private RectInt HandleFloorDragging() {
 		TerrainTile terrainTile = GetTileUnderMouse();
 		if (terrainTile == null)
-			return;
-		dragPosition = terrainTile.GetPosition();
+			return new RectInt(0, 0, 0, 0);
+		Vector2Int dragPosition = terrainTile.GetPosition();
 		int x1 = Math.Min(targetTile.x, dragPosition.x);
 		int x2 = Math.Max(targetTile.x, dragPosition.x) + 1;
 		int y1 = Math.Min(targetTile.y, dragPosition.y);
 		int y2 = Math.Max(targetTile.y, dragPosition.y) + 1;
-		RectInt dragRect = new RectInt();
-		dragRect.SetMinMax(new Vector2Int(x1, y1), new Vector2Int(x2, y2));
+		RectInt floorRect = new RectInt();
+		floorRect.SetMinMax(new Vector2Int(x1, y1), new Vector2Int(x2, y2));
 		Transform markerTransform = buildMarker.transform;
-		markerTransform.localScale = new Vector3(dragRect.width, markerTransform.localScale.y, dragRect.height);
+		markerTransform.localScale = new Vector3(floorRect.width, markerTransform.localScale.y, floorRect.height);
 		markerTransform.position = new Vector3(
-			dragRect.x + dragRect.width / 2f,
+			floorRect.x + floorRect.width / 2f,
 			markerTransform.position.y,
-			dragRect.y + dragRect.height / 2f
+			floorRect.y + floorRect.height / 2f
 		);
+		return floorRect;
 	}
 
-	private void PlaceObject () {
-		if (!canPlace) {
-			SoundController.Instance.PlaySound(SoundType.Deny);
-		} else {
-			FloorTile currentTile = PropertyController.Instance.property.GetFloorTile(targetTile.x, targetTile.y);
-			if (currentTile != null) {
-				if (currentTile.preset != placingPreset) {
-					SellFloor(currentTile);
-				} else {
-					return;
+	private int CalculateCosts(RectInt floorRect, FloorPreset floorPreset) {
+		int costs = floorPreset.price * floorRect.width * floorRect.height;
+		Property property = PropertyController.Instance.property;
+		for (int x = floorRect.x; x < floorRect.xMax; x++) {
+			for (int y = floorRect.y; y < floorRect.yMax; y++) {
+				FloorTile currentFloor = property.GetFloorTile(x, y);
+				if (currentFloor != null) {
+					costs -= currentFloor.preset.GetSellValue();
 				}
 			}
-			SoundController.Instance.PlaySound(SoundType.Place);
-			MoneyController.Instance.ChangeFunds(-placingPreset.price);
-			PropertyController.Instance.PlaceFloor(targetTile.x, targetTile.y, placingPreset);
-			BuildMarkerMoved(targetTile);
 		}
+		return costs;
+	}
+
+	private void PlaceFloors(RectInt floorRect, FloorPreset floorPreset) {
+		for (int x = floorRect.x; x < floorRect.xMax; x++) {
+			for (int y = floorRect.y; y < floorRect.yMax; y++) {
+				PropertyController.Instance.PlaceFloor(x, y, floorPreset);
+			}
+		}
+		BuildMarkerMoved(targetTile);
 	}
 
 	private void SellFloor (FloorTile floorTile) {
