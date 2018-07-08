@@ -129,6 +129,7 @@ public class FloorTool : ScriptableObject, ITool
 			markerTransform.position.y,
 			floorRect.y + floorRect.height / 2f
 		);
+		buildMarker.GetComponent<Renderer>().material.mainTextureScale = new Vector2(floorRect.width, floorRect.height);
 		return floorRect;
 	}
 
