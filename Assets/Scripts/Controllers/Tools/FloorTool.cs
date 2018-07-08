@@ -16,7 +16,6 @@ public class FloorTool : ScriptableObject, ITool
 	private FloorPreset placingPreset;
 	private GameObject buildMarker;
 	private TerrainTile targetTile;
-	private RectInt dragRect;
 	private bool pressingTile;
 
 	public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex) {
@@ -57,6 +56,7 @@ public class FloorTool : ScriptableObject, ITool
 				BuildMarkerMoved(newTargetTile);
 			}
 			if (Input.GetMouseButtonDown(0)) {
+				SoundController.Instance.PlaySound(SoundType.DragStart);
 				pressingTile = true;
 			}
 		} else if (targetTile != null) {
@@ -88,21 +88,19 @@ public class FloorTool : ScriptableObject, ITool
 	}
 
 	private void HandlePlacementHolding () {
-		dragRect = HandleFloorDragging();
+		RectInt dragRect = HandleFloorDragging();
 		int costs = CalculateCosts(dragRect, placingPreset);
 		bool canPlace = CanPlaceFloors(dragRect);
 		buildMarker.SetActive(canPlace);
 		if (Input.GetMouseButtonUp(0)) {
 			if (dragRect.width > 0) {
 				if (Input.GetKey(KeyCode.LeftControl)) {
-					FloorTile selectedTile = PropertyController.Instance.property.GetFloorTile(targetTile.x, targetTile.y);
-					if (selectedTile != null) {
-						SoundController.Instance.PlaySound(SoundType.Place);
-						SellFloor(selectedTile);
+					if (SellFloors(dragRect)) {
+						SoundController.Instance.PlaySound(SoundType.PlaceFloor);
 					}
 				} else if (canPlace && costs <= MoneyController.Instance.Funds) {
 					MoneyController.Instance.ChangeFunds(-costs);
-					SoundController.Instance.PlaySound(SoundType.Place);
+					SoundController.Instance.PlaySound(SoundType.PlaceFloor);
 					PlaceFloors(dragRect, placingPreset);
 				} else {
 					SoundController.Instance.PlaySound(SoundType.Deny);
@@ -157,9 +155,20 @@ public class FloorTool : ScriptableObject, ITool
 		BuildMarkerMoved(targetTile);
 	}
 
-	private void SellFloor (FloorTile floorTile) {
-		MoneyController.Instance.ChangeFunds(floorTile.preset.GetSellValue());
-		PropertyController.Instance.RemoveFloor(floorTile);
+	private bool SellFloors (RectInt floorRect) {
+		Property property = PropertyController.Instance.property;
+		bool sold = false;
+		for (int x = floorRect.x; x < floorRect.xMax; x++) {
+			for (int y = floorRect.y; y < floorRect.yMax; y++) {
+				FloorTile currentFloor = property.GetFloorTile(x, y);
+				if (currentFloor == null)
+					continue;
+				MoneyController.Instance.ChangeFunds(currentFloor.preset.GetSellValue());
+				PropertyController.Instance.RemoveFloor(currentFloor);
+				sold = true;
+			}
+		}
+		return sold;
 	}
 
     public void OnCatalogSelect(CatalogItem item, int skin)
