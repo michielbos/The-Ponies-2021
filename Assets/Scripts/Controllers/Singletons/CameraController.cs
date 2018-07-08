@@ -10,7 +10,7 @@ namespace Assets.Scripts.Controllers
 
 		private bool clicked;
 		private Vector3 panStartMouse;
-		private Vector3 panStartPos;
+		//private Vector3 panStartPos;
 	    private bool draging;
 
 		public void Rotate(bool cc)
@@ -37,7 +37,7 @@ namespace Assets.Scripts.Controllers
 			if (Input.GetButtonDown("Fire2"))
 			{
 				panStartMouse = Input.mousePosition;
-				panStartPos = holder.transform.position;
+				//panStartPos = holder.transform.position;
 			    draging = true;
 			}
 			if (Input.GetButtonUp("Fire2"))
