@@ -226,5 +226,9 @@ public class Property {
 		//TODO: Add floor level
 		return floorTiles[0, y, x];
 	}
+
+	public TerrainTile GetTerrainTile(int x, int y) {
+		return terrainTiles[y, x];
+	}
 }
 

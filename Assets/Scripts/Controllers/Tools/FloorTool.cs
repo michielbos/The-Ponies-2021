@@ -9,8 +9,6 @@ using UnityEngine.Experimental.UIElements;
 [CreateAssetMenu(fileName = "FloorTool", menuName = "Tools/Floor Tool", order = 10)]
 public class FloorTool : ScriptableObject, ITool
 {
-	private const int LAYER_TERRAIN = 8;
-	
 	public GameObject buildMarkerPrefab;
 
 	private FloorPreset placingPreset;
@@ -19,12 +17,18 @@ public class FloorTool : ScriptableObject, ITool
 	private bool pressingTile;
 
 	public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex) {
-		if (placingPreset != null) {
-			if (pressingTile) {
-				HandlePlacementHolding();
-			} else {
-				UpdateBuildMarker();
-			}
+		if (placingPreset == null)
+			return;
+		TerrainTile terrainTile;
+		if (tileIndex.x == -1 && tileIndex.y == -1) {
+			terrainTile = null;
+		} else {
+			terrainTile = PropertyController.Instance.property.GetTerrainTile(tileIndex.x, tileIndex.y);
+		}
+		if (pressingTile) {
+			HandlePlacementHolding(terrainTile);
+		} else {
+			UpdateBuildMarker(terrainTile);
 		}
 	}
 	
@@ -49,8 +53,7 @@ public class FloorTool : ScriptableObject, ITool
 		SetBuildMarkerPosition(0, 0);
 	}
 
-	private void UpdateBuildMarker () {
-		TerrainTile newTargetTile = GetTileUnderMouse();
+	private void UpdateBuildMarker (TerrainTile newTargetTile) {
 		if (newTargetTile != null) {
 			if (newTargetTile != targetTile) {
 				BuildMarkerMoved(newTargetTile);
@@ -63,15 +66,6 @@ public class FloorTool : ScriptableObject, ITool
 			buildMarker.transform.position = new Vector3(0, -100, 0);
 			targetTile = null;
 		}
-	}
-
-	private TerrainTile GetTileUnderMouse() {
-		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-		RaycastHit hit;
-		if (!HUDController.Instance.IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN)) {
-			return hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
-		}
-		return null;
 	}
 
 	private void BuildMarkerMoved (TerrainTile newTile) {
@@ -87,8 +81,8 @@ public class FloorTool : ScriptableObject, ITool
 		buildMarker.transform.position = new Vector3(x + 0.5f, 0, y + 0.5f);
 	}
 
-	private void HandlePlacementHolding () {
-		RectInt dragRect = HandleFloorDragging();
+	private void HandlePlacementHolding (TerrainTile terrainTile) {
+		RectInt dragRect = HandleFloorDragging(terrainTile);
 		int costs = CalculateCosts(dragRect, placingPreset);
 		bool canPlace = CanPlaceFloors(dragRect);
 		buildMarker.SetActive(canPlace);
@@ -111,8 +105,7 @@ public class FloorTool : ScriptableObject, ITool
 		}
 	}
 
-	private RectInt HandleFloorDragging() {
-		TerrainTile terrainTile = GetTileUnderMouse();
+	private RectInt HandleFloorDragging(TerrainTile terrainTile) {
 		if (terrainTile == null)
 			return new RectInt(0, 0, 0, 0);
 		Vector2Int dragPosition = terrainTile.GetPosition();
