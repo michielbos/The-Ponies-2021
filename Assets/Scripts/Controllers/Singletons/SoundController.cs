@@ -13,7 +13,10 @@ namespace Assets.Scripts.Controllers {
         Place,
         Rotate,
         Woosh,
-        Click
+        Click,
+        DragStart,
+        PlaceFloor,
+        PlaceWall
     }
 
     [Serializable]
