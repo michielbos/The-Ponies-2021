@@ -67,4 +67,9 @@ public class TerrainTile {
 	public void RemoveTile () {
 		Object.Destroy(dummyTile);
 	}
+
+	/// <returns>The X and Y position of this TerrainTile, wrapped in a Vector2Int.</returns>
+	public Vector2Int GetPosition() {
+		return new Vector2Int(x, y);
+	}
 }

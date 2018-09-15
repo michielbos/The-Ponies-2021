@@ -45,7 +45,7 @@ public abstract class PresetLoader <T, TData> where T : Preset {
 	}
 
 	private void LoadResourcePresets (Dictionary<Guid, T> presets) {
-		string[] files = Directory.GetFiles(RESOURCE_CONTENT_PATH + presetFolder);
+		string[] files = Directory.GetFileSystemEntries(RESOURCE_CONTENT_PATH + presetFolder, "*", SearchOption.AllDirectories);
 		foreach (string s in files) {
 			if (!s.EndsWith(presetExtension))
 				continue;

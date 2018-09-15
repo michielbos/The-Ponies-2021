@@ -363,11 +363,6 @@ Prefab:
       propertyPath: m_Pivot.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 114022543238446686, guid: 02c26d83b35cb374daa65d6918d687d9,
-        type: 2}
-      propertyPath: propertyController
-      value: 
-      objectReference: {fileID: 0}
     - target: {fileID: 224716657532521198, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 2}
       propertyPath: m_AnchorMax.x
@@ -408,17 +403,7 @@ Prefab:
       propertyPath: m_SizeDelta.y
       value: 26
       objectReference: {fileID: 0}
-    - target: {fileID: 1383177691709652, guid: 02c26d83b35cb374daa65d6918d687d9, type: 2}
-      propertyPath: m_Name
-      value: HouseGameController
-      objectReference: {fileID: 0}
-    - target: {fileID: 114099412846582776, guid: 02c26d83b35cb374daa65d6918d687d9,
-        type: 2}
-      propertyPath: channelCount
-      value: 5
-      objectReference: {fileID: 0}
-    m_RemovedComponents:
-    - {fileID: 114856338473800514, guid: 02c26d83b35cb374daa65d6918d687d9, type: 2}
+    m_RemovedComponents: []
   m_ParentPrefab: {fileID: 100100000, guid: 02c26d83b35cb374daa65d6918d687d9, type: 2}
   m_IsPrefabParent: 0
 --- !u!1001 &373976712
