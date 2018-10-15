@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Controller class for the catalog part of buy and build mode.
 /// </summary>
-public class CatalogController : MonoBehaviour {
+public class CatalogController : VolatileSingletonController<CatalogController> {
     public Button buttonPrefab;
     public int buyModeX;
     public int buildModeX;
@@ -20,21 +20,6 @@ public class CatalogController : MonoBehaviour {
     private int tab;
     private List<Button> catalogItemButtons = new List<Button>();
     private Button pressedButton;
-    private static CatalogController instance;
-
-    public static CatalogController GetInstance() {
-        if (instance == null) {
-            Debug.LogWarning("The CatalogController instance was requested before it was available!");
-        }
-        return instance;
-    }
-
-    private void Awake() {
-        if (instance != null) {
-            Debug.LogWarning("A new CatalogController was instantiated before the previous one was destroyed!");
-        }
-        instance = this;
-    }
 
     private void Update() {
         if (pressedButton != null && ShouldCloseInfoPanel()) {
