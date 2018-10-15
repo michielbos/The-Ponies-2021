@@ -28,14 +28,12 @@ public class MusicController : SingletonMonoBehaviour<MusicController> {
     private AudioClip[][] playingClips;
     private int[] playingIndex;
     private AudioSource audioSource;
-    
-    public void OnEnable()
-    {
+
+    public void OnEnable() {
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-    {
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
         audioSource = Camera.main.gameObject.AddComponent<AudioSource>();
     }
 

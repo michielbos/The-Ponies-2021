@@ -32,14 +32,12 @@ namespace Assets.Scripts.Controllers {
 
         private AudioSource[] sources;
         private int currentSource = 0;
-        
-        public void OnEnable()
-        {
+
+        public void OnEnable() {
             SceneManager.sceneLoaded += OnSceneLoaded;
         }
 
-        private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
-        {
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
             InitAudioSources();
         }
 
