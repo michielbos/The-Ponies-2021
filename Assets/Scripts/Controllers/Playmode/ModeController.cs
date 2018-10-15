@@ -51,7 +51,7 @@ namespace Assets.Scripts.Controllers {
             // No pannel = -1
             //      Live = 0
             SpeedController.Instance.ForcePause(mode > 0);
-            HUDController.Instance.UpdateSpeed();
+            HUDController.GetInstance().UpdateSpeed();
         }
     }
 }

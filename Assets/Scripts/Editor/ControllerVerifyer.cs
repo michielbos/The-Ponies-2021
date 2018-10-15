@@ -16,7 +16,6 @@ namespace Assets.Scripts.Editor
 				TestSingleton(CameraController.Instance, "CameraController");
 				TestSingleton(CheatsController.Instance, "CheatsController");
 				TestSingleton(GameController.Instance, "GameController");
-				TestSingleton(HUDController.Instance, "HUDController");
 				TestSingleton(MoneyController.Instance, "MoneyController");
 				TestSingleton(MusicController.Instance, "MusicController");
 				TestSingleton(PropertyController.Instance, "PropertyController");

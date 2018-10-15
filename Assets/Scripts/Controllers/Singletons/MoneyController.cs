@@ -10,19 +10,19 @@ namespace Assets.Scripts.Controllers
         {
             //TODO: Allocate the moneys in the proper place when we have one.
             Funds = 50000; 
-            HUDController.Instance.UpdateFunds();
+            HUDController.GetInstance().UpdateFunds();
         }
 
         public void ChangeFunds(int change)
         {
             Funds += change;
-            HUDController.Instance.UpdateFunds();
+            HUDController.GetInstance().UpdateFunds();
         }
 
         public void SetFunds(int amount)
         {
             Funds = amount;
-            HUDController.Instance.UpdateFunds();
+            HUDController.GetInstance().UpdateFunds();
         }
     }
 }

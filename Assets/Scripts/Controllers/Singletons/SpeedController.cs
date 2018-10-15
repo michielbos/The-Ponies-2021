@@ -28,7 +28,7 @@ namespace Assets.Scripts.Controllers
 			if (Paused)
 			{
 				_pauseTimer += Time.deltaTime * 2;
-				HUDController.Instance.UpdatePauseBlink(_pauseTimer);
+				HUDController.GetInstance().UpdatePauseBlink(_pauseTimer);
 			}
 		}
 
@@ -45,7 +45,7 @@ namespace Assets.Scripts.Controllers
 				PlaySpeedSound(from, to);
 				CurrentSpeed = speed;
 				_pauseTimer = 0;
-				HUDController.Instance.UpdateSpeed();
+				HUDController.GetInstance().UpdateSpeed();
 			}
 		}
 
