@@ -15,7 +15,7 @@ namespace Assets.Scripts.Controllers {
             if (mode == currentMode)
                 mode = HudPanel.None;
             currentMode = mode;
-            CatalogController.Instance.CloseCatalog();
+            CatalogController.GetInstance().CloseCatalog();
 
             // Quit any tools that may be open from the last panel
             ToolController.Instance.SetTool(ToolType.None);
