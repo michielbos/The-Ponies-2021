@@ -33,7 +33,7 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
     {
         SoundController.Instance.PlaySound(SoundType.Click);
         SoundController.Instance.PlaySound(SoundType.Woosh);
-        ModeController.Instance.SwitchMode(panel);
+        ModeController.GetInstance().SwitchMode(panel);
     }
 
     // Called from Unity GUI Button
