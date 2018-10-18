@@ -14,11 +14,8 @@ namespace Assets.Scripts.Editor
 			if (Application.isPlaying)
 			{
 				TestSingleton(CameraController.Instance, "CameraController");
-				TestSingleton(CatalogController.Instance, "CatalogController");
 				TestSingleton(CheatsController.Instance, "CheatsController");
 				TestSingleton(GameController.Instance, "GameController");
-				TestSingleton(HUDController.Instance, "HUDController");
-				TestSingleton(ModeController.Instance, "ModeController");
 				TestSingleton(MoneyController.Instance, "MoneyController");
 				TestSingleton(MusicController.Instance, "MusicController");
 				TestSingleton(PropertyController.Instance, "PropertyController");

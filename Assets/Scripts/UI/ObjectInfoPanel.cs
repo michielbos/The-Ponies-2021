@@ -68,7 +68,7 @@ public class ObjectInfoPanel : MonoBehaviour {
     /// <param name="skin">The skin to select.</param>
     public void SetSelectedSkin (int skin) {
         previewImage.texture = catalogItem.GetPreviewTextures()[skin];
-        CatalogController.Instance.SelectCatalogItem(catalogItem, skin);
+        CatalogController.GetInstance().SelectCatalogItem(catalogItem, skin);
     }
     
     private void PlaceSkinButtons () {

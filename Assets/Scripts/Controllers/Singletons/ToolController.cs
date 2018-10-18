@@ -83,7 +83,7 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
     private RaycastHit GetMouseTerrainHit(out bool hit) {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit raycastHit;
-        hit = Physics.Raycast(ray, out raycastHit, 1000, 1 << LAYER_TERRAIN) && !HUDController.Instance.IsMouseOverGui();
+        hit = Physics.Raycast(ray, out raycastHit, 1000, 1 << LAYER_TERRAIN) && !HUDController.GetInstance().IsMouseOverGui();
         return raycastHit;
     }
 

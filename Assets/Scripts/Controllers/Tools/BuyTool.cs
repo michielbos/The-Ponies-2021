@@ -83,7 +83,7 @@ public class BuyTool : ScriptableObject, ITool
 	{
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (!HUDController.Instance.IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN))
+		if (!HUDController.GetInstance().IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN))
 		{
 			TerrainTile newTargetTile = hit.collider.GetComponent<TerrainTileDummy>().terrainTile;
 			if (newTargetTile != targetTile)
@@ -183,7 +183,7 @@ public class BuyTool : ScriptableObject, ITool
 	{
 		Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
 		RaycastHit hit;
-		if (HUDController.Instance.IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000))
+		if (HUDController.GetInstance().IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000))
 			return;
 		PropertyObjectDummy dummy = hit.collider.GetComponent<PropertyObjectDummy>();
 		if (dummy == null)

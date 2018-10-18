@@ -2,6 +2,7 @@
 using System.Linq;
 using Assets.Scripts.Util;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
 
 /// <summary>
@@ -28,6 +29,14 @@ public class MusicController : SingletonMonoBehaviour<MusicController> {
     private int[] playingIndex;
     private AudioSource audioSource;
 
+    public void OnEnable() {
+        SceneManager.sceneLoaded += OnSceneLoaded;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+        audioSource = Camera.main.gameObject.AddComponent<AudioSource>();
+    }
+
     private void Start() {
         int numberOfTypes = Enum.GetNames(typeof(MusicType)).Length;
         playingClips = new AudioClip[numberOfTypes][];
@@ -35,8 +44,6 @@ public class MusicController : SingletonMonoBehaviour<MusicController> {
         for (int i = 0; i < numberOfTypes; i++) {
             ShufflePlayingList((MusicType) i);
         }
-
-        audioSource = Camera.main.gameObject.AddComponent<AudioSource>();
     }
 
     private void Update() {

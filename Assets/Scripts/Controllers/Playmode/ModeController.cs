@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace Assets.Scripts.Controllers {
-    public class ModeController : SingletonMonoBehaviour<ModeController> {
+    public class ModeController : VolatileSingletonController<ModeController> {
         public GuiButtonController LiveModeGuiButtonController;
         public GuiButtonController BuyModeGuiButtonController;
         public GuiButtonController BuildModeGuiButtonController;
@@ -15,7 +15,7 @@ namespace Assets.Scripts.Controllers {
             if (mode == currentMode)
                 mode = HudPanel.None;
             currentMode = mode;
-            CatalogController.Instance.CloseCatalog();
+            CatalogController.GetInstance().CloseCatalog();
 
             // Quit any tools that may be open from the last panel
             ToolController.Instance.SetTool(ToolType.None);
@@ -51,7 +51,7 @@ namespace Assets.Scripts.Controllers {
             // No pannel = -1
             //      Live = 0
             SpeedController.Instance.ForcePause(mode > 0);
-            HUDController.Instance.UpdateSpeed();
+            HUDController.GetInstance().UpdateSpeed();
         }
     }
 }

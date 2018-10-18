@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Util;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Assets.Scripts.Controllers {
     public enum SoundType {
@@ -32,7 +33,15 @@ namespace Assets.Scripts.Controllers {
         private AudioSource[] sources;
         private int currentSource = 0;
 
-        public void Start() {
+        public void OnEnable() {
+            SceneManager.sceneLoaded += OnSceneLoaded;
+        }
+
+        private void OnSceneLoaded(Scene scene, LoadSceneMode mode) {
+            InitAudioSources();
+        }
+
+        private void InitAudioSources() {
             if (channelCount < 2)
                 channelCount = 2;
 
