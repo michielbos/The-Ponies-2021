@@ -12,10 +12,12 @@ public class PoneCrafterImporter {
     private const string PROPERTIES_FILE = "properties.json";
     private const string PCC_EXTENSION = ".pcc";
     public List<Floor> loadedFloors;
+    public List<Roof> loadedRoofs;
     private static PoneCrafterImporter instance;
 
     private PoneCrafterImporter() {
         loadedFloors = new List<Floor>();
+        loadedRoofs = new List<Roof>();
     }
 
     public static PoneCrafterImporter Instance => instance ?? (instance = new PoneCrafterImporter());
@@ -61,6 +63,9 @@ public class PoneCrafterImporter {
             case "floor":
                 loadedFloors.Add(LoadFloor(zipArchive, properties));
                 break;
+            case "roof":
+                loadedRoofs.Add(LoadRoof(zipArchive, properties));
+                break;
             default:
                 throw new ImportException("Invalid content type: " + baseModel.type);
         }
@@ -68,10 +73,20 @@ public class PoneCrafterImporter {
 
     private Floor LoadFloor(ZipArchive zipArchive, string properties) {
         JsonFloor jsonFloor = JsonUtility.FromJson<JsonFloor>(properties);
+        Texture2D texture = LoadTexture(zipArchive);
+        return new Floor(jsonFloor, texture);
+    }
+    
+    private Roof LoadRoof(ZipArchive zipArchive, string properties) {
+        JsonRoof jsonRoof = JsonUtility.FromJson<JsonRoof>(properties);
+        Texture2D texture = LoadTexture(zipArchive);
+        return new Roof(jsonRoof, texture);
+    }
 
-        ZipArchiveEntry textureEntry = zipArchive.GetEntry("texture.png");
+    private Texture2D LoadTexture(ZipArchive zipArchive, string filename = "texture.png") {
+        ZipArchiveEntry textureEntry = zipArchive.GetEntry(filename);
         if (textureEntry == null) {
-            throw new ImportException("Floor file did not contain a texture.png entry.");
+            throw new ImportException("File did not contain a " + filename + ".png entry.");
         }
         using (Stream stream = textureEntry.Open()) {
             MemoryStream memoryStream = new MemoryStream();
@@ -81,7 +96,7 @@ public class PoneCrafterImporter {
             if (!texture.LoadImage(bytes)) {
                 throw new ImportException("Failed to import texture.");
             }
-            return new Floor(jsonFloor, texture);
+            return texture;
         }
     }
 }
