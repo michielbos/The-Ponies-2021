@@ -10,7 +10,6 @@ using Terrain = PoneCrafter.Model.Terrain;
 
 namespace PoneCrafter {
 
-
 public class PoneCrafterImporter {
     private const string PROPERTIES_FILE = "properties.json";
     private const string PCC_EXTENSION = ".pcc";
@@ -70,6 +69,11 @@ public class PoneCrafterImporter {
 
     private void LoadContent(ZipArchive zipArchive, string properties) {
         BaseJsonModel baseModel = JsonUtility.FromJson<BaseJsonModel>(properties);
+        Guid uuid = baseModel.GetUuid();
+        if (!GuidUtil.IsPackagelessContent(uuid)) {
+            throw new ImportException("UUID " + baseModel.GetUuid() +
+                                      " does not have a valid pack id for packageless content!");
+        }
         if (doesUuidExist(baseModel.GetUuid())) {
             throw new ImportException("UUID " + baseModel.GetUuid() + " is already used by another item!");
         }
@@ -93,13 +97,13 @@ public class PoneCrafterImporter {
         Texture2D texture = LoadTexture(zipArchive);
         return new Floor(jsonFloor, texture);
     }
-    
+
     private Roof LoadRoof(ZipArchive zipArchive, string properties) {
         JsonRoof jsonRoof = JsonUtility.FromJson<JsonRoof>(properties);
         Texture2D texture = LoadTexture(zipArchive);
         return new Roof(jsonRoof, texture);
     }
-    
+
     private Terrain LoadTerrain(ZipArchive zipArchive, string properties) {
         JsonTerrain jsonTerrain = JsonUtility.FromJson<JsonTerrain>(properties);
         Texture2D texture = LoadTexture(zipArchive);

@@ -26,6 +26,25 @@ public static class GuidUtil {
 		return BitConverter.ToUInt32(guid.ToByteArray(), 0);
 	}
 
+	public static bool IsMainGameContent(Guid guid) {
+		return GetPackIdentifier(guid) == 0;
+	}
+	
+	public static bool IsOfficialExtensionContent(Guid guid) {
+		uint packId = GetPackIdentifier(guid);
+		return packId >= 1 && packId <= 255;
+	}
+	
+	public static bool IsPackagelessContent(Guid guid) {
+		uint packId = GetPackIdentifier(guid);
+		return packId >= 256 && packId <= 65535;
+	}
+	
+	public static bool IsPackagedContent(Guid guid) {
+		uint packId = GetPackIdentifier(guid);
+		return packId >= 65536;
+	}
+
 	private static ushort RandomShort () {
 		return (ushort) Random.Range(ushort.MinValue, ushort.MaxValue);
 	}
