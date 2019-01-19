@@ -4,6 +4,7 @@ using System.IO.Compression;
 using PoneCrafter.Json;
 using PoneCrafter.Model;
 using UnityEngine;
+using Terrain = PoneCrafter.Model.Terrain;
 
 namespace PoneCrafter {
 
@@ -13,11 +14,13 @@ public class PoneCrafterImporter {
     private const string PCC_EXTENSION = ".pcc";
     public List<Floor> loadedFloors;
     public List<Roof> loadedRoofs;
+    public List<Terrain> loadedTerrains;
     private static PoneCrafterImporter instance;
 
     private PoneCrafterImporter() {
         loadedFloors = new List<Floor>();
         loadedRoofs = new List<Roof>();
+        loadedTerrains = new List<Terrain>();
     }
 
     public static PoneCrafterImporter Instance => instance ?? (instance = new PoneCrafterImporter());
@@ -66,6 +69,9 @@ public class PoneCrafterImporter {
             case "roof":
                 loadedRoofs.Add(LoadRoof(zipArchive, properties));
                 break;
+            case "terrain":
+                loadedTerrains.Add(LoadTerrain(zipArchive, properties));
+                break;
             default:
                 throw new ImportException("Invalid content type: " + baseModel.type);
         }
@@ -81,6 +87,12 @@ public class PoneCrafterImporter {
         JsonRoof jsonRoof = JsonUtility.FromJson<JsonRoof>(properties);
         Texture2D texture = LoadTexture(zipArchive);
         return new Roof(jsonRoof, texture);
+    }
+    
+    private Terrain LoadTerrain(ZipArchive zipArchive, string properties) {
+        JsonTerrain jsonTerrain = JsonUtility.FromJson<JsonTerrain>(properties);
+        Texture2D texture = LoadTexture(zipArchive);
+        return new Terrain(jsonTerrain, texture);
     }
 
     private Texture2D LoadTexture(ZipArchive zipArchive, string filename = "texture.png") {
