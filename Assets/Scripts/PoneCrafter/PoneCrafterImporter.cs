@@ -34,10 +34,6 @@ public class PoneCrafterImporter {
         }
     }
 
-    
-
-    
-
     private void ReadZip(string file) {
         using (ZipArchive zipArchive = ZipFile.Open(file, ZipArchiveMode.Read)) {
             ZipArchiveEntry propertiesEntry = zipArchive.GetEntry("properties.json");
@@ -61,19 +57,24 @@ public class PoneCrafterImporter {
                 throw new ImportException("Invalid content type: " + baseModel.type);
         }
     }
-    
+
     private Floor LoadFloor(ZipArchive zipArchive, string properties) {
         JsonFloor jsonFloor = JsonUtility.FromJson<JsonFloor>(properties);
-        
+
         ZipArchiveEntry textureEntry = zipArchive.GetEntry("texture.png");
         if (textureEntry == null) {
             throw new ImportException("Floor file did not contain a texture.png entry.");
         }
         using (Stream stream = textureEntry.Open()) {
-            // TODO: Load texture
+            MemoryStream memoryStream = new MemoryStream();
+            stream.CopyTo(memoryStream);
+            byte[] bytes = memoryStream.ToArray();
+            Texture2D texture = new Texture2D(0, 0);
+            if (!texture.LoadImage(bytes)) {
+                throw new ImportException("Failed to import texture.");
+            }
+            return new Floor(jsonFloor, texture);
         }
-        
-        return new Floor(jsonFloor);
     }
 }
 
