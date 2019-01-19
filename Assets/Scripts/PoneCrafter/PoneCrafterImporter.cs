@@ -1,6 +1,8 @@
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using PoneCrafter.Json;
 using PoneCrafter.Model;
 using UnityEngine;
@@ -47,6 +49,12 @@ public class PoneCrafterImporter {
         }
     }
 
+    private bool doesUuidExist(Guid uuid) {
+        return loadedFloors.Any(it => it.uuid == uuid) ||
+               loadedRoofs.Any(it => it.uuid == uuid) ||
+               loadedTerrains.Any(it => it.uuid == uuid);
+    }
+
     private void ReadZip(string file) {
         using (ZipArchive zipArchive = ZipFile.Open(file, ZipArchiveMode.Read)) {
             ZipArchiveEntry propertiesEntry = zipArchive.GetEntry("properties.json");
@@ -62,6 +70,9 @@ public class PoneCrafterImporter {
 
     private void LoadContent(ZipArchive zipArchive, string properties) {
         BaseJsonModel baseModel = JsonUtility.FromJson<BaseJsonModel>(properties);
+        if (doesUuidExist(baseModel.GetUuid())) {
+            throw new ImportException("UUID " + baseModel.GetUuid() + " is already used by another item!");
+        }
         switch (baseModel.type) {
             case "floor":
                 loadedFloors.Add(LoadFloor(zipArchive, properties));
