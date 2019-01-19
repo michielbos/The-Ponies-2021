@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using PoneCrafter;
+using PoneCrafter.Model;
 
 /// <summary>
 /// Singleton class that contains all the FurniturePresets that have been loaded.
@@ -9,7 +11,10 @@ public class FloorPresets {
 	private Dictionary<Guid, FloorPreset> presetDictionary;
 
 	private FloorPresets () {
-		presetDictionary = new FloorPresetLoader().LoadAllPresets();
+		presetDictionary = new Dictionary<Guid, FloorPreset>();
+		foreach (Floor floor in PoneCrafterImporter.Instance.loadedFloors) {
+			presetDictionary.Add(floor.uuid, new FloorPreset(floor));
+		}
 	}
 
 	public static FloorPresets Instance {
