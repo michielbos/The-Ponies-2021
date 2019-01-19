@@ -1,4 +1,5 @@
 ﻿using System;
+using Model.Property;
 using PoneCrafter.Model;
 using UnityEngine;
 using Object = UnityEngine.Object;

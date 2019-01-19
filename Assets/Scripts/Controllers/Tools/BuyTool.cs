@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.Controllers;
 using Assets.Scripts.Util;
+using Model.Property;
 using UnityEngine;
 using UnityEngine.Experimental.UIElements;
 

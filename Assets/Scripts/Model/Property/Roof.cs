@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿namespace Model.Property {
 
 public class Roof {
 	public int x1;
@@ -31,4 +29,6 @@ public class Roof {
 			height,
 			skin);
 	}
+}
+
 }
