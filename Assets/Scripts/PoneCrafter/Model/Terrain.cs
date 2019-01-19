@@ -5,7 +5,6 @@ using UnityEngine;
 namespace PoneCrafter.Model {
 
 public class Terrain : BaseModel {
-    public Guid uuid;
     public string name;
     public string description;
     public int price;
