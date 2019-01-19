@@ -7,15 +7,23 @@ using UnityEngine;
 
 namespace PoneCrafter {
 
+
 public class PoneCrafterImporter {
     private const string PROPERTIES_FILE = "properties.json";
     private const string PCC_EXTENSION = ".pcc";
     public List<Floor> loadedFloors;
+    private static PoneCrafterImporter instance;
 
-    public PoneCrafterImporter() {
+    private PoneCrafterImporter() {
         loadedFloors = new List<Floor>();
     }
 
+    public static PoneCrafterImporter Instance => instance ?? (instance = new PoneCrafterImporter());
+
+    /// <summary>
+    /// Import all PoneCrafter files.
+    /// This should be done only once, at the start of the game.
+    /// </summary>
     public void Import() {
         string directory = Application.dataPath + "/Mods/";
         if (!Directory.Exists(directory)) {
