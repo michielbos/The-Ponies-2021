@@ -22,7 +22,7 @@ public class ThePoniesBuilder {
         Debug.Log("Starting Windows64 build...");
         BuildPlayerOptions options = new BuildPlayerOptions();
         options.scenes = new[] {"Assets/_Scenes/PropertyScene.unity", "Assets/_Scenes/GameSceneTest.unity"};
-        options.target = BuildTarget.StandaloneLinuxUniversal;
+        options.target = BuildTarget.StandaloneWindows64;
         options.locationPathName = "Build/Windows64/The Ponies/The Ponies";
         BuildReport result = BuildPipeline.BuildPlayer(options);
         Debug.Log("Result: " + result.summary.result);
