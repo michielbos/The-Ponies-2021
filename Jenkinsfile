@@ -8,12 +8,12 @@ pipeline {
         }
         stage ('Build') {
             steps {
-                sh 'xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" /opt/Unity/Editor/Unity -projectPath . -executeMethod ThePoniesBuilder.RunBuild -batchmode -quit -logfile'
+                sh 'mkdir Build; mkdir Build/Linux/ echo "testing, testing" > Build/yay; echo "More testing..." > Build/moreyay;'
             }
         }
         stage('Archive') {
             steps {
-                sh 'echo Archive placeholder.'
+                zip zipFile: 'ThePonies-Linux.zip' archive: true, dir: 'Build/Linux'
             }
         }
     }
