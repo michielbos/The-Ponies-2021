@@ -9,8 +9,7 @@ pipeline {
         }
         stage ('Build') {
             steps {
-                sh 'mkdir Build; mkdir Build/Linux/; echo "testing, testing" > Build/Linux/yay; echo "More testing..." > Build/Linux/moreyay;'
-                sh 'ls Build/Linux'
+                sh 'xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" /opt/Unity/Editor/Unity -projectPath . -executeMethod ThePoniesBuilder.RunBuild -batchmode -quit -logfile'
             }
         }
         stage('Archive') {
