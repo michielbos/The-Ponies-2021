@@ -8,12 +8,12 @@ pipeline {
         }
         stage ('Build') {
             steps {
-                sh 'mkdir Build; mkdir Build/Linux/ echo "testing, testing" > Build/yay; echo "More testing..." > Build/moreyay;'
+                sh 'mkdir Build; mkdir Build/Linux/; echo "testing, testing" > Build/yay; echo "More testing..." > Build/moreyay;'
             }
         }
         stage('Archive') {
             steps {
-                zip zipFile: 'ThePonies-Linux.zip' archive: true, dir: 'Build/Linux'
+                zip zipFile: 'ThePonies-Linux.zip', archive: true, dir: 'Build/Linux'
             }
         }
     }
