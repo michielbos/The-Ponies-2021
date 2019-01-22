@@ -4,8 +4,8 @@ pipeline {
         stage ('Init') {
             steps {
                 sh 'ls'
-                sh 'ls/Build'
-                sh 'ls/Build/Linux'
+                sh 'ls Build'
+                sh 'ls Build/Linux'
                 sh '/opt/Unity/Editor/Unity -manualLicenseFile /opt/Unity/Editor/Unity_v2018.x.ulf -batchmode -nographics -logfile | true'
             }
         }
