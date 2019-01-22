@@ -3,13 +3,9 @@ pipeline {
     stages {
         stage ('Init') {
             steps {
-                script {
-                    try {
-                        sh '/opt/Unity/Editor/Unity -manualLicenseFile /opt/Unity/Editor/Unity_v2018.x.ulf -batchmode -nographics'
-                    } catch (err) {
-                        echo err
-                    }
-                }
+                set +e
+                sh '/opt/Unity/Editor/Unity -manualLicenseFile /opt/Unity/Editor/Unity_v2018.x.ulf -batchmode -nographics -logfile'
+                set -e
             }
         }
         stage ('Build') {
