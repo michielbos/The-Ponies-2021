@@ -9,22 +9,25 @@ public class ThePoniesBuilder {
     }
 
     private static void BuildLinux() {
-        Debug.Log("Starting Linux build...");
-        BuildPlayerOptions options = new BuildPlayerOptions();
-        options.scenes = new[] {"Assets/_Scenes/PropertyScene.unity", "Assets/_Scenes/GameSceneTest.unity"};
-        options.target = BuildTarget.StandaloneLinuxUniversal;
-        options.locationPathName = "Build/Linux/The Ponies/The Ponies";
-        BuildReport result = BuildPipeline.BuildPlayer(options);
-        Debug.Log("Result: " + result.summary.result);
+        Build("Linux", BuildTarget.StandaloneLinuxUniversal);
     }
-    
+
     private static void BuildWindows64() {
-        Debug.Log("Starting Windows64 build...");
+        Build("Windows64", BuildTarget.StandaloneWindows64);
+    }
+
+    private static void Build(string name, BuildTarget buildTarget) {
+        Debug.Log("Starting " + name + " build...");
         BuildPlayerOptions options = new BuildPlayerOptions();
         options.scenes = new[] {"Assets/_Scenes/PropertyScene.unity", "Assets/_Scenes/GameSceneTest.unity"};
-        options.target = BuildTarget.StandaloneWindows64;
-        options.locationPathName = "Build/Windows64/The Ponies/The Ponies";
+        options.target = buildTarget;
+        options.locationPathName = "Build/" + name + "/The Ponies/The Ponies";
         BuildReport result = BuildPipeline.BuildPlayer(options);
-        Debug.Log("Result: " + result.summary.result);
+        BuildSummary summary = result.summary;
+        Debug.Log(name + " build result: " + summary.result + " (took " + summary.totalTime + ")");
+        if (summary.result != BuildResult.Succeeded) {
+            throw new BuildException(name + " build was not successful. Result: " + summary.result + " with " +
+                                     summary.totalErrors + " errors and " + summary.totalWarnings + " warnings.");
+        }
     }
 }
