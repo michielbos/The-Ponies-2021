@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage ('Init') {
             steps {
-                sh '/opt/Unity/Editor/Unity -manualLicenseFile /opt/Unity/Editor/Unity_v2018.x.ulf -batchmode -nographics -logfile'
+                sh '/opt/Unity/Editor/Unity -manualLicenseFile /opt/Unity/Editor/Unity_v2018.x.ulf -batchmode -nographics'
             }
         }
         stage ('Build') {
