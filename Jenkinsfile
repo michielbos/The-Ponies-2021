@@ -3,7 +3,7 @@ pipeline {
     stages {
         stage ('Init') {
             steps {
-                sh 'rm -rf Build'
+                sh 'rm -rf Build/ Archives/'
                 sh '/opt/Unity/Editor/Unity -manualLicenseFile /opt/Unity/Editor/Unity_v2018.x.ulf -batchmode -nographics -logfile | true'
             }
         }
@@ -15,7 +15,7 @@ pipeline {
         }
         stage('Archive') {
             steps {
-                zip zipFile: 'ThePonies-Linux.zip', archive: true, dir: 'Build/Linux/'
+                zip zipFile: 'Archives/ThePonies-Linux.zip', archive: true, dir: 'Build/Linux/'
             }
         }
     }
