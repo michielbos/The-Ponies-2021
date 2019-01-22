@@ -8,7 +8,7 @@ pipeline {
         }
         stage ('Build') {
             steps {
-                sh 'ls'
+                sh 'xvfb-run --auto-servernum --server-args=\\'-screen 0 640x480x24:32\\' /opt/Unity/Editor/Unity -projectPath /home/michiel/ThePoniesGame/ -executeMethod ThePoniesBuilder.RunBuild -batchmode -quit -logfile'
             }
         }
         stage('Archive') {
