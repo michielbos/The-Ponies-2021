@@ -13,7 +13,9 @@ pipeline {
         }
         stage('Archive') {
             steps {
-                zip zipFile: 'ThePonies-Linux.zip', archive: true, dir: 'Build/Linux'
+                script {
+                    zip zipFile: 'ThePonies-Linux.zip', archive: true, dir: 'Build/Linux'
+                }
             }
         }
     }
