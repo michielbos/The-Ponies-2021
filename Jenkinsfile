@@ -8,7 +8,7 @@ pipeline {
         }
         stage ('Build') {
             steps {
-                sh 'echo Build placeholder.'
+                sh 'ls'
             }
         }
         stage('Archive') {
