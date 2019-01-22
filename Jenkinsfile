@@ -15,6 +15,7 @@ pipeline {
         stage('Archive') {
             steps {
                 zip zipFile: 'Archives/ThePonies-Linux.zip', archive: true, dir: 'Build/Linux/'
+                zip zipFile: 'Archives/ThePonies-Windows64.zip', archive: true, dir: 'Build/Windows64/'
             }
         }
     }
