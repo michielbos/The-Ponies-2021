@@ -1,5 +1,8 @@
 pipeline {
     agent any
+    options {
+        timeout(time: 1, unit: 'HOURS') 
+    }
     stages {
         stage ('Init') {
             steps {
@@ -9,6 +12,9 @@ pipeline {
             }
         }
         stage ('Build') {
+            options {
+                timeout(time: 1, unit: 'MINUTES') 
+            }
             steps {
                 sh 'xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" /opt/Unity/Editor/Unity -projectPath . -executeMethod ThePoniesBuilder.RunBuild -batchmode -quit -logfile'
             }
