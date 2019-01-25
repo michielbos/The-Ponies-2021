@@ -6,6 +6,7 @@ using System.Linq;
 using PoneCrafter.Json;
 using PoneCrafter.Model;
 using UnityEngine;
+using Util;
 using Terrain = PoneCrafter.Model.Terrain;
 
 namespace PoneCrafter {
@@ -16,12 +17,14 @@ public class PoneCrafterImporter {
     public List<Floor> loadedFloors;
     public List<Roof> loadedRoofs;
     public List<Terrain> loadedTerrains;
+    public List<Furniture> loadedFurniture;
     private static PoneCrafterImporter instance;
 
     private PoneCrafterImporter() {
         loadedFloors = new List<Floor>();
         loadedRoofs = new List<Roof>();
         loadedTerrains = new List<Terrain>();
+        loadedFurniture = new List<Furniture>();
     }
 
     public static PoneCrafterImporter Instance => instance ?? (instance = new PoneCrafterImporter());
@@ -87,6 +90,9 @@ public class PoneCrafterImporter {
             case "terrain":
                 loadedTerrains.Add(LoadTerrain(zipArchive, properties));
                 break;
+            case "furniture":
+                loadedFurniture.Add(LoadFurniture(zipArchive, properties));
+                break;
             default:
                 throw new ImportException("Invalid content type: " + baseModel.type);
         }
@@ -109,11 +115,18 @@ public class PoneCrafterImporter {
         Texture2D texture = LoadTexture(zipArchive);
         return new Terrain(jsonTerrain, texture);
     }
+    
+    private Furniture LoadFurniture(ZipArchive zipArchive, string properties) {
+        JsonFurniture jsonFurniture = JsonUtility.FromJson<JsonFurniture>(properties);
+        Texture2D texture = LoadTexture(zipArchive);
+        Mesh mesh = LoadMesh(zipArchive);
+        return new Furniture(jsonFurniture, mesh, texture);
+    }
 
     private Texture2D LoadTexture(ZipArchive zipArchive, string filename = "texture.png") {
         ZipArchiveEntry textureEntry = zipArchive.GetEntry(filename);
         if (textureEntry == null) {
-            throw new ImportException("File did not contain a " + filename + ".png entry.");
+            throw new ImportException("File did not contain a " + filename + " entry.");
         }
         using (Stream stream = textureEntry.Open()) {
             MemoryStream memoryStream = new MemoryStream();
@@ -124,6 +137,20 @@ public class PoneCrafterImporter {
                 throw new ImportException("Failed to import texture.");
             }
             return texture;
+        }
+    }
+    
+    private Mesh LoadMesh(ZipArchive zipArchive, string filename = "model.obj") {
+        ZipArchiveEntry meshEntry = zipArchive.GetEntry(filename);
+        if (meshEntry == null) {
+            throw new ImportException("File did not contain a " + filename + " entry.");
+        }
+        using (Stream stream = meshEntry.Open()) {
+            MemoryStream memoryStream = new MemoryStream();
+            stream.CopyTo(memoryStream);
+            byte[] bytes = memoryStream.ToArray();
+            Mesh mesh = FastObjImporter.Instance.ImportMesh(bytes);
+            return mesh;
         }
     }
 }

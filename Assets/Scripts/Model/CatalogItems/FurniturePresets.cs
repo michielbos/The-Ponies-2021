@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using PoneCrafter;
+using PoneCrafter.Model;
 using UnityEngine;
 
 /// <summary>
@@ -10,7 +12,10 @@ public class FurniturePresets {
 	private Dictionary<Guid, FurniturePreset> presetDictionary;
 
 	private FurniturePresets () {
-		presetDictionary = new FurniturePresetLoader().LoadAllPresets();
+		presetDictionary = new Dictionary<Guid, FurniturePreset>();
+		foreach (Furniture furniture in PoneCrafterImporter.Instance.loadedFurniture) {
+			presetDictionary.Add(furniture.uuid, new FurniturePreset(furniture));
+		}
 	}
 
 	public static FurniturePresets Instance {
