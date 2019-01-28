@@ -1,4 +1,6 @@
-﻿/// <summary>
+﻿namespace Model.Data {
+
+/// <summary>
 /// Class for keeping track of skill stats, for example for displaying on the furniture info tab.
 /// </summary>
 [System.Serializable]
@@ -40,4 +42,6 @@ public class SkillStats {
         }
         return text + "+ " + name;
     } 
+}
+
 }

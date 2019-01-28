@@ -1,4 +1,6 @@
-﻿/// <summary>
+﻿namespace Model.Data {
+
+/// <summary>
 /// Class for keeping track of need stats, for example for displaying on the furniture info tab.
 /// </summary>
 [System.Serializable]
@@ -44,4 +46,6 @@ public class NeedStats {
         }
         return text + name + ": " + value;
     } 
+}
+
 }
