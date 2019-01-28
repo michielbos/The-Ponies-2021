@@ -9,6 +9,10 @@ public class Furniture : BaseModel {
     public string description;
     public int price;
     public ObjectCategory category;
+    public bool pickupable;
+    public bool sellable;
+    public Vector2Int[] occupiedTiles;
+    public PlacementRestriction[] placementRestrictions;
     public NeedStats needStats;
     public SkillStats skillStats;
     public RequiredAge requiredAge;
@@ -23,6 +27,10 @@ public class Furniture : BaseModel {
         needStats = jsonFurniture.needStats;
         skillStats = jsonFurniture.skillStats;
         requiredAge = jsonFurniture.requiredAge;
+        pickupable = jsonFurniture.pickupable;
+        sellable = jsonFurniture.sellable;
+        occupiedTiles = jsonFurniture.occupiedTiles;
+        placementRestrictions = jsonFurniture.placementRestrictions;
         this.mesh = mesh;
         this.texture = texture;
     }

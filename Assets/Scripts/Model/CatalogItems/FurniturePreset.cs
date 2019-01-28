@@ -27,12 +27,13 @@ public class FurniturePreset : Preset {
     public FurniturePreset(Furniture furniture) :
         base(furniture.uuid, furniture.name, furniture.description, furniture.price, furniture.category,
             furniture.needStats, furniture.skillStats, furniture.requiredAge) {
-        pickupable = true;
-        sellable = true;
+        pickupable = furniture.pickupable;
+        sellable = furniture.sellable;
+        // TODO: Fill these if we implement them, remove them otherwise.
         rotationOffset = Vector3.zero;
         positionOffset = Vector3.zero;
-        occupiedTiles = new[] {new Vector2Int(0, 0)};
-        placementRestrictions = new[] {PlacementRestriction.Terrain, PlacementRestriction.Floor};
+        occupiedTiles = furniture.occupiedTiles;
+        placementRestrictions = furniture.placementRestrictions;
         mesh = furniture.mesh;
         texture = furniture.texture;
         materials = new Material[1][];
