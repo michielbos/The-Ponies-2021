@@ -1,4 +1,4 @@
-﻿namespace Model.Data {
+﻿namespace PoneCrafter.Model {
 
 /// <summary>
 /// Class for keeping track of skill stats, for example for displaying on the furniture info tab.

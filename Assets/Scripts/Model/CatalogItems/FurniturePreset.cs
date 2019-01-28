@@ -1,5 +1,4 @@
 ﻿using System;
-using Model.Data;
 using PoneCrafter.Model;
 using UnityEngine;
 using Object = UnityEngine.Object;
@@ -26,8 +25,8 @@ public class FurniturePreset : Preset {
 
     // TODO: Import missing fields
     public FurniturePreset(Furniture furniture) :
-        base(furniture.uuid, furniture.name, furniture.description, furniture.price, ObjectCategory.Seating,
-            new NeedStats(), new SkillStats(), RequiredAge.Any) {
+        base(furniture.uuid, furniture.name, furniture.description, furniture.price, furniture.category,
+            furniture.needStats, furniture.skillStats, furniture.requiredAge) {
         pickupable = true;
         sellable = true;
         rotationOffset = Vector3.zero;
