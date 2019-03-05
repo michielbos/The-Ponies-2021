@@ -34,11 +34,18 @@ public class PoneCrafterImporter {
     /// This should be done only once, at the start of the game.
     /// </summary>
     public void Import() {
-        string directory = Application.dataPath + "/Mods/";
-        if (!Directory.Exists(directory)) {
-            Directory.CreateDirectory(directory);
+        // TODO: Apply content UUID checks on content folder.
+        ImportFolder(Application.dataPath + "/Content/");
+        ImportFolder(Application.dataPath + "/../Mods/");
+    }
+
+    private void ImportFolder(string path) {
+        Debug.Log(path);
+        if (!Directory.Exists(path)) {
+            Debug.Log("Did not exist.");
+            Directory.CreateDirectory(path);
         }
-        foreach (string file in Directory.GetFiles(directory)) {
+        foreach (string file in Directory.GetFiles(path)) {
             if (!file.ToLower().EndsWith(PCC_EXTENSION)) {
                 continue;
             }
@@ -51,7 +58,7 @@ public class PoneCrafterImporter {
         }
     }
 
-    private bool doesUuidExist(Guid uuid) {
+    private bool DoesUuidExist(Guid uuid) {
         return loadedFloors.Any(it => it.uuid == uuid) ||
                loadedRoofs.Any(it => it.uuid == uuid) ||
                loadedTerrains.Any(it => it.uuid == uuid);
@@ -77,7 +84,7 @@ public class PoneCrafterImporter {
             throw new ImportException("UUID " + baseModel.GetUuid() +
                                       " does not have a valid pack id for packageless content!");
         }
-        if (doesUuidExist(baseModel.GetUuid())) {
+        if (DoesUuidExist(baseModel.GetUuid())) {
             throw new ImportException("UUID " + baseModel.GetUuid() + " is already used by another item!");
         }
         switch (baseModel.type) {
