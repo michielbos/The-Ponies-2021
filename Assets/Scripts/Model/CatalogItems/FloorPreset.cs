@@ -32,7 +32,7 @@ public class FloorPreset : Preset {
 	private Material GetMaterial () {
 		if (material == null) {
 			//TODO: Use the right shader or use a source material.
-			material = new Material(Shader.Find("Standard"));
+			material = new Material(Shader.Find("Cel Shading/Double Sided"));
 			material.mainTexture = GetTexture();
 		}
 		return material;

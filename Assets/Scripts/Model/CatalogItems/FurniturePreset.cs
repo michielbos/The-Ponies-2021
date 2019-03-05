@@ -8,6 +8,7 @@ using Object = UnityEngine.Object;
 /// </summary>
 [Serializable]
 public class FurniturePreset : Preset {
+    private static readonly int ShaderCutoutProperty = Shader.PropertyToID("_AlphaCutOut");
     public readonly bool pickupable;
     public readonly bool sellable;
     public readonly string modelName;
@@ -52,7 +53,8 @@ public class FurniturePreset : Preset {
         if (materials[skin] == null) {
             materials[skin] = new Material[1];
             //TODO: Use the right shader or use a source material.
-            materials[skin][0] = new Material(Shader.Find("Standard"));
+            materials[skin][0] = new Material(Shader.Find("Cel Shading/Double Sided"));
+            materials[skin][0].SetFloat(ShaderCutoutProperty, 0.75f);
             materials[skin][0].mainTexture = texture;
         }
         return materials[skin];
