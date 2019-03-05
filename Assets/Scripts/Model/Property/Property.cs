@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace Model.Property {
+
 [Serializable]
 public class Property {
 	public int id;
@@ -30,10 +32,10 @@ public class Property {
 	}
 
 	public Property (PropertyData propertyData) : this(propertyData.id,
-												propertyData.name,
-												propertyData.description,
-												propertyData.streetName,
-												propertyData.propertyType == 0 ? PropertyType.RESIDENTIAL : PropertyType.COMMUNITY) {
+		propertyData.name,
+		propertyData.description,
+		propertyData.streetName,
+		propertyData.propertyType == 0 ? PropertyType.RESIDENTIAL : PropertyType.COMMUNITY) {
 		LoadTerrainTiles(propertyData.terrainTileDatas);
 		LoadWalls(propertyData.wallDatas);
 		LoadFloorTiles(propertyData.floorTileDatas);
@@ -230,5 +232,7 @@ public class Property {
 	public TerrainTile GetTerrainTile(int x, int y) {
 		return terrainTiles[y, x];
 	}
+}
+
 }
 

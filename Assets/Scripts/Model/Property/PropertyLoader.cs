@@ -1,7 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using System.IO;
+﻿using System.IO;
 using UnityEngine;
+
+namespace Model.Property {
 
 public class PropertyLoader {
 	const string propertyPrefix = "Property";
@@ -71,4 +71,6 @@ public class PropertyLoader {
 			Directory.CreateDirectory(path);
 		}
 	}
+}
+
 }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Assets.Scripts.Util;
+using Model.Property;
 using UnityEngine;
 
 /// <summary>

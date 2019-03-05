@@ -1,4 +1,6 @@
 ﻿using System;
+using Model.Property;
+using PoneCrafter.Model;
 using UnityEngine;
 using Object = UnityEngine.Object;
 
@@ -7,13 +9,12 @@ using Object = UnityEngine.Object;
 /// </summary>
 [Serializable]
 public class FloorPreset : Preset {
-	private readonly string textureName;
 	private Texture texture;
 	private Material material;
-	
-	public FloorPreset (FloorPresetData fpd) : 
-		base(new Guid(fpd.guid), fpd.name, fpd.description, fpd.price, ObjectCategory.Floors) {
-		textureName = fpd.textureName;
+
+	public FloorPreset(Floor floor) :
+		base(floor.uuid, floor.name, floor.description, floor.price, ObjectCategory.Floors) {
+		texture = floor.texture;
 	}
 
 	public override Texture[] GetPreviewTextures () {
@@ -25,14 +26,6 @@ public class FloorPreset : Preset {
 	}
 	
 	private Texture GetTexture () {
-		if (texture == null) {
-			if (assetBundle != null) {
-				texture = assetBundle.LoadAsset<Texture>("assets/" + textureName);
-			} else {
-				texture = Resources.Load<Texture>(textureName);
-			}
-		}
-		//TODO: Use placeholder texture if still null...
 		return texture;
 	}
 	

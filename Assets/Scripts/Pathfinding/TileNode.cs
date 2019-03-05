@@ -1,5 +1,6 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
+using Model.Property;
 using UnityEngine;
 
 public class TileNode{

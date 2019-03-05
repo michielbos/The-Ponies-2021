@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+namespace Model.Property {
+
 /// <summary>
 /// An object that can be placed on a lot, usually a piece of furniture.
 /// The physical "dummy" of this object is kept in the dummyObject attribute.
@@ -78,4 +80,6 @@ public class PropertyObject {
 	public Vector2Int[] GetOccupiedTiles () {
 		return preset.GetOccupiedTiles(new Vector2Int(x, y));
 	}
+}
+
 }

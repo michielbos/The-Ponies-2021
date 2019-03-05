@@ -1,5 +1,7 @@
 ﻿using UnityEngine;
 
+namespace Model.Property {
+
 /// <summary>
 /// The "dummy" of a wall, used for displaying and interaction.
 /// It should only be controlled by its owner, which is in the wall attribute.
@@ -31,5 +33,7 @@ public class WallDummy : MonoBehaviour {
         x = Mathf.Min(s.x, e.x);
         y = Mathf.Min(s.y, e.y); 
     }*/
+
+}
 
 }
