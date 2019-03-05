@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Util;
+using PoneCrafter;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,9 +15,18 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 		if (instance == null) {
 			DontDestroyOnLoad(gameObject);
 			instance = this;
+			InitializeGame();
 		} else if (instance != this) {
 			Destroy(gameObject);
 		}
+	}
+
+	/// <summary>
+	/// Code that may take long to run that should be executed before the game is started.
+	/// This will later probably be moved to a loading screen.
+	/// </summary>
+	private void InitializeGame() {
+		PoneCrafterImporter.Instance.Import();
 	}
 
 	public void EnterLot (int id) {

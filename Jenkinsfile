@@ -19,6 +19,14 @@ pipeline {
                 sh 'xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" /opt/Unity/Editor/Unity -projectPath . -executeMethod ThePoniesBuilder.RunBuild -batchmode -quit -logfile'
             }
         }
+        stage ('Collect') {
+            steps {
+                sh 'rm -rf content'
+                copyArtifacts(projectName: 'ThePoniesContent/master', filter: 'build/*', target: 'content/');
+                sh 'cp content/build/* Build/Linux/The\\ Ponies/The\\ Ponies_Data/Content/'
+                sh 'cp content/build/* Build/Windows64/The\\ Ponies/The\\ Ponies_Data/Content/'
+            }
+        }
         stage('Archive') {
             steps {
                 zip zipFile: 'Archives/ThePonies-Linux.zip', archive: true, dir: 'Build/Linux/'

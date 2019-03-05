@@ -1,6 +1,8 @@
 ﻿
 using UnityEngine;
 
+namespace Model.Property {
+
 [System.Serializable]
 public class FloorTile {
 	public int x;
@@ -15,8 +17,8 @@ public class FloorTile {
 	}
 
 	public FloorTile (FloorTileData floorTileData, FloorPreset preset) : this (floorTileData.x,
-		                                                floorTileData.y,
-														preset) {
+		floorTileData.y,
+		preset) {
 
 	}
 	
@@ -49,4 +51,6 @@ public class FloorTile {
 	public void RemoveFloor () {
 		Object.Destroy(dummyObject.gameObject);
 	}
+}
+
 }
