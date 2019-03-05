@@ -40,9 +40,7 @@ public class PoneCrafterImporter {
     }
 
     private void ImportFolder(string path) {
-        Debug.Log(path);
         if (!Directory.Exists(path)) {
-            Debug.Log("Did not exist.");
             Directory.CreateDirectory(path);
         }
         foreach (string file in Directory.GetFiles(path)) {
