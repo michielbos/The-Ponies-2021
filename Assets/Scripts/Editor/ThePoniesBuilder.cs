@@ -1,3 +1,4 @@
+using System.IO;
 using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
@@ -38,5 +39,12 @@ public class ThePoniesBuilder {
             throw new BuildException(name + " build was not successful. Result: " + summary.result + " with " +
                                      summary.totalErrors + " errors and " + summary.totalWarnings + " warnings.");
         }
+        PostBuild(name);
+    }
+
+    private static void PostBuild(string name) {
+        Directory.CreateDirectory("Build/" + name + "/The Ponies/The Ponies_Data/Content");
+        Directory.CreateDirectory("Build/" + name + "/The Ponies/Mods");
+        Debug.Log("Post-build actions done.");
     }
 }
