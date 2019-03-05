@@ -21,7 +21,7 @@ pipeline {
         }
         stage ('Collect') {
             sh 'rm -rf content'
-            copyArtifacts(projectName: 'ThePoniesContent/master', filter: 'build/*', target 'content/');
+            copyArtifacts(projectName: 'ThePoniesContent/master', filter: 'build/*', target: 'content/');
         }
         stage('Archive') {
             steps {
