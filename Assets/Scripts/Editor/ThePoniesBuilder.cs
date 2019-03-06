@@ -10,18 +10,24 @@ public class ThePoniesBuilder {
         BuildLinux();
         BuildWindows64();
     }
+    
+    [MenuItem("Build/Build releases")]
+    public static void RunReleaseBuild() {
+        BuildLinux(false);
+        BuildWindows64(false);
+    }
 
     [MenuItem("Build/Build Linux")]
-    private static void BuildLinux() {
-        Build("Linux", BuildTarget.StandaloneLinuxUniversal);
+    private static void BuildLinux(bool development = true) {
+        Build("Linux", BuildTarget.StandaloneLinuxUniversal, development);
     }
 
     [MenuItem("Build/Build Windows64")]
-    private static void BuildWindows64() {
-        Build("Windows64", BuildTarget.StandaloneWindows64);
+    private static void BuildWindows64(bool development = true) {
+        Build("Windows64", BuildTarget.StandaloneWindows64, development);
     }
 
-    private static void Build(string name, BuildTarget buildTarget) {
+    private static void Build(string name, BuildTarget buildTarget, bool development) {
         Debug.Log("Starting " + name + " build...");
         BuildPlayerOptions options = new BuildPlayerOptions();
         options.scenes = new[] {"Assets/_Scenes/PropertyScene.unity", "Assets/_Scenes/GameSceneTest.unity"};
@@ -32,6 +38,7 @@ public class ThePoniesBuilder {
         } else {
             options.locationPathName = "Build/" + name + "/The Ponies/The Ponies";
         }
+        options.options = development ? BuildOptions.Development : BuildOptions.None;
         BuildReport result = BuildPipeline.BuildPlayer(options);
         BuildSummary summary = result.summary;
         Debug.Log(name + " build result: " + summary.result + " (took " + summary.totalTime + ")");

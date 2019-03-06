@@ -16,7 +16,11 @@ pipeline {
                 timeout(time: 30, unit: 'MINUTES') 
             }
             steps {
-                sh 'xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" /opt/Unity/Editor/Unity -projectPath . -executeMethod ThePoniesBuilder.RunBuild -batchmode -quit -logfile'
+                if (env.BRANCH_NAME == 'master') {
+                    sh 'xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" /opt/Unity/Editor/Unity -projectPath . -executeMethod ThePoniesBuilder.RunReleaseBuild -batchmode -quit -logfile'
+                } else {
+                    sh 'xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" /opt/Unity/Editor/Unity -projectPath . -executeMethod ThePoniesBuilder.RunBuild -batchmode -quit -logfile'
+                }
             }
         }
         stage ('Collect') {
