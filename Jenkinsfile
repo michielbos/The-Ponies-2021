@@ -29,13 +29,13 @@ pipeline {
             steps {
                 sh 'rm -rf content'
                 copyArtifacts(projectName: 'ThePoniesContent/master', filter: 'build/*', target: 'content/');
-                sh 'cp content/build/* Build/Linux/The\\ Ponies/The\\ Ponies_Data/Content/'
+                sh 'cp content/build/* Build/Linux64/The\\ Ponies/The\\ Ponies_Data/Content/'
                 sh 'cp content/build/* Build/Windows64/The\\ Ponies/The\\ Ponies_Data/Content/'
             }
         }
         stage('Archive') {
             steps {
-                zip zipFile: 'Archives/ThePonies-Linux.zip', archive: true, dir: 'Build/Linux/'
+                zip zipFile: 'Archives/ThePonies-Linux64.zip', archive: true, dir: 'Build/Linux64/'
                 zip zipFile: 'Archives/ThePonies-Windows64.zip', archive: true, dir: 'Build/Windows64/'
             }
         }
