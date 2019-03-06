@@ -17,9 +17,9 @@ public class ThePoniesBuilder {
         BuildWindows64(false);
     }
 
-    [MenuItem("Build/Build Linux")]
+    [MenuItem("Build/Build Linux64")]
     private static void BuildLinux(bool development = true) {
-        Build("Linux", BuildTarget.StandaloneLinuxUniversal, development);
+        Build("Linux64", BuildTarget.StandaloneLinux64, development);
     }
 
     [MenuItem("Build/Build Windows64")]
