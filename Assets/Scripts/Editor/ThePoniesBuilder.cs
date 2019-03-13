@@ -3,14 +3,13 @@ using UnityEditor;
 using UnityEditor.Build.Reporting;
 using UnityEngine;
 
-public class ThePoniesBuilder {
-    
+public static class ThePoniesBuilder {
     [MenuItem("Build/Build all")]
     public static void RunBuild() {
-        BuildLinux();
-        BuildWindows64();
+        BuildLinux(true);
+        BuildWindows64(true);
     }
-    
+
     [MenuItem("Build/Build releases")]
     public static void RunReleaseBuild() {
         BuildLinux(false);
@@ -18,12 +17,20 @@ public class ThePoniesBuilder {
     }
 
     [MenuItem("Build/Build Linux64")]
-    private static void BuildLinux(bool development = true) {
+    private static void BuildLinux() {
+        BuildLinux(true);
+    }
+
+    private static void BuildLinux(bool development) {
         Build("Linux64", BuildTarget.StandaloneLinux64, development);
     }
 
     [MenuItem("Build/Build Windows64")]
-    private static void BuildWindows64(bool development = true) {
+    private static void BuildWindows64() {
+        BuildWindows64(true);
+    }
+
+    private static void BuildWindows64(bool development) {
         Build("Windows64", BuildTarget.StandaloneWindows64, development);
     }
 
