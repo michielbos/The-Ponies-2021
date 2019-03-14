@@ -17,6 +17,9 @@ public class Property {
 	public List<Roof> roofs;
 	public List<PropertyObject> propertyObjects;
 
+	public int TerrainWidth => terrainTiles.GetLength(1);
+	public int TerrainHeight => terrainTiles.GetLength(0);
+
 	public Property () {
 		walls = new List<Wall>();
 		roofs = new List<Roof>();

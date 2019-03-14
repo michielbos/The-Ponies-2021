@@ -31,11 +31,15 @@ public class CameraController : VolatileSingletonController<CameraController> {
             Vector3 camForward = LevelVector(camera.transform.forward);
             Vector3 camRight = LevelVector(camera.transform.right);
 
-            holder.position = holder.position
+            Vector3 position = holder.position
                               + camForward * (Input.mousePosition - panStartMouse).y * camera.orthographicSize /
                               Screen.height
                               + camRight * (Input.mousePosition - panStartMouse).x * camera.orthographicSize /
                               Screen.width;
+            var property = PropertyController.Instance.property;
+            position.x = Mathf.Clamp(position.x, 0f, property.TerrainWidth);
+            position.z = Mathf.Clamp(position.z, 0f, property.TerrainHeight);
+            holder.position = position;
         }
 
         int scrollDir = (int) Mathf.Clamp(Input.mouseScrollDelta.y, -1, 1);
@@ -56,7 +60,7 @@ public class CameraController : VolatileSingletonController<CameraController> {
         camera.orthographicSize *= zoom;
         camera.orthographicSize = Mathf.Clamp(camera.orthographicSize, minSize, maxSize);
     }
-    
+
     private Vector3 LevelVector(Vector3 v) {
         return Vector3.ProjectOnPlane(v, Vector3.up).normalized;
     }
