@@ -50,3 +50,6 @@ Build/
 # While we are keeping saves in the resources, might as well exclude them.
 Assets/Resources/SaveData/
 Assets/Content/
+Assets/Content.meta
+Assets/Mods/
+Assets/Mods.meta
