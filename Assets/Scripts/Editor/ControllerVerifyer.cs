@@ -13,7 +13,6 @@ namespace Assets.Scripts.Editor
 			base.OnInspectorGUI();
 			if (Application.isPlaying)
 			{
-				TestSingleton(CameraController.Instance, "CameraController");
 				TestSingleton(CheatsController.Instance, "CheatsController");
 				TestSingleton(GameController.Instance, "GameController");
 				TestSingleton(MoneyController.Instance, "MoneyController");
