@@ -13,6 +13,7 @@ public class HUDController : VolatileSingletonController<HUDController>, IPointe
     private int TEMP_selectedRoof = 1;
 
     public Text fundsText;
+    public Text timeText;
     private bool touchingGui;
 
     void Start() {
@@ -42,7 +43,7 @@ public class HUDController : VolatileSingletonController<HUDController>, IPointe
 
     // Called from Unity GUI Button
     public void SetSpeed(int index) {
-        SpeedController.Instance.SetSpeed((Speed) index);
+        SpeedController.Instance.SetSpeed(index);
     }
 
     // Called from Unity GUI Button
@@ -60,7 +61,7 @@ public class HUDController : VolatileSingletonController<HUDController>, IPointe
     public void UpdateSpeed() {
         speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite;
         foreach (GameObject g in speedButtons) {
-            bool active = speedButtons.IndexOf(g) == (int) SpeedController.Instance.CurrentSpeed;
+            bool active = speedButtons.IndexOf(g) == SpeedController.Instance.GetCurrentSpeed().GetIndex();
             g.GetComponent<Button>().interactable = !active;
         }
     }
@@ -78,6 +79,11 @@ public class HUDController : VolatileSingletonController<HUDController>, IPointe
 
     public void UpdateFunds() {
         fundsText.text = "$" + MoneyController.Instance.Funds;
+    }
+
+    public void UpdateTime()
+    {
+        timeText.text = SpeedController.Instance.GetTimeText();
     }
 
     public void OnPointerEnter(PointerEventData eventData) {
