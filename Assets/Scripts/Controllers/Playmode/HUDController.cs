@@ -58,9 +58,25 @@ public class HUDController : VolatileSingletonController<HUDController>, IPointe
         CameraController.Instance.Rotate(counterClockwise);
     }
 
-    public void UpdateSpeed() {
+    // Called from Unity GUI Button
+    public void SetClocks()
+    {
+        if (SpeedController.Instance.twelveHourClock == true)
+        {
+            SpeedController.Instance.twelveHourClock = false;
+        }
+        else
+        {
+            SpeedController.Instance.twelveHourClock = true;
+        }
+        UpdateTime();
+    }
+
+    public void UpdateSpeed()
+    {
         speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite;
-        foreach (GameObject g in speedButtons) {
+        foreach (GameObject g in speedButtons)
+        {
             bool active = speedButtons.IndexOf(g) == SpeedController.Instance.GetCurrentSpeed().GetIndex();
             g.GetComponent<Button>().interactable = !active;
         }

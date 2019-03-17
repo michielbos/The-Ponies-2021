@@ -13,7 +13,7 @@ namespace Assets.Scripts.Controllers
         private double currentGameTime;
         private float pauseTimer;
         private bool forcePaused;
-        private bool twelveHourClock = true;
+        public bool twelveHourClock = true;
 
         void Start()
 		{
@@ -76,11 +76,6 @@ namespace Assets.Scripts.Controllers
         public Speed GetCurrentSpeed()
         {
             return currentSpeed;
-        }
-
-        public void SetTwelveHourClock(bool twelveHourClock)
-        {
-            this.twelveHourClock = twelveHourClock;
         }
 
         private void PlaySpeedSound(int from, int to)
