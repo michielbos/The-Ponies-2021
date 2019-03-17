@@ -6,7 +6,6 @@ Shader "Cel Shading/Double Sided" {
         _FlatnessSpecular ("Flatness/Specular", Range(0, 5)) = 0
         _AlphaCutOut ("Alpha CutOut", Range(0, 0.75)) = 0
         _LightBrightness ("Light Brightness", Range(0, 2)) = 0.5
-        [HideInInspector]_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
     }
     SubShader {
         Tags {
@@ -70,7 +69,7 @@ Shader "Cel Shading/Double Sided" {
                 float3 normalDirection = i.normalDir;
                 float3 viewReflectDirection = reflect( -viewDirection, normalDirection );
                 float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
-                clip(saturate(((_AlphaCutOut*-1.0+1.0)+(_MainTex_var.a*_Color.b))) - 0.5);
+                clip(saturate(((_AlphaCutOut*-1.0+1.0)+(_MainTex_var.a*_Color.a))) - 0.5);
                 float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
                 float3 lightColor = _LightColor0.rgb;
                 float3 halfDirection = normalize(viewDirection+lightDirection);
@@ -163,7 +162,7 @@ Shader "Cel Shading/Double Sided" {
                 float3 normalDirection = i.normalDir;
                 float3 viewReflectDirection = reflect( -viewDirection, normalDirection );
                 float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
-                clip(saturate(((_AlphaCutOut*-1.0+1.0)+(_MainTex_var.a*_Color.b))) - 0.5);
+                clip(saturate(((_AlphaCutOut*-1.0+1.0)+(_MainTex_var.a*_Color.a))) - 0.5);
                 float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));
                 float3 lightColor = _LightColor0.rgb;
                 float3 halfDirection = normalize(viewDirection+lightDirection);
@@ -236,7 +235,7 @@ Shader "Cel Shading/Double Sided" {
                 float isFrontFace = ( facing >= 0 ? 1 : 0 );
                 float faceSign = ( facing >= 0 ? 1 : -1 );
                 float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
-                clip(saturate(((_AlphaCutOut*-1.0+1.0)+(_MainTex_var.a*_Color.b))) - 0.5);
+                clip(saturate(((_AlphaCutOut*-1.0+1.0)+(_MainTex_var.a*_Color.a))) - 0.5);
                 SHADOW_CASTER_FRAGMENT(i)
             }
             ENDCG

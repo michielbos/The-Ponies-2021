@@ -3,8 +3,7 @@
 --- !u!1 &5075057834360993550
 GameObject:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 2631198798911267855, guid: 2543590dbb0564e46bdf12a4c1112b8c,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
@@ -21,8 +20,7 @@ GameObject:
 --- !u!4 &5075057834360993548
 Transform:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 2631198798911267853, guid: 2543590dbb0564e46bdf12a4c1112b8c,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5075057834360993550}
@@ -36,8 +34,7 @@ Transform:
 --- !u!108 &5075057834360993549
 Light:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 2631198798911267852, guid: 2543590dbb0564e46bdf12a4c1112b8c,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5075057834360993550}
@@ -63,7 +60,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 311
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
@@ -75,8 +72,7 @@ Light:
 --- !u!1 &5075057835550885008
 GameObject:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 2631198797723522961, guid: 2543590dbb0564e46bdf12a4c1112b8c,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
@@ -93,12 +89,11 @@ GameObject:
 --- !u!4 &5075057835550885014
 Transform:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 2631198797723522967, guid: 2543590dbb0564e46bdf12a4c1112b8c,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5075057835550885008}
-  m_LocalRotation: {x: -0.016164098, y: -0.96840024, z: 0.24019295, w: -0.06516976}
+  m_LocalRotation: {x: 0.016164143, y: 0.96840024, z: -0.24019295, w: 0.06516994}
   m_LocalPosition: {x: 1.6062794, y: 18.143654, z: 21.17572}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -106,12 +101,11 @@ Transform:
   - {fileID: 5075057835752449397}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 27.86, y: 172.3, z: 0}
 --- !u!114 &5075057835550885015
 MonoBehaviour:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 2631198797723522966, guid: 2543590dbb0564e46bdf12a4c1112b8c,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5075057835550885008}
@@ -144,8 +138,7 @@ MonoBehaviour:
 --- !u!1 &5075057835752449399
 GameObject:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 2631198797924562550, guid: 2543590dbb0564e46bdf12a4c1112b8c,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
@@ -162,8 +155,7 @@ GameObject:
 --- !u!4 &5075057835752449397
 Transform:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 2631198797924562548, guid: 2543590dbb0564e46bdf12a4c1112b8c,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5075057835752449399}
@@ -178,8 +170,7 @@ Transform:
 --- !u!108 &5075057835752449398
 Light:
   m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 2631198797924562551, guid: 2543590dbb0564e46bdf12a4c1112b8c,
-    type: 3}
+  m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5075057835752449399}
@@ -205,7 +196,7 @@ Light:
   m_RenderMode: 0
   m_CullingMask:
     serializedVersion: 2
-    m_Bits: 4294967295
+    m_Bits: 311
   m_Lightmapping: 4
   m_LightShadowCasterMode: 0
   m_AreaSize: {x: 1, y: 1}
