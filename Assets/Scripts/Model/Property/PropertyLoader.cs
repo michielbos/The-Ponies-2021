@@ -23,7 +23,7 @@ public class PropertyLoader {
 	public Property LoadOrCreateProperty (int id) {
 		if (PropertyExists(id))
 			return LoadProperty(id);
-		return CreateEmptyProperty(id, 40, 30);
+		return CreateEmptyProperty(id, 64, 64);
 	}
 
 	private Property CreateEmptyProperty (int id, int width, int height) {
