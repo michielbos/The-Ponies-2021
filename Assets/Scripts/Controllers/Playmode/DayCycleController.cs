@@ -13,10 +13,10 @@ namespace Assets.Scripts.Controllers
 
         private float currentTime;
 
-        [Range(0f, 24f)] public float _StartingSunrise = 8f;
-        [Range(0f, 24f)] public float _StartingDay = 12;
-        [Range(0f, 24f)] public float _StartingSunset = 18;
-        [Range(0f, 24f)] public float _StartingNight = 22;
+        [Range(0f, 24f)] public float _StartingSunrise = 7f;
+        [Range(0f, 24f)] public float _StartingDay = 12f;
+        [Range(0f, 24f)] public float _StartingSunset = 18f;
+        [Range(0f, 24f)] public float _StartingNight = 22f;
 
         [Range(0f, 1f)] public float _SunriseLightIntensity = 0.6f;
         [Range(0f, 1f)] public float _DayLightIntensity = 1.0f;
@@ -29,7 +29,7 @@ namespace Assets.Scripts.Controllers
         public Color _Night_LightColor;
 
         public bool _UseDifferentFadeTimes;
-        public float _DefaultFadeTime = 30.0f;
+        public float _DefaultFadeTime = 45.0f;
         public float _SunriseFadeTime = 5.0f;
         public float _DayFadeTime = 5.0f;
         public float _SunsetFadeTime = 5.0f;
