@@ -84,14 +84,29 @@ namespace Assets.Scripts.Controllers
         void UpdateTimeset()
         {
             if (currentTime >= _StartingSunrise && currentTime <= _StartingDay && CurrTimeset != Timeset.SUNRISE)
+            {
                 SetCurrentTimeset(Timeset.SUNRISE);
+                SunLight.enabled = true;
+                NightLight.enabled = false;
+            }
             else if (currentTime >= _StartingDay && currentTime <= _StartingSunset && CurrTimeset != Timeset.DAY)
+            {
                 SetCurrentTimeset(Timeset.DAY);
+                SunLight.enabled = true;
+                NightLight.enabled = false;
+            }
             else if (currentTime >= _StartingSunset && currentTime <= _StartingNight && CurrTimeset != Timeset.SUNSET)
+            {
                 SetCurrentTimeset(Timeset.SUNSET);
+                SunLight.enabled = true;
+                NightLight.enabled = false;
+            }
             else if (currentTime >= _StartingNight || currentTime <= _StartingSunrise && CurrTimeset != Timeset.NIGHT)
+            {
                 SetCurrentTimeset(Timeset.NIGHT);
-
+                SunLight.enabled = false;
+                NightLight.enabled = true;
+            }
         }
 
         void SetCurrentTimeset(Timeset currentTime)
