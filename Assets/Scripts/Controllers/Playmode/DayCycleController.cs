@@ -13,9 +13,9 @@ namespace Assets.Scripts.Controllers
 
         private float currentTime;
 
-        [Range(0f, 24f)] public float _StartingSunrise = 6f;
+        [Range(0f, 24f)] public float _StartingSunrise = 8f;
         [Range(0f, 24f)] public float _StartingDay = 12;
-        [Range(0f, 24f)] public float _StartingSunset = 16;
+        [Range(0f, 24f)] public float _StartingSunset = 18;
         [Range(0f, 24f)] public float _StartingNight = 22;
 
         [Range(0f, 1f)] public float _SunriseLightIntensity = 0.6f;
@@ -75,9 +75,9 @@ namespace Assets.Scripts.Controllers
             //need some tweaks here
 
             // Rotates the sun 360 degree in X-axis according to our current time of day.
-            SunLight.transform.localRotation = Quaternion.Euler((currentTime / 24 * 360) + 300, 0, 0);
+            SunLight.transform.localRotation = Quaternion.Euler((currentTime / 24 * 360f) - 90, 170, 0);
 
-            NightLight.transform.localRotation = Quaternion.Euler((currentTime / 24* 360) - 30, 0, 0);
+            NightLight.transform.localRotation = Quaternion.Euler((currentTime / 24* 360f) + 80, 170, 0);
 
         }
 
