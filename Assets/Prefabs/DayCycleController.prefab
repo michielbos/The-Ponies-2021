@@ -127,7 +127,7 @@ MonoBehaviour:
   _Sunrise_LightColor: {r: 0.9811321, g: 0.842946, b: 0.6062656, a: 0}
   _Day_LightColor: {r: 1, g: 0.99072874, b: 0.8160377, a: 0}
   _Sunset_LightColor: {r: 1, g: 0.71237, b: 0, a: 0}
-  _Night_LightColor: {r: 0.86077285, g: 0.5424528, b: 1, a: 0}
+  _Night_LightColor: {r: 0.47158766, g: 0, b: 1, a: 0}
   _UseDifferentFadeTimes: 0
   _DefaultFadeTime: 45
   _SunriseFadeTime: 5
@@ -178,7 +178,7 @@ Light:
   serializedVersion: 8
   m_Type: 1
   m_Color: {r: 1, g: 1, b: 1, a: 1}
-  m_Intensity: 0.4
+  m_Intensity: 0.2
   m_Range: 10
   m_SpotAngle: 30
   m_CookieSize: 10
@@ -186,7 +186,7 @@ Light:
     m_Type: 1
     m_Resolution: -1
     m_CustomResolution: -1
-    m_Strength: 0.4
+    m_Strength: 0.5
     m_Bias: 0.05
     m_NormalBias: 0.4
     m_NearPlane: 0.2

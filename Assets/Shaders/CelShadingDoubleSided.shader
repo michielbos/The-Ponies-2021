@@ -2,11 +2,11 @@ Shader "Cel Shading/Double Sided" {
     Properties {
         _MainTex ("MainTex", 2D) = "white" {}
         _Color ("Color", Color) = (0.5,0.5,0.5,1)
-        _ColorBrightness ("Color Brightness", Range(0, 1)) = 0.75
         _ShadowBrightness ("Shadow Brightness", Range(0, 2)) = 0.5
         _LightBrightness ("Light Brightness", Range(0, 2)) = 0.5
         _FlatnessSpecular ("Flatness/Specular", Range(0, 5)) = 0
         _AlphaCutOut ("Alpha CutOut", Range(0, 0.75)) = 0
+        _ColorBrightness ("Color Brightness", Range(0, 1)) = 0.75
         [HideInInspector]_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
     }
     SubShader {
@@ -71,7 +71,6 @@ Shader "Cel Shading/Double Sided" {
                 float faceSign = ( facing >= 0 ? 1 : -1 );
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
                 float3 normalDirection = i.normalDir;
-                float3 viewReflectDirection = reflect( -viewDirection, normalDirection );
                 float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
                 clip(saturate(((_AlphaCutOut*-1.0+1.0)+(_MainTex_var.a*_Color.a))) - 0.5);
                 float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
@@ -80,11 +79,10 @@ Shader "Cel Shading/Double Sided" {
                 float attenuation = LIGHT_ATTENUATION(i);
 ////// Emissive:
                 float3 node_8611 = (_MainTex_var.rgb*_Color.rgb*_ColorBrightness);
-                float3 node_5765 = (node_8611*pow(attenuation,((((max(0,dot(normalDirection,viewReflectDirection))*_FlatnessSpecular)*max(0,dot(viewReflectDirection,lightDirection)))*_LightBrightness)+_LightBrightness)));
+                float3 node_4394 = ((node_8611*pow(attenuation,((((max(0,dot(normalDirection,viewDirection))*_FlatnessSpecular)*max(0,dot(viewDirection,lightDirection)))*_LightBrightness)+_LightBrightness)))*_LightColor0.rgb);
                 float node_8973 = (1.0 - ((1.0 - attenuation)*_ShadowBrightness));
-                float3 node_856 = saturate(( lerp(node_8611,float3(node_8973,node_8973,node_8973),float3(0.5,0.5,0.5)) > 0.5 ? (1.0-(1.0-2.0*(lerp(node_8611,float3(node_8973,node_8973,node_8973),float3(0.5,0.5,0.5))-0.5))*(1.0-node_5765)) : (2.0*lerp(node_8611,float3(node_8973,node_8973,node_8973),float3(0.5,0.5,0.5))*node_5765) ));
+                float3 node_856 = saturate(( lerp(node_8611,float3(node_8973,node_8973,node_8973),float3(0.5,0.5,0.5)) > 0.5 ? (1.0-(1.0-2.0*(lerp(node_8611,float3(node_8973,node_8973,node_8973),float3(0.5,0.5,0.5))-0.5))*(1.0-node_4394)) : (2.0*lerp(node_8611,float3(node_8973,node_8973,node_8973),float3(0.5,0.5,0.5))*node_4394) ));
                 float3 emissive = node_856;
-                float3 node_4394 = (node_5765*_LightColor0.rgb);
                 float3 finalColor = emissive + node_4394;
                 fixed4 finalRGBA = fixed4(finalColor,1);
                 UNITY_APPLY_FOG(i.fogCoord, finalRGBA);
@@ -149,7 +147,6 @@ Shader "Cel Shading/Double Sided" {
                 float faceSign = ( facing >= 0 ? 1 : -1 );
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
                 float3 normalDirection = i.normalDir;
-                float3 viewReflectDirection = reflect( -viewDirection, normalDirection );
                 float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
                 clip(saturate(((_AlphaCutOut*-1.0+1.0)+(_MainTex_var.a*_Color.a))) - 0.5);
                 float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));
@@ -157,8 +154,7 @@ Shader "Cel Shading/Double Sided" {
 ////// Lighting:
                 float attenuation = LIGHT_ATTENUATION(i);
                 float3 node_8611 = (_MainTex_var.rgb*_Color.rgb*_ColorBrightness);
-                float3 node_5765 = (node_8611*pow(attenuation,((((max(0,dot(normalDirection,viewReflectDirection))*_FlatnessSpecular)*max(0,dot(viewReflectDirection,lightDirection)))*_LightBrightness)+_LightBrightness)));
-                float3 node_4394 = (node_5765*_LightColor0.rgb);
+                float3 node_4394 = ((node_8611*pow(attenuation,((((max(0,dot(normalDirection,viewDirection))*_FlatnessSpecular)*max(0,dot(viewDirection,lightDirection)))*_LightBrightness)+_LightBrightness)))*_LightColor0.rgb);
                 float3 finalColor = node_4394;
                 fixed4 finalRGBA = fixed4(finalColor * 1,0);
                 UNITY_APPLY_FOG(i.fogCoord, finalRGBA);
