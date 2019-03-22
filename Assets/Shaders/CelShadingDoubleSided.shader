@@ -2,12 +2,11 @@ Shader "Cel Shading/Double Sided" {
     Properties {
         _MainTex ("MainTex", 2D) = "white" {}
         _Color ("Color", Color) = (0.5,0.5,0.5,1)
-        _ShadowBrightness ("Shadow Brightness", Range(0, 2)) = 0.5
-        _LightBrightness ("Light Brightness", Range(0, 2)) = 0.5
+        _ShadowBrightness ("Shadow Brightness", Range(0, 2)) = 0.2
+        _LightBrightness ("Light Brightness", Range(0, 2)) = 0.2
         _FlatnessSpecular ("Flatness/Specular", Range(0, 5)) = 0
         _AlphaCutOut ("Alpha CutOut", Range(0, 0.75)) = 0
-        _ColorBrightness ("Color Brightness", Range(0, 1)) = 0.75
-        [HideInInspector]_Cutoff ("Alpha cutoff", Range(0,1)) = 0.5
+        _ColorBrightness ("Color Brightness", Range(0, 1)) = 1
     }
     SubShader {
         Tags {
