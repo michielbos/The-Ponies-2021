@@ -6,7 +6,7 @@ Shader "Cel Shading/Double Sided" {
         _LightBrightness ("Light Brightness", Range(0, 2)) = 0.2
         _FlatnessSpecular ("Flatness/Specular", Range(0, 5)) = 0
         _AlphaCutOut ("Alpha CutOut", Range(0, 0.75)) = 0
-        _ColorBrightness ("Color Brightness", Range(0, 1)) = 1
+        _ColorBrightness ("Color Brightness", Range(0, 1)) = 0.75
     }
     SubShader {
         Tags {
