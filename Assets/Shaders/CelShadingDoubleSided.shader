@@ -1,5 +1,3 @@
-// Upgrade NOTE: upgraded instancing buffer 'InstanceProperties' to new syntax.
-
 Shader "Cel Shading/Double Sided" {
     Properties {
         _MainTex ("MainTex", 2D) = "white" {}
