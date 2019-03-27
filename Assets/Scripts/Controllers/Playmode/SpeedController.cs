@@ -10,6 +10,7 @@ namespace Assets.Scripts.Controllers
         private const float REAL_TIME_TO_GAME_TIME_MULTIPLIER = 60;
         private Speed currentSpeed;
         private long fullSeconds;
+        public double StaringGameTime = 720;
         private double currentGameTime;
         private float pauseTimer;
         private bool forcePaused;
@@ -18,7 +19,9 @@ namespace Assets.Scripts.Controllers
         void Start()
 		{
             currentSpeed = Speed.Normal;
-		}
+            currentGameTime = StaringGameTime;
+
+        }
 
         public void Update()
         {
