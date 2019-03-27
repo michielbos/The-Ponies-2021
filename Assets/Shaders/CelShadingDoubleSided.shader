@@ -1,3 +1,5 @@
+// Upgrade NOTE: upgraded instancing buffer 'InstanceProperties' to new syntax.
+
 Shader "Cel Shading/Double Sided" {
     Properties {
         _MainTex ("MainTex", 2D) = "white" {}
@@ -29,7 +31,6 @@ Shader "Cel Shading/Double Sided" {
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
             #include "Lighting.cginc"
-            #include "Tessellation.cginc"
             #pragma multi_compile_fwdbase_fullshadows
             #pragma multi_compile_fog
             #pragma only_renderers d3d9 d3d11 glcore gles gles3 d3d11_9x vulkan 
@@ -105,7 +106,6 @@ Shader "Cel Shading/Double Sided" {
             #include "UnityCG.cginc"
             #include "AutoLight.cginc"
             #include "Lighting.cginc"
-            #include "Tessellation.cginc"
             #pragma multi_compile_fwdadd_fullshadows
             #pragma multi_compile_fog
             #pragma only_renderers d3d9 d3d11 glcore gles gles3 d3d11_9x vulkan 
@@ -175,7 +175,6 @@ Shader "Cel Shading/Double Sided" {
             #define UNITY_PASS_SHADOWCASTER
             #include "UnityCG.cginc"
             #include "Lighting.cginc"
-            #include "Tessellation.cginc"
             #pragma fragmentoption ARB_precision_hint_fastest
             #pragma multi_compile_shadowcaster
             #pragma multi_compile_fog
