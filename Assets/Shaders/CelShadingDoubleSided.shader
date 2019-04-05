@@ -1,12 +1,12 @@
 Shader "Cel Shading/Double Sided" {
     Properties {
-        _MainTex ("MainTex", 2D) = "white" {}
         _Color ("Color", Color) = (0.5,0.5,0.5,1)
-        _ShadowBrightness ("Shadow Brightness", Range(0, 2)) = 0.2
-        _LightBrightness ("Light Brightness", Range(0, 2)) = 0.2
+        _MainTex ("MainTex", 2D) = "white" {}
+        _AlphaCutOut ("Alpha CutOut", Range(0, 0.75)) = 0.75
+        _LightBrightness ("Light Brightness", Range(0, 2)) = 2
         _FlatnessSpecular ("Flatness/Specular", Range(0, 5)) = 0
-        _AlphaCutOut ("Alpha CutOut", Range(0, 0.75)) = 0
-        _ColorBrightness ("Color Brightness", Range(0, 1)) = 0.75
+        _RampThreshold ("RampThreshold", Range(0, 2)) = 0
+        _RampSmooth ("RampSmooth", Range(0, 1)) = 0
     }
     SubShader {
         Tags {
@@ -22,6 +22,7 @@ Shader "Cel Shading/Double Sided" {
             Cull Off
             
             
+            AlphaToMask On
             CGPROGRAM
             #pragma vertex vert
             #pragma fragment frag
@@ -31,15 +32,15 @@ Shader "Cel Shading/Double Sided" {
             #include "Lighting.cginc"
             #pragma multi_compile_fwdbase_fullshadows
             #pragma multi_compile_fog
-            #pragma only_renderers d3d9 d3d11 glcore gles gles3 d3d11_9x vulkan 
+            #pragma only_renderers d3d11 glcore gles gles3 vulkan 
             #pragma target 3.0
             uniform float4 _Color;
-            uniform float _ShadowBrightness;
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
-            uniform float _FlatnessSpecular;
             uniform float _AlphaCutOut;
             uniform float _LightBrightness;
-            uniform float _ColorBrightness;
+            uniform float _FlatnessSpecular;
+            uniform float _RampThreshold;
+            uniform float _RampSmooth;
             struct VertexInput {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
@@ -76,13 +77,12 @@ Shader "Cel Shading/Double Sided" {
 ////// Lighting:
                 float attenuation = LIGHT_ATTENUATION(i);
 ////// Emissive:
-                float3 node_8611 = (_MainTex_var.rgb*_Color.rgb*_ColorBrightness);
-                float3 node_4394 = ((node_8611*pow(attenuation,((((max(0,dot(normalDirection,viewDirection))*_FlatnessSpecular)*max(0,dot(viewDirection,lightDirection)))*_LightBrightness)+_LightBrightness)))*_LightColor0.rgb);
-                float node_8973 = (1.0 - ((1.0 - attenuation)*_ShadowBrightness));
-                float3 node_856 = saturate(( lerp(node_8611,float3(node_8973,node_8973,node_8973),float3(0.5,0.5,0.5)) > 0.5 ? (1.0-(1.0-2.0*(lerp(node_8611,float3(node_8973,node_8973,node_8973),float3(0.5,0.5,0.5))-0.5))*(1.0-node_4394)) : (2.0*lerp(node_8611,float3(node_8973,node_8973,node_8973),float3(0.5,0.5,0.5))*node_4394) ));
-                float3 emissive = node_856;
-                float3 finalColor = emissive + node_4394;
-                fixed4 finalRGBA = fixed4(finalColor,1);
+                float3 node_8611 = (_MainTex_var.rgb*_Color.rgb);
+                float3 emissive = node_8611;
+                float NormallightDot = max(0,dot(normalDirection,lightDirection));
+                float node_3127 = 0.5;
+                float3 finalColor = emissive + (((node_8611*pow(attenuation,((max(0,dot(lightDirection,viewDirection))*_LightBrightness*(NormallightDot*_FlatnessSpecular))+_LightBrightness)))*_LightColor0.rgb)*smoothstep( ((_RampThreshold-_RampSmooth)*node_3127), ((_RampThreshold+_RampSmooth)*node_3127), (attenuation*NormallightDot) ));
+                fixed4 finalRGBA = fixed4(finalColor,(saturate(((_AlphaCutOut*-1.0+1.0)+(_MainTex_var.a*_Color.a)))) * 2.0 - 1.0);
                 UNITY_APPLY_FOG(i.fogCoord, finalRGBA);
                 return finalRGBA;
             }
@@ -106,15 +106,15 @@ Shader "Cel Shading/Double Sided" {
             #include "Lighting.cginc"
             #pragma multi_compile_fwdadd_fullshadows
             #pragma multi_compile_fog
-            #pragma only_renderers d3d9 d3d11 glcore gles gles3 d3d11_9x vulkan 
+            #pragma only_renderers d3d11 glcore gles gles3 vulkan 
             #pragma target 3.0
             uniform float4 _Color;
-            uniform float _ShadowBrightness;
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;
-            uniform float _FlatnessSpecular;
             uniform float _AlphaCutOut;
             uniform float _LightBrightness;
-            uniform float _ColorBrightness;
+            uniform float _FlatnessSpecular;
+            uniform float _RampThreshold;
+            uniform float _RampSmooth;
             struct VertexInput {
                 float4 vertex : POSITION;
                 float3 normal : NORMAL;
@@ -150,9 +150,10 @@ Shader "Cel Shading/Double Sided" {
                 float3 lightColor = _LightColor0.rgb;
 ////// Lighting:
                 float attenuation = LIGHT_ATTENUATION(i);
-                float3 node_8611 = (_MainTex_var.rgb*_Color.rgb*_ColorBrightness);
-                float3 node_4394 = ((node_8611*pow(attenuation,((((max(0,dot(normalDirection,viewDirection))*_FlatnessSpecular)*max(0,dot(viewDirection,lightDirection)))*_LightBrightness)+_LightBrightness)))*_LightColor0.rgb);
-                float3 finalColor = node_4394;
+                float3 node_8611 = (_MainTex_var.rgb*_Color.rgb);
+                float NormallightDot = max(0,dot(normalDirection,lightDirection));
+                float node_3127 = 0.5;
+                float3 finalColor = (((node_8611*pow(attenuation,((max(0,dot(lightDirection,viewDirection))*_LightBrightness*(NormallightDot*_FlatnessSpecular))+_LightBrightness)))*_LightColor0.rgb)*smoothstep( ((_RampThreshold-_RampSmooth)*node_3127), ((_RampThreshold+_RampSmooth)*node_3127), (attenuation*NormallightDot) ));
                 fixed4 finalRGBA = fixed4(finalColor * 1,0);
                 UNITY_APPLY_FOG(i.fogCoord, finalRGBA);
                 return finalRGBA;
@@ -176,7 +177,7 @@ Shader "Cel Shading/Double Sided" {
             #pragma fragmentoption ARB_precision_hint_fastest
             #pragma multi_compile_shadowcaster
             #pragma multi_compile_fog
-            #pragma only_renderers d3d9 d3d11 glcore gles gles3 d3d11_9x vulkan 
+            #pragma only_renderers d3d11 glcore gles gles3 vulkan 
             #pragma target 3.0
             uniform float4 _Color;
             uniform sampler2D _MainTex; uniform float4 _MainTex_ST;

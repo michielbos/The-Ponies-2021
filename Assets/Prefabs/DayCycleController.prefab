@@ -25,7 +25,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5075057834360993550}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: -1.87, y: -0.59, z: -1.59}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 5075057835550885014}
@@ -116,18 +116,30 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SunLight: {fileID: 5075057834360993549}
   NightLight: {fileID: 5075057835752449398}
-  _StartingSunrise: 7
+  CamHolder: {fileID: 0}
+  currentTime: 0
+  _StartingSunrise: 6
   _StartingDay: 12
-  _StartingSunset: 18
-  _StartingNight: 22
+  _StartingSunset: 16
+  _StartingNight: 20
   _SunriseLightIntensity: 0.6
   _DayLightIntensity: 1
   _SunsetLightIntensity: 0.7
-  _NightLightIntensity: 0.4
-  _Sunrise_LightColor: {r: 0.9811321, g: 0.842946, b: 0.6062656, a: 0}
-  _Day_LightColor: {r: 1, g: 0.99072874, b: 0.8160377, a: 0}
-  _Sunset_LightColor: {r: 1, g: 0.71237, b: 0, a: 0}
-  _Night_LightColor: {r: 0.47158766, g: 0, b: 1, a: 0}
+  _NightLightIntensity: 0
+  _NightMoonLightIntensity: 0.4
+  _Sunrise_LightColor: {r: 1, g: 0.6901961, b: 0.36078432, a: 0}
+  _Day_LightColor: {r: 1, g: 1, b: 1, a: 0}
+  _Sunset_LightColor: {r: 1, g: 0.5568628, b: 0.5568628, a: 0}
+  _Night_LightColor: {r: 0.6392157, g: 0.8352941, b: 0.99840736, a: 0}
+  _MoonNight_LightColor: {r: 1, g: 0.3843137, b: 0.8196493, a: 0}
+  _Sunrise_SkyTintColor: {r: 1, g: 0.5647059, b: 0.36862746, a: 1}
+  _Day_SkyTintColor: {r: 0.30980393, g: 0.65882355, b: 1, a: 1}
+  _Sunset_SkyTintColor: {r: 1, g: 0.5568628, b: 0.5568628, a: 1}
+  _Night_SkyTintColor: {r: 0.38076276, g: 0.04705883, b: 0.4392157, a: 1}
+  _SunriseShadowStrength: 0.3
+  _DayShadowStrength: 0.45
+  _SunsetShadowStrength: 0.5
+  _NightShadowStrength: 0.1
   _UseDifferentFadeTimes: 0
   _DefaultFadeTime: 45
   _SunriseFadeTime: 5

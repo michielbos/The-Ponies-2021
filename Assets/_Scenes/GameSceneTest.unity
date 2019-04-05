@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: c520765c828141c4bae4a956adbb32f3, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -37,8 +37,8 @@ RenderSettings:
   m_ReflectionBounces: 1
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
-  m_Sun: {fileID: 0}
-  m_IndirectSpecularColor: {r: 0.45141464, g: 0.5006045, b: 0.5706755, a: 1}
+  m_Sun: {fileID: 768799596}
+  m_IndirectSpecularColor: {r: 0.38037047, g: 0.04788205, b: 0.43750048, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -546,6 +546,12 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!108 &768799596 stripped
+Light:
+  m_CorrespondingSourceObject: {fileID: 5075057834360993549, guid: 2543590dbb0564e46bdf12a4c1112b8c,
+    type: 3}
+  m_PrefabInstance: {fileID: 5075057834721665387}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1696496549
 GameObject:
   m_ObjectHideFlags: 0
@@ -670,6 +676,11 @@ PrefabInstance:
       propertyPath: m_LocalPosition.z
       value: -52
       objectReference: {fileID: 0}
+    - target: {fileID: 20384007150673800, guid: 3758831885474f14fadeffe55c7f3c0f,
+        type: 3}
+      propertyPath: m_ClearFlags
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3758831885474f14fadeffe55c7f3c0f, type: 3}
 --- !u!1001 &5075057834721665387
@@ -738,6 +749,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 5075057835550885015, guid: 2543590dbb0564e46bdf12a4c1112b8c,
+        type: 3}
+      propertyPath: CamHolder
+      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2543590dbb0564e46bdf12a4c1112b8c, type: 3}

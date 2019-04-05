@@ -6877,6 +6877,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3882e212a7f8ca046a8a87fdde8dfbae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  StaringGameTime: 720
   twelveHourClock: 1
 --- !u!114 &114000624313239220
 MonoBehaviour:

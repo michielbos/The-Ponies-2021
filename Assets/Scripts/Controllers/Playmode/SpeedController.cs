@@ -15,7 +15,6 @@ namespace Assets.Scripts.Controllers
         private float pauseTimer;
         private bool forcePaused;
         public bool twelveHourClock = true;
-
         void Start()
 		{
             currentSpeed = Speed.Normal;
