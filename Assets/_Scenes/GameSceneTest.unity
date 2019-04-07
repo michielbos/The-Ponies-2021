@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 768799596}
-  m_IndirectSpecularColor: {r: 0.38037047, g: 0.04788205, b: 0.43750048, a: 1}
+  m_IndirectSpecularColor: {r: 0.53369045, g: 0.62255913, b: 0.8505864, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -749,11 +749,6 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
-      objectReference: {fileID: 0}
-    - target: {fileID: 5075057835550885015, guid: 2543590dbb0564e46bdf12a4c1112b8c,
-        type: 3}
-      propertyPath: CamHolder
-      value: 
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 2543590dbb0564e46bdf12a4c1112b8c, type: 3}
