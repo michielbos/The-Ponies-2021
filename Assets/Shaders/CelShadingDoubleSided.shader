@@ -43,21 +43,18 @@ Shader "Cel Shading/Double Sided" {
             uniform float _ShadowBrightness;
             struct VertexInput {
                 float4 vertex : POSITION;
-                float3 normal : NORMAL;
                 float2 texcoord0 : TEXCOORD0;
             };
             struct VertexOutput {
                 float4 pos : SV_POSITION;
                 float2 uv0 : TEXCOORD0;
                 float4 posWorld : TEXCOORD1;
-                float3 normalDir : TEXCOORD2;
-                UNITY_LIGHTING_COORDS(3,4)
-                UNITY_FOG_COORDS(5)
+                UNITY_LIGHTING_COORDS(2,3)
+                UNITY_FOG_COORDS(4)
             };
             VertexOutput vert (VertexInput v) {
                 VertexOutput o = (VertexOutput)0;
                 o.uv0 = v.texcoord0;
-                o.normalDir = UnityObjectToWorldNormal(v.normal);
                 o.posWorld = mul(unity_ObjectToWorld, v.vertex);
                 float3 lightColor = _LightColor0.rgb;
                 o.pos = UnityObjectToClipPos( v.vertex );
@@ -69,7 +66,6 @@ Shader "Cel Shading/Double Sided" {
                 float isFrontFace = ( facing >= 0 ? 1 : 0 );
                 float faceSign = ( facing >= 0 ? 1 : -1 );
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
-                float3 normalDirection = i.normalDir;
                 float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
                 clip(saturate(((_AlphaCutOut*-1.0+1.0)+(_MainTex_var.a*_Color.a))) - 0.5);
                 float3 lightDirection = normalize(_WorldSpaceLightPos0.xyz);
@@ -78,7 +74,7 @@ Shader "Cel Shading/Double Sided" {
                 UNITY_LIGHT_ATTENUATION(attenuation, i, i.posWorld.xyz);
 ////// Emissive:
                 float3 node_8611 = (_MainTex_var.rgb*_Color.rgb*_ColorBrightness);
-                float3 node_4394 = ((node_8611*pow(attenuation,((max(0,dot(lightDirection,viewDirection))*_LightBrightness*max(0,dot(normalDirection,lightDirection)))+_LightBrightness)))*_LightColor0.rgb);
+                float3 node_4394 = ((node_8611*pow(attenuation,((max(0,dot(lightDirection,viewDirection))*_LightBrightness)+_LightBrightness)))*_LightColor0.rgb);
                 float node_4607 = (1.0 - ((1.0 - attenuation)*_ShadowBrightness));
                 float3 emissive = saturate(( lerp(node_8611,float3(node_4607,node_4607,node_4607),float3(0.5,0.5,0.5)) > 0.5 ? (1.0-(1.0-2.0*(lerp(node_8611,float3(node_4607,node_4607,node_4607),float3(0.5,0.5,0.5))-0.5))*(1.0-node_4394)) : (2.0*lerp(node_8611,float3(node_4607,node_4607,node_4607),float3(0.5,0.5,0.5))*node_4394) ));
                 float3 finalColor = emissive + node_4394;
@@ -118,21 +114,18 @@ Shader "Cel Shading/Double Sided" {
             uniform float _ShadowBrightness;
             struct VertexInput {
                 float4 vertex : POSITION;
-                float3 normal : NORMAL;
                 float2 texcoord0 : TEXCOORD0;
             };
             struct VertexOutput {
                 float4 pos : SV_POSITION;
                 float2 uv0 : TEXCOORD0;
                 float4 posWorld : TEXCOORD1;
-                float3 normalDir : TEXCOORD2;
-                UNITY_LIGHTING_COORDS(3,4)
-                UNITY_FOG_COORDS(5)
+                UNITY_LIGHTING_COORDS(2,3)
+                UNITY_FOG_COORDS(4)
             };
             VertexOutput vert (VertexInput v) {
                 VertexOutput o = (VertexOutput)0;
                 o.uv0 = v.texcoord0;
-                o.normalDir = UnityObjectToWorldNormal(v.normal);
                 o.posWorld = mul(unity_ObjectToWorld, v.vertex);
                 float3 lightColor = _LightColor0.rgb;
                 o.pos = UnityObjectToClipPos( v.vertex );
@@ -144,7 +137,6 @@ Shader "Cel Shading/Double Sided" {
                 float isFrontFace = ( facing >= 0 ? 1 : 0 );
                 float faceSign = ( facing >= 0 ? 1 : -1 );
                 float3 viewDirection = normalize(_WorldSpaceCameraPos.xyz - i.posWorld.xyz);
-                float3 normalDirection = i.normalDir;
                 float4 _MainTex_var = tex2D(_MainTex,TRANSFORM_TEX(i.uv0, _MainTex));
                 clip(saturate(((_AlphaCutOut*-1.0+1.0)+(_MainTex_var.a*_Color.a))) - 0.5);
                 float3 lightDirection = normalize(lerp(_WorldSpaceLightPos0.xyz, _WorldSpaceLightPos0.xyz - i.posWorld.xyz,_WorldSpaceLightPos0.w));
@@ -152,7 +144,7 @@ Shader "Cel Shading/Double Sided" {
 ////// Lighting:
                 UNITY_LIGHT_ATTENUATION(attenuation, i, i.posWorld.xyz);
                 float3 node_8611 = (_MainTex_var.rgb*_Color.rgb*_ColorBrightness);
-                float3 node_4394 = ((node_8611*pow(attenuation,((max(0,dot(lightDirection,viewDirection))*_LightBrightness*max(0,dot(normalDirection,lightDirection)))+_LightBrightness)))*_LightColor0.rgb);
+                float3 node_4394 = ((node_8611*pow(attenuation,((max(0,dot(lightDirection,viewDirection))*_LightBrightness)+_LightBrightness)))*_LightColor0.rgb);
                 float3 finalColor = node_4394;
                 fixed4 finalRGBA = fixed4(finalColor * 1,0);
                 UNITY_APPLY_FOG(i.fogCoord, finalRGBA);
@@ -211,4 +203,3 @@ Shader "Cel Shading/Double Sided" {
     }
     FallBack "Diffuse"
 }
-

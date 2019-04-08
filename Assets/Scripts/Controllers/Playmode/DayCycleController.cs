@@ -10,25 +10,18 @@ namespace Assets.Scripts.Controllers
 
         public Light SunLight;
         public Light NightLight;
-        public float currentTime;
+        private float currentTime;
 
- /*       public float fHoursbeforeMidnight;
+        private float fHoursbeforeMidnight;
+        private float fHoursAfterMidnight;
+        private float nightTime;
+        private float dayTime;
 
-        public float fDayMult;
-        public float fSunriseMult;
-        public float fNoonMult;
-        public float fNightMult;
+        private float xRot;
+        private float angleCompensation = 25;
 
-        public float fMoonAngle;
-        public float fSunAngle;
-
-        public float fMoonPhase;
-        public float fSunPhase;
-        public float fSunrisePhase;
-        public float fNoonPhase;
-
-        public float fCurrSunAngle;
-        public float fCurrMoonAngle;*/
+        private float fSunrisePhase;
+        private float fNoonPhase;
 
         [Range(0f, 24f)] public float _StartingSunrise = 7f;
         [Range(0f, 24f)] public float _StartingDay = 12f;
@@ -80,24 +73,16 @@ namespace Assets.Scripts.Controllers
 
         void Start()
         {
-            /*
-            fSunPhase = ((24 - _StartingSunrise) - (24 - _StartingNight) + 1);
-            fMoonPhase = ((24 - _StartingNight) + _StartingSunrise) + 1;
-
-            fSunrisePhase = ((24 - _StartingSunrise) - (24 - _StartingDay) +1);
-            fNoonPhase = ((24 - _StartingDay) - (24 - _StartingNight) +1);
 
             if ((24 - _StartingNight) > 0 && 24 - _StartingNight < 12)
             {
                 fHoursbeforeMidnight = 24 - _StartingNight;
             }
 
-            fMoonAngle = 180 / fMoonPhase / 60;
-            fSunAngle = 180 / fSunPhase / 60;
+            fHoursAfterMidnight = _StartingSunrise;
 
-            fNightMult = 90 / ((fMoonPhase * 60)* fMoonAngle);
-            fSunriseMult = 90 / ((fSunrisePhase * 60) * fSunAngle);
-            fNoonMult = 90 / ((fNoonPhase * 60) * fSunAngle);*/
+            fSunrisePhase = ((24 - _StartingSunrise) - (24 - _StartingDay));
+            fNoonPhase = ((24 - _StartingDay) - (24 - _StartingNight));
 
             UpdateTime();
         }
@@ -124,9 +109,40 @@ namespace Assets.Scripts.Controllers
 
         void UpdateSunAndMoon()
         {
-			SunLight.transform.localRotation = Quaternion.Euler((currentTime/24 * 360) - 65, 170, 0);
+			//SunLight.transform.localRotation = Quaternion.Euler((currentTime/24 * 360) - 65, 170, 0);
 
-            NightLight.transform.localRotation = Quaternion.Euler((currentTime/24 * 360) - 245, 170, 0);
+            //NightLight.transform.localRotation = Quaternion.Euler((currentTime/24 * 360) - 245, 170, 0);
+
+            if (currentTime < _StartingSunrise || currentTime > _StartingNight)
+            {
+                if (currentTime < 24 && currentTime > _StartingNight)
+                {
+                    nightTime = currentTime - _StartingNight;
+                    xRot = Mathf.Lerp(5f, 90f, nightTime / fHoursbeforeMidnight);
+                }
+                else if (currentTime < _StartingSunrise)
+                {
+                    xRot = Mathf.Lerp(90f, 175f, currentTime / fHoursAfterMidnight);
+                }
+
+                NightLight.transform.localRotation = Quaternion.Euler(xRot + angleCompensation, 170, 0);
+            }
+            else
+            {
+                if (currentTime > _StartingSunrise && currentTime < _StartingDay)
+                {
+                    dayTime = currentTime - _StartingSunrise;
+                    xRot = Mathf.Lerp(5f, 90f, dayTime / fSunrisePhase);
+                }
+                else if (currentTime > _StartingDay)
+                {
+                    dayTime = currentTime - _StartingDay;
+                    xRot = Mathf.Lerp(90f, 175f, dayTime / fNoonPhase);
+                }
+                 
+                SunLight.transform.localRotation = Quaternion.Euler(xRot + angleCompensation, 170, 0);
+            }
+
 
         }
 
@@ -155,7 +171,7 @@ namespace Assets.Scripts.Controllers
 
             if (CurrTimeset == Timeset.SUNRISE)
             {
-                NightLight.shadowStrength = Mathf.Lerp(NightLight.shadowStrength, 0, Time.deltaTime / 30f);
+                NightLight.shadowStrength = Mathf.Lerp(NightLight.shadowStrength, 0, Time.deltaTime / 10f);
                 SunLight.shadowStrength = Mathf.Lerp(SunLight.shadowStrength, _SunriseShadowStrength, Time.deltaTime / 30f);
                 if (NightLight.shadowStrength <= 0.05 && NightLight.enabled == true)
                 {
@@ -185,12 +201,16 @@ namespace Assets.Scripts.Controllers
             }
             if (CurrTimeset == Timeset.NIGHT)
             {
-                SunLight.shadowStrength = Mathf.Lerp(SunLight.shadowStrength, 0,Time.deltaTime / 30f);
+                SunLight.shadowStrength = Mathf.Lerp(SunLight.shadowStrength, 0,Time.deltaTime / 5f);
                 NightLight.shadowStrength = Mathf.Lerp(NightLight.shadowStrength, _NightShadowStrength, Time.deltaTime / 15f);
+
+                if (SunLight.shadowStrength <= 0.1 && SunLight.shadowStrength > 0.05)
+                    NightLight.enabled = true;
                 if (SunLight.shadowStrength <= 0.05 && SunLight.enabled == true)
                 {
                     SunLight.enabled = false;
-                    NightLight.enabled = true;
+                    if (NightLight.enabled == false)
+                        NightLight.enabled = true;
                 }
             }
         }
