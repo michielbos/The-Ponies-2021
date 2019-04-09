@@ -116,15 +116,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SunLight: {fileID: 5075057834360993549}
   NightLight: {fileID: 5075057835752449398}
-  currentTime: 0
-  fHoursbeforeMidnight: 0
-  fHoursAfterMidnight: 0
-  nightTime: 0
-  dayTime: 0
-  xRot: 0
-  angleCompensation: 25
-  fSunrisePhase: 0
-  fNoonPhase: 0
   _StartingSunrise: 6
   _StartingDay: 12
   _StartingSunset: 18
@@ -140,9 +131,9 @@ MonoBehaviour:
   _Night_LightColor: {r: 0.6392157, g: 0.8352941, b: 0.99840736, a: 0}
   _MoonNight_LightColor: {r: 1, g: 0.3843137, b: 0.8196493, a: 0}
   _Sunrise_SkyTintColor: {r: 1, g: 0.5647059, b: 0.36862746, a: 1}
-  _Day_SkyTintColor: {r: 0.30980393, g: 0.65882355, b: 1, a: 1}
-  _Sunset_SkyTintColor: {r: 1, g: 0.5568628, b: 0.5568628, a: 1}
-  _Night_SkyTintColor: {r: 0.38076276, g: 0.04705883, b: 0.4392157, a: 1}
+  _Day_SkyTintColor: {r: 0.654902, g: 0.9137255, b: 0.972549, a: 1}
+  _Sunset_SkyTintColor: {r: 0.8666667, g: 0.5764706, b: 0.6627451, a: 1}
+  _Night_SkyTintColor: {r: 0.12941177, g: 0.050980393, b: 0.23921569, a: 1}
   _SunriseShadowStrength: 0.25
   _DayShadowStrength: 0.35
   _SunsetShadowStrength: 0.2
