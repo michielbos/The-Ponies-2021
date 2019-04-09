@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: buy-tilemarker-disallowed
-  m_Shader: {fileID: 4800000, guid: 048cd7496d0348a5aa4ac692d27ecfa3, type: 3}
+  m_Shader: {fileID: 4800000, guid: c3ee66251f57cfc48ac1334182e0dc94, type: 3}
   m_ShaderKeywords: _ALPHATEST_ON _GLOSSYREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -63,6 +63,7 @@ Material:
     - PixelSnap: 0
     - _AlphaCutOut: 0.75
     - _BumpScale: 1
+    - _ColorBrightness: 0.75
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
@@ -76,6 +77,8 @@ Material:
     - _Mode: 1
     - _OcclusionStrength: 1
     - _Parallax: 0.02
+    - _RampSmooth: 0.01
+    - _RampThreshold: 0
     - _ShadowBrightness: 0.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 0
@@ -86,4 +89,6 @@ Material:
     - _Color: {r: 1, g: 0, b: 0, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Flip: {r: 1, g: 1, b: 1, a: 1}
+    - _HColor: {r: 0.785, g: 0.785, b: 0.785, a: 1}
     - _RendererColor: {r: 1, g: 1, b: 1, a: 1}
+    - _SColor: {r: 0.3, g: 0.3, b: 0.3, a: 1}
