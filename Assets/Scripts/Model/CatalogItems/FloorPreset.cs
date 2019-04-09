@@ -11,8 +11,7 @@ using Object = UnityEngine.Object;
 public class FloorPreset : Preset {
 	private Texture texture;
 	private Material material;
-
-	public FloorPreset(Floor floor) :
+    public FloorPreset(Floor floor) :
 		base(floor.uuid, floor.name, floor.description, floor.price, ObjectCategory.Floors) {
 		texture = floor.texture;
 	}
@@ -33,7 +32,8 @@ public class FloorPreset : Preset {
 		if (material == null) {
 			//TODO: Use the right shader or use a source material.
 			material = new Material(Shader.Find("Cel Shading/SurfaceDoubleSided"));
-			material.mainTexture = GetTexture();
+            material.SetColor("_SColor", Color.gray);
+            material.mainTexture = GetTexture();
 		}
 		return material;
 	}

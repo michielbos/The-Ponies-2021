@@ -4,11 +4,11 @@
 	{
 		_Color ("Color", Color) = (1,1,1,1)
 		_HColor ("Highlight Color", Color) = (0.785,0.785,0.785,1.0)
-		_SColor ("Shadow Color", Color) = (0.5,0.5,0.5,1.0)
+		_SColor ("Shadow Color", Color) = (0.65,0.65,0.65,1.0)
 		
 		_MainTex ("Main Texture", 2D) = "white" {}
 		
-		_RampThreshold ("Ramp Threshold", Range(0,1)) = 0.1
+		_RampThreshold ("Ramp Threshold", Range(0,1)) = 0.05
 		_RampSmooth ("Ramp Smoothing", Range(0.01,1)) = 0.01
 		
 		_Cutoff("AlphaCutoff", Range( 0 , 0.75)) = 0.75
