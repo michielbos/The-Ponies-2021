@@ -91,8 +91,9 @@ namespace Assets.Scripts.Controllers
         {
             float hour = SpeedController.Instance.GetHourOfDay();
             float minute = SpeedController.Instance.GetMinuteOfHour();
+            float second = SpeedController.Instance.GetSecondOfMinute();
 
-            currentTime = hour + (minute / 60);
+            currentTime = hour + ((minute / 60) + (second/60/60));
 
         }
 

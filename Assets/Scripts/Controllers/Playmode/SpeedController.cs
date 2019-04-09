@@ -174,6 +174,11 @@ namespace Assets.Scripts.Controllers
             return (int)(currentGameTime * REAL_TIME_TO_GAME_TIME_MULTIPLIER / 60 % 60);
         }
 
+        public int GetSecondOfMinute()
+        {
+            return (int)(currentGameTime * REAL_TIME_TO_GAME_TIME_MULTIPLIER % 60);
+        }
+
         private int GetDay()
         {
             return (int)(currentGameTime * REAL_TIME_TO_GAME_TIME_MULTIPLIER / 60 / 60 / 24);
