@@ -11,6 +11,8 @@ namespace Assets.Scripts.Controllers
         private Speed currentSpeed;
         private long fullSeconds;
         public double StaringGameTime = 720;
+        public int DaysInOneMonth = 25;
+        public int DaysInOneYear = 100;
         private double currentGameTime;
         private float pauseTimer;
         private bool forcePaused;
@@ -179,7 +181,12 @@ namespace Assets.Scripts.Controllers
             return (int)(currentGameTime * REAL_TIME_TO_GAME_TIME_MULTIPLIER % 60);
         }
 
-        private int GetDay()
+        public int GetDayOfYear()
+        {
+            return (int)(currentGameTime * REAL_TIME_TO_GAME_TIME_MULTIPLIER / 60 / 60 / 24 % DaysInOneYear);
+        }
+
+        public int GetDay()
         {
             return (int)(currentGameTime * REAL_TIME_TO_GAME_TIME_MULTIPLIER / 60 / 60 / 24);
         }
