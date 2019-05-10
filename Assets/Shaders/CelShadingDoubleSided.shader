@@ -201,5 +201,5 @@ Shader "Cel Shading/Double Sided" {
             ENDCG
         }
     }
-    FallBack "Diffuse"
+    FallBack "Cel Shading/SurfaceDoubleSided"
 }
