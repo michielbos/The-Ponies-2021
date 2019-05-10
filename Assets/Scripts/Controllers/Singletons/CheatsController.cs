@@ -65,7 +65,7 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController>
 		hadFocus = cheatField.isFocused;
 		if (showFps)
 		{
-			fpsText.text = "FPS: " + Mathf.RoundToInt(1f / Time.deltaTime);
+			fpsText.text = "FPS: " + Mathf.RoundToInt(1f / Time.unscaledDeltaTime);
 		}
 	}
 
