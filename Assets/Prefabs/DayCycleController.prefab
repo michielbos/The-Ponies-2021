@@ -119,18 +119,20 @@ MonoBehaviour:
   NightLight: {fileID: 5075057835752449398}
   sripngSettings:
     startingSunrise: 6
+    endingSunrise: 9
     startingDay: 12
     startingSunset: 18
     startingNight: 20
     sunriseLightIntensity: 0.6
+    endingSunriseLightIntensity: 0.8
     dayLightIntensity: 1
     sunsetLightIntensity: 0.7
     nightLightIntensity: 0
-    nightMoonLightIntensity: 0.5
-    sunriseLightColor: {r: 1, g: 0.6901961, b: 0.36078432, a: 0}
+    nightMoonLightIntensity: 0.7
+    sunriseLightColor: {r: 1, g: 0.7233766, b: 0.4292453, a: 0}
     dayLightColor: {r: 1, g: 1, b: 1, a: 1}
-    sunsetLightColor: {r: 1, g: 0.654902, b: 0.5372549, a: 0}
-    nightLightColor: {r: 0, g: 0.09454359, b: 0.5660378, a: 0}
+    sunsetLightColor: {r: 1, g: 0.654902, b: 0.5372549, a: 1}
+    nightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 1}
     moonNightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 1}
     sunriseSkyTintColor: {r: 1, g: 0.5647059, b: 0.36862746, a: 1}
     daySkyTintColor: {r: 0.654902, g: 0.91372555, b: 0.9725491, a: 1}
@@ -138,10 +140,12 @@ MonoBehaviour:
     nightSkyTintColor: {r: 0.12941177, g: 0.050980397, b: 0.2392157, a: 1}
   summerSettings:
     startingSunrise: 4
+    endingSunrise: 7
     startingDay: 12
     startingSunset: 20
     startingNight: 22
     sunriseLightIntensity: 0.6
+    endingSunriseLightIntensity: 0.8
     dayLightIntensity: 1
     sunsetLightIntensity: 0.7
     nightLightIntensity: 0
@@ -149,7 +153,7 @@ MonoBehaviour:
     sunriseLightColor: {r: 1, g: 0.6901961, b: 0.36078432, a: 0}
     dayLightColor: {r: 1, g: 1, b: 1, a: 0}
     sunsetLightColor: {r: 1, g: 0.654902, b: 0.5372549, a: 0}
-    nightLightColor: {r: 0, g: 0.09411766, b: 0.5647059, a: 0}
+    nightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 1}
     moonNightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 0}
     sunriseSkyTintColor: {r: 1, g: 0.5647059, b: 0.36862746, a: 0}
     daySkyTintColor: {r: 0.654902, g: 0.91372555, b: 0.9725491, a: 0}
@@ -157,10 +161,12 @@ MonoBehaviour:
     nightSkyTintColor: {r: 0.12941177, g: 0.050980397, b: 0.2392157, a: 0}
   autumnSettings:
     startingSunrise: 7
+    endingSunrise: 10
     startingDay: 12
     startingSunset: 19
     startingNight: 21
     sunriseLightIntensity: 0.6
+    endingSunriseLightIntensity: 0.8
     dayLightIntensity: 1
     sunsetLightIntensity: 0.7
     nightLightIntensity: 0
@@ -168,7 +174,7 @@ MonoBehaviour:
     sunriseLightColor: {r: 1, g: 0.6901961, b: 0.36078432, a: 0}
     dayLightColor: {r: 1, g: 1, b: 1, a: 0}
     sunsetLightColor: {r: 1, g: 0.654902, b: 0.5372549, a: 0}
-    nightLightColor: {r: 0, g: 0.09411766, b: 0.5647059, a: 0}
+    nightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 1}
     moonNightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 0}
     sunriseSkyTintColor: {r: 1, g: 0.5647059, b: 0.36862746, a: 0}
     daySkyTintColor: {r: 0.654902, g: 0.91372555, b: 0.9725491, a: 0}
@@ -176,10 +182,12 @@ MonoBehaviour:
     nightSkyTintColor: {r: 0.12941177, g: 0.050980397, b: 0.2392157, a: 0}
   winterSettings:
     startingSunrise: 8
+    endingSunrise: 10
     startingDay: 12
     startingSunset: 20
     startingNight: 22
     sunriseLightIntensity: 0.6
+    endingSunriseLightIntensity: 0.8
     dayLightIntensity: 1
     sunsetLightIntensity: 0.7
     nightLightIntensity: 0
@@ -187,7 +195,7 @@ MonoBehaviour:
     sunriseLightColor: {r: 1, g: 0.6901961, b: 0.36078432, a: 0}
     dayLightColor: {r: 1, g: 1, b: 1, a: 0}
     sunsetLightColor: {r: 1, g: 0.654902, b: 0.5372549, a: 0}
-    nightLightColor: {r: 0, g: 0.09411766, b: 0.5647059, a: 0}
+    nightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 1}
     moonNightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 0}
     sunriseSkyTintColor: {r: 1, g: 0.5647059, b: 0.36862746, a: 0}
     daySkyTintColor: {r: 0.654902, g: 0.91372555, b: 0.9725491, a: 0}

@@ -31,12 +31,14 @@ namespace Assets.Scripts.Controllers
 
             [Header("Time Cycle")]
             [Range(0f, 24f)] public float startingSunrise = 6f;
+            [Range(0f, 24f)] public float endingSunrise = 10f;
             [Range(0f, 24f)] public float startingDay = 12f;
             [Range(0f, 24f)] public float startingSunset = 18f;
             [Range(0f, 24f)] public float startingNight = 20f;
 
             [Header("Light Intensity")]
             [Range(0f, 1f)] public float sunriseLightIntensity = 0.6f;
+            [Range(0f, 1f)] public float endingSunriseLightIntensity = 0.8f;
             [Range(0f, 1f)] public float dayLightIntensity = 1.0f;
             [Range(0f, 1f)] public float sunsetLightIntensity = 0.7f;
             [Range(0f, 1f)] public float nightLightIntensity = 0f;
@@ -66,6 +68,9 @@ namespace Assets.Scripts.Controllers
         public LightSettings autumnSettings;
         public LightSettings winterSettings;
 
+        private float sunriseLightIntensity;
+        private Color sunriseLightColor;
+
         private float sunriseShadowStrength = 0.25f;
         private float dayShadowStrength = 0.45f;
         private float sunsetShadowStrength = 0.4f;
@@ -86,6 +91,7 @@ namespace Assets.Scripts.Controllers
         public enum Timeset
         {
             SUNRISE,
+            SUNRISEENDING,
             DAY,
             SUNSET,
             NIGHT
@@ -164,10 +170,13 @@ namespace Assets.Scripts.Controllers
         }
         void UpdateTimeset()
         {
-            if (currentTime >= currentSettings.startingSunrise && currentTime <= currentSettings.startingDay && currTimeset != Timeset.SUNRISE)
+            if (currentTime >= currentSettings.startingSunrise && currentTime <= currentSettings.endingSunrise && currTimeset != Timeset.SUNRISE)
             {
                 SetCurrentTimeset(Timeset.SUNRISE);
-
+            }
+            else if (currentTime >= currentSettings.endingSunrise && currentTime <= currentSettings.startingDay && currTimeset != Timeset.SUNRISEENDING)
+            {
+                SetCurrentTimeset(Timeset.SUNRISEENDING);
             }
             else if (currentTime >= currentSettings.startingDay && currentTime <= currentSettings.startingSunset && currTimeset != Timeset.DAY)
             {
@@ -240,6 +249,16 @@ namespace Assets.Scripts.Controllers
                     NightLight.enabled = false;
                 }
             }
+            if (currTimeset == Timeset.SUNRISEENDING)
+            {
+                NightLight.shadowStrength = Mathf.Lerp(NightLight.shadowStrength, 0, Time.deltaTime / 10f);
+                SunLight.shadowStrength = Mathf.Lerp(SunLight.shadowStrength, sunriseShadowStrength, Time.deltaTime / 30f);
+                if (NightLight.shadowStrength <= 0.05 && NightLight.enabled == true)
+                {
+                    SunLight.enabled = true;
+                    NightLight.enabled = false;
+                }
+            }
             if (currTimeset == Timeset.DAY)
             {
                 NightLight.shadowStrength = Mathf.Lerp(NightLight.shadowStrength, 0, Time.deltaTime / 30f);
@@ -267,7 +286,7 @@ namespace Assets.Scripts.Controllers
 
                 if (SunLight.shadowStrength <= 0.1 && SunLight.shadowStrength > 0.05)
                     NightLight.enabled = true;
-                if (SunLight.shadowStrength <= 0.05 && SunLight.enabled == true)
+                if (SunLight.shadowStrength <= 0.05 && SunLight.intensity <= 0.05 && SunLight.enabled == true)
                 {
                     SunLight.enabled = false;
                     if (NightLight.enabled == false)
@@ -287,6 +306,16 @@ namespace Assets.Scripts.Controllers
 
         public void UpdateWeather()
         {
+            if (currTimeset == Timeset.SUNRISE)
+            {
+                sunriseLightIntensity = currentSettings.sunriseLightIntensity;
+                sunriseLightColor = currentSettings.sunriseLightColor;
+            }
+            else if (currTimeset == Timeset.SUNRISEENDING)
+            {
+                sunriseLightIntensity = currentSettings.endingSunriseLightIntensity;
+                sunriseLightColor = currentSettings.dayLightColor;
+            }
             DifferentFadeTimes();
         }
 
@@ -295,9 +324,9 @@ namespace Assets.Scripts.Controllers
         {
 
            
-            if (currTimeset == Timeset.SUNRISE)
+            if (currTimeset == Timeset.SUNRISE || currTimeset == Timeset.SUNRISEENDING)
             {
-                UpdateAll(currentSettings.sunriseLightIntensity, currentSettings.sunriseLightColor, 0.0f, currentSettings.moonNightLightColor, currentSettings.sunriseSkyTintColor, fadeTime);
+                UpdateAll(sunriseLightIntensity, sunriseLightColor, 0.0f, currentSettings.moonNightLightColor, currentSettings.sunriseSkyTintColor, fadeTime);
                 DeactivateTimesetParticle(nightParticle);
                 DeactivateTimesetParticle(dayParticle);
                 DeactivateTimesetParticle(sunsetParticle);
@@ -321,7 +350,7 @@ namespace Assets.Scripts.Controllers
             }
             else if (currTimeset == Timeset.NIGHT)
             {
-                UpdateAll(currentSettings.nightLightIntensity, currentSettings.nightLightColor, currentSettings.nightMoonLightIntensity, currentSettings.moonNightLightColor, currentSettings.nightSkyTintColor, fadeTime);
+                UpdateAll(currentSettings.nightLightIntensity, currentSettings.nightLightColor, currentSettings.nightMoonLightIntensity, currentSettings.moonNightLightColor, currentSettings.nightSkyTintColor, 20);
 
                 DeactivateTimesetParticle(sunriseParticle);
                 DeactivateTimesetParticle(dayParticle);
