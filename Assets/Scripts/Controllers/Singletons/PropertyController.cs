@@ -8,7 +8,6 @@ using UnityEngine;
 public class PropertyController : SingletonMonoBehaviour<PropertyController> {
     public Property propertyPrefab;
     public GameObject terrainTilePrefab;
-    public GameObject wallPrefab;
     public GameObject propertyObjectPrefab;
     public Property property;
     private int nextObjectId;
@@ -29,8 +28,6 @@ public class PropertyController : SingletonMonoBehaviour<PropertyController> {
             }
         }
         PlaceTerrainTiles();
-        PlaceWalls();
-        //PlaceFloors();
         PlacePropertyObjects();
     }
 
@@ -49,15 +46,6 @@ public class PropertyController : SingletonMonoBehaviour<PropertyController> {
             if (tt != null) {
                 tt.PlaceTile(terrainTilePrefab);
             }
-        }
-    }
-
-    /// <summary>
-    /// Place "dummy" instances of all loaded walls, so they are visible and interactable.
-    /// </summary>
-    private void PlaceWalls() {
-        foreach (Wall w in property.walls) {
-            w.PlaceWall(wallPrefab);
         }
     }
 

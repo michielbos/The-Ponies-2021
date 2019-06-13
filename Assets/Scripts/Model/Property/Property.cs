@@ -48,6 +48,12 @@ public class Property : MonoBehaviour {
 		floorTiles[0, y, x] = floorTile;
 	}
 	
+	public void PlaceWall (int x, int y, WallDirection wallDirection) {
+		Wall wall = Instantiate(Prefabs.Instance.wallPrefab, transform);
+		wall.Init(x, y, wallDirection);
+		walls.Add(wall);
+	}
+	
 	public void RemoveFloor (FloorTile floorTile) {
 		Destroy(floorTile.gameObject);
 		//TODO: Floor level
@@ -78,7 +84,7 @@ public class Property : MonoBehaviour {
 
 	private void LoadWalls (WallData[] wallDatas) {
 		foreach (WallData wd in wallDatas) {
-			walls.Add(new Wall(wd));
+			PlaceWall(wd.x, wd.y, (WallDirection) wd.direction);
 		}
 	}
 	

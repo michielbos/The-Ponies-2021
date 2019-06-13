@@ -5,6 +5,7 @@ namespace Model {
 
 public class Prefabs : SingletonMonoBehaviour<Prefabs> {
     public FloorTile floorTilePrefab;
+    public Wall wallPrefab;
 }
 
 }
