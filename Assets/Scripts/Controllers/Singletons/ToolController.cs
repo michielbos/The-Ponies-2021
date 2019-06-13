@@ -97,8 +97,8 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
     }
 
     private Vector2Int GetTileIndex(RaycastHit hitInfo) {
-        TerrainTile terrainTile = hitInfo.collider.GetComponent<TerrainTileDummy>().terrainTile;
-        return new Vector2Int(terrainTile.x, terrainTile.y);
+        TerrainTile terrainTile = hitInfo.collider.GetComponent<TerrainTile>();
+        return terrainTile.TilePosition;
     }
 
 }

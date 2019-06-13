@@ -11,7 +11,6 @@ public class Wall : MonoBehaviour {
     public int x;
     public int y;
     public WallDirection wallDirection;
-    public GameObject dummyWall;
 
     public void Init (int x, int y, WallDirection wallDirection) {
         this.x = x;

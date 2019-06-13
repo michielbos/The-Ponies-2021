@@ -27,7 +27,6 @@ public class PropertyController : SingletonMonoBehaviour<PropertyController> {
                 nextObjectId = propertyObject.id + 1;
             }
         }
-        PlaceTerrainTiles();
         PlacePropertyObjects();
     }
 
@@ -36,17 +35,6 @@ public class PropertyController : SingletonMonoBehaviour<PropertyController> {
     /// </summary>
     public void SaveProperty() {
         new PropertyLoader().SaveProperty(property.GetPropertyData());
-    }
-
-    /// <summary>
-    /// Place "dummy" instances of all loaded terrain tiles, so they are visible and interactable.
-    /// </summary>
-    private void PlaceTerrainTiles() {
-        foreach (TerrainTile tt in property.terrainTiles) {
-            if (tt != null) {
-                tt.PlaceTile(terrainTilePrefab);
-            }
-        }
     }
 
     /// <summary>

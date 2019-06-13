@@ -490,6 +490,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 85c62bda519c4ca0bd6150600f6f4c2d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  terrainTilePrefab: {fileID: 9153237413200094343, guid: 91be4d9b445d64ce5b7717588a1f0445,
+    type: 3}
   floorTilePrefab: {fileID: 486409671843105406, guid: cb1634ccb17b94d54bd8592812aaba3a,
     type: 3}
   wallPrefab: {fileID: 989618141288117731, guid: a5d2bd43000624114a063d361f8774eb,

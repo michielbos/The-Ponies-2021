@@ -71,7 +71,8 @@ public class FloorTool : ScriptableObject, ITool
 
 	private void BuildMarkerMoved (TerrainTile newTile) {
 		targetTile = newTile;
-		SetBuildMarkerPosition(targetTile.x, targetTile.y);
+		Vector2Int tilePosition = targetTile.TilePosition;
+		SetBuildMarkerPosition(tilePosition.x, tilePosition.y);
 	}
 
 	private bool CanPlaceFloors (RectInt floorRect) {
@@ -109,11 +110,12 @@ public class FloorTool : ScriptableObject, ITool
 	private RectInt HandleFloorDragging(TerrainTile terrainTile) {
 		if (terrainTile == null)
 			return new RectInt(0, 0, 0, 0);
-		Vector2Int dragPosition = terrainTile.GetPosition();
-		int x1 = Math.Min(targetTile.x, dragPosition.x);
-		int x2 = Math.Max(targetTile.x, dragPosition.x) + 1;
-		int y1 = Math.Min(targetTile.y, dragPosition.y);
-		int y2 = Math.Max(targetTile.y, dragPosition.y) + 1;
+		Vector2Int dragPosition = terrainTile.TilePosition;
+		Vector2Int tilePosition = targetTile.TilePosition;
+		int x1 = Math.Min(tilePosition.x, dragPosition.x);
+		int x2 = Math.Max(tilePosition.x, dragPosition.x) + 1;
+		int y1 = Math.Min(tilePosition.y, dragPosition.y);
+		int y2 = Math.Max(tilePosition.y, dragPosition.y) + 1;
 		RectInt floorRect = new RectInt();
 		floorRect.SetMinMax(new Vector2Int(x1, y1), new Vector2Int(x2, y2));
 		Transform markerTransform = buildMarker.transform;

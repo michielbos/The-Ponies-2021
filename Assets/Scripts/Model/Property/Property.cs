@@ -75,7 +75,9 @@ public class Property : MonoBehaviour {
 		terrainTiles = new TerrainTile[height,width];
 		foreach (TerrainTileData ttd in terrainTileDatas) {
 			if (terrainTiles[ttd.y, ttd.x] == null) {
-				terrainTiles[ttd.y, ttd.x] = new TerrainTile(ttd);
+				TerrainTile terrainTile = Instantiate(Prefabs.Instance.terrainTilePrefab, transform);
+				terrainTile.Init(ttd.x, ttd.y, ttd.height, ttd.type);
+				terrainTiles[ttd.y, ttd.x] = terrainTile;
 			} else {
 				Debug.LogWarning("There is already a terrain tile for (" + ttd.x + ", " + ttd.y + "). Not loading another one.");
 			}
