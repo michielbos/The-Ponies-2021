@@ -492,6 +492,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   floorTilePrefab: {fileID: 486409671843105406, guid: cb1634ccb17b94d54bd8592812aaba3a,
     type: 3}
+  wallPrefab: {fileID: 989618141288117731, guid: a5d2bd43000624114a063d361f8774eb,
+    type: 3}
 --- !u!4 &558716127
 Transform:
   m_ObjectHideFlags: 0
