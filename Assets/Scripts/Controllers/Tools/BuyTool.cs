@@ -1,5 +1,7 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Assets.Scripts.Controllers;
+using JetBrains.Annotations;
 using Model.Property;
 using UnityEngine;
 
@@ -53,7 +55,7 @@ public class BuyTool : ScriptableObject, ITool {
             } else {
                 UpdateBuildMarker(false);
             }
-            HandleRotation();
+            HandleRotationButtons();
         } else {
             HandleHovering();
         }
@@ -120,10 +122,8 @@ public class BuyTool : ScriptableObject, ITool {
     }
 
     private void UpdateBuildMarker(bool ignoreClick) {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (!HUDController.GetInstance().IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN)) {
-            TerrainTile newTargetTile = hit.collider.GetComponent<TerrainTile>();
+        TerrainTile newTargetTile = GetTileUnderCursor();
+        if (newTargetTile != null) {
             if (newTargetTile != targetTile) {
                 BuildMarkerMoved(newTargetTile);
             }
@@ -134,6 +134,16 @@ public class BuyTool : ScriptableObject, ITool {
             buildMarker.transform.position = new Vector3(0, -100, 0);
             targetTile = null;
         }
+    }
+
+    [CanBeNull]
+    private TerrainTile GetTileUnderCursor() {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit hit;
+        if (!HUDController.GetInstance().IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN)) {
+            return hit.collider.GetComponent<TerrainTile>();
+        }
+        return null;
     }
 
     private void BuildMarkerMoved(TerrainTile newTile) {
@@ -169,6 +179,20 @@ public class BuyTool : ScriptableObject, ITool {
     }
 
     private void HandlePlacementHolding() {
+        TerrainTile newTargetTile = GetTileUnderCursor();
+        if (newTargetTile != null) {
+            Vector2Int diff = targetTile.TilePosition - newTargetTile.TilePosition;
+            ObjectRotation newRotation = MarkerRotation;
+            if (diff.x != 0 && Math.Abs(diff.x) > Math.Abs(diff.y)) {
+                newRotation = diff.x > 0 ? ObjectRotation.SouthWest : ObjectRotation.NorthEast;
+            } else if (diff.y != 0 && Math.Abs(diff.y) > Math.Abs(diff.x)) {
+                newRotation = diff.y > 0 ? ObjectRotation.SouthEast : ObjectRotation.NorthWest;
+            }
+            if (newRotation != MarkerRotation) {
+                SoundController.Instance.PlaySound(SoundType.Rotate);
+                MarkerRotation = newRotation;
+            }
+        }
         if (Input.GetMouseButtonUp(0)) {
             PlaceObject();
             pressingTile = false;
@@ -251,11 +275,13 @@ public class BuyTool : ScriptableObject, ITool {
         RemoveBuyMarkings();
     }
 
-    private void HandleRotation() {
+    private void HandleRotationButtons() {
         if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.Comma)) {
+            SoundController.Instance.PlaySound(SoundType.Rotate);
             MarkerRotation = ObjectRotationUtil.RotateCounterClockwise(MarkerRotation);
         }
         if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Period)) {
+            SoundController.Instance.PlaySound(SoundType.Rotate);
             MarkerRotation = ObjectRotationUtil.RotateClockwise(MarkerRotation);
         }
     }

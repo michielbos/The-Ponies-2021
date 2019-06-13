@@ -198,7 +198,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b47ae404bdef458183d5d0c244cc437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previewPosition: {x: 0, y: 0, z: -10}
   previewObject: {fileID: 290185926}
 --- !u!1 &290185926
 GameObject:
