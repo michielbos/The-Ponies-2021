@@ -20,6 +20,20 @@ public static class ObjectRotationUtil {
 	public static Vector3 GetRotationVector (ObjectRotation objectRotation) {
 		return new Vector3(0, ((int)objectRotation - 1) * 90, 0);
 	}
+
+	public static ObjectRotation RotateClockwise(ObjectRotation current) {
+		if (current < ObjectRotation.NorthEast) {
+			return current + 1;
+		}
+		return ObjectRotation.SouthEast;
+	}
+	
+	public static ObjectRotation RotateCounterClockwise(ObjectRotation current) {
+		if (current > ObjectRotation.SouthEast) {
+			return current - 1;
+		}
+		return ObjectRotation.NorthEast;
+	}
 }
 
 }

@@ -8,7 +8,7 @@ namespace Model.Property {
 [System.Serializable]
 public class PropertyObject : MonoBehaviour {
     public int id;
-    public ObjectRotation rotation;
+    private ObjectRotation rotation;
     public FurniturePreset preset;
     public int skin;
     public int value;
@@ -27,16 +27,18 @@ public class PropertyObject : MonoBehaviour {
         set {
             rotation = value;
             transform.eulerAngles = ObjectRotationUtil.GetRotationVector(rotation);
+            ResetTiles();
         }
     }
 
     public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin) {
         this.id = id;
         TilePosition = new Vector2Int(x, y);
-        Rotation = rotation;
         this.preset = preset;
         this.skin = skin;
+        Rotation = rotation;
         value = preset.price;
+        model.localPosition = Vector3.zero;
         preset.ApplyToPropertyObject(this, true);
     }
 
@@ -56,6 +58,11 @@ public class PropertyObject : MonoBehaviour {
 
     public void SetVisibility(bool visible) {
         model.gameObject.SetActive(visible);
+    }
+
+    private void ResetTiles() {
+        model.localPosition = Vector3.zero;
+        preset.AdjustToTiles(model);
     }
 }
 

@@ -1,9 +1,7 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.Controllers;
-using Assets.Scripts.Util;
 using Model.Property;
 using UnityEngine;
-using UnityEngine.Experimental.UIElements;
 
 /// <summary>
 /// Tool for buy/build mode that deals with buying, moving and selling furniture.
@@ -25,10 +23,20 @@ public class BuyTool : ScriptableObject, ITool {
 
     private GameObject buildMarker;
     private ObjectRotation markerRotation = ObjectRotation.SouthEast;
-    private List<GameObject> buyMarkings;
+    private readonly List<GameObject> buyMarkings;
     private TerrainTile targetTile;
     private bool pressingTile;
     private bool canPlace;
+
+    public ObjectRotation MarkerRotation {
+        get { return markerRotation; }
+        set {
+            markerRotation = value;
+            if (buildMarker != null) {
+                buildMarker.transform.eulerAngles = ObjectRotationUtil.GetRotationVector(MarkerRotation);
+            }
+        }
+    }
 
     public BuyTool() {
         buyMarkings = new List<GameObject>();
@@ -37,12 +45,58 @@ public class BuyTool : ScriptableObject, ITool {
     public void OnDisable() {
         ClearSelection();
     }
-    
+
+    public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex) {
+        if (GetMovingPreset() != null) {
+            if (pressingTile) {
+                HandlePlacementHolding();
+            } else {
+                UpdateBuildMarker(false);
+            }
+            HandleRotation();
+        } else {
+            HandleHovering();
+        }
+
+        if (Input.GetKey(KeyCode.Delete)) {
+            SellSelection();
+        }
+    }
+
+    public void OnCatalogSelect(CatalogItem item, int skin) {
+        FurniturePreset furniturePreset = item as FurniturePreset;
+        if (furniturePreset == null) {
+            Debug.LogWarning(item + " is not a FurniturePreset, cannot be set to BuyTool.");
+            return;
+        }
+        ClearSelection();
+        placingPreset = furniturePreset;
+        placingSkin = skin;
+        CreateBuildMarker(placingPreset);
+    }
+
+    public void Enable() {
+        pressingTile = false;
+        movingObject = null;
+        buildMarker = null;
+        placingPreset = null;
+    }
+
+    public void Disable() {
+        if (buildMarker != null) {
+            if (movingObject != null) {
+                movingObject.SetVisibility(true);
+            }
+            Destroy(buildMarker);
+        }
+    }
+
     private void CreateBuildMarker(FurniturePreset preset) {
         buildMarker = Instantiate(buildMarkerPrefab);
         preset.ApplyToGameObject(buildMarker, placingSkin, true);
         SetBuildMarkerPosition(0, 0);
         PlaceBuyMarkings(0, 0);
+        buildMarker.transform.eulerAngles = ObjectRotationUtil.GetRotationVector(MarkerRotation);
     }
 
     private void PlaceBuyMarkings(int x, int y) {
@@ -111,7 +165,6 @@ public class BuyTool : ScriptableObject, ITool {
     private void SetBuildMarkerPosition(int x, int y) {
         FurniturePreset preset = GetMovingPreset();
         buildMarker.transform.position = new Vector3(x + 0.5f, 0, y + 0.5f);
-        buildMarker.transform.eulerAngles = ObjectRotationUtil.GetRotationVector(markerRotation);
         preset.AdjustToTiles(buildMarker.transform);
     }
 
@@ -128,13 +181,14 @@ public class BuyTool : ScriptableObject, ITool {
         } else if (movingObject != null) {
             SoundController.Instance.PlaySound(SoundType.Place);
             movingObject.TilePosition = targetTile.TilePosition;
+            movingObject.Rotation = MarkerRotation;
             ClearSelection();
         } else {
             SoundController.Instance.PlaySound(SoundType.Buy);
             MoneyController.Instance.ChangeFunds(-placingPreset.price);
             Vector2Int tilePosition = targetTile.TilePosition;
-            PropertyController.Instance.property.PlacePropertyObject(tilePosition.x, tilePosition.y,
-                ObjectRotation.SouthEast, placingPreset, placingSkin);
+            PropertyController.Instance.property.PlacePropertyObject(tilePosition.x, tilePosition.y, MarkerRotation, 
+                placingPreset, placingSkin);
             if (Input.GetKey(KeyCode.LeftShift)) {
                 BuildMarkerMoved(targetTile);
             } else {
@@ -167,6 +221,7 @@ public class BuyTool : ScriptableObject, ITool {
         movingObject.SetVisibility(false);
         CreateBuildMarker(movingObject.preset);
         targetTile = null;
+        MarkerRotation = movingObject.Rotation; 
         UpdateBuildMarker(true);
     }
 
@@ -196,48 +251,12 @@ public class BuyTool : ScriptableObject, ITool {
         RemoveBuyMarkings();
     }
 
-    public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex) {
-        if (GetMovingPreset() != null) {
-            if (pressingTile) {
-                HandlePlacementHolding();
-            } else {
-                UpdateBuildMarker(false);
-            }
-        } else {
-            HandleHovering();
+    private void HandleRotation() {
+        if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.Comma)) {
+            MarkerRotation = ObjectRotationUtil.RotateCounterClockwise(MarkerRotation);
         }
-
-        if (Input.GetKey(KeyCode.Delete)) {
-            SellSelection();
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Period)) {
+            MarkerRotation = ObjectRotationUtil.RotateClockwise(MarkerRotation);
         }
     }
-
-    public void OnCatalogSelect(CatalogItem item, int skin) {
-        FurniturePreset furniturePreset = item as FurniturePreset;
-        if (furniturePreset == null) {
-            Debug.LogWarning(item + " is not a FurniturePreset, cannot be set to BuyTool.");
-            return;
-        }
-        ClearSelection();
-        placingPreset = furniturePreset;
-        placingSkin = skin;
-        CreateBuildMarker(placingPreset);
-    }
-
-    public void Enable() {
-        pressingTile = false;
-        movingObject = null;
-        buildMarker = null;
-        placingPreset = null;
-    }
-
-    public void Disable() {
-        if (buildMarker != null) {
-            if (movingObject != null) {
-                movingObject.SetVisibility(true);
-            }
-            Destroy(buildMarker);
-        }
-    }
-
 }
