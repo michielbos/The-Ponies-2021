@@ -7,6 +7,7 @@ public class Prefabs : SingletonMonoBehaviour<Prefabs> {
     public TerrainTile terrainTilePrefab;
     public FloorTile floorTilePrefab;
     public Wall wallPrefab;
+    public PropertyObject propertyObjectPrefab;
 }
 
 }

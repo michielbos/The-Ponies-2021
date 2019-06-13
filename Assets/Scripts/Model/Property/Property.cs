@@ -16,6 +16,7 @@ public class Property : MonoBehaviour {
 	public List<Wall> walls;
 	public List<Roof> roofs;
 	public List<PropertyObject> propertyObjects;
+	private int nextObjectId;
 
 	public int TerrainWidth => terrainTiles.GetLength(1);
 	public int TerrainHeight => terrainTiles.GetLength(0);
@@ -54,11 +55,29 @@ public class Property : MonoBehaviour {
 		walls.Add(wall);
 	}
 	
+	public void PlacePropertyObject (int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
+		PlacePropertyObject(nextObjectId++, x, y, objectRotation, preset, skin);
+	}
+	
+	public void PlacePropertyObject (int id, int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
+		if (id >= nextObjectId) {
+			nextObjectId = id + 1;
+		}
+		PropertyObject propertyObject = Instantiate(Prefabs.Instance.propertyObjectPrefab, transform);
+		propertyObject.Init(id, x, y, objectRotation, preset, skin);
+		propertyObjects.Add(propertyObject);
+	}
+	
 	public void RemoveFloor (FloorTile floorTile) {
 		Destroy(floorTile.gameObject);
 		//TODO: Floor level
 		Vector2Int tilePosition = floorTile.TilePosition;
 		floorTiles[0, tilePosition.y, tilePosition.x] = null;
+	}
+	
+	public void RemovePropertyObject(PropertyObject propertyObject) {
+		Destroy(propertyObject.gameObject);
+		propertyObjects.Remove(propertyObject);
 	}
 
 	private void LoadTerrainTiles (TerrainTileData[] terrainTileDatas) {
@@ -119,7 +138,7 @@ public class Property : MonoBehaviour {
 			try {
 				FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(new Guid(pod.furnitureGuid));
 				if (preset != null) {
-					propertyObjects.Add(new PropertyObject(pod, preset));
+					PlacePropertyObject(pod.id, pod.x, pod.y, pod.GetObjectRotation(), preset, pod.skin);
 				} else {
 					Debug.LogWarning("No furniture preset for GUID " + pod.furnitureGuid + ". Not loading property object " + pod.id + ".");
 				}

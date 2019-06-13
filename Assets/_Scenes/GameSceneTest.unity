@@ -496,6 +496,8 @@ MonoBehaviour:
     type: 3}
   wallPrefab: {fileID: 989618141288117731, guid: a5d2bd43000624114a063d361f8774eb,
     type: 3}
+  propertyObjectPrefab: {fileID: 3185211623188794925, guid: be8404b2751774904bd936ec878fbe03,
+    type: 3}
 --- !u!4 &558716127
 Transform:
   m_ObjectHideFlags: 0

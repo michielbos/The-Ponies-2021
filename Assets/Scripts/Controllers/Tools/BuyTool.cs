@@ -37,16 +37,10 @@ public class BuyTool : ScriptableObject, ITool {
     public void OnDisable() {
         ClearSelection();
     }
-
-    /// <summary>
-    /// Set the furniture preset that is being placed.
-    /// </summary>
-    /// <param name="catalogItem">The FurniturePreset that is being placed.</param>
-    /// <param name="skin">The skin that should be applied to the preset.</param>
-    private void CreateBuildMarker() {
+    
+    private void CreateBuildMarker(FurniturePreset preset) {
         buildMarker = Instantiate(buildMarkerPrefab);
-        placingPreset.ApplyToGameObject(buildMarker, buildMarker.transform.position, buildMarker.transform.eulerAngles,
-            placingSkin, true);
+        preset.ApplyToGameObject(buildMarker, placingSkin, true);
         SetBuildMarkerPosition(0, 0);
         PlaceBuyMarkings(0, 0);
     }
@@ -71,7 +65,7 @@ public class BuyTool : ScriptableObject, ITool {
         buyMarkings.Clear();
     }
 
-    private void UpdateBuildMarker() {
+    private void UpdateBuildMarker(bool ignoreClick) {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (!HUDController.GetInstance().IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN)) {
@@ -79,7 +73,7 @@ public class BuyTool : ScriptableObject, ITool {
             if (newTargetTile != targetTile) {
                 BuildMarkerMoved(newTargetTile);
             }
-            if (Input.GetMouseButtonDown(0)) {
+            if (!ignoreClick && Input.GetMouseButtonDown(0)) {
                 pressingTile = true;
             }
         } else if (targetTile != null) {
@@ -118,7 +112,6 @@ public class BuyTool : ScriptableObject, ITool {
         FurniturePreset preset = GetMovingPreset();
         buildMarker.transform.position = new Vector3(x + 0.5f, 0, y + 0.5f);
         buildMarker.transform.eulerAngles = ObjectRotationUtil.GetRotationVector(markerRotation);
-        preset.ApplyOffsets(buildMarker.transform);
         preset.AdjustToTiles(buildMarker.transform);
     }
 
@@ -134,16 +127,14 @@ public class BuyTool : ScriptableObject, ITool {
             SoundController.Instance.PlaySound(SoundType.Deny);
         } else if (movingObject != null) {
             SoundController.Instance.PlaySound(SoundType.Place);
-            // TODO: movingObject.TilePosition = targetTile.TilePosition; (when PropertyObject is refactored)
-            movingObject.x = targetTile.TilePosition.x;
-            movingObject.y = targetTile.TilePosition.y;
+            movingObject.TilePosition = targetTile.TilePosition;
             ClearSelection();
         } else {
             SoundController.Instance.PlaySound(SoundType.Buy);
             MoneyController.Instance.ChangeFunds(-placingPreset.price);
             Vector2Int tilePosition = targetTile.TilePosition;
-            PropertyController.Instance.PlacePropertyObject(tilePosition.x, tilePosition.y, ObjectRotation.SouthEast,
-                placingPreset, placingSkin);
+            PropertyController.Instance.property.PlacePropertyObject(tilePosition.x, tilePosition.y,
+                ObjectRotation.SouthEast, placingPreset, placingSkin);
             if (Input.GetKey(KeyCode.LeftShift)) {
                 BuildMarkerMoved(targetTile);
             } else {
@@ -157,23 +148,26 @@ public class BuyTool : ScriptableObject, ITool {
         RaycastHit hit;
         if (HUDController.GetInstance().IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000))
             return;
-        PropertyObjectDummy dummy = hit.collider.GetComponent<PropertyObjectDummy>();
-        if (dummy == null)
+        PropertyObject propertyObject = hit.collider.transform.GetComponentInParent<PropertyObject>();
+        if (propertyObject == null)
             return;
         //TODO: Highlight object if it can be picked up.
         if (!Input.GetMouseButtonDown(0))
             return;
-        if (dummy.propertyObject.preset.pickupable || CheatsController.Instance.moveObjectsMode) {
-            PickUpObject(dummy.propertyObject);
+        if (propertyObject.preset.pickupable || CheatsController.Instance.moveObjectsMode) {
+            PickUpObject(propertyObject);
         } else {
             SoundController.Instance.PlaySound(SoundType.Deny);
         }
     }
 
     private void PickUpObject(PropertyObject propertyObject) {
+        ClearSelection();
         movingObject = propertyObject;
-        buildMarker = movingObject.dummyObject;
-        PlaceBuyMarkings(movingObject.x, movingObject.y);
+        movingObject.SetVisibility(false);
+        CreateBuildMarker(movingObject.preset);
+        targetTile = null;
+        UpdateBuildMarker(true);
     }
 
     private void SellSelection() {
@@ -181,7 +175,7 @@ public class BuyTool : ScriptableObject, ITool {
             ClearSelection();
         } else if (movingObject.preset.sellable || CheatsController.Instance.moveObjectsMode) {
             SoundController.Instance.PlaySound(SoundType.Sell);
-            PropertyController.Instance.RemovePropertyObject(movingObject);
+            PropertyController.Instance.property.RemovePropertyObject(movingObject);
             MoneyController.Instance.ChangeFunds(movingObject.value);
             ClearSelection();
         } else {
@@ -191,10 +185,9 @@ public class BuyTool : ScriptableObject, ITool {
 
     private void ClearSelection() {
         placingPreset = null;
-        if (movingObject != null && movingObject.dummyObject.Exists()) {
-            movingObject.RefreshDummy();
+        if (movingObject != null) {
+            movingObject.SetVisibility(true);
             movingObject = null;
-            buildMarker = null;
         }
         if (buildMarker != null) {
             Destroy(buildMarker);
@@ -208,7 +201,7 @@ public class BuyTool : ScriptableObject, ITool {
             if (pressingTile) {
                 HandlePlacementHolding();
             } else {
-                UpdateBuildMarker();
+                UpdateBuildMarker(false);
             }
         } else {
             HandleHovering();
@@ -228,7 +221,7 @@ public class BuyTool : ScriptableObject, ITool {
         ClearSelection();
         placingPreset = furniturePreset;
         placingSkin = skin;
-        CreateBuildMarker();
+        CreateBuildMarker(placingPreset);
     }
 
     public void Enable() {
@@ -238,7 +231,14 @@ public class BuyTool : ScriptableObject, ITool {
         placingPreset = null;
     }
 
-    public void Disable() { }
+    public void Disable() {
+        if (buildMarker != null) {
+            if (movingObject != null) {
+                movingObject.SetVisibility(true);
+            }
+            Destroy(buildMarker);
+        }
+    }
 
     public void OnClicked(MouseButton button) { }
 }
