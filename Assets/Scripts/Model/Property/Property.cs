@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Model.Property {
 
 [Serializable]
-public class Property {
+public class Property : MonoBehaviour {
 	public int id;
-	public string name;
+	public string propertyName;
 	public string description;
 	public string streetName;
 	public PropertyType propertyType;
@@ -19,30 +19,40 @@ public class Property {
 
 	public int TerrainWidth => terrainTiles.GetLength(1);
 	public int TerrainHeight => terrainTiles.GetLength(0);
-
-	public Property () {
+	
+	public void Init(int id, string propertyName, string description, string streetName, PropertyType propertyType) {
+		this.id = id;
+		this.propertyName = propertyName;
+		this.streetName = streetName;
+		this.description = description;
+		this.propertyType = propertyType;
 		walls = new List<Wall>();
 		roofs = new List<Roof>();
 		propertyObjects = new List<PropertyObject>();
 	}
 
-	public Property (int id, string name, string description, string streetName, PropertyType propertyType) : this() {
-		this.id = id;
-		this.name = name;
-		this.streetName = streetName;
-		this.description = description;
-		this.propertyType = propertyType;
-	}
-
-	public Property (PropertyData propertyData) : this(propertyData.id,
-		propertyData.name,
-		propertyData.description,
-		propertyData.streetName,
-		propertyData.propertyType == 0 ? PropertyType.RESIDENTIAL : PropertyType.COMMUNITY) {
+	public void SpawnObjects(PropertyData propertyData) {
 		LoadTerrainTiles(propertyData.terrainTileDatas);
 		LoadWalls(propertyData.wallDatas);
 		LoadFloorTiles(propertyData.floorTileDatas);
 		LoadPropertyObjects(propertyData.propertyObjectDatas);
+	}
+	
+	public void PlaceFloor (int x, int y, FloorPreset preset) {
+		//TODO: Floor level
+		if (floorTiles[0, y, x] != null) {
+			RemoveFloor(floorTiles[0, y, x]);
+		}
+		FloorTile floorTile = Instantiate(Prefabs.Instance.floorTilePrefab, transform);
+		floorTile.Init(x, y, preset);
+		floorTiles[0, y, x] = floorTile;
+	}
+	
+	public void RemoveFloor (FloorTile floorTile) {
+		Destroy(floorTile.gameObject);
+		//TODO: Floor level
+		Vector2Int tilePosition = floorTile.TilePosition;
+		floorTiles[0, tilePosition.y, tilePosition.x] = null;
 	}
 
 	private void LoadTerrainTiles (TerrainTileData[] terrainTileDatas) {
@@ -82,7 +92,7 @@ public class Property {
 				try {
 					FloorPreset preset = FloorPresets.Instance.GetFloorPreset(new Guid(ftd.floorGuid));
 					if (preset != null) {
-						floorTiles[0, ftd.y, ftd.x] = new FloorTile(ftd, preset);
+						PlaceFloor(ftd.x, ftd.y, preset);
 					} else {
 						Debug.LogWarning("No floor preset for GUID " + ftd.floorGuid + ". Not loading floor at (" + ftd.x + ", " + ftd.y + ").");
 					}
@@ -114,7 +124,7 @@ public class Property {
 
 	public PropertyData GetPropertyData () {
 		return new PropertyData(id,
-			name,
+			propertyName,
 			description,
 			streetName,
 			propertyType == PropertyType.RESIDENTIAL ? 0 : 1,

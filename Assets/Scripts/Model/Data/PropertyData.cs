@@ -1,4 +1,6 @@
 ﻿
+using Model.Property;
+
 [System.Serializable]
 public class PropertyData {
 	public int id;
@@ -26,4 +28,7 @@ public class PropertyData {
 		this.propertyObjectDatas = propertyObjectDatas;
 	}
 
+	public PropertyType GetPropertyType() {
+		return propertyType == 0 ? PropertyType.RESIDENTIAL : PropertyType.COMMUNITY;
+	}
 }

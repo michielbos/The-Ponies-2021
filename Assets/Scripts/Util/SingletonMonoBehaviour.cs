@@ -1,21 +1,28 @@
 ﻿using UnityEngine;
 
 namespace Assets.Scripts.Util {
-    public class SingletonMonoBehaviour<T> : MonoBehaviour {
-        public static T Instance {
-            get {
-                if (_instance == null) {
-                    _instance = FindObjectOfType<SingletonMonoBehaviour<T>>();
-                }
-                return (T) _instance;
+
+public class SingletonMonoBehaviour<T> : MonoBehaviour where T : SingletonMonoBehaviour<T> {
+    protected static bool InstanceReady => instance != null;
+    private static T instance;
+
+    public static T Instance {
+        get {
+            if (instance == null) {
+                Debug.LogWarning("The " + typeof(T) + " instance was requested before it was available!");
             }
-        }
 
-        private static object _instance;
-
-        // Clear the instance when ending play mode
-        void OnApplicationQuit() {
-            _instance = null;
+            return instance;
         }
     }
+
+    public void Awake() {
+        if (instance != null) {
+            Debug.LogWarning("A new " + typeof(T) + " was instantiated before the previous one was destroyed!");
+        }
+
+        instance = (T) this;
+    }
+}
+
 }

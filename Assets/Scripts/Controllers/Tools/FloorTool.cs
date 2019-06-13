@@ -144,7 +144,7 @@ public class FloorTool : ScriptableObject, ITool
 	private void PlaceFloors(RectInt floorRect, FloorPreset floorPreset) {
 		for (int x = floorRect.x; x < floorRect.xMax; x++) {
 			for (int y = floorRect.y; y < floorRect.yMax; y++) {
-				PropertyController.Instance.PlaceFloor(x, y, floorPreset);
+				PropertyController.Instance.property.PlaceFloor(x, y, floorPreset);
 			}
 		}
 		BuildMarkerMoved(targetTile);
@@ -159,7 +159,7 @@ public class FloorTool : ScriptableObject, ITool
 				if (currentFloor == null)
 					continue;
 				MoneyController.Instance.ChangeFunds(currentFloor.preset.GetSellValue());
-				PropertyController.Instance.RemoveFloor(currentFloor);
+				PropertyController.Instance.property.RemoveFloor(currentFloor);
 				sold = true;
 			}
 		}
