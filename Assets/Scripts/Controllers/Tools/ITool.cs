@@ -17,5 +17,4 @@ public interface ITool
 
     void Enable();
     void Disable();
-    void OnClicked(MouseButton button);
 }

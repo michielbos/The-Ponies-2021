@@ -22,20 +22,27 @@ public class PropertyObject : MonoBehaviour {
         set { transform.position = new Vector3(value.x + 0.5f, 0, value.y + 0.5f); }
     }
 
+    public ObjectRotation Rotation {
+        get { return rotation; }
+        set {
+            rotation = value;
+            transform.eulerAngles = ObjectRotationUtil.GetRotationVector(rotation);
+        }
+    }
+
     public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin) {
         this.id = id;
         TilePosition = new Vector2Int(x, y);
-        this.rotation = rotation;
+        Rotation = rotation;
         this.preset = preset;
         this.skin = skin;
         value = preset.price;
         preset.ApplyToPropertyObject(this, true);
-        transform.eulerAngles = ObjectRotationUtil.GetRotationVector(rotation);
     }
 
     public PropertyObjectData GetPropertyObjectData() {
         Vector2Int tilePosition = TilePosition;
-        return new PropertyObjectData(id, tilePosition.x, tilePosition.y, (int) rotation, preset.guid.ToString(), skin,
+        return new PropertyObjectData(id, tilePosition.x, tilePosition.y, (int) Rotation, preset.guid.ToString(), skin,
             value);
     }
 

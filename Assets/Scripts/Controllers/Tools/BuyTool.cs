@@ -240,5 +240,4 @@ public class BuyTool : ScriptableObject, ITool {
         }
     }
 
-    public void OnClicked(MouseButton button) { }
 }

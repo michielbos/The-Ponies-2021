@@ -6898,8 +6898,6 @@ MonoBehaviour:
   - type: 2
     tool: {fileID: 11400000, guid: 3f2c2fa57c0bd0c47b000457157b6bc3, type: 2}
   - type: 3
-    tool: {fileID: 11400000, guid: a84a9ee9c1a9d8a4b8cf8f2104ef4cb8, type: 2}
-  - type: 4
     tool: {fileID: 11400000, guid: db9b8f83fa19ba74a8d2f027ea868d3d, type: 2}
 --- !u!114 &114586363656697466
 MonoBehaviour:
@@ -6914,11 +6912,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   propertyPrefab: {fileID: 573034655650601785, guid: 94f66518982ffae34b2399870cc1cf8c,
-    type: 3}
-  terrainTilePrefab: {fileID: 1343583355818736, guid: 91be4d9b445d64ce5b7717588a1f0445,
-    type: 3}
-  wallPrefab: {fileID: 1459735444399992, guid: a5d2bd43000624114a063d361f8774eb, type: 3}
-  propertyObjectPrefab: {fileID: 1459735444399992, guid: be8404b2751774904bd936ec878fbe03,
     type: 3}
   property: {fileID: 0}
 --- !u!114 &114544127686149074
