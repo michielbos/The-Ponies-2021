@@ -71,25 +71,20 @@ public class FurniturePreset : Preset {
         return textures;
     }
 
-    public void ApplyToPropertyObject(PropertyObject propertyObject, bool adjustToTiles) {
-        ApplyToGameObject(propertyObject.model.gameObject, propertyObject.skin, adjustToTiles);
+    public void ApplyToPropertyObject(PropertyObject propertyObject) {
+        ApplyToModel(propertyObject.model.gameObject, propertyObject.skin);
     }
 
     /// <summary>
     /// Update a GameObject by applying the rotation/position offsets, model and materials of this furniture preset to it.
     /// </summary>
-    /// <param name="gameObject">The GameObject to apply the update to.</param>
+    /// <param name="model">The GameObject to apply the update to.</param>
     /// <param name="skin">The skin of the furniture item.</param>
-    /// <param name="adjustToTiles">Whether AdjustToTiles should be called.
-    /// If true, the object will be positioned with its lowest tile on the given position, instead of its center point.</param>
-    public void ApplyToGameObject(GameObject gameObject, int skin, bool adjustToTiles) {
-        if (adjustToTiles) {
-            AdjustToTiles(gameObject.transform);
-        }
+    public void ApplyToModel(GameObject model, int skin) {
         if (GetMesh() != null) {
-            gameObject.GetComponent<MeshFilter>().mesh = GetMesh();
-            gameObject.GetComponent<MeshRenderer>().materials = GetMaterials(skin);
-            MeshCollider meshCollider = gameObject.GetComponent<MeshCollider>();
+            model.GetComponent<MeshFilter>().mesh = GetMesh();
+            model.GetComponent<MeshRenderer>().materials = GetMaterials(skin);
+            MeshCollider meshCollider = model.GetComponent<MeshCollider>();
             if (meshCollider != null) {
                 meshCollider.sharedMesh = GetMesh();
             }
@@ -97,11 +92,11 @@ public class FurniturePreset : Preset {
     }
 
     /// <summary>
-    /// Adjust the given transform to this preset's occupied tiles.
-    /// This will move the lower-left tile of this object to the current center position.
+    /// Fix the position and rotation of a model object.
+    /// This assumes the position of the parent is the exact tile position.
     /// </summary>
-    /// <param name="transform">The transform to adjust.</param>
-    public void AdjustToTiles(Transform transform) {
+    public void FixModelTransform(Transform model, ObjectRotation rotation) {
+        Transform parent = model.parent;
         int widthTiles = 0;
         int heightTiles = 0;
         foreach (Vector2Int tile in occupiedTiles) {
@@ -112,19 +107,37 @@ public class FurniturePreset : Preset {
                 heightTiles = tile.y + 1;
             }
         }
-        transform.position += new Vector3((widthTiles - 1) * 0.5f, 0, (heightTiles - 1) * 0.5f);
+        model.localPosition = new Vector3(widthTiles * 0.5f, 0, heightTiles * 0.5f);
+        model.rotation = Quaternion.identity;
+        Vector3 pivot = parent.position + new Vector3(0.5f, 0, 0.5f);
+        model.RotateAround(pivot, Vector3.up, ObjectRotationUtil.GetRotationAngle(rotation));
     }
 
     /// <summary>
     /// Get the coordinates of the tiles that would be occupied by this PropertyObject if it was on the given position.
     /// </summary>
     /// <returns>A Vector2Int array of all coordinates that would be occupied.</returns>
-    public Vector2Int[] GetOccupiedTiles(Vector2Int position) {
+    public Vector2Int[] GetOccupiedTiles(Vector2Int position, ObjectRotation objectRotation) {
         Vector2Int[] occupied = new Vector2Int[occupiedTiles.Length];
         for (int i = 0; i < occupied.Length; i++) {
-            occupied[i] = position + occupiedTiles[i];
+            occupied[i] = position + RotateTile(occupiedTiles[i], objectRotation);
         }
         return occupied;
+    }
+
+    private Vector2Int RotateTile(Vector2Int tile, ObjectRotation rotation) {
+        // Sorry for the yuckiness, but at least it works now. And it's actually performance efficiënt-ish.
+        if (rotation == ObjectRotation.SouthWest) {
+            return new Vector2Int(tile.y, -tile.x);
+        }
+        if (rotation == ObjectRotation.NorthWest) {
+            return new Vector2Int(-tile.x, -tile.y);
+        }
+        if (rotation == ObjectRotation.NorthEast) {
+            return new Vector2Int(-tile.y, tile.x);
+        }
+        // SouthEast
+        return tile;
     }
 
     /// <summary>

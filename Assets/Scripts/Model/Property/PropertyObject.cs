@@ -17,17 +17,17 @@ public class PropertyObject : MonoBehaviour {
     public Vector2Int TilePosition {
         get {
             Vector3 position = transform.position;
-            return new Vector2Int(Mathf.RoundToInt(position.x - 0.5f), Mathf.RoundToInt(position.z - 0.5f));
+            return new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         }
-        set { transform.position = new Vector3(value.x + 0.5f, 0, value.y + 0.5f); }
+        set { transform.position = new Vector3(value.x, 0, value.y); }
     }
 
     public ObjectRotation Rotation {
         get { return rotation; }
         set {
             rotation = value;
-            transform.eulerAngles = ObjectRotationUtil.GetRotationVector(rotation);
-            ResetTiles();
+            model.rotation = Quaternion.identity;
+            preset.FixModelTransform(model, Rotation);
         }
     }
 
@@ -36,10 +36,9 @@ public class PropertyObject : MonoBehaviour {
         TilePosition = new Vector2Int(x, y);
         this.preset = preset;
         this.skin = skin;
-        Rotation = rotation;
         value = preset.price;
-        model.localPosition = Vector3.zero;
-        preset.ApplyToPropertyObject(this, true);
+        preset.ApplyToPropertyObject(this);
+        Rotation = rotation;
     }
 
     public PropertyObjectData GetPropertyObjectData() {
@@ -53,16 +52,11 @@ public class PropertyObject : MonoBehaviour {
     /// </summary>
     /// <returns>A Vector2Int array of all occupied coordinates.</returns>
     public Vector2Int[] GetOccupiedTiles() {
-        return preset.GetOccupiedTiles(TilePosition);
+        return preset.GetOccupiedTiles(TilePosition, Rotation);
     }
 
     public void SetVisibility(bool visible) {
         model.gameObject.SetActive(visible);
-    }
-
-    private void ResetTiles() {
-        model.localPosition = Vector3.zero;
-        preset.AdjustToTiles(model);
     }
 }
 

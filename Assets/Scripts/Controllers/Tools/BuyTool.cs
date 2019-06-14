@@ -23,6 +23,7 @@ public class BuyTool : MonoBehaviour, ITool {
     private PropertyObject movingObject;
 
     private GameObject buildMarker;
+    private Transform buildMarkerModel;
     private ObjectRotation markerRotation = ObjectRotation.SouthEast;
     private readonly List<GameObject> buyMarkings;
     private TerrainTile targetTile;
@@ -33,8 +34,8 @@ public class BuyTool : MonoBehaviour, ITool {
         get { return markerRotation; }
         set {
             markerRotation = value;
-            if (buildMarker != null) {
-                buildMarker.transform.eulerAngles = ObjectRotationUtil.GetRotationVector(MarkerRotation);
+            if (buildMarkerModel != null) {
+                GetMovingPreset().FixModelTransform(buildMarkerModel, markerRotation);
             }
         }
     }
@@ -80,6 +81,7 @@ public class BuyTool : MonoBehaviour, ITool {
         pressingTile = false;
         movingObject = null;
         buildMarker = null;
+        buildMarkerModel = null;
         placingPreset = null;
     }
 
@@ -94,16 +96,19 @@ public class BuyTool : MonoBehaviour, ITool {
 
     private void CreateBuildMarker(FurniturePreset preset) {
         buildMarker = Instantiate(buildMarkerPrefab);
-        preset.ApplyToGameObject(buildMarker, placingSkin, true);
+        buildMarkerModel = buildMarker.transform.GetChild(0);
+        preset.ApplyToModel(buildMarkerModel.gameObject, placingSkin);
         SetBuildMarkerPosition(0, 0);
-        PlaceBuyMarkings(0, 0);
-        buildMarker.transform.eulerAngles = ObjectRotationUtil.GetRotationVector(MarkerRotation);
+        ObjectRotation rotation = MarkerRotation;
+        MarkerRotation = ObjectRotation.SouthEast;
+        PlaceBuyMarkings();
+        MarkerRotation = rotation;
     }
 
-    private void PlaceBuyMarkings(int x, int y) {
+    private void PlaceBuyMarkings() {
         foreach (Vector2Int tile in GetMovingPreset().occupiedTiles) {
-            buyMarkings.Add(Instantiate(buyMarkingPrefab, new Vector3(x + tile.x + 0.5f, 0.01f, y + tile.y + 0.5f),
-                buyMarkingPrefab.transform.rotation, buildMarker.transform));
+            buyMarkings.Add(Instantiate(buyMarkingPrefab, new Vector3(tile.x + 0.5f, 0.01f, tile.y + 0.5f),
+                buyMarkingPrefab.transform.rotation, buildMarkerModel.transform));
         }
     }
 
@@ -158,7 +163,7 @@ public class BuyTool : MonoBehaviour, ITool {
 
     private bool CanPlaceObject() {
         FurniturePreset movingPreset = GetMovingPreset();
-        Vector2Int[] requiredTiles = movingPreset.GetOccupiedTiles(targetTile.TilePosition);
+        Vector2Int[] requiredTiles = movingPreset.GetOccupiedTiles(targetTile.TilePosition, MarkerRotation);
         List<PropertyObject> occupyingObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
         bool canPlace = placingPreset == null || placingPreset.price <= MoneyController.Instance.Funds;
         if (canPlace && !CheatsController.Instance.moveObjectsMode) {
@@ -172,9 +177,7 @@ public class BuyTool : MonoBehaviour, ITool {
     }
 
     private void SetBuildMarkerPosition(int x, int y) {
-        FurniturePreset preset = GetMovingPreset();
-        buildMarker.transform.position = new Vector3(x + 0.5f, 0, y + 0.5f);
-        preset.AdjustToTiles(buildMarker.transform);
+        buildMarker.transform.position = new Vector3(x, 0, y);
     }
 
     private void HandlePlacementHolding() {
