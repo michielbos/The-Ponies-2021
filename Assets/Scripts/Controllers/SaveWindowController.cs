@@ -40,7 +40,7 @@ public class SaveWindowController : MonoBehaviour {
 
 	private void OpenSaveDialog () {
 		savePanel.transform.localScale = new Vector3(1, 1, 1);
-		saveNameField.text = propertyController.property.name;
+		saveNameField.text = propertyController.property.propertyName;
 		saveDescriptionField.text = propertyController.property.description;
 	}
 
@@ -55,7 +55,7 @@ public class SaveWindowController : MonoBehaviour {
 	}
 
 	private void SaveProperty () {
-		propertyController.property.name = saveNameField.text;
+		propertyController.property.propertyName = saveNameField.text;
 		propertyController.property.description = saveDescriptionField.text;
 		propertyController.SaveProperty();
 	}

@@ -8,15 +8,14 @@ using UnityEngine.SceneManagement;
 /// It will be kept between scene transitions.
 /// </summary>
 public class GameController : SingletonMonoBehaviour<GameController> {
-	private static GameController instance;
 	private int enteringLot = -1;
 
-	private void Awake() {
-		if (instance == null) {
+	private new void Awake() {
+		if (!InstanceReady) {
+			base.Awake();
 			DontDestroyOnLoad(gameObject);
-			instance = this;
 			InitializeGame();
-		} else if (instance != this) {
+		} else {
 			Destroy(gameObject);
 		}
 	}

@@ -1,6 +1,6 @@
-﻿using System;
-using System.Linq;
+﻿using Assets.Scripts.Controls.Tools;
 using Assets.Scripts.Util;
+using JetBrains.Annotations;
 using Model.Property;
 using UnityEngine;
 
@@ -9,35 +9,29 @@ using UnityEngine;
 /// </summary>
 public class ToolController : SingletonMonoBehaviour<ToolController> {
     private const int LAYER_TERRAIN = 8;
+    
+    public BuyTool buyTool;
+    public FloorTool floorTool;
+    public WallTool wallTool;
 
-    [Serializable]
-    public class ToolMap {
-        public ToolType type;
+    private ITool tool;
+    private ToolType activeToolType;
 
-        // This is a ScriptableObject because otherwise we can't assign tools from the editor
-        public ScriptableObject tool;
-    }
+    public bool HasActiveTool => ActiveTool != null;
 
-    public bool HasActiveTool {
-        get { return ActiveTool != null; }
-    }
-
-    public ITool ActiveTool { get; set; }
-    public ToolType ActiveToolType { get; set; }
-
-    public ToolMap[] tools;
+    public ITool ActiveTool { get; private set; }
 
     /// <summary>
     /// Set the currently active tool.
     /// </summary>
     /// <param name="toolType">The tool type to activate.</param>
     public void SetTool(ToolType toolType) {
-        bool isNewTool = toolType != ActiveToolType;
+        bool isNewTool = toolType != activeToolType;
         if (isNewTool && HasActiveTool) {
             ActiveTool.Disable();
         }
-        ActiveToolType = toolType;
-        ActiveTool = toolType == ToolType.None ? null : GetTool(toolType);
+        activeToolType = toolType;
+        ActiveTool = GetToolForType(toolType);
         if (isNewTool && HasActiveTool) {
             // This here complains about a possible null reference exception, but if you look at the
             // implementation of HasActiveTool you can see that it is a null check for this offending
@@ -61,13 +55,17 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
         }
     }
 
-    /// <summary>
-    /// Get the currently active tool, if there is one.
-    /// </summary>
-    /// <returns>The tool that is currently active. Null if there is none.</returns>
-    public ITool GetTool(ToolType type) {
-        ToolMap tool = tools.FirstOrDefault(t => t.type == type);
-        return tool == null ? null : tool.tool as ITool;
+    [CanBeNull]
+    private ITool GetToolForType(ToolType type) {
+        switch (type) {
+            case ToolType.Floor:
+                return floorTool;
+            case ToolType.Buy:
+                return buyTool;
+            case ToolType.Wall:
+                return wallTool;
+        }
+        return null;
     }
 
     private void Update() {
@@ -84,7 +82,8 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
     private RaycastHit GetMouseTerrainHit(out bool hit) {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit raycastHit;
-        hit = Physics.Raycast(ray, out raycastHit, 1000, 1 << LAYER_TERRAIN) && !HUDController.GetInstance().IsMouseOverGui();
+        hit = Physics.Raycast(ray, out raycastHit, 1000, 1 << LAYER_TERRAIN) &&
+              !HUDController.GetInstance().IsMouseOverGui();
         return raycastHit;
     }
 
@@ -97,8 +96,7 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
     }
 
     private Vector2Int GetTileIndex(RaycastHit hitInfo) {
-        TerrainTile terrainTile = hitInfo.collider.GetComponent<TerrainTileDummy>().terrainTile;
-        return new Vector2Int(terrainTile.x, terrainTile.y);
+        TerrainTile terrainTile = hitInfo.collider.GetComponent<TerrainTile>();
+        return terrainTile.TilePosition;
     }
-
 }

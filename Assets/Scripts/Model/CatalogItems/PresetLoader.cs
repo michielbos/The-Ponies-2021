@@ -71,7 +71,8 @@ public abstract class PresetLoader <T, TData> where T : Preset {
 				}
 				try {
 					T preset = CreateFromData(JsonUtility.FromJson<TData>(textAsset.text));
-					preset.assetBundle = bundle;
+					// TODO: Apparently there is still some AssetBundle junk left. Destroy it.
+					// preset.assetBundle = bundle;
 					uint packId = GuidUtil.GetPackIdentifier(preset.guid);
 					if (packId == mod.modInfoData.packId) {
 						AddPreset(presets, assetName, preset);

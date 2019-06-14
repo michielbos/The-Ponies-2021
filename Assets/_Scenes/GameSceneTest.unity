@@ -198,7 +198,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b47ae404bdef458183d5d0c244cc437, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  previewPosition: {x: 0, y: 0, z: -10}
   previewObject: {fileID: 290185926}
 --- !u!1 &290185926
 GameObject:
@@ -485,6 +484,57 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f1e1d752d19a4492ca64580822770417, type: 3}
+--- !u!1 &558716125
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 558716127}
+  - component: {fileID: 558716126}
+  m_Layer: 0
+  m_Name: Prefabs
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &558716126
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558716125}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 85c62bda519c4ca0bd6150600f6f4c2d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  terrainTilePrefab: {fileID: 9153237413200094343, guid: 91be4d9b445d64ce5b7717588a1f0445,
+    type: 3}
+  floorTilePrefab: {fileID: 486409671843105406, guid: cb1634ccb17b94d54bd8592812aaba3a,
+    type: 3}
+  wallPrefab: {fileID: 989618141288117731, guid: a5d2bd43000624114a063d361f8774eb,
+    type: 3}
+  propertyObjectPrefab: {fileID: 3185211623188794925, guid: be8404b2751774904bd936ec878fbe03,
+    type: 3}
+--- !u!4 &558716127
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 558716125}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 366.36926, y: 100.98392, z: 26.259583}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 7
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &715872384
 GameObject:
   m_ObjectHideFlags: 0

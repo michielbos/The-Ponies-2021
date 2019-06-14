@@ -1,4 +1,5 @@
 ﻿using System;
+using Model.Property;
 
 [Serializable]
 public class PropertyObjectData {
@@ -18,5 +19,9 @@ public class PropertyObjectData {
 		this.furnitureGuid = furnitureGuid;
 		this.skin = skin;
 		this.value = value;
+	}
+
+	public ObjectRotation GetObjectRotation() {
+		return (ObjectRotation) rotation;
 	}
 }

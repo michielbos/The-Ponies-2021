@@ -5,9 +5,9 @@ using UnityEngine;
 namespace Model.Property {
 
 [Serializable]
-public class Property {
+public class Property : MonoBehaviour {
 	public int id;
-	public string name;
+	public string propertyName;
 	public string description;
 	public string streetName;
 	public PropertyType propertyType;
@@ -16,33 +16,68 @@ public class Property {
 	public List<Wall> walls;
 	public List<Roof> roofs;
 	public List<PropertyObject> propertyObjects;
+	private int nextObjectId;
 
 	public int TerrainWidth => terrainTiles.GetLength(1);
 	public int TerrainHeight => terrainTiles.GetLength(0);
-
-	public Property () {
+	
+	public void Init(int id, string propertyName, string description, string streetName, PropertyType propertyType) {
+		this.id = id;
+		this.propertyName = propertyName;
+		this.streetName = streetName;
+		this.description = description;
+		this.propertyType = propertyType;
 		walls = new List<Wall>();
 		roofs = new List<Roof>();
 		propertyObjects = new List<PropertyObject>();
 	}
 
-	public Property (int id, string name, string description, string streetName, PropertyType propertyType) : this() {
-		this.id = id;
-		this.name = name;
-		this.streetName = streetName;
-		this.description = description;
-		this.propertyType = propertyType;
-	}
-
-	public Property (PropertyData propertyData) : this(propertyData.id,
-		propertyData.name,
-		propertyData.description,
-		propertyData.streetName,
-		propertyData.propertyType == 0 ? PropertyType.RESIDENTIAL : PropertyType.COMMUNITY) {
+	public void SpawnObjects(PropertyData propertyData) {
 		LoadTerrainTiles(propertyData.terrainTileDatas);
 		LoadWalls(propertyData.wallDatas);
 		LoadFloorTiles(propertyData.floorTileDatas);
 		LoadPropertyObjects(propertyData.propertyObjectDatas);
+	}
+	
+	public void PlaceFloor (int x, int y, FloorPreset preset) {
+		//TODO: Floor level
+		if (floorTiles[0, y, x] != null) {
+			RemoveFloor(floorTiles[0, y, x]);
+		}
+		FloorTile floorTile = Instantiate(Prefabs.Instance.floorTilePrefab, transform);
+		floorTile.Init(x, y, preset);
+		floorTiles[0, y, x] = floorTile;
+	}
+	
+	public void PlaceWall (int x, int y, WallDirection wallDirection) {
+		Wall wall = Instantiate(Prefabs.Instance.wallPrefab, transform);
+		wall.Init(x, y, wallDirection);
+		walls.Add(wall);
+	}
+	
+	public void PlacePropertyObject (int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
+		PlacePropertyObject(nextObjectId++, x, y, objectRotation, preset, skin);
+	}
+	
+	public void PlacePropertyObject (int id, int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
+		if (id >= nextObjectId) {
+			nextObjectId = id + 1;
+		}
+		PropertyObject propertyObject = Instantiate(Prefabs.Instance.propertyObjectPrefab, transform);
+		propertyObject.Init(id, x, y, objectRotation, preset, skin);
+		propertyObjects.Add(propertyObject);
+	}
+	
+	public void RemoveFloor (FloorTile floorTile) {
+		Destroy(floorTile.gameObject);
+		//TODO: Floor level
+		Vector2Int tilePosition = floorTile.TilePosition;
+		floorTiles[0, tilePosition.y, tilePosition.x] = null;
+	}
+	
+	public void RemovePropertyObject(PropertyObject propertyObject) {
+		Destroy(propertyObject.gameObject);
+		propertyObjects.Remove(propertyObject);
 	}
 
 	private void LoadTerrainTiles (TerrainTileData[] terrainTileDatas) {
@@ -59,7 +94,9 @@ public class Property {
 		terrainTiles = new TerrainTile[height,width];
 		foreach (TerrainTileData ttd in terrainTileDatas) {
 			if (terrainTiles[ttd.y, ttd.x] == null) {
-				terrainTiles[ttd.y, ttd.x] = new TerrainTile(ttd);
+				TerrainTile terrainTile = Instantiate(Prefabs.Instance.terrainTilePrefab, transform);
+				terrainTile.Init(ttd.x, ttd.y, ttd.height, ttd.type);
+				terrainTiles[ttd.y, ttd.x] = terrainTile;
 			} else {
 				Debug.LogWarning("There is already a terrain tile for (" + ttd.x + ", " + ttd.y + "). Not loading another one.");
 			}
@@ -68,7 +105,7 @@ public class Property {
 
 	private void LoadWalls (WallData[] wallDatas) {
 		foreach (WallData wd in wallDatas) {
-			walls.Add(new Wall(wd));
+			PlaceWall(wd.x, wd.y, (WallDirection) wd.direction);
 		}
 	}
 	
@@ -82,7 +119,7 @@ public class Property {
 				try {
 					FloorPreset preset = FloorPresets.Instance.GetFloorPreset(new Guid(ftd.floorGuid));
 					if (preset != null) {
-						floorTiles[0, ftd.y, ftd.x] = new FloorTile(ftd, preset);
+						PlaceFloor(ftd.x, ftd.y, preset);
 					} else {
 						Debug.LogWarning("No floor preset for GUID " + ftd.floorGuid + ". Not loading floor at (" + ftd.x + ", " + ftd.y + ").");
 					}
@@ -101,7 +138,7 @@ public class Property {
 			try {
 				FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(new Guid(pod.furnitureGuid));
 				if (preset != null) {
-					propertyObjects.Add(new PropertyObject(pod, preset));
+					PlacePropertyObject(pod.id, pod.x, pod.y, pod.GetObjectRotation(), preset, pod.skin);
 				} else {
 					Debug.LogWarning("No furniture preset for GUID " + pod.furnitureGuid + ". Not loading property object " + pod.id + ".");
 				}
@@ -114,7 +151,7 @@ public class Property {
 
 	public PropertyData GetPropertyData () {
 		return new PropertyData(id,
-			name,
+			propertyName,
 			description,
 			streetName,
 			propertyType == PropertyType.RESIDENTIAL ? 0 : 1,

@@ -1,9 +1,6 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using Model.Property;
+﻿using Model.Property;
 using UnityEngine;
 using UnityEngine.UI;
-using UnityEngine.SceneManagement;
 
 public class PropertyMenuController : MonoBehaviour {
 	public Button[] lotButtons;
@@ -12,8 +9,8 @@ public class PropertyMenuController : MonoBehaviour {
 		PropertyLoader propertyLoader = new PropertyLoader();
 		for (int i = 0; i < lotButtons.Length; i++) {
 			if (propertyLoader.PropertyExists(i)) {
-				Property property = propertyLoader.LoadProperty(i);
-				lotButtons[i].GetComponentInChildren<Text>().text = i + ". " + property.name + "\n(" + property.streetName + ")";
+				PropertyData propertyData = propertyLoader.LoadProperty(i);
+				lotButtons[i].GetComponentInChildren<Text>().text = i + ". " + propertyData.name + "\n(" + propertyData.streetName + ")";
 			} else {
 				lotButtons[i].GetComponentInChildren<Text>().text = "Empty lot (" + i + ")";
 			}

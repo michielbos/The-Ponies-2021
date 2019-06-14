@@ -1,7 +1,7 @@
 ﻿using System;
+using Model.Property;
 using PoneCrafter.Model;
 using UnityEngine;
-using Object = UnityEngine.Object;
 
 /// <summary>
 /// Preset for furniture items. These are the objects that are displayed in the catalog.
@@ -11,9 +11,6 @@ public class FurniturePreset : Preset {
     private static readonly int ShaderCutoutProperty = Shader.PropertyToID("_AlphaCutout");
     public readonly bool pickupable;
     public readonly bool sellable;
-    public readonly string modelName;
-    public readonly Vector3 rotationOffset;
-    public readonly Vector3 positionOffset;
     public readonly Vector2Int[] occupiedTiles;
     public readonly PlacementRestriction[] placementRestrictions;
 
@@ -30,9 +27,6 @@ public class FurniturePreset : Preset {
             furniture.needStats, furniture.skillStats, furniture.requiredAge) {
         pickupable = furniture.pickupable;
         sellable = furniture.sellable;
-        // TODO: Fill these if we implement them, remove them otherwise.
-        rotationOffset = Vector3.zero;
-        positionOffset = Vector3.zero;
         occupiedTiles = furniture.occupiedTiles;
         placementRestrictions = furniture.placementRestrictions;
         mesh = furniture.mesh;
@@ -77,30 +71,18 @@ public class FurniturePreset : Preset {
         return textures;
     }
 
-    /// <summary>
-    /// Place a GameObject with the base rotation, model and materials of this furniture preset.
-    /// </summary>
-    /// <param name="prefab">The prefab to instantiate. It needs to have a MeshFilter and MeshRenderer.</param>
-    /// <param name="position">The position to place the object.</param>
-    /// <param name="skin">The skin to apply to the object to place.</param>
-    public GameObject PlaceObject(GameObject prefab, Vector3 position, int skin) {
-        GameObject gameObject = Object.Instantiate(prefab);
-        ApplyToGameObject(gameObject, position, Vector3.zero, skin, true);
-        return gameObject;
+    public void ApplyToPropertyObject(PropertyObject propertyObject, bool adjustToTiles) {
+        ApplyToGameObject(propertyObject.model.gameObject, propertyObject.skin, adjustToTiles);
     }
 
     /// <summary>
     /// Update a GameObject by applying the rotation/position offsets, model and materials of this furniture preset to it.
     /// </summary>
     /// <param name="gameObject">The GameObject to apply the update to.</param>
-    /// <param name="position">The position of the item, to which the offset will be added.</param>
-    /// <param name="rotation">The rotation of the item, to which the offset will be added.</param>
     /// <param name="skin">The skin of the furniture item.</param>
     /// <param name="adjustToTiles">Whether AdjustToTiles should be called.
     /// If true, the object will be positioned with its lowest tile on the given position, instead of its center point.</param>
-    public void ApplyToGameObject(GameObject gameObject, Vector3 position, Vector3 rotation, int skin,
-        bool adjustToTiles) {
-        ApplyOffsets(gameObject.transform, position, rotation);
+    public void ApplyToGameObject(GameObject gameObject, int skin, bool adjustToTiles) {
         if (adjustToTiles) {
             AdjustToTiles(gameObject.transform);
         }
@@ -112,25 +94,6 @@ public class FurniturePreset : Preset {
                 meshCollider.sharedMesh = GetMesh();
             }
         }
-    }
-
-    /// <summary>
-    /// Apply the rotation and position offsets for this furniture preset to a Transform.
-    /// </summary>
-    /// <param name="transform">The Transform to apply the offsets to.</param>
-    public void ApplyOffsets(Transform transform) {
-        ApplyOffsets(transform, transform.position, transform.eulerAngles);
-    }
-
-    /// <summary>
-    /// Apply the rotation and position offsets for this furniture preset to a Transform.
-    /// </summary>
-    /// <param name="transform">The GameObject to apply the offsets to.</param>
-    /// <param name="position">The position of the item, to which the offset will be added.</param>
-    /// <param name="rotation">The rotation of the item, to which the offset will be added.</param>
-    public void ApplyOffsets(Transform transform, Vector3 position, Vector3 rotation) {
-        transform.rotation = Quaternion.Euler(rotation + rotationOffset);
-        transform.position = position + positionOffset;
     }
 
     /// <summary>

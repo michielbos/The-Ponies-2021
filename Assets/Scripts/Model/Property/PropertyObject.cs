@@ -4,82 +4,66 @@ namespace Model.Property {
 
 /// <summary>
 /// An object that can be placed on a lot, usually a piece of furniture.
-/// The physical "dummy" of this object is kept in the dummyObject attribute.
 /// </summary>
 [System.Serializable]
-public class PropertyObject {
-	public int id;
-	public int x;
-	public int y;
-	public ObjectRotation rotation;
-	public FurniturePreset preset;
-	public int skin;
-	public GameObject dummyObject;
-	public int value;
+public class PropertyObject : MonoBehaviour {
+    public int id;
+    private ObjectRotation rotation;
+    public FurniturePreset preset;
+    public int skin;
+    public int value;
+    public Transform model;
 
-	public PropertyObject (int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin) {
-		this.id = id;
-		this.x = x;
-		this.y = y;
-		this.rotation = rotation;
-		this.preset = preset;
-		this.skin = skin;
-		value = preset.price;
-	}
+    public Vector2Int TilePosition {
+        get {
+            Vector3 position = transform.position;
+            return new Vector2Int(Mathf.RoundToInt(position.x - 0.5f), Mathf.RoundToInt(position.z - 0.5f));
+        }
+        set { transform.position = new Vector3(value.x + 0.5f, 0, value.y + 0.5f); }
+    }
 
-	public PropertyObject (PropertyObjectData pod, FurniturePreset preset) {
-		id = pod.id;
-		x = pod.x;
-		y = pod.y;
-		this.preset = preset;
-		skin = pod.skin;
-		rotation = (ObjectRotation) pod.rotation;
-		value = pod.value;
-	}
+    public ObjectRotation Rotation {
+        get { return rotation; }
+        set {
+            rotation = value;
+            transform.eulerAngles = ObjectRotationUtil.GetRotationVector(rotation);
+            ResetTiles();
+        }
+    }
 
-	public PropertyObjectData GetPropertyObjectData () {
-		return new PropertyObjectData(id,
-			x,
-			y,
-			(int) rotation,
-			preset.guid.ToString(),
-			skin,
-			value);
-	}
+    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin) {
+        this.id = id;
+        TilePosition = new Vector2Int(x, y);
+        this.preset = preset;
+        this.skin = skin;
+        Rotation = rotation;
+        value = preset.price;
+        model.localPosition = Vector3.zero;
+        preset.ApplyToPropertyObject(this, true);
+    }
 
-	/// <summary>
-	/// Place a dummy of this object in the scene.
-	/// </summary>
-	/// <param name="prefab">The property object prefab to instantiate.</param>
-	public void PlaceObject (GameObject prefab) {
-		dummyObject = preset.PlaceObject(prefab, new Vector3(x + 0.5f, 0, y + 0.5f), skin);
-		dummyObject.GetComponent<PropertyObjectDummy>().propertyObject = this;
-	}
+    public PropertyObjectData GetPropertyObjectData() {
+        Vector2Int tilePosition = TilePosition;
+        return new PropertyObjectData(id, tilePosition.x, tilePosition.y, (int) Rotation, preset.guid.ToString(), skin,
+            value);
+    }
 
-	/// <summary>
-	/// Refresh the dummy object, updating its position to match the real PropertyObject.
-	/// </summary>
-	public void RefreshDummy () {
-		dummyObject.transform.position = new Vector3(x + 0.5f, 0, y + 0.5f);
-		dummyObject.transform.eulerAngles = ObjectRotationUtil.GetRotationVector(rotation);
-		preset.ApplyOffsets(dummyObject.transform);
-		preset.AdjustToTiles(dummyObject.transform);
-	}
+    /// <summary>
+    /// Get the coordinates of the tiles occupied by this PropertyObject.
+    /// </summary>
+    /// <returns>A Vector2Int array of all occupied coordinates.</returns>
+    public Vector2Int[] GetOccupiedTiles() {
+        return preset.GetOccupiedTiles(TilePosition);
+    }
 
-	/// <summary>
-	/// Remove the dummy object from the scene.
-	/// </summary>
-	public void RemoveObject () {
-		Object.Destroy(dummyObject);
-	}
+    public void SetVisibility(bool visible) {
+        model.gameObject.SetActive(visible);
+    }
 
-	/// <summary>
-	/// Get the coordinates of the tiles occupied by this PropertyObject.
-	/// </summary>
-	/// <returns>A Vector2Int array of all occupied coordinates.</returns>
-	public Vector2Int[] GetOccupiedTiles () {
-		return preset.GetOccupiedTiles(new Vector2Int(x, y));
-	}
+    private void ResetTiles() {
+        model.localPosition = Vector3.zero;
+        preset.AdjustToTiles(model);
+    }
 }
 
 }

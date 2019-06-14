@@ -95,7 +95,7 @@ public class Pathfinding {
         }
     float Estimate(TileNode here,TileNode there)
     {
-        return Mathf.Sqrt(Mathf.Pow(here.tile.x-there.tile.x,2)+ Mathf.Pow(here.tile.y - there.tile.y, 2));
+        return Mathf.Sqrt(Mathf.Pow(here.tile.TilePosition.x-there.tile.TilePosition.x,2)+ Mathf.Pow(here.tile.TilePosition.y - there.tile.TilePosition.y, 2));
     }
     
 }

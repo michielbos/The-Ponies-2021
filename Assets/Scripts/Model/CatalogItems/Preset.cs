@@ -7,7 +7,6 @@ using UnityEngine;
 /// </summary>
 public abstract class Preset : CatalogItem {
     public readonly Guid guid;
-    public AssetBundle assetBundle;
 
     protected Preset (Guid guid, string name, string description, int price, ObjectCategory category,
         NeedStats needStats, SkillStats skillStats, RequiredAge requiredAge) :

@@ -38,16 +38,6 @@ public class FloorPreset : Preset {
 	}
 
 	/// <summary>
-	/// Place a floor GameObject with the texture of this floor preset.
-	/// </summary>
-	/// <param name="prefab">The floor prefab to instantiate.</param>
-	/// <param name="position">The position of the floor tile.</param>
-	public FloorTileDummy PlaceFloor (GameObject prefab, Vector3 position) {
-		GameObject gameObject = Object.Instantiate(prefab, position, Quaternion.identity);
-		return gameObject.GetComponent<FloorTileDummy>();
-	}
-
-	/// <summary>
 	/// Apply this floor preset's material to the given GameObject.
 	/// </summary>
 	/// <param name="gameObject">The GameObject to apply to. It must have a renderer.</param>

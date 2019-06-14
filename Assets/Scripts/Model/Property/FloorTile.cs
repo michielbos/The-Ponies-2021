@@ -1,56 +1,30 @@
-﻿
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Model.Property {
 
 [System.Serializable]
-public class FloorTile {
-	public int x;
-	public int y;
-	public FloorPreset preset;
-	public FloorTileDummy dummyObject;
+public class FloorTile : MonoBehaviour {
+    public FloorPreset preset;
+    public Transform model;
 
-	public FloorTile (int x, int y, FloorPreset preset) {
-		this.x = x;
-		this.y = y;
-		this.preset = preset;
-	}
+    public Vector2Int TilePosition {
+        get {
+            Vector3 position = transform.position;
+            return new Vector2Int(Mathf.RoundToInt(position.x - 0.5f), Mathf.RoundToInt(position.z - 0.5f));
+        }
+        set { transform.position = new Vector3(value.x + 0.5f, 0, value.y + 0.5f); }
+    }
 
-	public FloorTile (FloorTileData floorTileData, FloorPreset preset) : this (floorTileData.x,
-		floorTileData.y,
-		preset) {
+    public void Init(int x, int y, FloorPreset preset) {
+        this.preset = preset;
+        TilePosition = new Vector2Int(x, y);
+        preset.ApplyToGameObject(model.gameObject);
+    }
 
-	}
-	
-	public FloorTileData GetFloorTileData () {
-		return new FloorTileData(x,
-			y,
-			preset.guid.ToString());
-	}
-	
-	/// <summary>
-	/// Place a dummy of this floor in the scene.
-	/// </summary>
-	/// <param name="prefab">The floor tile dummy prefab to instantiate.</param>
-	public void PlaceFloor (GameObject prefab) {
-		dummyObject = preset.PlaceFloor(prefab, new Vector3(x + 0.5f, 0, y + 0.5f));
-		dummyObject.GetComponent<FloorTileDummy>().floorTile = this;
-		preset.ApplyToGameObject(dummyObject.gameObject);
-	}
-
-	/// <summary>
-	/// Refresh the dummy, updating its position to match this FloorTile.
-	/// </summary>
-	public void RefreshDummy () {
-		dummyObject.transform.position = new Vector3(x + 0.5f, 0, y + 0.5f);
-	}
-
-	/// <summary>
-	/// Remove the dummy floor from the scene.
-	/// </summary>
-	public void RemoveFloor () {
-		Object.Destroy(dummyObject.gameObject);
-	}
+    public FloorTileData GetFloorTileData() {
+        Vector2Int tilePosition = TilePosition;
+        return new FloorTileData(tilePosition.x, tilePosition.y, preset.guid.ToString());
+    }
 }
 
 }
