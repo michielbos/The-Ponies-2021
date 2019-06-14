@@ -20,7 +20,7 @@ namespace Assets.Scripts.Controllers {
             // Quit any tools that may be open from the last panel
             ToolController.Instance.SetTool(ToolType.None);
 
-            if (mode == HudPanel.Buy) {
+            if (mode == HudPanel.Buy || mode == HudPanel.Build) {
                 // Note that we intentionally set the tool to None first.
                 // This is to ensure the buy tool is always disabling when switching from build to buy. 
                 ToolController.Instance.SetTool(ToolType.Buy);
