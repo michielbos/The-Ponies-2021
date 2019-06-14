@@ -59,24 +59,18 @@ public class HUDController : VolatileSingletonController<HUDController>, IPointe
     }
 
     // Called from Unity GUI Button
-    public void SetClocks()
-    {
-        if (SpeedController.Instance.twelveHourClock == true)
-        {
+    public void SetClocks() {
+        if (SpeedController.Instance.twelveHourClock) {
             SpeedController.Instance.twelveHourClock = false;
-        }
-        else
-        {
+        } else {
             SpeedController.Instance.twelveHourClock = true;
         }
         UpdateTime();
     }
 
-    public void UpdateSpeed()
-    {
+    public void UpdateSpeed() {
         speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite;
-        foreach (GameObject g in speedButtons)
-        {
+        foreach (GameObject g in speedButtons) {
             bool active = speedButtons.IndexOf(g) == SpeedController.Instance.GetCurrentSpeed().GetIndex();
             g.GetComponent<Button>().interactable = !active;
         }
@@ -97,8 +91,7 @@ public class HUDController : VolatileSingletonController<HUDController>, IPointe
         fundsText.text = "$" + MoneyController.Instance.Funds;
     }
 
-    public void UpdateTime()
-    {
+    public void UpdateTime() {
         timeText.text = SpeedController.Instance.GetTimeText();
     }
 
