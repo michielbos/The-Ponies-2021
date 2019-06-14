@@ -97,6 +97,14 @@ public class FurniturePreset : Preset {
     /// </summary>
     public void FixModelTransform(Transform model, ObjectRotation rotation) {
         Transform parent = model.parent;
+        Vector2Int tileSize = GetTileSize();
+        model.localPosition = new Vector3(tileSize.x * 0.5f, 0, tileSize.y * 0.5f);
+        model.rotation = Quaternion.identity;
+        Vector3 pivot = parent.position + new Vector3(0.5f, 0, 0.5f);
+        model.RotateAround(pivot, Vector3.up, ObjectRotationUtil.GetRotationAngle(rotation));
+    }
+
+    public Vector2Int GetTileSize() {
         int widthTiles = 0;
         int heightTiles = 0;
         foreach (Vector2Int tile in occupiedTiles) {
@@ -107,10 +115,7 @@ public class FurniturePreset : Preset {
                 heightTiles = tile.y + 1;
             }
         }
-        model.localPosition = new Vector3(widthTiles * 0.5f, 0, heightTiles * 0.5f);
-        model.rotation = Quaternion.identity;
-        Vector3 pivot = parent.position + new Vector3(0.5f, 0, 0.5f);
-        model.RotateAround(pivot, Vector3.up, ObjectRotationUtil.GetRotationAngle(rotation));
+        return new Vector2Int(widthTiles, heightTiles);
     }
 
     /// <summary>
