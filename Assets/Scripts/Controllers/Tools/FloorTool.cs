@@ -6,8 +6,7 @@ using UnityEngine;
 /// <summary>
 /// Tool for build mode that deals with placing and removing floors.
 /// </summary>
-[CreateAssetMenu(fileName = "FloorTool", menuName = "Tools/Floor Tool", order = 10)]
-public class FloorTool : ScriptableObject, ITool {
+public class FloorTool : MonoBehaviour, ITool {
     public GameObject buildMarkerPrefab;
 
     private FloorPreset placingPreset;

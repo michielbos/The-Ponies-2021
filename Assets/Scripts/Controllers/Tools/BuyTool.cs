@@ -9,8 +9,7 @@ using UnityEngine;
 /// Tool for buy/build mode that deals with buying, moving and selling furniture.
 /// </summary>
 /// 
-[CreateAssetMenu(fileName = "BuyTool", menuName = "Tools/Buy Tool", order = 10)]
-public class BuyTool : ScriptableObject, ITool {
+public class BuyTool : MonoBehaviour, ITool {
     private const int LAYER_TERRAIN = 8;
 
     public GameObject buildMarkerPrefab;
