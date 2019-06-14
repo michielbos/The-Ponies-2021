@@ -39,8 +39,9 @@ public class PropertyLoader {
             }
         }
 
+        // TODO: Add placeholder household
         return new PropertyData(id, "untitled", "", "untitled street " + id, 0, terrainTileDatas, floorTileDatas,
-            wallDatas, roofDatas, propertyObjectDatas);
+            wallDatas, roofDatas, propertyObjectDatas, null);
     }
 
     public PropertyData LoadProperty(int id) {

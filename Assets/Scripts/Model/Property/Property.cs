@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Model.Data;
+using Model.Ponies;
 using UnityEngine;
 
 namespace Model.Property {
@@ -16,6 +18,7 @@ public class Property : MonoBehaviour {
 	public List<Wall> walls;
 	public List<Roof> roofs;
 	public List<PropertyObject> propertyObjects;
+	public Household household;
 	private int nextObjectId;
 
 	public int TerrainWidth => terrainTiles.GetLength(1);
@@ -37,6 +40,7 @@ public class Property : MonoBehaviour {
 		LoadWalls(propertyData.wallDatas);
 		LoadFloorTiles(propertyData.floorTileDatas);
 		LoadPropertyObjects(propertyData.propertyObjectDatas);
+		LoadHousehold(propertyData.householdData);
 	}
 	
 	public void PlaceFloor (int x, int y, FloorPreset preset) {
@@ -152,6 +156,19 @@ public class Property : MonoBehaviour {
 		}
 	}
 
+	private void LoadHousehold(HouseholdData data) {
+		if (data == null) {
+			return;
+		}
+		List<Pony> ponies = new List<Pony>();
+		foreach (PonyData ponyData in data.ponies) {
+			Pony pony = Instantiate(Prefabs.Instance.ponyPrefab);
+			pony.Init(ponyData.firstName, ponyData.Race, ponyData.Gender, ponyData.Age);
+			ponies.Add(pony);
+		}
+		household = new Household(data.householdName, ponies);
+	}
+
 	public PropertyData GetPropertyData () {
 		return new PropertyData(id,
 			propertyName,
@@ -162,7 +179,8 @@ public class Property : MonoBehaviour {
 			CreateFloorTileDataArray(floorTiles),
 			CreateWallDataArray(walls),
 			CreateRoofDataArray(roofs),
-			CreatePropertyObjectDataArray(propertyObjects));
+			CreatePropertyObjectDataArray(propertyObjects),
+			null);
 	}
 
 	private TerrainTileData[] CreateTerrainTileDataArray (TerrainTile[,] terrainTiles) {
