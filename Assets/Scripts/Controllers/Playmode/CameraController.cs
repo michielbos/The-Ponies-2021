@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Util;
+using UnityEngine;
 
 namespace Assets.Scripts.Controllers {
 
-public class CameraController : VolatileSingletonController<CameraController> {
+public class CameraController : SingletonMonoBehaviour<CameraController> {
     public Transform holder;
     public float minSize = 1, maxSize = 32;
 

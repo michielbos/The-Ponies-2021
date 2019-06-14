@@ -2,7 +2,7 @@
 using UnityEngine;
 
 namespace Assets.Scripts.Controllers {
-    public class ModeController : VolatileSingletonController<ModeController> {
+    public class ModeController : SingletonMonoBehaviour<ModeController> {
         public GuiButtonController LiveModeGuiButtonController;
         public GuiButtonController BuyModeGuiButtonController;
         public GuiButtonController BuildModeGuiButtonController;

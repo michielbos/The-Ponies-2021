@@ -1,8 +1,9 @@
-﻿using UnityEngine;
+﻿using Assets.Scripts.Util;
+using UnityEngine;
 
 namespace Assets.Scripts.Controllers {
 
-public class DayCycleController : VolatileSingletonController<DayCycleController> {
+public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
     public Light SunLight;
     public Light NightLight;
     public Material skyboxMaterialBase;

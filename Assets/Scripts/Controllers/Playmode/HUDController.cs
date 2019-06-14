@@ -5,7 +5,7 @@ using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
-public class HUDController : VolatileSingletonController<HUDController>, IPointerEnterHandler, IPointerExitHandler {
+public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnterHandler, IPointerExitHandler {
     public List<GameObject> speedButtons;
     public List<GameObject> roofButtons;
     public Sprite[] pauseSprites;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Controllers {
 
-public class SpeedController : VolatileSingletonController<SpeedController> {
+public class SpeedController : SingletonMonoBehaviour<SpeedController> {
     private const float REAL_TIME_TO_GAME_TIME_MULTIPLIER = 60;
     private Speed currentSpeed;
     private long fullSeconds;

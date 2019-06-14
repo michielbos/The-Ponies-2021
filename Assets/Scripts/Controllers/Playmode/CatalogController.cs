@@ -7,7 +7,7 @@ using UnityEngine.UI;
 /// <summary>
 /// Controller class for the catalog part of buy and build mode.
 /// </summary>
-public class CatalogController : VolatileSingletonController<CatalogController> {
+public class CatalogController : SingletonMonoBehaviour<CatalogController> {
     public Button buttonPrefab;
     public int buyModeX;
     public int buildModeX;
