@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Model.Data;
 using UnityEngine;
 
 namespace Model.Property {
@@ -39,9 +40,16 @@ public class PropertyLoader {
             }
         }
 
-        // TODO: Add placeholder household
+        HouseholdData householdData = null;
+        if (id == 0) {
+            PonyData[] ponies = {
+                new PonyData("Orange Butt", 2, 2, 1),
+                new PonyData("Gilheart", 3, 1, 1)
+            };
+            householdData = new HouseholdData("The Placeholders", 20000, ponies);
+        }
         return new PropertyData(id, "untitled", "", "untitled street " + id, 0, terrainTileDatas, floorTileDatas,
-            wallDatas, roofDatas, propertyObjectDatas, null);
+            wallDatas, roofDatas, propertyObjectDatas, householdData);
     }
 
     public PropertyData LoadProperty(int id) {

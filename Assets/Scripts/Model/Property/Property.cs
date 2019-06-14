@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using JetBrains.Annotations;
 using Model.Data;
 using Model.Ponies;
 using UnityEngine;
@@ -18,7 +19,7 @@ public class Property : MonoBehaviour {
 	public List<Wall> walls;
 	public List<Roof> roofs;
 	public List<PropertyObject> propertyObjects;
-	public Household household;
+	[CanBeNull] public Household household;
 	private int nextObjectId;
 
 	public int TerrainWidth => terrainTiles.GetLength(1);
@@ -78,7 +79,6 @@ public class Property : MonoBehaviour {
 		//TODO: Floor level
 		Vector2Int tilePosition = floorTile.TilePosition;
 		floorTiles[0, tilePosition.y, tilePosition.x] = null;
-		Debug.Log("removed");
 		terrainTiles[tilePosition.y, tilePosition.x].SetVisible(true);
 	}
 	
@@ -163,7 +163,7 @@ public class Property : MonoBehaviour {
 		List<Pony> ponies = new List<Pony>();
 		foreach (PonyData ponyData in data.ponies) {
 			Pony pony = Instantiate(Prefabs.Instance.ponyPrefab);
-			pony.Init(ponyData.firstName, ponyData.Race, ponyData.Gender, ponyData.Age);
+			pony.Init(ponyData.ponyName, ponyData.Race, ponyData.Gender, ponyData.Age);
 			ponies.Add(pony);
 		}
 		household = new Household(data.householdName, ponies);
@@ -180,7 +180,7 @@ public class Property : MonoBehaviour {
 			CreateWallDataArray(walls),
 			CreateRoofDataArray(roofs),
 			CreatePropertyObjectDataArray(propertyObjects),
-			null);
+			household?.GetHouseholdData());
 	}
 
 	private TerrainTileData[] CreateTerrainTileDataArray (TerrainTile[,] terrainTiles) {

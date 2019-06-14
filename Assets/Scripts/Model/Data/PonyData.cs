@@ -4,7 +4,7 @@ namespace Model.Data {
 
 [System.Serializable]
 public class PonyData {
-    public string firstName;
+    public string ponyName;
     public int race;
     public int gender;
     public int age;
@@ -13,8 +13,8 @@ public class PonyData {
     public Gender Gender => (Gender) gender;
     public PonyAge Age => (PonyAge) age;
 
-    public PonyData(string firstName, int race, int gender, int age) {
-        this.firstName = firstName;
+    public PonyData(string ponyName, int race, int gender, int age) {
+        this.ponyName = ponyName;
         this.race = race;
         this.gender = gender;
         this.age = age;

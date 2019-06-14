@@ -1,8 +1,8 @@
 ﻿namespace Model.Ponies {
 
 public enum Gender {
-    Adult = 1,
-    Foal = 2
+    Female = 1,
+    Male = 2
 }
 
 }
