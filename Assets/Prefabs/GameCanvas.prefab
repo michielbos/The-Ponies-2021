@@ -6720,12 +6720,12 @@ GameObject:
   - component: {fileID: 114668456012891634}
   - component: {fileID: 114315203990206404}
   - component: {fileID: 114000624313239220}
-  - component: {fileID: 114223302282688168}
   - component: {fileID: 114486188290150994}
   - component: {fileID: 114586363656697466}
   - component: {fileID: 114544127686149074}
   - component: {fileID: 114099412846582776}
   - component: {fileID: 114086576077371470}
+  - component: {fileID: 8243250806356457648}
   m_Layer: 5
   m_Name: HouseGameController
   m_TagString: GameController
@@ -6868,18 +6868,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 523ac008cf0f60449a7bb8310d78c4c6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &114223302282688168
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383177691709652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4612e8aa4a6c03f4984fdd4902aba67f, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!114 &114486188290150994
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7016,6 +7004,22 @@ MonoBehaviour:
   - {fileID: 8300000, guid: 7c0ab740a6d0b4c71996775cf6f91d9f, type: 3}
   - {fileID: 8300000, guid: ec30f828d65c0409e8c03654ee94030d, type: 3}
   communityBuildSongs: []
+--- !u!114 &8243250806356457648
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383177691709652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 3882e212a7f8ca046a8a87fdde8dfbae, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  StaringGameTime: 720
+  DaysInOneMonth: 25
+  DaysInOneYear: 100
+  twelveHourClock: 1
 --- !u!1 &1400994035058900
 GameObject:
   m_ObjectHideFlags: 0
@@ -9091,6 +9095,7 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 8be847cb2322da64e89726df4487edc4, type: 3}
   - {fileID: 21300000, guid: caef8c13c37db714ba0b615cad6a7018, type: 3}
   fundsText: {fileID: 114000812847085396}
+  timeText: {fileID: 114336257830083344}
 --- !u!114 &114542114524124648
 MonoBehaviour:
   m_ObjectHideFlags: 0
