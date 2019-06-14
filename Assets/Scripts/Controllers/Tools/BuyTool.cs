@@ -36,6 +36,7 @@ public class BuyTool : MonoBehaviour, ITool {
             markerRotation = value;
             if (buildMarkerModel != null) {
                 GetMovingPreset().FixModelTransform(buildMarkerModel, markerRotation);
+                UpdateCanPlace();
             }
         }
     }
@@ -152,13 +153,21 @@ public class BuyTool : MonoBehaviour, ITool {
 
     private void BuildMarkerMoved(TerrainTile newTile) {
         targetTile = newTile;
+        UpdateCanPlace();
+        Vector2Int tilePosition = targetTile.TilePosition;
+        SetBuildMarkerPosition(tilePosition.x, tilePosition.y);
+    }
+
+    private void UpdateCanPlace() {
+        if (targetTile == null) {
+            canPlace = false;
+            return;
+        }
         canPlace = CanPlaceObject();
         foreach (GameObject buyMarking in buyMarkings) {
             buyMarking.GetComponent<Renderer>().material =
                 canPlace ? buyMarkingNormalMaterial : buyMarkingDisallowedMaterial;
         }
-        Vector2Int tilePosition = targetTile.TilePosition;
-        SetBuildMarkerPosition(tilePosition.x, tilePosition.y);
     }
 
     private bool CanPlaceObject() {
