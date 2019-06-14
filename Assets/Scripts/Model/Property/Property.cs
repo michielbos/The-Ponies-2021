@@ -47,6 +47,7 @@ public class Property : MonoBehaviour {
 		FloorTile floorTile = Instantiate(Prefabs.Instance.floorTilePrefab, transform);
 		floorTile.Init(x, y, preset);
 		floorTiles[0, y, x] = floorTile;
+		terrainTiles[y, x].SetVisible(false);
 	}
 	
 	public void PlaceWall (int x, int y, WallDirection wallDirection) {
@@ -73,6 +74,8 @@ public class Property : MonoBehaviour {
 		//TODO: Floor level
 		Vector2Int tilePosition = floorTile.TilePosition;
 		floorTiles[0, tilePosition.y, tilePosition.x] = null;
+		Debug.Log("removed");
+		terrainTiles[tilePosition.y, tilePosition.x].SetVisible(true);
 	}
 	
 	public void RemovePropertyObject(PropertyObject propertyObject) {

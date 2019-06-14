@@ -60,6 +60,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   height: 0
   type: 0
+  model: {fileID: 7749535939924632795}
 --- !u!1 &2322197390439498920
 GameObject:
   m_ObjectHideFlags: 0

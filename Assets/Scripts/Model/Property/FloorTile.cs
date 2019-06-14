@@ -10,9 +10,9 @@ public class FloorTile : MonoBehaviour {
     public Vector2Int TilePosition {
         get {
             Vector3 position = transform.position;
-            return new Vector2Int(Mathf.RoundToInt(position.x - 0.5f), Mathf.RoundToInt(position.z - 0.5f));
+            return new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         }
-        set { transform.position = new Vector3(value.x + 0.5f, 0, value.y + 0.5f); }
+        set { transform.position = new Vector3(value.x, 0, value.y); }
     }
 
     public void Init(int x, int y, FloorPreset preset) {

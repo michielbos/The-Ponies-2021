@@ -11,6 +11,7 @@ namespace Model.Property {
 public class TerrainTile : MonoBehaviour {
     public int height;
     public int type;
+    public Transform model;
 
     public Vector2Int TilePosition {
         get {
@@ -29,6 +30,10 @@ public class TerrainTile : MonoBehaviour {
     public TerrainTileData GetTerrainTileData() {
         Vector2Int tilePosition = TilePosition;
         return new TerrainTileData(tilePosition.x, tilePosition.y, height, type);
+    }
+
+    public void SetVisible(bool visible) {
+        model.GetComponent<MeshRenderer>().enabled = visible;
     }
 }
 

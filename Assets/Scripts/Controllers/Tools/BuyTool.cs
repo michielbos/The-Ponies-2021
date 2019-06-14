@@ -183,7 +183,6 @@ public class BuyTool : MonoBehaviour, ITool {
         }
         Property property = PropertyController.Instance.property;
         foreach (Vector2Int tile in requiredTiles) {
-            Debug.Log(tile);
             if (tile.x < 0 || tile.y < 0 || tile.x >= property.TerrainWidth || tile.y >= property.TerrainHeight) {
                 return false;
             }
