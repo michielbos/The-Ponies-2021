@@ -117,6 +117,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   SunLight: {fileID: 5075057834360993549}
   NightLight: {fileID: 5075057835752449398}
+  skyboxMaterialBase: {fileID: 2100000, guid: c520765c828141c4bae4a956adbb32f3, type: 2}
   sripngSettings:
     startingSunrise: 6
     endingSunrise: 9
@@ -4872,7 +4873,7 @@ ParticleSystem:
 --- !u!199 &7468574782451538039
 ParticleSystemRenderer:
   serializedVersion: 6
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
@@ -9543,7 +9544,7 @@ ParticleSystem:
 --- !u!199 &7468574782451505679
 ParticleSystemRenderer:
   serializedVersion: 6
-  m_ObjectHideFlags: 0
+  m_ObjectHideFlags: 2
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}

@@ -1,13 +1,11 @@
 ﻿using UnityEngine;
-using System.Collections;
-using System;
-using Assets.Scripts.Util;
 
 namespace Assets.Scripts.Controllers {
 
 public class DayCycleController : VolatileSingletonController<DayCycleController> {
     public Light SunLight;
     public Light NightLight;
+    public Material skyboxMaterialBase;
 
     private float currentTime;
 
@@ -21,6 +19,8 @@ public class DayCycleController : VolatileSingletonController<DayCycleController
 
     private float fSunrisePhase;
     private float fNoonPhase;
+
+    private Material skyboxMaterial;
 
     [System.Serializable]
     public class LightSettings {
@@ -88,6 +88,8 @@ public class DayCycleController : VolatileSingletonController<DayCycleController
     [HideInInspector] public Timeset currTimeset;
     [HideInInspector] public Seasons currSeason;
 
+    private static readonly int TintProperty = Shader.PropertyToID("_Tint");
+
     public enum Timeset {
         SUNRISE,
         SUNRISEENDING,
@@ -104,6 +106,8 @@ public class DayCycleController : VolatileSingletonController<DayCycleController
     };
 
     void Start() {
+        skyboxMaterial = new Material(skyboxMaterialBase);
+        RenderSettings.skybox = skyboxMaterial;
         currentSettings = sripngSettings;
 
         UpdateTime();
@@ -316,8 +320,8 @@ public class DayCycleController : VolatileSingletonController<DayCycleController
         NightLight.color = Color.Lerp(NightLight.color, moonLightColor, Time.deltaTime / fadeTime);
 
         // Skybox settings
-        RenderSettings.skybox.SetColor("_Tint",
-            Color.Lerp(RenderSettings.skybox.GetColor("_Tint"), skyTint, Time.deltaTime / fadeTime));
+        skyboxMaterial.SetColor(TintProperty,
+            Color.Lerp(skyboxMaterial.GetColor(TintProperty), skyTint, Time.deltaTime / fadeTime));
     }
 
     public void ActivateTimesetParticle(GameObject CurrParticles) {
