@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 768799596}
-  m_IndirectSpecularColor: {r: 0.73437613, g: 0.7348628, b: 0.8095699, a: 1}
+  m_IndirectSpecularColor: {r: 0.45141697, g: 0.58007866, b: 0.68798864, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -436,10 +436,23 @@ PrefabInstance:
       propertyPath: m_SizeDelta.y
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 7704112007708273264, guid: 02c26d83b35cb374daa65d6918d687d9,
+    - target: {fileID: 1263525068817536, guid: 02c26d83b35cb374daa65d6918d687d9, type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 1400994035058900, guid: 02c26d83b35cb374daa65d6918d687d9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6249670150361599740, guid: 02c26d83b35cb374daa65d6918d687d9,
         type: 3}
-      propertyPath: StaringGameTime
-      value: 1100
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2441541629696500996, guid: 02c26d83b35cb374daa65d6918d687d9,
+        type: 3}
+      propertyPath: m_Text
+      value: 12 hour clocks mode
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02c26d83b35cb374daa65d6918d687d9, type: 3}

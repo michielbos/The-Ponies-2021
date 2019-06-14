@@ -2,17 +2,17 @@ Shader "Cel Shading/PonyShaderV2"
 {
 	Properties
 	{
-		_AlphaTex("AlphaTex", 2D) = "gray" {}
+		_AlphaTex("AlphaTex", 2D) = "white" {}
 		_AlphaCutout("AlphaCutout", Range( 0 , 0.75)) = 0
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
 		_OutlineColor("OutlineColor", Color) = (1,1,1,1)
-		_OutlineBrightness("OutlineBrightness", Range( 0 , 2)) = 1
-		_OutlineWidth("OutlineWidth", Range( 0 , 0.05)) = 0
+		_OutlineBrightness("OutlineBrightness", Range( 0 , 2)) = 0.7
+		_OutlineWidth("OutlineWidth", Range( 0 , 0.4)) = 0
 		[Toggle]_OutlineSwitch("Texture Based Outline Switch", Float) = 1
-		[Enum(Overlay,0,Overlap,1)]_Cutiemarkmode("CM Render Mode", Float) = 1
-		_CutieMarkTex("CutieMarkTex", 2D) = "white" {}
-		_CutiemarkRotation("Cutiemark Rotation", Range( 0 , 360)) = 270
-		_CutiemarksUVs("Cutiemarks UVs", Vector) = (12,12,-0.34,2.36)
+		_FlankmarkTex("FlankmarkTex", 2D) = "white" {}
+		_FlankmarkZoneMask("FlankmarkZoneMask", 2D) = "white" {}
+		_FlankmarkRotation("Flankmark Rotation", Range( 0 , 360)) = 270
+		_FlankmarksUVs("Flankmarks UVs", Vector) = (12,12,-0.34,2.36)
 		_ColorMaskTex("ColorMaskTex", 2D) = "white" {}
 		[Toggle(_USEADDITIONALTEXTURE_ON)] _UseAdditionalTexture("Use Additional Texture", Float) = 0
 		_ColorMaskAdditionalTex("ColorMaskAdditionalTex", 2D) = "white" {}
@@ -22,8 +22,6 @@ Shader "Cel Shading/PonyShaderV2"
 		_Color4("Color 4", Color) = (0.7,0.7,0.7,1)
 		_Color5("Color 5", Color) = (0.7,0.7,0.7,1)
 		_Color6("Color 6", Color) = (0.7,0.7,0.7,1)
-		_CutieMarkZoneMask("CutieMarkZoneMask", 2D) = "white" {}
-		[Toggle(_DISABLEMASK_ON)] _DisableMask("DisableMask", Float) = 0
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
@@ -31,6 +29,8 @@ Shader "Cel Shading/PonyShaderV2"
 	SubShader
 	{
 		Tags{ }
+		ZWrite Off
+		ZTest LEqual
 		Cull Front
 		CGPROGRAM
 		#pragma target 3.0
@@ -74,30 +74,23 @@ Shader "Cel Shading/PonyShaderV2"
 			float2 uv_AlphaTex = i.uv_texcoord * _AlphaTex_ST.xy + _AlphaTex_ST.zw;
 			half4 tex2DNode59 = tex2D( _AlphaTex, uv_AlphaTex );
 			float4 AlphaTexVar72 = tex2DNode59;
-			#ifdef _DISABLEMASK_ON
-				float4 staticSwitch181 = AlphaTexVar72;
-			#else
-				float4 staticSwitch181 = ( ( ( _Color1 * break13.x ) + ( _Color2 * break13.y ) + ( _Color3 * break13.z ) + ( _Color4 * break43.x ) + ( _Color5 * break43.y ) + ( _Color6 * break43.z ) ) * AlphaTexVar72 );
-			#endif
-			float4 ColorMaskTextureOutput93 = staticSwitch181;
-			half4 _Color = half4(0.7,0.7,0.7,1);
-			float4 ColorVar116 = _Color;
-			half2 temp_cast_4 = (0.5).xx;
-			float2 appendResult22 = (half2(_CutiemarksUVs.x , _CutiemarksUVs.y));
-			float2 appendResult36 = (half2(_CutiemarksUVs.z , _CutiemarksUVs.w));
-			half2 UV60 = ( ( ( i.uv_texcoord - temp_cast_4 ) * appendResult22 ) + appendResult36 );
-			half Angle60 = radians( _CutiemarkRotation );
+			float4 ColorMaskTextureOutput93 = ( ( ( _Color1 * break13.x ) + ( _Color2 * break13.y ) + ( _Color3 * break13.z ) + ( _Color4 * break43.x ) + ( _Color5 * break43.y ) + ( _Color6 * break43.z ) ) * AlphaTexVar72 );
+			half2 temp_cast_3 = (0.5).xx;
+			float2 appendResult22 = (half2(_FlankmarksUVs.x , _FlankmarksUVs.y));
+			float2 appendResult36 = (half2(_FlankmarksUVs.z , _FlankmarksUVs.w));
+			half2 UV60 = ( ( ( i.uv_texcoord - temp_cast_3 ) * appendResult22 ) + appendResult36 );
+			half Angle60 = radians( _FlankmarkRotation );
 			half2 localRotateUV60 = RotateUV60( UV60 , Angle60 );
-			half2 CutiemarksUVs65 = localRotateUV60;
-			half4 CutieMarkTexVar82 = tex2D( _CutieMarkTex, CutiemarksUVs65 );
-			float temp_output_94_0 = (CutieMarkTexVar82).a;
-			half CMZoneAlpha83 = tex2D( _CutieMarkZoneMask, CutiemarksUVs65 ).r;
+			half2 FlankmarksUVs65 = localRotateUV60;
+			half4 FlankmarkTexVar82 = tex2D( _FlankmarkTex, FlankmarksUVs65 );
+			float temp_output_94_0 = (FlankmarkTexVar82).a;
+			half FMZoneAlpha83 = tex2D( _FlankmarkZoneMask, FlankmarksUVs65 ).r;
 			half ifLocalVar118 = 0;
 			if( temp_output_94_0 == 1.0 )
-				ifLocalVar118 = ( temp_output_94_0 - CMZoneAlpha83 );
+				ifLocalVar118 = ( temp_output_94_0 - FMZoneAlpha83 );
 			else if( temp_output_94_0 < 1.0 )
 				ifLocalVar118 = temp_output_94_0;
-			float4 lerpResult137 = lerp( ( ColorMaskTextureOutput93 * ColorVar116 ) , ( ( half4( half3(0.7,0.7,0.7) , 0.0 ) * CutieMarkTexVar82 ) * saturate( ( ColorMaskTextureOutput93 + _Cutiemarkmode ) ) ) , ifLocalVar118);
+			float4 lerpResult137 = lerp( ( ColorMaskTextureOutput93 * float4( 0.7,0.7,0.7,1 ) ) , ( ( float4( 0.7,0.7,0.7,1 ) * FlankmarkTexVar82 ) * saturate( ( ColorMaskTextureOutput93 + float4( 1,1,1,0 ) ) ) ) , ifLocalVar118);
 			float4 switchResult141 = (((i.ASEVFace>0)?(lerpResult137):(ColorMaskTextureOutput93)));
 			half4 CombinedTexture149 = switchResult141;
 			float3 BaseColor160 = ( ( ( IndirDiffLight142 * ase_lightColor.a * temp_output_143_0 ) + ( ase_lightColor.rgb * lerpResult148 ) ) * (CombinedTexture149).rgb );
@@ -108,14 +101,16 @@ Shader "Cel Shading/PonyShaderV2"
 		
 
 		Tags{ "RenderType" = "TransparentCutout"  "Queue" = "Geometry+0" }
+		LOD 200
 		Cull Off
+		ZWrite On
+		ZTest LEqual
 		CGINCLUDE
 		#include "UnityPBSLighting.cginc"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 		#include "Lighting.cginc"
 		#pragma target 3.0
-		#pragma shader_feature _DISABLEMASK_ON
 		#pragma shader_feature _USEADDITIONALTEXTURE_ON
 		#ifdef UNITY_PASS_SHADOWCASTER
 			#undef INTERNAL_DATA
@@ -160,11 +155,10 @@ Shader "Cel Shading/PonyShaderV2"
 		uniform half4 _Color6;
 		uniform sampler2D _AlphaTex;
 		uniform half4 _AlphaTex_ST;
-		uniform sampler2D _CutieMarkTex;
-		uniform half4 _CutiemarksUVs;
-		uniform half _CutiemarkRotation;
-		uniform half _Cutiemarkmode;
-		uniform sampler2D _CutieMarkZoneMask;
+		uniform sampler2D _FlankmarkTex;
+		uniform half4 _FlankmarksUVs;
+		uniform half _FlankmarkRotation;
+		uniform sampler2D _FlankmarkZoneMask;
 		uniform half _AlphaCutout;
 		uniform half _OutlineWidth;
 		uniform half _OutlineSwitch;
@@ -212,8 +206,7 @@ Shader "Cel Shading/PonyShaderV2"
 			#endif
 			float2 uv_AlphaTex = i.uv_texcoord * _AlphaTex_ST.xy + _AlphaTex_ST.zw;
 			half4 tex2DNode59 = tex2D( _AlphaTex, uv_AlphaTex );
-			half4 _Color = half4(0.7,0.7,0.7,1);
-			float AlphaValue175 = ( tex2DNode59.a * _Color.a );
+			float AlphaValue175 = tex2DNode59.a;
 			float AlphaClipVar173 = saturate( ( (0.0 + (_AlphaCutout - 1.0) * (1.0 - 0.0) / (0.0 - 1.0)) + AlphaValue175 ) );
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
 			float4 ase_lightColor = 0;
@@ -247,29 +240,23 @@ Shader "Cel Shading/PonyShaderV2"
 			#endif
 			float3 break43 = (staticSwitch6).rgb;
 			float4 AlphaTexVar72 = tex2DNode59;
-			#ifdef _DISABLEMASK_ON
-				float4 staticSwitch181 = AlphaTexVar72;
-			#else
-				float4 staticSwitch181 = ( ( ( _Color1 * break13.x ) + ( _Color2 * break13.y ) + ( _Color3 * break13.z ) + ( _Color4 * break43.x ) + ( _Color5 * break43.y ) + ( _Color6 * break43.z ) ) * AlphaTexVar72 );
-			#endif
-			float4 ColorMaskTextureOutput93 = staticSwitch181;
-			float4 ColorVar116 = _Color;
-			half2 temp_cast_5 = (0.5).xx;
-			float2 appendResult22 = (half2(_CutiemarksUVs.x , _CutiemarksUVs.y));
-			float2 appendResult36 = (half2(_CutiemarksUVs.z , _CutiemarksUVs.w));
-			half2 UV60 = ( ( ( i.uv_texcoord - temp_cast_5 ) * appendResult22 ) + appendResult36 );
-			half Angle60 = radians( _CutiemarkRotation );
+			float4 ColorMaskTextureOutput93 = ( ( ( _Color1 * break13.x ) + ( _Color2 * break13.y ) + ( _Color3 * break13.z ) + ( _Color4 * break43.x ) + ( _Color5 * break43.y ) + ( _Color6 * break43.z ) ) * AlphaTexVar72 );
+			half2 temp_cast_3 = (0.5).xx;
+			float2 appendResult22 = (half2(_FlankmarksUVs.x , _FlankmarksUVs.y));
+			float2 appendResult36 = (half2(_FlankmarksUVs.z , _FlankmarksUVs.w));
+			half2 UV60 = ( ( ( i.uv_texcoord - temp_cast_3 ) * appendResult22 ) + appendResult36 );
+			half Angle60 = radians( _FlankmarkRotation );
 			half2 localRotateUV60 = RotateUV60( UV60 , Angle60 );
-			half2 CutiemarksUVs65 = localRotateUV60;
-			half4 CutieMarkTexVar82 = tex2D( _CutieMarkTex, CutiemarksUVs65 );
-			float temp_output_94_0 = (CutieMarkTexVar82).a;
-			half CMZoneAlpha83 = tex2D( _CutieMarkZoneMask, CutiemarksUVs65 ).r;
+			half2 FlankmarksUVs65 = localRotateUV60;
+			half4 FlankmarkTexVar82 = tex2D( _FlankmarkTex, FlankmarksUVs65 );
+			float temp_output_94_0 = (FlankmarkTexVar82).a;
+			half FMZoneAlpha83 = tex2D( _FlankmarkZoneMask, FlankmarksUVs65 ).r;
 			half ifLocalVar118 = 0;
 			if( temp_output_94_0 == 1.0 )
-				ifLocalVar118 = ( temp_output_94_0 - CMZoneAlpha83 );
+				ifLocalVar118 = ( temp_output_94_0 - FMZoneAlpha83 );
 			else if( temp_output_94_0 < 1.0 )
 				ifLocalVar118 = temp_output_94_0;
-			float4 lerpResult137 = lerp( ( ColorMaskTextureOutput93 * ColorVar116 ) , ( ( half4( half3(0.7,0.7,0.7) , 0.0 ) * CutieMarkTexVar82 ) * saturate( ( ColorMaskTextureOutput93 + _Cutiemarkmode ) ) ) , ifLocalVar118);
+			float4 lerpResult137 = lerp( ( ColorMaskTextureOutput93 * float4( 0.7,0.7,0.7,1 ) ) , ( ( float4( 0.7,0.7,0.7,1 ) * FlankmarkTexVar82 ) * saturate( ( ColorMaskTextureOutput93 + float4( 1,1,1,0 ) ) ) ) , ifLocalVar118);
 			float4 switchResult141 = (((i.ASEVFace>0)?(lerpResult137):(ColorMaskTextureOutput93)));
 			half4 CombinedTexture149 = switchResult141;
 			float3 BaseColor160 = ( ( ( IndirDiffLight142 * ase_lightColor.a * temp_output_143_0 ) + ( ase_lightColor.rgb * lerpResult148 ) ) * (CombinedTexture149).rgb );
@@ -318,30 +305,23 @@ Shader "Cel Shading/PonyShaderV2"
 			float2 uv_AlphaTex = i.uv_texcoord * _AlphaTex_ST.xy + _AlphaTex_ST.zw;
 			half4 tex2DNode59 = tex2D( _AlphaTex, uv_AlphaTex );
 			float4 AlphaTexVar72 = tex2DNode59;
-			#ifdef _DISABLEMASK_ON
-				float4 staticSwitch181 = AlphaTexVar72;
-			#else
-				float4 staticSwitch181 = ( ( ( _Color1 * break13.x ) + ( _Color2 * break13.y ) + ( _Color3 * break13.z ) + ( _Color4 * break43.x ) + ( _Color5 * break43.y ) + ( _Color6 * break43.z ) ) * AlphaTexVar72 );
-			#endif
-			float4 ColorMaskTextureOutput93 = staticSwitch181;
-			half4 _Color = half4(0.7,0.7,0.7,1);
-			float4 ColorVar116 = _Color;
-			half2 temp_cast_2 = (0.5).xx;
-			float2 appendResult22 = (half2(_CutiemarksUVs.x , _CutiemarksUVs.y));
-			float2 appendResult36 = (half2(_CutiemarksUVs.z , _CutiemarksUVs.w));
-			half2 UV60 = ( ( ( i.uv_texcoord - temp_cast_2 ) * appendResult22 ) + appendResult36 );
-			half Angle60 = radians( _CutiemarkRotation );
+			float4 ColorMaskTextureOutput93 = ( ( ( _Color1 * break13.x ) + ( _Color2 * break13.y ) + ( _Color3 * break13.z ) + ( _Color4 * break43.x ) + ( _Color5 * break43.y ) + ( _Color6 * break43.z ) ) * AlphaTexVar72 );
+			half2 temp_cast_1 = (0.5).xx;
+			float2 appendResult22 = (half2(_FlankmarksUVs.x , _FlankmarksUVs.y));
+			float2 appendResult36 = (half2(_FlankmarksUVs.z , _FlankmarksUVs.w));
+			half2 UV60 = ( ( ( i.uv_texcoord - temp_cast_1 ) * appendResult22 ) + appendResult36 );
+			half Angle60 = radians( _FlankmarkRotation );
 			half2 localRotateUV60 = RotateUV60( UV60 , Angle60 );
-			half2 CutiemarksUVs65 = localRotateUV60;
-			half4 CutieMarkTexVar82 = tex2D( _CutieMarkTex, CutiemarksUVs65 );
-			float temp_output_94_0 = (CutieMarkTexVar82).a;
-			half CMZoneAlpha83 = tex2D( _CutieMarkZoneMask, CutiemarksUVs65 ).r;
+			half2 FlankmarksUVs65 = localRotateUV60;
+			half4 FlankmarkTexVar82 = tex2D( _FlankmarkTex, FlankmarksUVs65 );
+			float temp_output_94_0 = (FlankmarkTexVar82).a;
+			half FMZoneAlpha83 = tex2D( _FlankmarkZoneMask, FlankmarksUVs65 ).r;
 			half ifLocalVar118 = 0;
 			if( temp_output_94_0 == 1.0 )
-				ifLocalVar118 = ( temp_output_94_0 - CMZoneAlpha83 );
+				ifLocalVar118 = ( temp_output_94_0 - FMZoneAlpha83 );
 			else if( temp_output_94_0 < 1.0 )
 				ifLocalVar118 = temp_output_94_0;
-			float4 lerpResult137 = lerp( ( ColorMaskTextureOutput93 * ColorVar116 ) , ( ( half4( half3(0.7,0.7,0.7) , 0.0 ) * CutieMarkTexVar82 ) * saturate( ( ColorMaskTextureOutput93 + _Cutiemarkmode ) ) ) , ifLocalVar118);
+			float4 lerpResult137 = lerp( ( ColorMaskTextureOutput93 * float4( 0.7,0.7,0.7,1 ) ) , ( ( float4( 0.7,0.7,0.7,1 ) * FlankmarkTexVar82 ) * saturate( ( ColorMaskTextureOutput93 + float4( 1,1,1,0 ) ) ) ) , ifLocalVar118);
 			float4 switchResult141 = (((i.ASEVFace>0)?(lerpResult137):(ColorMaskTextureOutput93)));
 			half4 CombinedTexture149 = switchResult141;
 			float3 BaseColor160 = ( ( ( IndirDiffLight142 * ase_lightColor.a * temp_output_143_0 ) + ( ase_lightColor.rgb * lerpResult148 ) ) * (CombinedTexture149).rgb );
