@@ -85,7 +85,7 @@ public class FloorTool : MonoBehaviour, ITool {
                     if (SellFloors(dragRect)) {
                         SoundController.Instance.PlaySound(SoundType.PlaceFloor);
                     }
-                } else if (canPlace && costs <= MoneyController.Instance.Funds) {
+                } else if (canPlace && MoneyController.Instance.CanAfford(costs)) {
                     MoneyController.Instance.ChangeFunds(-costs);
                     SoundController.Instance.PlaySound(SoundType.PlaceFloor);
                     PlaceFloors(dragRect, placingPreset);

@@ -166,7 +166,7 @@ public class Property : MonoBehaviour {
 			pony.Init(ponyData.ponyName, ponyData.Race, ponyData.Gender, ponyData.Age);
 			ponies.Add(pony);
 		}
-		household = new Household(data.householdName, ponies);
+		household = new Household(data.householdName, data.money, ponies);
 	}
 
 	public PropertyData GetPropertyData () {

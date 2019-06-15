@@ -8,8 +8,9 @@ public class Household {
     public int money;
     public readonly List<Pony> ponies;
 
-    public Household(string householdName, List<Pony> ponies) {
+    public Household(string householdName, int money, List<Pony> ponies) {
         this.householdName = householdName;
+        this.money = money;
         this.ponies = ponies;
     }
 

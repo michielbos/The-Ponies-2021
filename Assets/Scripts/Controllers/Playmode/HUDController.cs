@@ -88,7 +88,11 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
     }
 
     public void UpdateFunds() {
-        fundsText.text = "$" + MoneyController.Instance.Funds;
+        if (MoneyController.Instance.UseFunds) {
+            fundsText.text = "$" + MoneyController.Instance.Funds;
+        } else {
+            fundsText.text = "";
+        }
     }
 
     public void UpdateTime() {

@@ -174,7 +174,7 @@ public class BuyTool : MonoBehaviour, ITool {
         FurniturePreset movingPreset = GetMovingPreset();
         Vector2Int[] requiredTiles = movingPreset.GetOccupiedTiles(targetTile.TilePosition, MarkerRotation);
         List<PropertyObject> occupyingObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
-        bool canPlace = placingPreset == null || placingPreset.price <= MoneyController.Instance.Funds;
+        bool canPlace = placingPreset == null || MoneyController.Instance.CanAfford(placingPreset.price);
         if (canPlace && !CheatsController.Instance.moveObjectsMode) {
             foreach (PropertyObject occupyingObject in occupyingObjects) {
                 if (occupyingObject != movingObject)

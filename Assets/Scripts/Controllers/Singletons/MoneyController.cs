@@ -1,28 +1,31 @@
 ﻿using Assets.Scripts.Util;
 
-namespace Assets.Scripts.Controllers
-{
-    public class MoneyController : SingletonMonoBehaviour<MoneyController>
-    {
-        public int Funds { get; private set; }
+namespace Assets.Scripts.Controllers {
 
-        private void Start()
-        {
-            //TODO: Allocate the moneys in the proper place when we have one.
-            Funds = 50000; 
-            HUDController.GetInstance().UpdateFunds();
-        }
+public class MoneyController : SingletonMonoBehaviour<MoneyController> {
+    public bool UseFunds => PropertyController.Instance.property.household != null;
+    public int Funds => PropertyController.Instance.property.household?.money ?? 0;
 
-        public void ChangeFunds(int change)
-        {
-            Funds += change;
-            HUDController.GetInstance().UpdateFunds();
-        }
-
-        public void SetFunds(int amount)
-        {
-            Funds = amount;
-            HUDController.GetInstance().UpdateFunds();
-        }
+    private void Start() {
+        HUDController.GetInstance().UpdateFunds();
     }
+
+    public void ChangeFunds(int change) {
+        if (!UseFunds)
+            return;
+        SetFunds(Funds + change);
+    }
+
+    public void SetFunds(int amount) {
+        if (!UseFunds)
+            return;
+        PropertyController.Instance.property.household.money = amount;
+        HUDController.GetInstance().UpdateFunds();
+    }
+
+    public bool CanAfford(int amount) {
+        return !UseFunds || amount <= Funds;
+    }
+}
+
 }
