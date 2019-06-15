@@ -1,4 +1,8 @@
-﻿using UnityEngine;
+﻿using System.Collections.Generic;
+using Model.Actions;
+using Model.Actions.Actions;
+using Model.Ponies;
+using UnityEngine;
 
 namespace Model.Property {
 
@@ -6,7 +10,7 @@ namespace Model.Property {
 /// An object that can be placed on a lot, usually a piece of furniture.
 /// </summary>
 [System.Serializable]
-public class PropertyObject : MonoBehaviour {
+public class PropertyObject : MonoBehaviour, IActionProvider {
     public int id;
     private ObjectRotation rotation;
     public FurniturePreset preset;
@@ -57,6 +61,12 @@ public class PropertyObject : MonoBehaviour {
 
     public void SetVisibility(bool visible) {
         model.gameObject.SetActive(visible);
+    }
+
+    public List<PonyAction> GetActions(Pony pony) {
+        return new List<PonyAction>() {
+            new FakeAction("View")
+        };
     }
 }
 

@@ -7080,6 +7080,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: bad148455e354b348f664485eb5d3feb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  pieMenuPrefab: {fileID: 7612717002123301924, guid: cae467969fac86468b5fee66954f5550,
+    type: 3}
   selectedPony: {fileID: 0}
 --- !u!114 &114544127686149074
 MonoBehaviour:

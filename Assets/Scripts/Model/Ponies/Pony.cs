@@ -1,9 +1,12 @@
+using System.Collections.Generic;
+using Model.Actions;
+using Model.Actions.Actions;
 using Model.Data;
 using UnityEngine;
 
 namespace Model.Ponies {
 
-public class Pony: MonoBehaviour {
+public class Pony: MonoBehaviour, IActionProvider {
     public GameObject indicator;
     public Material indicatorMaterial;
     
@@ -26,6 +29,23 @@ public class Pony: MonoBehaviour {
 
     public void SetSelected(bool selected) {
         indicator.SetActive(selected);
+    }
+
+    public void QueueAction(PonyAction action) {
+        // TODO: Implement queue
+    }
+
+    public List<PonyAction> GetActions(Pony pony) {
+        if (pony == this) {
+            return new List<PonyAction>() {
+                new FakeAction("Why am I a cube?")
+            };
+        }
+        return new List<PonyAction>() {
+            new FakeAction("Chat"),
+            new FakeAction("Slap"),
+            new FakeAction("Flirt"),
+        };
     }
 }
 

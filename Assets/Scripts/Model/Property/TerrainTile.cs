@@ -1,4 +1,8 @@
 ﻿using System;
+using System.Collections.Generic;
+using Model.Actions;
+using Model.Actions.Actions;
+using Model.Ponies;
 using UnityEngine;
 
 namespace Model.Property {
@@ -8,7 +12,7 @@ namespace Model.Property {
 /// The physical "dummy" of this object is kept in the dummyTile attribute.
 /// </summary>
 [Serializable]
-public class TerrainTile : MonoBehaviour {
+public class TerrainTile : MonoBehaviour, IActionProvider {
     public int height;
     public int type;
     public Transform model;
@@ -34,6 +38,10 @@ public class TerrainTile : MonoBehaviour {
 
     public void SetVisible(bool visible) {
         model.GetComponent<MeshRenderer>().enabled = visible;
+    }
+
+    public List<PonyAction> GetActions(Pony pony) {
+        return new List<PonyAction> {new MoveAction("Go here"), new MoveAction("Gallop here")};
     }
 }
 
