@@ -8,7 +8,7 @@ pipeline {
             steps {
                 slackSend color: '#0000FF', message: "Started build ${env.JOB_NAME} #${env.BUILD_NUMBER}. (<${env.BUILD_URL}|Open>)"
                 sh 'rm -rf Build/ Archives/'
-                sh '/opt/Unity/Editor/Unity -manualLicenseFile /opt/Unity/Editor/Unity_v2019.x.ulf -batchmode -nographics -logfile | true'
+                sh '/opt/Unity/Editor/Unity -manualLicenseFile /opt/Unity/Editor/Unity_v2019.x.ulf -batchmode -nographics | true'
             }
         }
         stage ('Build') {
@@ -18,9 +18,9 @@ pipeline {
             steps {
                 script {
                     if (env.BRANCH_NAME == 'master') {
-                        sh 'xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" /opt/Unity/Editor/Unity -projectPath . -executeMethod ThePoniesBuilder.RunReleaseBuild -batchmode -quit -logfile'
+                        sh 'xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" /opt/Unity/Editor/Unity -projectPath . -executeMethod ThePoniesBuilder.RunReleaseBuild -batchmode -quit'
                     } else {
-                        sh 'xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" /opt/Unity/Editor/Unity -projectPath . -executeMethod ThePoniesBuilder.RunBuild -batchmode -quit -logfile'
+                        sh 'xvfb-run --auto-servernum --server-args=\"-screen 0 640x480x24:32\" /opt/Unity/Editor/Unity -projectPath . -executeMethod ThePoniesBuilder.RunBuild -batchmode -quit'
                     }
                 }
             }
