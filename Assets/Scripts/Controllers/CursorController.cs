@@ -1,3 +1,4 @@
+using System;
 using Assets.Scripts.Util;
 using UnityEngine;
 
@@ -18,14 +19,21 @@ public enum CursorType {
 }
 
 public class CursorController : SingletonMonoBehaviour<CursorController> {
-    public Texture2D[] cursorTextures;
+    public CursorSetting[] cursorSettings;
     private CursorType currentCursor;
+    
+    [Serializable]
+    public struct CursorSetting {
+        public Texture2D texture;
+        public Vector2Int hotspot;
+    }
 
     public void SetCursor(CursorType cursorType) {
         if (cursorType == currentCursor)
             return;
         currentCursor = cursorType;
-        Cursor.SetCursor(cursorTextures[(int) cursorType], Vector2.zero, CursorMode.Auto);
+        CursorSetting cursorSetting = cursorSettings[(int) cursorType];
+        Cursor.SetCursor(cursorSetting.texture, cursorSetting.hotspot, CursorMode.Auto);
     }
 }
 

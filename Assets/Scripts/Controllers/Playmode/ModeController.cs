@@ -10,12 +10,12 @@ public class ModeController : SingletonMonoBehaviour<ModeController> {
     public GuiButtonController CameraModeGuiButtonController;
     public GuiButtonController OptionsModeGuiButtonController;
 
-    private HudPanel currentMode = HudPanel.None;
+    public HudPanel CurrentMode { get; private set; } = HudPanel.None;
 
     public void SwitchMode(HudPanel mode) {
-        if (mode == currentMode)
+        if (mode == CurrentMode)
             mode = HudPanel.None;
-        currentMode = mode;
+        CurrentMode = mode;
         CatalogController.GetInstance().CloseCatalog();
 
         // Quit any tools that may be open from the last panel
@@ -62,8 +62,8 @@ public class ModeController : SingletonMonoBehaviour<ModeController> {
     }
 
     public void LockLiveMode(bool locked) {
-        if (locked && currentMode == HudPanel.Live) {
-            currentMode = HudPanel.None;
+        if (locked && CurrentMode == HudPanel.Live) {
+            CurrentMode = HudPanel.None;
         }
         LiveModeGuiButtonController.Locked = locked;
     }
