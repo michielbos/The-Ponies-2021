@@ -8,7 +8,7 @@ pipeline {
             steps {
                 slackSend color: '#0000FF', message: "Started build ${env.JOB_NAME} #${env.BUILD_NUMBER}. (<${env.BUILD_URL}|Open>)"
                 sh 'rm -rf Build/ Archives/'
-                sh '/opt/Unity/Editor/Unity -batchmode -nographics -logfile | true'
+                sh '/opt/Unity/Editor/Unity -manualLicenseFile /opt/Unity/Editor/Unity_v2019.x.ulf -batchmode -nographics -logfile | true'
             }
         }
         stage ('Build') {
