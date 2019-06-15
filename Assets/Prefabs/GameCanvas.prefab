@@ -1059,6 +1059,7 @@ GameObject:
   - component: {fileID: 224405170459545026}
   - component: {fileID: 222636865972891770}
   - component: {fileID: 114955317043649444}
+  - component: {fileID: 1768695551498501924}
   m_Layer: 5
   m_Name: PlaybleCharacters
   m_TagString: Untagged
@@ -1130,6 +1131,27 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+--- !u!114 &1768695551498501924
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1125525438543956}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 17d07ae631a24915986776eb1ba919d5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  portraits:
+  - {fileID: 1239726291051818}
+  - {fileID: 1117387601065658}
+  - {fileID: 1652003490282646}
+  - {fileID: 1516634882160802}
+  - {fileID: 1416934831347904}
+  - {fileID: 1407416353383148}
+  - {fileID: 1276826519143138}
+  - {fileID: 1433996885744354}
 --- !u!1 &1127123760684834
 GameObject:
   m_ObjectHideFlags: 0
@@ -3984,7 +4006,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &224692227753370068
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7046,7 +7068,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &224530609870845374
 RectTransform:
   m_ObjectHideFlags: 0
