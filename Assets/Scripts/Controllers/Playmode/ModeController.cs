@@ -10,7 +10,7 @@ public class ModeController : SingletonMonoBehaviour<ModeController> {
     public GuiButtonController CameraModeGuiButtonController;
     public GuiButtonController OptionsModeGuiButtonController;
 
-    private HudPanel currentMode;
+    private HudPanel currentMode = HudPanel.None;
 
     public void SwitchMode(HudPanel mode) {
         if (mode == currentMode)

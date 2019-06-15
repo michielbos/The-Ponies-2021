@@ -2,7 +2,7 @@ using Assets.Scripts.Util;
 using JetBrains.Annotations;
 using Model.Ponies;
 
-namespace Assets.Scripts.Controllers {
+namespace Controllers.Playmode {
 
 public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
     [CanBeNull] public Household Household => PropertyController.Instance.property.household;
