@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using Assets.Scripts.Controllers;
 using JetBrains.Annotations;
 using Model.Data;
 using Model.Ponies;
@@ -158,6 +159,7 @@ public class Property : MonoBehaviour {
 
 	private void LoadHousehold(HouseholdData data) {
 		if (data == null) {
+			ModeController.Instance.LockLiveMode(true);
 			return;
 		}
 		List<Pony> ponies = new List<Pony>();
