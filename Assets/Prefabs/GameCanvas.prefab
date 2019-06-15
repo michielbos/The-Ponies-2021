@@ -6895,6 +6895,7 @@ GameObject:
   - component: {fileID: 114099412846582776}
   - component: {fileID: 114086576077371470}
   - component: {fileID: 8243250806356457648}
+  - component: {fileID: 7785438659274785964}
   m_Layer: 5
   m_Name: HouseGameController
   m_TagString: GameController
@@ -7202,6 +7203,30 @@ MonoBehaviour:
   DaysInOneMonth: 25
   DaysInOneYear: 100
   twelveHourClock: 1
+--- !u!114 &7785438659274785964
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383177691709652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 34422261d307452396805062702eceb7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  cursorTextures:
+  - {fileID: 2800000, guid: 936a715b284e76a489f4e74335bae723, type: 3}
+  - {fileID: 2800000, guid: 3c56a9a80ba41eb48a4308716b1085ec, type: 3}
+  - {fileID: 2800000, guid: 035515684c959644bbee636f0201aa97, type: 3}
+  - {fileID: 2800000, guid: ed4a363e2c1296c428f62024d3956316, type: 3}
+  - {fileID: 2800000, guid: 935b634f6f123464ebc21594bc63a2ee, type: 3}
+  - {fileID: 2800000, guid: 2eb02faa814cdd24392ce7c64ca3af41, type: 3}
+  - {fileID: 2800000, guid: fc161d7b889473a47a1e3c10afafa787, type: 3}
+  - {fileID: 2800000, guid: b1c06d0dce39705418e13348b30fffe4, type: 3}
+  - {fileID: 2800000, guid: dbb1dab61f177964c98dc4863a3bd482, type: 3}
+  - {fileID: 2800000, guid: 3401c2a844a0e9042a230fe7384afd7b, type: 3}
+  - {fileID: 2800000, guid: 370457a2b2714b24284c5e1c19e86724, type: 3}
 --- !u!1 &1400994035058900
 GameObject:
   m_ObjectHideFlags: 0
