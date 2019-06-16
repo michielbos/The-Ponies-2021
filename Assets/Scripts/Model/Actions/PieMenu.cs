@@ -35,7 +35,6 @@ public class PieMenu : MonoBehaviour {
 
     private Vector2 GetPositionInCircle(int index, int totalActions) {
         float radians = index * Mathf.PI * 2 / totalActions;
-        Debug.Log(new Vector2(Mathf.Sin(radians), Mathf.Cos(radians)));
         return new Vector2(Mathf.Sin(radians), Mathf.Cos(radians)) * ButtonDistance;
     }
 }

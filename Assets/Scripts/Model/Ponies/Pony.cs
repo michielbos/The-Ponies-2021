@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Controllers.Playmode;
 using Model.Actions;
 using Model.Actions.Actions;
 using Model.Data;
@@ -9,11 +10,14 @@ namespace Model.Ponies {
 public class Pony: MonoBehaviour, IActionProvider {
     public GameObject indicator;
     public Material indicatorMaterial;
+    public List<PonyAction> queuedActions = new List<PonyAction>();
     
     public string ponyName;
     public PonyRace race;
     public Gender gender;
     public PonyAge age;
+
+    public bool IsSelected => HouseholdController.Instance.selectedPony == this;
 
     public void Init(string ponyName, PonyRace race, Gender gender, PonyAge age) {
         this.ponyName = ponyName;
@@ -32,9 +36,12 @@ public class Pony: MonoBehaviour, IActionProvider {
     }
 
     public void QueueAction(PonyAction action) {
-        // TODO: Implement queue
+        queuedActions.Add(action);
+        if (IsSelected) {
+            HouseholdController.Instance.actionQueue.UpdateActions(queuedActions);
+        }
     }
-
+    
     public List<PonyAction> GetActions(Pony pony) {
         if (pony == this) {
             return new List<PonyAction>() {

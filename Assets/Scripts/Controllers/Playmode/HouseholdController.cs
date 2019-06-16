@@ -10,6 +10,7 @@ namespace Controllers.Playmode {
 
 public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
     public PieMenu pieMenuPrefab;
+    public ActionQueue actionQueue;
     [CanBeNull] public Household Household => PropertyController.Instance.property.household;
     [CanBeNull] public Pony selectedPony;
 
@@ -21,6 +22,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         }
         selectedPony = Household.ponies[index];
         selectedPony.SetSelected(true);
+        actionQueue.UpdateActions(selectedPony.queuedActions);
     }
 
     private void Update() {
