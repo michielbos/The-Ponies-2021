@@ -287,6 +287,20 @@ public class Property : MonoBehaviour {
 		return objectsOnTiles;
 	}
 
+	/// <summary>
+	/// Returns a map that specifies which tiles have an object on them.
+	/// All free tiles are represented by a 0. All occupied tiles are represented by a -1.
+	/// </summary>
+	public int[,] GetTileOccupancyMap() {
+		int[,] occupancyMap = new int[TerrainHeight,TerrainWidth];
+		foreach (PropertyObject propertyObject in propertyObjects) {
+			foreach (Vector2Int occupiedTile in propertyObject.GetOccupiedTiles()) {
+				occupancyMap[occupiedTile.y, occupiedTile.x] = -1;
+			}
+		}
+		return occupancyMap;
+	}
+
 	public FloorTile GetFloorTile (int x, int y) {
 		//TODO: Add floor level
 		return floorTiles[0, y, x];
