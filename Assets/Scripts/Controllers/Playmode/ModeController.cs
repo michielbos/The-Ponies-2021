@@ -57,7 +57,7 @@ public class ModeController : SingletonMonoBehaviour<ModeController> {
         // Only pause for Buy Mode and up, excluding Live mode and whenever no mode is selected.
         // No pannel = -1
         //      Live = 0
-        SpeedController.Instance.ForcePause(mode > 0);
+        TimeController.Instance.ForcePause(mode > 0);
         HUDController.GetInstance().UpdateSpeed();
     }
 

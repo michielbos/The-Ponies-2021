@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Assets.Scripts.Controllers {
 
-public class SpeedController : SingletonMonoBehaviour<SpeedController> {
+public class TimeController : SingletonMonoBehaviour<TimeController> {
     private const float REAL_TIME_TO_GAME_TIME_MULTIPLIER = 60;
     private Speed currentSpeed;
     private long fullSeconds;
@@ -23,7 +23,6 @@ public class SpeedController : SingletonMonoBehaviour<SpeedController> {
 
     public void Update() {
         if (IsPaused()) {
-            //	_pauseTimer += Time.deltaTime * 2;
             HUDController.Instance.UpdatePauseBlink(pauseTimer);
 
             if (Time.timeScale != 0) {

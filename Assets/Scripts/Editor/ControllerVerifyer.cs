@@ -19,7 +19,7 @@ namespace Assets.Scripts.Editor
 				TestSingleton(MusicController.Instance, "MusicController");
 				TestSingleton(PropertyController.Instance, "PropertyController");
 				TestSingleton(SoundController.Instance, "SoundController");
-				TestSingleton(SpeedController.Instance, "SpeedController");
+				TestSingleton(TimeController.Instance, "SpeedController");
 			}
 			else
 			{

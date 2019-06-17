@@ -43,7 +43,7 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
 
     // Called from Unity GUI Button
     public void SetSpeed(int index) {
-        SpeedController.Instance.SetSpeed(index);
+        TimeController.Instance.SetSpeed(index);
     }
 
     // Called from Unity GUI Button
@@ -60,10 +60,10 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
 
     // Called from Unity GUI Button
     public void SetClocks() {
-        if (SpeedController.Instance.twelveHourClock) {
-            SpeedController.Instance.twelveHourClock = false;
+        if (TimeController.Instance.twelveHourClock) {
+            TimeController.Instance.twelveHourClock = false;
         } else {
-            SpeedController.Instance.twelveHourClock = true;
+            TimeController.Instance.twelveHourClock = true;
         }
         UpdateTime();
     }
@@ -71,7 +71,7 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
     public void UpdateSpeed() {
         speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite;
         foreach (GameObject g in speedButtons) {
-            bool active = speedButtons.IndexOf(g) == SpeedController.Instance.GetCurrentSpeed().GetIndex();
+            bool active = speedButtons.IndexOf(g) == TimeController.Instance.GetCurrentSpeed().GetIndex();
             g.GetComponent<Button>().interactable = !active;
         }
     }
@@ -96,7 +96,7 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
     }
 
     public void UpdateTime() {
-        timeText.text = SpeedController.Instance.GetTimeText();
+        timeText.text = TimeController.Instance.GetTimeText();
     }
 
     public void OnPointerEnter(PointerEventData eventData) {

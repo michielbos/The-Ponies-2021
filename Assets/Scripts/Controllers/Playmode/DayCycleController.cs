@@ -115,9 +115,9 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
     }
 
     public void UpdateTime() {
-        float hour = SpeedController.Instance.GetHourOfDay();
-        float minute = SpeedController.Instance.GetMinuteOfHour();
-        float second = SpeedController.Instance.GetSecondOfMinute();
+        float hour = TimeController.Instance.GetHourOfDay();
+        float minute = TimeController.Instance.GetMinuteOfHour();
+        float second = TimeController.Instance.GetSecondOfMinute();
 
         currentTime = hour + ((minute / 60) + (second / 60 / 60));
     }
@@ -184,9 +184,9 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
     }
 
     void UpdateSeasons() {
-        float DaysInOneYear = SpeedController.Instance.DaysInOneYear;
-        float DaysInOneMonth = SpeedController.Instance.DaysInOneMonth;
-        float CurrDayOfYear = SpeedController.Instance.GetDayOfYear();
+        float DaysInOneYear = TimeController.Instance.DaysInOneYear;
+        float DaysInOneMonth = TimeController.Instance.DaysInOneMonth;
+        float CurrDayOfYear = TimeController.Instance.GetDayOfYear();
 
         if (CurrDayOfYear >= 0 && CurrDayOfYear <= DaysInOneMonth && currSeason != Seasons.SPRING) {
             SetCurrentSeason(Seasons.SPRING);
