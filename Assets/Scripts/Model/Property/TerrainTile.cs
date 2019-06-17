@@ -41,7 +41,7 @@ public class TerrainTile : MonoBehaviour, IActionProvider {
     }
 
     public List<PonyAction> GetActions(Pony pony) {
-        return new List<PonyAction> {new MoveAction("Go here"), new MoveAction("Gallop here")};
+        return new List<PonyAction> {new MoveAction(pony, "Go here"), new MoveAction(pony, "Gallop here")};
     }
 }
 

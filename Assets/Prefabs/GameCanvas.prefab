@@ -17515,6 +17515,7 @@ MonoBehaviour:
     type: 3}
   itemColor: {r: 0.12941177, g: 0.15686275, b: 0.44705883, a: 1}
   activeItemColor: {r: 0.14509805, g: 0.25882354, b: 0.54509807, a: 1}
+  canceledItemColor: {r: 0.54509807, g: 0.14509805, b: 0.25882354, a: 1}
 --- !u!1 &5095254285434209063
 GameObject:
   m_ObjectHideFlags: 0

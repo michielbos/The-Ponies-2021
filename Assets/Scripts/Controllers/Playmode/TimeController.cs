@@ -1,5 +1,7 @@
 ﻿using Assets.Scripts.Util;
 using System;
+using System.Collections.Generic;
+using Controllers.Playmode;
 using UnityEngine;
 
 namespace Assets.Scripts.Controllers {
@@ -15,6 +17,7 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
     private float pauseTimer;
     private bool forcePaused;
     public bool twelveHourClock = true;
+    private readonly List<ITimeTickListener> tickListeners = new List<ITimeTickListener>();
 
     void Start() {
         currentSpeed = Speed.Normal;
@@ -37,6 +40,7 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
         if (Math.Floor(currentGameTime) > fullSeconds) {
             fullSeconds = (long) Math.Floor(currentGameTime);
             HUDController.Instance.UpdateTime();
+            tickListeners.ForEach(listener => listener.OnTick());
         }
     }
 
@@ -148,6 +152,14 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
 
     private Day GetDayOfWeek() {
         return Day.GetByIndex(GetDay() % 7);
+    }
+
+    public void AddTickListener(ITimeTickListener listener) {
+        tickListeners.Add(listener);
+    }
+    
+    public void RemoveTickListener(ITimeTickListener listener) {
+        tickListeners.Remove(listener);
     }
 
     public struct Speed {

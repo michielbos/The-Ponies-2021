@@ -65,7 +65,7 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
 
     public List<PonyAction> GetActions(Pony pony) {
         return new List<PonyAction>() {
-            new FakeAction("View")
+            new FakeAction(pony, "View")
         };
     }
 }
