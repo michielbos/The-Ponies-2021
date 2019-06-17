@@ -21,7 +21,18 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     public Gender gender;
     public PonyAge age;
 
+    [CanBeNull] private Path walkPath;
+
     public bool IsSelected => HouseholdController.Instance.selectedPony == this;
+    public bool IsWalking => walkPath != null;
+    
+    public Vector2Int TilePosition {
+        get {
+            Vector3 position = transform.position;
+            return new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
+        }
+        set { transform.position = new Vector3(value.x, 0, value.y); }
+    }
 
     public void Init(string ponyName, PonyRace race, Gender gender, PonyAge age) {
         this.ponyName = ponyName;
@@ -40,6 +51,13 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     }
 
     public void OnTick() {
+        if (IsWalking) {
+            Vector2Int nextTile = walkPath.NextTile();
+            transform.position = new Vector3(nextTile.x, 0, nextTile.y);
+            if (!walkPath.HasNext()) {
+                walkPath = null;
+            }
+        }
         if (currentAction == null && queuedActions.Count > 0) {
             currentAction = queuedActions[0];
             currentAction.SetActive();
@@ -47,7 +65,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
             
         }
         if (currentAction != null) {
-            currentAction.Tick();
+            currentAction.TickAction();
             if (currentAction.finished) {
                 queuedActions.Remove(currentAction);
                 currentAction = null;
@@ -95,6 +113,11 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         if (IsSelected) {
             HouseholdController.Instance.actionQueue.UpdateActions(queuedActions);
         }
+    }
+
+    public bool SetWalkTarget(Vector2Int target) {
+        walkPath = Pathfinding.PathToTile(TilePosition, target);
+        return walkPath != null;
     }
 }
 

@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+namespace OldPathfinding {
+
 public class Pathfinding {
     TileGraph graph;
     List<TileNode> Q = new List<TileNode>();
@@ -98,4 +100,6 @@ public class Pathfinding {
         return Mathf.Sqrt(Mathf.Pow(here.tile.TilePosition.x-there.tile.TilePosition.x,2)+ Mathf.Pow(here.tile.TilePosition.y - there.tile.TilePosition.y, 2));
     }
     
+}
+
 }

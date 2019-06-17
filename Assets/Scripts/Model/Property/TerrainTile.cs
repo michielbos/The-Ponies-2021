@@ -9,7 +9,6 @@ namespace Model.Property {
 
 /// <summary>
 /// A tile that is part of the terrain.
-/// The physical "dummy" of this object is kept in the dummyTile attribute.
 /// </summary>
 [Serializable]
 public class TerrainTile : MonoBehaviour, IActionProvider {
@@ -41,7 +40,7 @@ public class TerrainTile : MonoBehaviour, IActionProvider {
     }
 
     public List<PonyAction> GetActions(Pony pony) {
-        return new List<PonyAction> {new MoveAction(pony, "Go here"), new MoveAction(pony, "Gallop here")};
+        return new List<PonyAction> {new MoveAction(pony, "Go here", this), new MoveAction(pony, "Gallop here", this)};
     }
 }
 
