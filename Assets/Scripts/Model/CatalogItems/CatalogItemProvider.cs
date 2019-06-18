@@ -24,7 +24,9 @@ public static class CatalogItemProvider {
 			catalogItems.Sort((a, b) => a.price.CompareTo(b.price));
 			return catalogItems;
 		}
-		Debug.LogWarning("Category " + objectCategory + " has not yet been implemented.");
+		if (objectCategory != ObjectCategory.None) {
+			Debug.LogWarning("Category " + objectCategory + " has not yet been implemented.");
+		}
 		return new List<CatalogItem>();
 	}
 }

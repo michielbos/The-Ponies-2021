@@ -11,7 +11,7 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 	private int enteringLot = -1;
 
 	private new void Awake() {
-		if (!InstanceReady) {
+		if (!HasInstance) {
 			base.Awake();
 			DontDestroyOnLoad(gameObject);
 			InitializeGame();

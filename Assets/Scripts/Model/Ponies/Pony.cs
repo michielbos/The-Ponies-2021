@@ -47,7 +47,9 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     }
 
     private void OnDisable() {
-        TimeController.Instance.RemoveTickListener(this);
+        if (TimeController.HasInstance) {
+            TimeController.Instance.RemoveTickListener(this);
+        }
     }
 
     public void OnTick() {
