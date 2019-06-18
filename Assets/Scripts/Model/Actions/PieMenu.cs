@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using Assets.Scripts.Controllers;
 using Model.Ponies;
 using UnityEngine;
 using UnityEngine.UI;
@@ -19,6 +20,7 @@ public class PieMenu : MonoBehaviour {
         foreach (PonyAction action in actions) {
             CreateActionButton(action, index++, actions.Count);
         }
+        SoundController.Instance.PlaySound(SoundType.PieAppear);
     }
 
     private void CreateActionButton(PonyAction action, int index, int totalActions) {
@@ -28,6 +30,7 @@ public class PieMenu : MonoBehaviour {
         Text text = button.GetComponentInChildren<Text>();
         text.text = action.name;
         button.onClick.AddListener(() => {
+            SoundController.Instance.PlaySound(SoundType.PieSelect);
             pony.QueueAction(action);
             Destroy(gameObject);
         });

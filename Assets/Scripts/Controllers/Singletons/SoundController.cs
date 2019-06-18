@@ -17,7 +17,11 @@ namespace Assets.Scripts.Controllers {
         Click,
         DragStart,
         PlaceFloor,
-        PlaceWall
+        PlaceWall,
+        PieAppear,
+        PieSelect,
+        QueueAdded,
+        QueueRemoved
     }
 
     [Serializable]

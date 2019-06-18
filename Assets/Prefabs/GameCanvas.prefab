@@ -7163,6 +7163,14 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: 23dc259700a900540883dea38eabb8b4, type: 3}
   - type: 10
     clip: {fileID: 8300000, guid: c997143b3c90953489c9337b7f246939, type: 3}
+  - type: 11
+    clip: {fileID: 8300000, guid: 287ff3f13078477418ed005d3dd923c6, type: 3}
+  - type: 12
+    clip: {fileID: 8300000, guid: 344b4c7079bb0794f87b0c79cee4e2de, type: 3}
+  - type: 13
+    clip: {fileID: 8300000, guid: d4bbcb31cad57f545ad066e4729f4676, type: 3}
+  - type: 14
+    clip: {fileID: 8300000, guid: 838639eb790e21e48b43dc35151e9f1a, type: 3}
 --- !u!114 &114086576077371470
 MonoBehaviour:
   m_ObjectHideFlags: 0

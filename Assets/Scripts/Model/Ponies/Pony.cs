@@ -104,7 +104,10 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
 
     public void QueueAction(PonyAction action) {
         queuedActions.Add(action);
-        UpdateQueue();
+        if (IsSelected) {
+            SoundController.Instance.PlaySound(SoundType.QueueAdded);
+            UpdateQueue();
+        }
     }
     
     public List<PonyAction> GetActions(Pony pony) {
@@ -126,7 +129,10 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         } else {
             queuedActions.Remove(action);
         }
-        UpdateQueue();
+        if (IsSelected) {
+            SoundController.Instance.PlaySound(SoundType.QueueRemoved);
+            UpdateQueue();
+        }
     }
 
     private void UpdateQueue() {
