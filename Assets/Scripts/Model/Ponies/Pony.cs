@@ -11,6 +11,8 @@ using UnityEngine;
 namespace Model.Ponies {
 
 public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
+    private const float WALK_SPEED = 3f;
+    
     public GameObject indicator;
     public Material indicatorMaterial;
     public List<PonyAction> queuedActions = new List<PonyAction>();
@@ -22,6 +24,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     public PonyAge age;
 
     [CanBeNull] private Path walkPath;
+    private Vector2Int? nextWalkTile;
 
     public bool IsSelected => HouseholdController.Instance.selectedPony == this;
     public bool IsWalking => walkPath != null;
@@ -52,14 +55,29 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         }
     }
 
-    public void OnTick() {
-        if (IsWalking) {
-            Vector2Int nextTile = walkPath.NextTile();
-            transform.position = new Vector3(nextTile.x, 0, nextTile.y);
+    private void Update() {
+        HandleWalking();
+    }
+
+    private void HandleWalking() {
+        if (!IsWalking)
+            return;
+        if (nextWalkTile == null) {
+            nextWalkTile = walkPath.NextTile();
+        }
+        Vector2Int nextTile = nextWalkTile.Value;
+        Vector3 target = new Vector3(nextTile.x, 0, nextTile.y);
+        float speed = WALK_SPEED * Time.deltaTime;
+        transform.position = Vector3.MoveTowards(transform.position, target, speed);
+        if (transform.position == target) {
+            nextWalkTile = null;
             if (!walkPath.HasNext()) {
                 walkPath = null;
             }
         }
+    }
+
+    public void OnTick() {
         if (currentAction == null && queuedActions.Count > 0) {
             currentAction = queuedActions[0];
             currentAction.SetActive();
