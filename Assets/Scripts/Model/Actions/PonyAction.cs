@@ -27,7 +27,14 @@ public abstract class PonyAction {
     }
 
     public void Cancel() {
-        canceled = true;
+        if (!canceled) {
+            canceled = true;
+            OnCancel();
+        }
+    }
+
+    protected virtual void OnCancel() {
+        // Override for additional cancel behaviour.
     }
 
     protected void Finish() {

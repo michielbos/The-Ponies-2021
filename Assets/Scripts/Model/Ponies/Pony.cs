@@ -11,7 +11,7 @@ using UnityEngine;
 namespace Model.Ponies {
 
 public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
-    private const float WALK_SPEED = 3f;
+    private const float WalkSpeed = 3f;
     
     public GameObject indicator;
     public Material indicatorMaterial;
@@ -27,7 +27,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     private Vector2Int? nextWalkTile;
 
     public bool IsSelected => HouseholdController.Instance.selectedPony == this;
-    public bool IsWalking => walkPath != null;
+    public bool IsWalking => nextWalkTile != null || walkPath != null;
     
     public Vector2Int TilePosition {
         get {
@@ -60,18 +60,18 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     }
 
     private void HandleWalking() {
-        if (!IsWalking)
-            return;
-        if (nextWalkTile == null) {
+        if (nextWalkTile == null && walkPath != null) {
             nextWalkTile = walkPath.NextTile();
         }
+        if (nextWalkTile == null)
+            return;
         Vector2Int nextTile = nextWalkTile.Value;
         Vector3 target = new Vector3(nextTile.x, 0, nextTile.y);
-        float speed = WALK_SPEED * Time.deltaTime;
+        float speed = WalkSpeed * Time.deltaTime;
         transform.position = Vector3.MoveTowards(transform.position, target, speed);
         if (transform.position == target) {
             nextWalkTile = null;
-            if (!walkPath.HasNext()) {
+            if (walkPath != null && !walkPath.HasNext()) {
                 walkPath = null;
             }
         }
@@ -144,6 +144,10 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     public bool SetWalkTarget(Vector2Int target) {
         walkPath = Pathfinding.PathToTile(TilePosition, target);
         return walkPath != null;
+    }
+
+    public void CancelWalking() {
+        walkPath = null;
     }
 }
 

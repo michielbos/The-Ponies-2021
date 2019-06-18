@@ -15,9 +15,14 @@ public class MoveAction : PonyAction {
             if (!pony.SetWalkTarget(target.TilePosition)) {
                 Finish();
             }
-        } else if (!pony.IsWalking) {
+        }
+        if (!pony.IsWalking) {
             Finish();
         }
+    }
+
+    protected override void OnCancel() {
+        pony.CancelWalking();
     }
 }
 
