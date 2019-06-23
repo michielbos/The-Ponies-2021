@@ -4,7 +4,7 @@ Shader "Cel Shading/EyeShader"
 	{
 		_EyePupilTex("EyePupilTex", 2D) = "white" {}
 		_EyeGlossMask("Eye Gloss Mask", 2D) = "white" {}
-		_Color("Color", Color) = (1,1,1,1)
+		_EyeColor("EyeColor", Color) = (0.7,0.7,0.7,1)
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
 		_Tiling("Tiling", Range( -0.25 , 4)) = 1.5
 		_YOffset("YOffset", Range( -4 , 4)) = 0
@@ -130,7 +130,7 @@ Shader "Cel Shading/EyeShader"
 			float3 _WhiteColor = float3(1,1,1);
 			float2 uv_TexCoord262 = i.uv_texcoord * appendResult166 + appendResult177;
 			half2 UV293 = uv_TexCoord262;
-			half Angle293 = lerp(radians( ( 180.0 * ase_worldlightDir ) ),radians( ( ase_worldlightDir * -180.0 ) ),_LtoR).x;
+			half Angle293 = lerp(radians( ( 360.0 * ase_worldlightDir.x ) ),radians( ( ase_worldlightDir.x * -360.0 ) ),_LtoR);
 			half2 localRotateUV293 = RotateUV293( UV293 , Angle293 );
 			half2 GlossUV265 = localRotateUV293;
 			half3 EyeGlossTextVar232 = (tex2D( _EyeGlossMask, GlossUV265 )).rgb;
@@ -188,7 +188,7 @@ Shader "Cel Shading/EyeShader"
 			float3 _WhiteColor = float3(1,1,1);
 			float2 uv_TexCoord262 = i.uv_texcoord * appendResult166 + appendResult177;
 			half2 UV293 = uv_TexCoord262;
-			half Angle293 = lerp(radians( ( 180.0 * ase_worldlightDir ) ),radians( ( ase_worldlightDir * -180.0 ) ),_LtoR).x;
+			half Angle293 = lerp(radians( ( 360.0 * ase_worldlightDir.x ) ),radians( ( ase_worldlightDir.x * -360.0 ) ),_LtoR);
 			half2 localRotateUV293 = RotateUV293( UV293 , Angle293 );
 			half2 GlossUV265 = localRotateUV293;
 			half3 EyeGlossTextVar232 = (tex2D( _EyeGlossMask, GlossUV265 )).rgb;

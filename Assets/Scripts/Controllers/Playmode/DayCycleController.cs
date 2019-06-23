@@ -160,16 +160,16 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
             currTimeset != Timeset.SUNRISE) {
             SetCurrentTimeset(Timeset.SUNRISE);
         } else if (currentTime >= currentSettings.endingSunrise && currentTime <= currentSettings.startingDay &&
-                   currTimeset != Timeset.SUNRISEENDING) {
+            currTimeset != Timeset.SUNRISEENDING) {
             SetCurrentTimeset(Timeset.SUNRISEENDING);
         } else if (currentTime >= currentSettings.startingDay && currentTime <= currentSettings.startingSunset &&
-                   currTimeset != Timeset.DAY) {
+            currTimeset != Timeset.DAY) {
             SetCurrentTimeset(Timeset.DAY);
         } else if (currentTime >= currentSettings.startingSunset && currentTime <= currentSettings.startingNight &&
-                   currTimeset != Timeset.SUNSET) {
+            currTimeset != Timeset.SUNSET) {
             SetCurrentTimeset(Timeset.SUNSET);
         } else if (currentTime >= currentSettings.startingNight ||
-                   currentTime <= currentSettings.startingSunrise && currTimeset != Timeset.NIGHT) {
+            currentTime <= currentSettings.startingSunrise && currTimeset != Timeset.NIGHT) {
             SetCurrentTimeset(Timeset.NIGHT);
         }
 
@@ -214,11 +214,16 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         if (currTimeset == Timeset.SUNRISE) {
             NightLight.shadowStrength = Mathf.Lerp(NightLight.shadowStrength, 0, Time.deltaTime / 10f);
             SunLight.shadowStrength = Mathf.Lerp(SunLight.shadowStrength, sunriseShadowStrength, Time.deltaTime / 30f);
-            if (NightLight.shadowStrength <= 0.05 && NightLight.enabled == true) {
+
+            if (NightLight.shadowStrength <= 0.1 && NightLight.shadowStrength > 0.05)
                 SunLight.enabled = true;
-                NightLight.enabled = false;
+            if (NightLight.shadowStrength <= 0.05 && NightLight.intensity <= 0.05 && NightLight.enabled == true)
+                {
+                    NightLight.enabled = false;
+                    if (SunLight.enabled == false)
+                        SunLight.enabled = true;
+                }
             }
-        }
         if (currTimeset == Timeset.SUNRISEENDING) {
             NightLight.shadowStrength = Mathf.Lerp(NightLight.shadowStrength, 0, Time.deltaTime / 10f);
             SunLight.shadowStrength = Mathf.Lerp(SunLight.shadowStrength, sunriseShadowStrength, Time.deltaTime / 30f);
@@ -279,8 +284,13 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
 
     private void DifferentFadeTimes() {
         if (currTimeset == Timeset.SUNRISE || currTimeset == Timeset.SUNRISEENDING) {
+            if (currTimeset == Timeset.SUNRISE)
             UpdateAll(sunriseLightIntensity, sunriseLightColor, 0.0f, currentSettings.moonNightLightColor,
                 currentSettings.sunriseSkyTintColor, fadeTime);
+            else if (currTimeset == Timeset.SUNRISEENDING)
+            UpdateAll(sunriseLightIntensity, sunriseLightColor, 0.0f, currentSettings.moonNightLightColor,
+    currentSettings.daySkyTintColor, fadeTime);
+
             DeactivateTimesetParticle(nightParticle);
             DeactivateTimesetParticle(dayParticle);
             DeactivateTimesetParticle(sunsetParticle);
