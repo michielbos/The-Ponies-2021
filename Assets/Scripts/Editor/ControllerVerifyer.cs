@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Controllers;
 using Assets.Scripts.Util;
+using Controllers.Singletons;
 using UnityEditor;
 using UnityEngine;
 

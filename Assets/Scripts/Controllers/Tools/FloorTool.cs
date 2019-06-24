@@ -1,7 +1,13 @@
 ﻿using System;
 using Assets.Scripts.Controllers;
+using Controllers.Singletons;
 using Model.Property;
 using UnityEngine;
+
+namespace Controllers.Tools {
+
+
+
 
 /// <summary>
 /// Tool for build mode that deals with placing and removing floors.
@@ -23,6 +29,7 @@ public class FloorTool : MonoBehaviour, ITool {
         } else {
             terrainTile = PropertyController.Instance.property.GetTerrainTile(tileIndex.x, tileIndex.y);
         }
+
         if (pressingTile) {
             HandlePlacementHolding(terrainTile);
         } else {
@@ -40,6 +47,7 @@ public class FloorTool : MonoBehaviour, ITool {
         if (buildMarker != null) {
             Destroy(buildMarker);
         }
+
         buildMarker = Instantiate(buildMarkerPrefab);
         placingPreset.ApplyToGameObject(buildMarker);
         SetBuildMarkerPosition(0, 0);
@@ -50,6 +58,7 @@ public class FloorTool : MonoBehaviour, ITool {
             if (newTargetTile != targetTile) {
                 BuildMarkerMoved(newTargetTile);
             }
+
             if (Input.GetMouseButtonDown(0)) {
                 SoundController.Instance.PlaySound(SoundType.DragStart);
                 pressingTile = true;
@@ -93,6 +102,7 @@ public class FloorTool : MonoBehaviour, ITool {
                     SoundController.Instance.PlaySound(SoundType.Deny);
                 }
             }
+
             CreateBuildMarker();
             pressingTile = false;
         }
@@ -131,6 +141,7 @@ public class FloorTool : MonoBehaviour, ITool {
                 }
             }
         }
+
         return costs;
     }
 
@@ -140,6 +151,7 @@ public class FloorTool : MonoBehaviour, ITool {
                 PropertyController.Instance.property.PlaceFloor(x, y, floorPreset);
             }
         }
+
         BuildMarkerMoved(targetTile);
     }
 
@@ -156,6 +168,7 @@ public class FloorTool : MonoBehaviour, ITool {
                 sold = true;
             }
         }
+
         return sold;
     }
 
@@ -165,7 +178,10 @@ public class FloorTool : MonoBehaviour, ITool {
             Debug.LogWarning(item + " is not a FloorPreset, cannot be set to FloorTool.");
             return;
         }
+
         placingPreset = floorPreset;
         CreateBuildMarker();
     }
+}
+
 }

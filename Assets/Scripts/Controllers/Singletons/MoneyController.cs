@@ -1,6 +1,7 @@
 ﻿using Assets.Scripts.Util;
+using Controllers.Playmode;
 
-namespace Assets.Scripts.Controllers {
+namespace Controllers.Singletons {
 
 public class MoneyController : SingletonMonoBehaviour<MoneyController> {
     public bool UseFunds => PropertyController.Instance.property.household != null;

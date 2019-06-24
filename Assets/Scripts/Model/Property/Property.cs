@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.Scripts.Controllers;
+using Controllers.Playmode;
 using JetBrains.Annotations;
 using Model.Data;
 using Model.Ponies;

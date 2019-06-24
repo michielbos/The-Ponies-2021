@@ -1,9 +1,12 @@
 using System.Collections.Generic;
 using Assets.Scripts.Controllers;
 using Assets.Scripts.Util;
+using Controllers.Singletons;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
+
+namespace Controllers.Playmode {
 
 public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnterHandler, IPointerExitHandler {
     public List<GameObject> speedButtons;
@@ -65,6 +68,7 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
         } else {
             TimeController.Instance.twelveHourClock = true;
         }
+
         UpdateTime();
     }
 
@@ -120,4 +124,6 @@ public enum HudPanel {
     Build = 2,
     Camera = 3,
     Options = 4
+}
+
 }

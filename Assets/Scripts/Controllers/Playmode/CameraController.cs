@@ -1,7 +1,7 @@
 ﻿using Assets.Scripts.Util;
 using UnityEngine;
 
-namespace Assets.Scripts.Controllers {
+namespace Controllers.Playmode {
 
 public class CameraController : SingletonMonoBehaviour<CameraController> {
     public Transform holder;
@@ -20,10 +20,12 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
         if (Input.GetButtonDown("Fire3")) {
             clicked = !clicked;
         }
+
         if (Input.GetButtonDown("Fire2")) {
             panStartMouse = Input.mousePosition;
             dragging = true;
         }
+
         if (Input.GetButtonUp("Fire2")) {
             dragging = false;
         }
@@ -33,10 +35,10 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
             Vector3 camRight = LevelVector(camera.transform.right);
 
             Vector3 position = holder.position
-                              + camForward * (Input.mousePosition - panStartMouse).y * camera.orthographicSize /
-                              Screen.height
-                              + camRight * (Input.mousePosition - panStartMouse).x * camera.orthographicSize /
-                              Screen.width;
+                               + camForward * (Input.mousePosition - panStartMouse).y * camera.orthographicSize /
+                               Screen.height
+                               + camRight * (Input.mousePosition - panStartMouse).x * camera.orthographicSize /
+                               Screen.width;
             var property = PropertyController.Instance.property;
             position.x = Mathf.Clamp(position.x, 0f, property.TerrainWidth);
             position.z = Mathf.Clamp(position.z, 0f, property.TerrainHeight);

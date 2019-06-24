@@ -1,7 +1,8 @@
-﻿using Assets.Scripts.Util;
-using UnityEngine;
+﻿using Assets.Scripts.Controllers;
+using Assets.Scripts.Util;
+using Controllers.Singletons;
 
-namespace Assets.Scripts.Controllers {
+namespace Controllers.Playmode {
 
 public class ModeController : SingletonMonoBehaviour<ModeController> {
     public GuiButtonController LiveModeGuiButtonController;

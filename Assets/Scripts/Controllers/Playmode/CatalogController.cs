@@ -1,8 +1,11 @@
 ﻿using System.Collections.Generic;
 using Assets.Scripts.Controllers;
 using Assets.Scripts.Util;
+using Controllers.Singletons;
 using UnityEngine;
 using UnityEngine.UI;
+
+namespace Controllers.Playmode {
 
 /// <summary>
 /// Controller class for the catalog part of buy and build mode.
@@ -96,6 +99,7 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController> {
         foreach (Button button in catalogItemButtons) {
             Destroy(button.gameObject);
         }
+
         catalogItemButtons.Clear();
     }
 
@@ -119,6 +123,7 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController> {
             if (i >= tab * maxButtons + maxHorizontal) {
                 pos.y -= buttonSize.y + buttonMargin;
             }
+
             rectTransform.anchoredPosition = pos;
             button.GetComponentInChildren<RawImage>().texture = catalogItem.GetPreviewTextures()[0];
             button.onClick.AddListener(delegate { OnCatalogItemClicked(button, catalogItem); });
@@ -166,4 +171,6 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController> {
         tab++;
         UpdateCatalogButtons();
     }
+}
+
 }

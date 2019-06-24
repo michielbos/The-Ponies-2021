@@ -1,15 +1,19 @@
 ﻿using Assets.Scripts.Controls.Tools;
 using Assets.Scripts.Util;
+using Controllers.Playmode;
+using Controllers.Tools;
 using JetBrains.Annotations;
 using Model.Property;
 using UnityEngine;
+
+namespace Controllers.Singletons {
 
 /// <summary>
 /// Controller for buy/build mode that controls the currently selected tool.
 /// </summary>
 public class ToolController : SingletonMonoBehaviour<ToolController> {
     private const int LAYER_TERRAIN = 8;
-    
+
     public BuyTool buyTool;
     public FloorTool floorTool;
     public WallTool wallTool;
@@ -30,6 +34,7 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
         if (isNewTool && HasActiveTool) {
             ActiveTool.Disable();
         }
+
         activeToolType = toolType;
         ActiveTool = GetToolForType(toolType);
         if (isNewTool && HasActiveTool) {
@@ -65,6 +70,7 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
             case ToolType.Wall:
                 return wallTool;
         }
+
         return null;
     }
 
@@ -72,6 +78,7 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
         if (!HasActiveTool) {
             return;
         }
+
         bool hit;
         RaycastHit hitInfo = GetMouseTerrainHit(out hit);
         Vector3 tilePosition = hit ? GetBuildMarkerPosition(hitInfo) : Vector3.zero;
@@ -99,4 +106,6 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
         TerrainTile terrainTile = hitInfo.collider.GetComponent<TerrainTile>();
         return terrainTile.TilePosition;
     }
+}
+
 }
