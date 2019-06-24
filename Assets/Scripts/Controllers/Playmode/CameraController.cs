@@ -45,10 +45,18 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
         }
 
         // Keyboard movement
-        Vector3 keyboardMovement = Time.unscaledDeltaTime * KeyboardMoveSpeed * new Vector2(
-                                       Input.GetAxisRaw("Horizontal"),
-                                       Input.GetAxisRaw("Vertical")
-                                   );
+        Vector3 keyboardMovement = new Vector2(
+            Input.GetAxisRaw("Horizontal"),
+            Input.GetAxisRaw("Vertical")
+        );
+
+        if (Mathf.Abs(keyboardMovement.x) > 0.1f && Mathf.Abs(keyboardMovement.y) > 0.1f) {
+            // sqrt(1² + 1²) = 1.4142
+            keyboardMovement /= 1.4142f;
+        }
+
+        keyboardMovement *= Time.unscaledDeltaTime * KeyboardMoveSpeed;
+
         cameraPosition += keyboardMovement.y * orthographicSize * camForward +
                           keyboardMovement.x * orthographicSize * camRight;
 
