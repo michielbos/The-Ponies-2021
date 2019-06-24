@@ -45,13 +45,12 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
         }
 
         // Keyboard movement
-        Vector3 keyboardMovement = new Vector2(
-            Input.GetAxisRaw("Horizontal"),
-            Input.GetAxisRaw("Vertical")
-        ) * Time.deltaTime * KeyboardMoveSpeed;
-        cameraPosition += camForward * keyboardMovement.y * orthographicSize +
-                          camRight * keyboardMovement.x * orthographicSize;
-        
+        Vector3 keyboardMovement = Time.unscaledDeltaTime * KeyboardMoveSpeed * new Vector2(
+                                       Input.GetAxisRaw("Horizontal"),
+                                       Input.GetAxisRaw("Vertical")
+                                   );
+        cameraPosition += keyboardMovement.y * orthographicSize * camForward +
+                          keyboardMovement.x * orthographicSize * camRight;
 
         // Put camera within bounds
         Property property = PropertyController.Instance.property;
