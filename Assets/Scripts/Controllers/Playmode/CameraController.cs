@@ -1,9 +1,12 @@
 ﻿using Assets.Scripts.Util;
+using Model.Property;
 using UnityEngine;
 
 namespace Controllers.Playmode {
 
 public class CameraController : SingletonMonoBehaviour<CameraController> {
+    private const float KeyboardMoveSpeed = 4f;
+
     public Transform holder;
     public float minSize = 1, maxSize = 32;
 
@@ -30,27 +33,41 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
             dragging = false;
         }
 
-        if (dragging) {
-            Vector3 camForward = LevelVector(camera.transform.forward);
-            Vector3 camRight = LevelVector(camera.transform.right);
+        Vector3 camForward = LevelVector(camera.transform.forward);
+        Vector3 camRight = LevelVector(camera.transform.right);
+        float orthographicSize = camera.orthographicSize;
+        Vector3 cameraPosition = holder.position;
 
-            Vector3 position = holder.position
-                               + camForward * (Input.mousePosition - panStartMouse).y * camera.orthographicSize /
-                               Screen.height
-                               + camRight * (Input.mousePosition - panStartMouse).x * camera.orthographicSize /
-                               Screen.width;
-            var property = PropertyController.Instance.property;
-            position.x = Mathf.Clamp(position.x, 0f, property.TerrainWidth);
-            position.z = Mathf.Clamp(position.z, 0f, property.TerrainHeight);
-            holder.position = position;
+        // Drag movement
+        if (dragging) {
+            cameraPosition += camForward * (Input.mousePosition - panStartMouse).y * orthographicSize / Screen.height +
+                              camRight * (Input.mousePosition - panStartMouse).x * orthographicSize / Screen.width;
         }
 
+        // Keyboard movement
+        Vector3 keyboardMovement = new Vector2(
+            Input.GetAxisRaw("Horizontal"),
+            Input.GetAxisRaw("Vertical")
+        ) * Time.deltaTime * KeyboardMoveSpeed;
+        cameraPosition += camForward * keyboardMovement.y * orthographicSize +
+                          camRight * keyboardMovement.x * orthographicSize;
+        
+
+        // Put camera within bounds
+        Property property = PropertyController.Instance.property;
+        holder.position = new Vector3(
+            Mathf.Clamp(cameraPosition.x, 0f, property.TerrainWidth),
+            cameraPosition.y,
+            Mathf.Clamp(cameraPosition.z, 0f, property.TerrainHeight)
+        );
+
+        // Scrolling
         int scrollDir = (int) Mathf.Clamp(Input.mouseScrollDelta.y, -1, 1);
         Zoom(scrollDir);
     }
 
-    public void Rotate(bool cc) {
-        holder.Rotate(0, cc ? -90 : 90, 0);
+    public void Rotate(bool counterClockwise) {
+        holder.Rotate(0, counterClockwise ? -90 : 90, 0);
     }
 
     public void Zoom(int zoomDir) {
