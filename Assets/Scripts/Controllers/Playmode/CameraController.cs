@@ -8,12 +8,21 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
     private const float KeyboardMoveSpeed = 4f;
 
     public Transform holder;
+    public RectTransform dragOriginIcon;
     public float minSize = 1, maxSize = 32;
 
     private bool clicked;
     private Vector3 panStartMouse;
-    private bool dragging;
+    private bool _dragging;
     private new Camera camera;
+
+    private bool Dragging {
+        get { return _dragging; }
+        set {
+            _dragging = value; 
+            dragOriginIcon.gameObject.SetActive(value);
+        }
+    }
 
     private void Start() {
         camera = Camera.main;
@@ -26,11 +35,12 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
 
         if (Input.GetButtonDown("Fire2")) {
             panStartMouse = Input.mousePosition;
-            dragging = true;
+            dragOriginIcon.anchoredPosition = panStartMouse;
+            Dragging = true;
         }
 
         if (Input.GetButtonUp("Fire2")) {
-            dragging = false;
+            Dragging = false;
         }
 
         Vector3 camForward = LevelVector(camera.transform.forward);
@@ -39,7 +49,7 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
         Vector3 cameraPosition = holder.position;
 
         // Drag movement
-        if (dragging) {
+        if (Dragging) {
             cameraPosition += camForward * (Input.mousePosition - panStartMouse).y * orthographicSize / Screen.height +
                               camRight * (Input.mousePosition - panStartMouse).x * orthographicSize / Screen.width;
         }
