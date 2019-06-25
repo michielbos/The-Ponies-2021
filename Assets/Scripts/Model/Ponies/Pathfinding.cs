@@ -7,6 +7,10 @@ public static class Pathfinding {
     private const int MaxPathLength = 100;
 
     public static Path PathToTile(Vector2Int start, Vector2Int target) {
+        return PathToNearest(start, new[] {target});
+    }
+
+    public static Path PathToNearest(Vector2Int start, Vector2Int[] targets) {
         Property.Property property = PropertyController.Instance.property;
         int width = property.TerrainWidth;
         int height = property.TerrainHeight;
@@ -33,8 +37,10 @@ public static class Pathfinding {
                     }
                 }
             }
-            if (stepMap[target.y, target.x] > 0) {
-                return CreatePathFromStepMap(stepMap, width, height, target);
+            foreach (Vector2Int target in targets) {
+                if (stepMap[target.y, target.x] > 0) {
+                    return CreatePathFromStepMap(stepMap, width, height, target);
+                }
             }
         }
 

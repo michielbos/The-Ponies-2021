@@ -117,9 +117,9 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
             };
         }
         return new List<PonyAction>() {
-            new FakeAction(pony, "Chat"),
-            new FakeAction(pony, "Slap"),
-            new FakeAction(pony, "Flirt"),
+            new SocialAction(pony, "Chat", this),
+            new SocialAction(pony, "Slap", this),
+            new SocialAction(pony, "Flirt", this),
         };
     }
 
@@ -144,6 +144,28 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     public bool SetWalkTarget(Vector2Int target) {
         walkPath = Pathfinding.PathToTile(TilePosition, target);
         return walkPath != null;
+    }
+    
+    /// <summary>
+    /// Set the walk target to the nearest of the provided tiles.
+    /// </summary>
+    public bool SetWalkTargetToNearest(Vector2Int[] targets) {
+        walkPath = Pathfinding.PathToNearest(TilePosition, targets);
+        return walkPath != null;
+    }
+
+    /// <summary>
+    /// Similar to SetWalkTarget, but attempts to find a tile next to the target tile.
+    /// </summary>
+    public bool SetWalkTargetNextTo(Vector2Int target) {
+        // TODO: This will break on borders.
+        Vector2Int[] targets = new[] {
+            new Vector2Int(target.x + 1, target.y),
+            new Vector2Int(target.x - 1, target.y),
+            new Vector2Int(target.x, target.y + 1),
+            new Vector2Int(target.x, target.y - 1)
+        };
+        return SetWalkTargetToNearest(targets);
     }
 
     public void CancelWalking() {
