@@ -1,15 +1,16 @@
 ﻿using Assets.Scripts.Controllers;
 using Assets.Scripts.Util;
 using Controllers.Singletons;
+using UI;
 
 namespace Controllers.Playmode {
 
 public class ModeController : SingletonMonoBehaviour<ModeController> {
-    public GuiButtonController LiveModeGuiButtonController;
-    public GuiButtonController BuyModeGuiButtonController;
-    public GuiButtonController BuildModeGuiButtonController;
-    public GuiButtonController CameraModeGuiButtonController;
-    public GuiButtonController OptionsModeGuiButtonController;
+    public ModeButton liveModeButton;
+    public ModeButton buyModeButton;
+    public ModeButton buildModeButton;
+    public ModeButton cameraModeButton;
+    public ModeButton optionsModeButton;
 
     public HudPanel CurrentMode { get; private set; } = HudPanel.None;
 
@@ -28,11 +29,11 @@ public class ModeController : SingletonMonoBehaviour<ModeController> {
             ToolController.Instance.SetTool(ToolType.Buy);
         }
 
-        LiveModeGuiButtonController.enabled = mode == HudPanel.Live;
-        BuyModeGuiButtonController.enabled = mode == HudPanel.Buy;
-        BuildModeGuiButtonController.enabled = mode == HudPanel.Build;
-        CameraModeGuiButtonController.enabled = mode == HudPanel.Camera;
-        OptionsModeGuiButtonController.enabled = mode == HudPanel.Options;
+        liveModeButton.enabled = mode == HudPanel.Live;
+        buyModeButton.enabled = mode == HudPanel.Buy;
+        buildModeButton.enabled = mode == HudPanel.Build;
+        cameraModeButton.enabled = mode == HudPanel.Camera;
+        optionsModeButton.enabled = mode == HudPanel.Options;
 
         switch (mode) {
             case HudPanel.None:
@@ -66,7 +67,7 @@ public class ModeController : SingletonMonoBehaviour<ModeController> {
         if (locked && CurrentMode == HudPanel.Live) {
             CurrentMode = HudPanel.None;
         }
-        LiveModeGuiButtonController.Locked = locked;
+        liveModeButton.Locked = locked;
     }
 }
 

@@ -10,10 +10,6 @@ namespace Controllers.Playmode {
 
 public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnterHandler, IPointerExitHandler {
     public List<GameObject> speedButtons;
-    public List<GameObject> roofButtons;
-    public Sprite[] pauseSprites;
-
-    private int TEMP_selectedRoof = 1;
 
     public Text fundsText;
     public Text timeText;
@@ -21,7 +17,6 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
 
     void Start() {
         UpdateSpeed();
-        UpdateRoof();
         UpdateFunds();
     }
 
@@ -34,14 +29,6 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
         SoundController.Instance.PlaySound(SoundType.Click);
         SoundController.Instance.PlaySound(SoundType.Woosh);
         ModeController.GetInstance().SwitchMode(panel);
-    }
-
-    // Called from Unity GUI Button
-    public void SetRoofButton(int index) {
-        // TODO: Implement a proper controller for this
-        SoundController.Instance.PlaySound(SoundType.Click);
-        TEMP_selectedRoof = index;
-        UpdateRoof();
     }
 
     // Called from Unity GUI Button
@@ -80,20 +67,9 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
         }
     }
 
-    public void UpdatePauseBlink(float timer) {
-        speedButtons[0].GetComponent<Image>().overrideSprite = pauseSprites[(int) Mathf.Floor(timer % 2)];
-    }
-
-    private void UpdateRoof() {
-        foreach (GameObject g in roofButtons) {
-            bool active = roofButtons.IndexOf(g) == TEMP_selectedRoof;
-            g.GetComponent<Button>().interactable = !active;
-        }
-    }
-
     public void UpdateFunds() {
         if (MoneyController.Instance.UseFunds) {
-            fundsText.text = "$" + MoneyController.Instance.Funds;
+            fundsText.text = MoneyController.Instance.Funds.ToString();
         } else {
             fundsText.text = "";
         }

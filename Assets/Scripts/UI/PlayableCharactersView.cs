@@ -7,7 +7,11 @@ namespace UI {
 public class PlayableCharactersView : MonoBehaviour {
     public GameObject[] portraits;
 
-    private void OnEnable() {
+    private void Start() {
+        UpdateHousehold();
+    }
+
+    public void UpdateHousehold() {
         List<Pony> ponies = PropertyController.Instance.property.household.ponies;
         foreach (GameObject portrait in portraits) {
             portrait.SetActive(false);
