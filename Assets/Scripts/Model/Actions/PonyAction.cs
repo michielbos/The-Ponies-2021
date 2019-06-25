@@ -20,10 +20,22 @@ public abstract class PonyAction {
         Tick();
     }
     
+    /// <summary>
+    /// Called every ingame second to execute this action's behaviour.
+    /// Execution will start after the action becomes active.
+    /// The frequency is dependent on the game speed and execution will pause when the game is paused.
+    /// </summary>
     public abstract void Tick();
 
     public void SetActive() {
-        active = true;
+        if (!active) {
+            active = true;
+            OnActivated();
+        }
+    }
+    
+    protected virtual void OnActivated() {
+        // Override for additional activation behaviour.
     }
 
     public void Cancel() {
@@ -37,8 +49,15 @@ public abstract class PonyAction {
         // Override for additional cancel behaviour.
     }
 
-    protected void Finish() {
-        finished = true;
+    protected internal void Finish() {
+        if (!finished) {
+            finished = true;
+            OnFinish();
+        }
+    }
+    
+    protected virtual void OnFinish() {
+        // Override for additional finish behaviour.
     }
 }
 

@@ -126,6 +126,8 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         if (action == currentAction) {
             action.Cancel();
         } else {
+            action.canceled = true;
+            action.finished = true;
             queuedActions.Remove(action);
         }
         if (IsSelected) {
