@@ -26,7 +26,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
     }
 
     private void Update() {
-        if (Input.GetMouseButtonDown(1) && pieMenu != null) {
+        if ((Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape)) && pieMenu != null) {
             Destroy(pieMenu.gameObject);
         }
         if (ModeController.Instance.CurrentMode == HudPanel.Live && selectedPony != null) {
@@ -72,7 +72,15 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
                 Destroy(pieMenu.gameObject);
             }
             pieMenu = Instantiate(pieMenuPrefab, transform.parent);
-            pieMenu.GetComponent<RectTransform>().anchoredPosition = Input.mousePosition;
+            RectTransform pieTransform = pieMenu.GetComponent<RectTransform>();
+            Vector2 position = Input.mousePosition;
+            Vector2 size = pieTransform.sizeDelta;
+            
+            // Make sure the pie menu fits inside the screen
+            position.x = Mathf.Clamp(position.x, size.x / 2, Screen.width - size.x / 2);
+            position.y = Mathf.Clamp(position.y, size.y / 2, Screen.height - size.y / 2);
+            
+            pieTransform.anchoredPosition = position;
             pieMenu.Init(selectedPony, actionProvider.GetActions(selectedPony));
         }
     }
