@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Model.Ponies {
@@ -10,11 +12,12 @@ public static class Pathfinding {
         return PathToNearest(start, new[] {target});
     }
 
-    public static Path PathToNearest(Vector2Int start, Vector2Int[] targets) {
+    public static Path PathToNearest(Vector2Int start, IEnumerable<Vector2Int> targets) {
         Property.Property property = PropertyController.Instance.property;
         int width = property.TerrainWidth;
         int height = property.TerrainHeight;
         int[,] stepMap = property.GetTileOccupancyMap();
+        targets = RemoveTilesOutsideMap(targets, width, height);
         stepMap[start.y, start.x] = 1;
         int step;
         for (step = 1; step <= MaxPathLength; step++) {
@@ -23,20 +26,25 @@ public static class Pathfinding {
                     if (stepMap[y, x] != step) {
                         continue;
                     }
+
                     if (y + 1 < height && stepMap[y + 1, x] == 0) {
                         stepMap[y + 1, x] = step + 1;
                     }
+
                     if (x + 1 < width && stepMap[y, x + 1] == 0) {
                         stepMap[y, x + 1] = step + 1;
                     }
+
                     if (y > 0 && stepMap[y - 1, x] == 0) {
                         stepMap[y - 1, x] = step + 1;
                     }
+
                     if (x > 0 && stepMap[y, x - 1] == 0) {
                         stepMap[y, x - 1] = step + 1;
                     }
                 }
             }
+
             foreach (Vector2Int target in targets) {
                 if (stepMap[target.y, target.x] > 0) {
                     return CreatePathFromStepMap(stepMap, width, height, target);
@@ -45,6 +53,11 @@ public static class Pathfinding {
         }
 
         return null;
+    }
+
+    private static List<Vector2Int> RemoveTilesOutsideMap(IEnumerable<Vector2Int> targets, int mapWidth,
+        int mapHeight) {
+        return targets.Where(target => target.x >= 0 && target.y >= 0 && target.x < mapWidth && target.y < mapHeight).ToList();
     }
 
     private static Path CreatePathFromStepMap(int[,] stepMap, int width, int height, Vector2Int target) {
@@ -66,6 +79,7 @@ public static class Pathfinding {
             } else {
                 throw new Exception("Failed to find tile for step " + step + " at " + target);
             }
+
             tiles[step - 1] = currentTile;
         }
 

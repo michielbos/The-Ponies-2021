@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using Assets.Scripts.Controllers;
 using Controllers.Playmode;
@@ -149,7 +148,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     /// <summary>
     /// Set the walk target to the nearest of the provided tiles.
     /// </summary>
-    public bool SetWalkTargetToNearest(Vector2Int[] targets) {
+    public bool SetWalkTargetToNearest(IEnumerable<Vector2Int> targets) {
         walkPath = Pathfinding.PathToNearest(TilePosition, targets);
         return walkPath != null;
     }
@@ -158,8 +157,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     /// Similar to SetWalkTarget, but attempts to find a tile next to the target tile.
     /// </summary>
     public bool SetWalkTargetNextTo(Vector2Int target) {
-        // TODO: This will break on borders.
-        Vector2Int[] targets = new[] {
+        Vector2Int[] targets = {
             new Vector2Int(target.x + 1, target.y),
             new Vector2Int(target.x - 1, target.y),
             new Vector2Int(target.x, target.y + 1),
