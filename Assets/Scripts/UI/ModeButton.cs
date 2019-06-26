@@ -17,13 +17,21 @@ public class ModeButton : MonoBehaviour {
         set { button.interactable = !value; }
     }
 
-    public virtual void OnEnable() {
+    public void SetModeActive(bool active) {
+        if (active) {
+            OnModeActivated();
+        } else {
+            OnModeDeactivated();
+        }
+    }
+
+    private void OnModeActivated() {
         foreach (GameObject o in assignedObjects) {
             o.SetActive(true);
         }
     }
 
-    public virtual void OnDisable() {
+    private void OnModeDeactivated() {
         foreach (GameObject o in assignedObjects) {
             o.SetActive(false);
         }

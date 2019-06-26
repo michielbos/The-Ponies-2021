@@ -29,11 +29,11 @@ public class ModeController : SingletonMonoBehaviour<ModeController> {
             ToolController.Instance.SetTool(ToolType.Buy);
         }
 
-        liveModeButton.enabled = mode == HudPanel.Live;
-        buyModeButton.enabled = mode == HudPanel.Buy;
-        buildModeButton.enabled = mode == HudPanel.Build;
-        cameraModeButton.enabled = mode == HudPanel.Camera;
-        optionsModeButton.enabled = mode == HudPanel.Options;
+        liveModeButton.SetModeActive(mode == HudPanel.Live);
+        buyModeButton.SetModeActive(mode == HudPanel.Buy);
+        buildModeButton.SetModeActive(mode == HudPanel.Build);
+        cameraModeButton.SetModeActive(mode == HudPanel.Camera);
+        optionsModeButton.SetModeActive(mode == HudPanel.Options);
 
         switch (mode) {
             case HudPanel.None:
@@ -60,7 +60,8 @@ public class ModeController : SingletonMonoBehaviour<ModeController> {
         // No pannel = -1
         //      Live = 0
         TimeController.Instance.ForcePause(mode > 0);
-        HUDController.GetInstance().UpdateSpeed();
+        HUDController.Instance.UpdateSpeed();
+        HUDController.Instance.OnModeUpdate(mode);
     }
 
     public void LockLiveMode(bool locked) {
