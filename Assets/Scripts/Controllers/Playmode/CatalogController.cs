@@ -12,8 +12,6 @@ namespace Controllers.Playmode {
 /// </summary>
 public class CatalogController : SingletonMonoBehaviour<CatalogController> {
     public Button buttonPrefab;
-    public int buyModeX;
-    public int buildModeX;
     public RectTransform catalogBar;
     public Button catalogPreviousButton;
     public Button catalogNextButton;
@@ -76,14 +74,8 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController> {
             tab = 0;
             catalogBar.gameObject.SetActive(true);
             catalogBar.localScale = new Vector3(1, 1, 1);
-            ResizeCatalog(ObjectCategoryUtil.IsBuildCategory(category) ? buildModeX : buyModeX);
             UpdateCatalogButtons();
         }
-    }
-
-    private void ResizeCatalog(int startX) {
-        catalogBar.anchoredPosition = new Vector2(startX, catalogBar.anchoredPosition.y);
-        catalogBar.sizeDelta = new Vector2(Screen.width - startX, catalogBar.sizeDelta.y);
     }
 
     /// <summary>
@@ -109,7 +101,7 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController> {
         int barMargin = 35;
         int buttonMargin = 5;
         Vector2 buttonSize = buttonPrefab.GetComponent<RectTransform>().sizeDelta;
-        float buttonAreaWidth = catalogBar.sizeDelta.x - barMargin * 2;
+        float buttonAreaWidth = catalogBar.rect.width - barMargin * 2;
         float spareWidth = buttonAreaWidth % (buttonSize.x + buttonMargin);
         int maxHorizontal = Mathf.FloorToInt(buttonAreaWidth / (buttonSize.x + buttonMargin));
         int maxButtons = maxHorizontal * 2;
@@ -118,8 +110,7 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController> {
             CatalogItem catalogItem = catalogItems[i];
             Button button = Instantiate(buttonPrefab, catalogBar);
             RectTransform rectTransform = button.GetComponent<RectTransform>();
-            Vector3 pos = rectTransform.anchoredPosition;
-            pos.x = barMargin + i % maxHorizontal * (buttonSize.x + buttonMargin) + spareWidth / 2;
+            Vector3 pos = new Vector3(barMargin + i % maxHorizontal * (buttonSize.x + buttonMargin) + spareWidth / 2, 0);
             if (i >= tab * maxButtons + maxHorizontal) {
                 pos.y -= buttonSize.y + buttonMargin;
             }
@@ -132,9 +123,9 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController> {
     }
 
     private void UpdatePreviousAndNextButtons(int numberOfButtons, int buttonsPerTab) {
-        catalogPreviousButton.transform.localScale = tab <= 0 ? new Vector3(0, 0, 0) : new Vector3(1, 1, 1);
+        catalogPreviousButton.gameObject.SetActive(tab > 0);
         int numberOfTabs = Mathf.CeilToInt((float) numberOfButtons / buttonsPerTab);
-        catalogNextButton.transform.localScale = tab >= numberOfTabs - 1 ? new Vector3(0, 0, 0) : new Vector3(1, 1, 1);
+        catalogNextButton.gameObject.SetActive(tab < numberOfTabs - 1);
     }
 
     private void OnCatalogItemClicked(Button button, CatalogItem catalogItem) {
