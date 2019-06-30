@@ -450,6 +450,19 @@ PrefabInstance:
       propertyPath: onValueChanged.m_PersistentCalls.m_Calls.Array.data[0].m_Target
       value: 
       objectReference: {fileID: 1884590507}
+    - target: {fileID: 1501811578415924, guid: 02c26d83b35cb374daa65d6918d687d9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 1608172727401438, guid: 02c26d83b35cb374daa65d6918d687d9, type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 290514347688728665, guid: 02c26d83b35cb374daa65d6918d687d9,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 02c26d83b35cb374daa65d6918d687d9, type: 3}
 --- !u!1001 &373976712
@@ -679,6 +692,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: CameraController
       objectReference: {fileID: 0}
+    - target: {fileID: 20384007150673800, guid: 3758831885474f14fadeffe55c7f3c0f,
+        type: 3}
+      propertyPath: m_ClearFlags
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4498083224677076, guid: 3758831885474f14fadeffe55c7f3c0f, type: 3}
       propertyPath: m_LocalPosition.x
       value: 7.5
@@ -722,11 +740,6 @@ PrefabInstance:
     - target: {fileID: 4795790236988014, guid: 3758831885474f14fadeffe55c7f3c0f, type: 3}
       propertyPath: m_LocalPosition.z
       value: -52
-      objectReference: {fileID: 0}
-    - target: {fileID: 20384007150673800, guid: 3758831885474f14fadeffe55c7f3c0f,
-        type: 3}
-      propertyPath: m_ClearFlags
-      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 114766077841925386, guid: 3758831885474f14fadeffe55c7f3c0f,
         type: 3}

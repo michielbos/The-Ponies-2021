@@ -1,15 +1,16 @@
 ﻿using Assets.Scripts.Controllers;
 using Assets.Scripts.Util;
 using Controllers.Singletons;
+using UI;
 
 namespace Controllers.Playmode {
 
 public class ModeController : SingletonMonoBehaviour<ModeController> {
-    public GuiButtonController LiveModeGuiButtonController;
-    public GuiButtonController BuyModeGuiButtonController;
-    public GuiButtonController BuildModeGuiButtonController;
-    public GuiButtonController CameraModeGuiButtonController;
-    public GuiButtonController OptionsModeGuiButtonController;
+    public ModeButton liveModeButton;
+    public ModeButton buyModeButton;
+    public ModeButton buildModeButton;
+    public ModeButton cameraModeButton;
+    public ModeButton optionsModeButton;
 
     public HudPanel CurrentMode { get; private set; } = HudPanel.None;
 
@@ -28,11 +29,11 @@ public class ModeController : SingletonMonoBehaviour<ModeController> {
             ToolController.Instance.SetTool(ToolType.Buy);
         }
 
-        LiveModeGuiButtonController.enabled = mode == HudPanel.Live;
-        BuyModeGuiButtonController.enabled = mode == HudPanel.Buy;
-        BuildModeGuiButtonController.enabled = mode == HudPanel.Build;
-        CameraModeGuiButtonController.enabled = mode == HudPanel.Camera;
-        OptionsModeGuiButtonController.enabled = mode == HudPanel.Options;
+        liveModeButton.SetModeActive(mode == HudPanel.Live);
+        buyModeButton.SetModeActive(mode == HudPanel.Buy);
+        buildModeButton.SetModeActive(mode == HudPanel.Build);
+        cameraModeButton.SetModeActive(mode == HudPanel.Camera);
+        optionsModeButton.SetModeActive(mode == HudPanel.Options);
 
         switch (mode) {
             case HudPanel.None:
@@ -59,14 +60,15 @@ public class ModeController : SingletonMonoBehaviour<ModeController> {
         // No pannel = -1
         //      Live = 0
         TimeController.Instance.ForcePause(mode > 0);
-        HUDController.GetInstance().UpdateSpeed();
+        HUDController.Instance.UpdateSpeed();
+        HUDController.Instance.OnModeUpdate(mode);
     }
 
     public void LockLiveMode(bool locked) {
         if (locked && CurrentMode == HudPanel.Live) {
             CurrentMode = HudPanel.None;
         }
-        LiveModeGuiButtonController.Locked = locked;
+        liveModeButton.Locked = locked;
     }
 }
 

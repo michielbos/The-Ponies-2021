@@ -10,18 +10,20 @@ namespace Controllers.Playmode {
 
 public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnterHandler, IPointerExitHandler {
     public List<GameObject> speedButtons;
-    public List<GameObject> roofButtons;
-    public Sprite[] pauseSprites;
-
-    private int TEMP_selectedRoof = 1;
-
+    
     public Text fundsText;
     public Text timeText;
+    public Image cpanel;
+
+    public Sprite noModeCpanel;
+    public Sprite liveModeCpanel;
+    public Sprite buyModeCpanel;
+    public Sprite buildModeCpanel;
+    
     private bool touchingGui;
 
     void Start() {
         UpdateSpeed();
-        UpdateRoof();
         UpdateFunds();
     }
 
@@ -34,14 +36,6 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
         SoundController.Instance.PlaySound(SoundType.Click);
         SoundController.Instance.PlaySound(SoundType.Woosh);
         ModeController.GetInstance().SwitchMode(panel);
-    }
-
-    // Called from Unity GUI Button
-    public void SetRoofButton(int index) {
-        // TODO: Implement a proper controller for this
-        SoundController.Instance.PlaySound(SoundType.Click);
-        TEMP_selectedRoof = index;
-        UpdateRoof();
     }
 
     // Called from Unity GUI Button
@@ -80,20 +74,9 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
         }
     }
 
-    public void UpdatePauseBlink(float timer) {
-        speedButtons[0].GetComponent<Image>().overrideSprite = pauseSprites[(int) Mathf.Floor(timer % 2)];
-    }
-
-    private void UpdateRoof() {
-        foreach (GameObject g in roofButtons) {
-            bool active = roofButtons.IndexOf(g) == TEMP_selectedRoof;
-            g.GetComponent<Button>().interactable = !active;
-        }
-    }
-
     public void UpdateFunds() {
         if (MoneyController.Instance.UseFunds) {
-            fundsText.text = "$" + MoneyController.Instance.Funds;
+            fundsText.text = MoneyController.Instance.Funds.ToString();
         } else {
             fundsText.text = "";
         }
@@ -114,6 +97,18 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
     public bool IsMouseOverGui() {
         //I doubt how reliable this is, but it's not like we have anything better at the moment.
         return touchingGui;
+    }
+
+    public void OnModeUpdate(HudPanel mode) {
+        if (mode == HudPanel.Live) {
+            cpanel.sprite = liveModeCpanel;
+        } else if (mode == HudPanel.Buy) {
+            cpanel.sprite = buyModeCpanel;
+        } else if (mode == HudPanel.Build) {
+            cpanel.sprite = buildModeCpanel;
+        } else {
+            cpanel.sprite = noModeCpanel;
+        }
     }
 }
 

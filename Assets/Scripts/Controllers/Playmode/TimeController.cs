@@ -26,8 +26,6 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
 
     public void Update() {
         if (IsPaused()) {
-            HUDController.Instance.UpdatePauseBlink(pauseTimer);
-
             if (Time.timeScale != 0) {
                 Time.timeScale = 0;
             }
