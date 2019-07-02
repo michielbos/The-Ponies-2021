@@ -8361,6 +8361,7 @@ GameObject:
   - component: {fileID: 114828761947541350}
   - component: {fileID: 114113357470691672}
   - component: {fileID: 114542114524124648}
+  - component: {fileID: 6232470177371798433}
   m_Layer: 0
   m_Name: GameCanvas
   m_TagString: HUD
@@ -8424,7 +8425,7 @@ MonoBehaviour:
   m_Script: {fileID: 1980459831, guid: f5f67c52d1564df4a8936ccd202a3bd8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  m_UiScaleMode: 1
+  m_UiScaleMode: 0
   m_ReferencePixelsPerUnit: 100
   m_ScaleFactor: 1
   m_ReferenceResolution: {x: 1920, y: 1080}
@@ -8490,6 +8491,19 @@ MonoBehaviour:
   messageWindowPrefab: {fileID: 114746704912265858, guid: 68e414702aacd4c818ec22491e60acd3,
     type: 3}
   audioSource: {fileID: 0}
+--- !u!114 &6232470177371798433
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1510649578667014}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0593391aa0464afb8126d81c7f0c20c4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  canvasScaler: {fileID: 114101825527077996}
 --- !u!1 &1514434072766498
 GameObject:
   m_ObjectHideFlags: 0
