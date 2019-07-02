@@ -4,6 +4,7 @@ using JetBrains.Annotations;
 using Model.Actions;
 using Model.Ponies;
 using Model.Property;
+using UI;
 using UnityEngine;
 
 namespace Controllers.Playmode {
@@ -73,12 +74,13 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
             }
             pieMenu = Instantiate(pieMenuPrefab, transform.parent);
             RectTransform pieTransform = pieMenu.GetComponent<RectTransform>();
-            Vector2 position = Input.mousePosition;
+            Vector2 position = UiScaler.ScalePointToCanvas(Input.mousePosition);
             Vector2 size = pieTransform.sizeDelta;
             
             // Make sure the pie menu fits inside the screen
-            position.x = Mathf.Clamp(position.x, size.x / 2, Screen.width - size.x / 2);
-            position.y = Mathf.Clamp(position.y, size.y / 2, Screen.height - size.y / 2);
+            Vector2 canvasSize = UiScaler.CanvasSize;
+            position.x = Mathf.Clamp(position.x, size.x / 2, canvasSize.x - size.x / 2);
+            position.y = Mathf.Clamp(position.y, size.y / 2, canvasSize.y - size.y / 2);
             
             pieTransform.anchoredPosition = position;
             pieMenu.Init(selectedPony, actionProvider.GetActions(selectedPony));

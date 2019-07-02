@@ -1,4 +1,4 @@
-using System;
+using Assets.Scripts.Util;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -8,9 +8,21 @@ namespace UI {
 /// Simple temporary class for scaling down the UI on smaller resolutions.
 /// In the future, we might want to replace this with a better system, with for example folding.
 /// </summary>
-public class UiScaler : MonoBehaviour {
+public class UiScaler : SingletonMonoBehaviour<UiScaler> {
+    public RectTransform canvasTransform;
     public CanvasScaler canvasScaler;
     private int lastWidth;
+    private static float uiScale = 1f;
+
+    /// <summary>
+    /// The size of the canvas, which may be larger than the screen size when scaling is applied.
+    /// </summary>
+    public static Vector2 CanvasSize {
+        get {
+            Rect pixelRect = Instance.canvasTransform.rect;
+            return new Vector2(pixelRect.width, pixelRect.height);
+        }
+    } 
 
     private void Start() {
         UpdateSize();
@@ -25,14 +37,23 @@ public class UiScaler : MonoBehaviour {
     private void UpdateSize() {
         lastWidth = Screen.width;
         if (lastWidth <= 1024) {
-            canvasScaler.scaleFactor = 0.6f;
+            uiScale = 0.6f;
         } else if (lastWidth <= 1280) {
-            canvasScaler.scaleFactor = 0.7f;
+            uiScale = 0.7f;
         } else if (lastWidth <= 1600) {
-            canvasScaler.scaleFactor = 0.8f;
+            uiScale = 0.8f;
         } else {
-            canvasScaler.scaleFactor = 1f;
+            uiScale = 1f;
         }
+        canvasScaler.scaleFactor = uiScale;
+    }
+
+    /// <summary>
+    /// Scale a point on the screen, to match the canvas scale.
+    /// This is useful for converting mouse positions to canvas positions.
+    /// </summary>
+    public static Vector2 ScalePointToCanvas(Vector2 point) {
+        return point / uiScale;
     }
 }
 
