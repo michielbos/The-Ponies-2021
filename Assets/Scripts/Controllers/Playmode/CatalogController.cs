@@ -41,8 +41,7 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController> {
 
         float left = Mathf.Min(catalogPos.x, objectInfoPos.x);
         float top = objectInfoPos.y + objectInfoSize.y;
-        float right = Mathf.Max(catalogPos.x + catalogSize.x, objectInfoPos.x + objectInfoSize.x);
-        return mousePos.x < left || mousePos.x > right || mousePos.y > top;
+        return mousePos.x < left || mousePos.y > top;
     }
 
     private void OnApplicationFocus(bool hasFocus) {

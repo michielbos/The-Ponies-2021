@@ -108,7 +108,6 @@ public class ObjectInfoPanel : MonoBehaviour {
     /// </summary>
     /// <param name="visible">Whether the panel should be visible.</param>
     public void SetVisible (bool visible) {
-        transform.localScale = visible ? new Vector3(1, 1, 1) : new Vector3(0, 0, 0);
-        gameObject.SetActive(true);
+        gameObject.SetActive(visible);
     }
 }
