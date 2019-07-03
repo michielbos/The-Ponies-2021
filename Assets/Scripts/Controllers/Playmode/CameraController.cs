@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Util;
 using Model.Property;
+using UI;
 using UnityEngine;
 
 namespace Controllers.Playmode {
@@ -35,7 +36,7 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
 
         if (Input.GetButtonDown("Fire2")) {
             panStartMouse = Input.mousePosition;
-            dragOriginIcon.anchoredPosition = panStartMouse;
+            dragOriginIcon.anchoredPosition = UiScaler.ScalePointToCanvas(panStartMouse);
             Dragging = true;
         }
 
