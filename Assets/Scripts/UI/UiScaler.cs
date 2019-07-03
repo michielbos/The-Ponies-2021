@@ -42,6 +42,8 @@ public class UiScaler : SingletonMonoBehaviour<UiScaler> {
             uiScale = 0.7f;
         } else if (lastWidth <= 1600) {
             uiScale = 0.8f;
+        } else if (lastWidth <= 1920) {
+            uiScale = 0.85f;
         } else {
             uiScale = 1f;
         }
