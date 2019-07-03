@@ -14771,6 +14771,9 @@ MonoBehaviour:
   socialFill: {fileID: 208670708652377619}
   bladderFill: {fileID: 4480944117093834392}
   roomFill: {fileID: 8639704067973343009}
+  positiveColor: {r: 0.13333334, g: 0.7058824, b: 0.4509804, a: 1}
+  neutralColor: {r: 1, g: 0.8509804, b: 0.4509804, a: 1}
+  negativeColor: {r: 0.84705883, g: 0.2901961, b: 0.3372549, a: 1}
 --- !u!1 &4606144062541199699
 GameObject:
   m_ObjectHideFlags: 0

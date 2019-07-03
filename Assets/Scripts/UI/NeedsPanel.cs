@@ -16,6 +16,10 @@ public class NeedsPanel : MonoBehaviour {
     public Image bladderFill;
     public Image roomFill;
 
+    public Color positiveColor;
+    public Color neutralColor;
+    public Color negativeColor;
+
     public void UpdateNeeds(Needs needs) {
         UpdateNeed(hungerFill, needs.hunger);
         UpdateNeed(energyFill, needs.energy);
@@ -30,6 +34,13 @@ public class NeedsPanel : MonoBehaviour {
     private void UpdateNeed(Image fill, float needValue) {
         RectTransform rectTransform = fill.rectTransform;
         rectTransform.sizeDelta = new Vector2(needValue * BarLength, rectTransform.sizeDelta.y);
+        if (needValue >= 0.67f) {
+            fill.color = positiveColor;
+        } else if (needValue >= 0.33) {
+            fill.color = neutralColor;
+        } else {
+            fill.color = negativeColor;
+        }
     }
 }
 
