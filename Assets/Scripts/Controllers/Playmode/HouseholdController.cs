@@ -13,6 +13,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
     public PieMenu pieMenuPrefab;
     public ActionQueue actionQueue;
     public PlayableCharactersView playableCharactersView;
+    public NeedsPanel needsPanel;
     [CanBeNull] public Household Household => PropertyController.Instance.property.household;
     [CanBeNull] public Pony selectedPony;
 
@@ -26,6 +27,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         selectedPony.SetSelected(true);
         actionQueue.UpdateActions(selectedPony.queuedActions);
         playableCharactersView.UpdateHousehold();
+        needsPanel.UpdateNeeds(pony.needs);
     }
 
     private void Update() {
