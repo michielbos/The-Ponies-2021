@@ -35,7 +35,6 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController> {
         RectTransform objectInfoTransform = objectInfoPanel.GetComponent<RectTransform>();
         Vector2 catalogPos = catalogTransform.position;
         Vector2 objectInfoPos = objectInfoTransform.position;
-        Vector2 catalogSize = catalogTransform.sizeDelta;
         Vector2 objectInfoSize = objectInfoTransform.sizeDelta;
         Vector3 mousePos = Input.mousePosition;
 

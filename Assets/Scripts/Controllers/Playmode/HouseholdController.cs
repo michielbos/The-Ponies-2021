@@ -12,18 +12,20 @@ namespace Controllers.Playmode {
 public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
     public PieMenu pieMenuPrefab;
     public ActionQueue actionQueue;
+    public PlayableCharactersView playableCharactersView;
     [CanBeNull] public Household Household => PropertyController.Instance.property.household;
     [CanBeNull] public Pony selectedPony;
 
     private PieMenu pieMenu;
 
-    public void SetSelectedPony(int index) {
+    public void SetSelectedPony(Pony pony) {
         if (selectedPony != null) {
             selectedPony.SetSelected(false);
         }
-        selectedPony = Household.ponies[index];
+        selectedPony = pony;
         selectedPony.SetSelected(true);
         actionQueue.UpdateActions(selectedPony.queuedActions);
+        playableCharactersView.UpdateHousehold();
     }
 
     private void Update() {
