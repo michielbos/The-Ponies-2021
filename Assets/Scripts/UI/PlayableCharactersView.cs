@@ -14,6 +14,7 @@ public class PlayableCharactersView : MonoBehaviour {
 
     public Button portraitPrefab;
     public RectTransform charactersButtonsPane;
+    public RectTransform statsPane;
     public GameObject selectedCharacterPortrait;
 
     private RectTransform charactersPane;
@@ -39,7 +40,7 @@ public class PlayableCharactersView : MonoBehaviour {
         if (HouseholdController.Instance.selectedPony != null) {
             numberOfPortraits--;
         }
-        
+
         portraits = new GameObject[numberOfPortraits];
         int index = 0;
         foreach (Pony pony in ponies) {
@@ -47,7 +48,7 @@ public class PlayableCharactersView : MonoBehaviour {
                 continue;
             Button portrait = Instantiate(portraitPrefab, charactersButtonsPane);
             portrait.GetComponent<RectTransform>().anchoredPosition = new Vector2(index * SpaceBetweenPortraits, 0);
-            portrait.onClick.AddListener(() => HouseholdController.Instance.SetSelectedPony(pony) );
+            portrait.onClick.AddListener(() => HouseholdController.Instance.SetSelectedPony(pony));
             portraits[index] = portrait.gameObject;
             index++;
         }
@@ -57,8 +58,10 @@ public class PlayableCharactersView : MonoBehaviour {
         float buttonWidth = portraitPrefab.GetComponent<RectTransform>().sizeDelta.x;
         float totalButtonWidth = (portraits.Length - 1) * SpaceBetweenPortraits + buttonWidth;
         charactersButtonsPane.sizeDelta = new Vector2(totalButtonWidth, charactersButtonsPane.sizeDelta.y);
-        float paneWidth = totalButtonWidth + PortraitsMargin * 2;
-        charactersPane.sizeDelta = new Vector2(Mathf.Max(paneWidth, MinPaneWidth), charactersPane.sizeDelta.y);
+        float paneWidth = Mathf.Max(totalButtonWidth + PortraitsMargin * 2, MinPaneWidth);
+        charactersPane.sizeDelta = new Vector2(paneWidth, charactersPane.sizeDelta.y);
+        statsPane.anchoredPosition =
+            new Vector2(charactersPane.anchoredPosition.x + paneWidth, statsPane.anchoredPosition.y);
     }
 }
 
