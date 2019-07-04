@@ -92,7 +92,17 @@ public class Needs {
         Social -= 1f / TicksPerDay;
         Bladder -= 2f / TicksPerDay;
         Room = 0.5f;
-        Debug.Log(Bladder);
+    }
+
+    public void SetAll(float value) {
+        Hunger = value;
+        Energy = value;
+        Comfort = value;
+        Fun = value;
+        Hygiene = value;
+        Social = value;
+        Bladder = value;
+        Room = value;
     }
 }
 
