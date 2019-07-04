@@ -1,7 +1,4 @@
-﻿using System.Collections.Generic;
-using Assets.Scripts.Controllers;
-using Assets.Scripts.Util;
-using Controllers.Singletons;
+﻿using Assets.Scripts.Util;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -21,8 +18,8 @@ namespace Controllers.Playmode
         public Sprite maneModeCpanel;
         public Sprite tailModeCpanel;
         public Sprite outfitModeCpanel;
-        public Sprite accesorryModeCpanel;
-        public Sprite peronalityModeCpanel;
+        public Sprite accessoryModeCpanel;
+        public Sprite personalityModeCpanel;
 
         private bool touchingGui;
 
@@ -85,13 +82,13 @@ namespace Controllers.Playmode
             {
                 cpanel.sprite = outfitModeCpanel;
             }
-            else if (mode == CapHudPanel.Accesorry)
+            else if (mode == CapHudPanel.Accessory)
             {
-                cpanel.sprite = accesorryModeCpanel;
+                cpanel.sprite = accessoryModeCpanel;
             }
             else if (mode == CapHudPanel.Personality)
             {
-                cpanel.sprite = peronalityModeCpanel;
+                cpanel.sprite = personalityModeCpanel;
             }
             else
             {
@@ -109,7 +106,7 @@ namespace Controllers.Playmode
         Mane = 3,
         Tail = 4,
         Outfit = 5,
-        Accesorry = 6,
+        Accessory = 6,
         Personality = 7,
     }
 

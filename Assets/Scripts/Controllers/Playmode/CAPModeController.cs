@@ -1,6 +1,4 @@
-﻿using Assets.Scripts.Controllers;
-using Assets.Scripts.Util;
-using Controllers.Singletons;
+﻿using Assets.Scripts.Util;
 using UI;
 
 namespace Controllers.Playmode
@@ -14,7 +12,7 @@ namespace Controllers.Playmode
         public ModeButton maneModeButton;
         public ModeButton tailModeButton;
         public ModeButton outfitModeButton;
-        public ModeButton accesorryModeButton;
+        public ModeButton accessoryModeButton;
         public ModeButton personalityModeButton;
 
 
@@ -36,7 +34,7 @@ namespace Controllers.Playmode
             maneModeButton.SetModeActive(mode == CapHudPanel.Mane);
             tailModeButton.SetModeActive(mode == CapHudPanel.Tail);
             outfitModeButton.SetModeActive(mode == CapHudPanel.Outfit);
-            accesorryModeButton.SetModeActive(mode == CapHudPanel.Accesorry);
+            accessoryModeButton.SetModeActive(mode == CapHudPanel.Accessory);
             personalityModeButton.SetModeActive(mode == CapHudPanel.Personality);
 
             CAPHUDController.Instance.OnModeUpdate(mode);

@@ -588,7 +588,7 @@ MonoBehaviour:
   maneModeButton: {fileID: 2229796627608705733}
   tailModeButton: {fileID: 1889560327304787231}
   outfitModeButton: {fileID: 3056948429543210204}
-  accesorryModeButton: {fileID: 2701890385304668032}
+  accessoryModeButton: {fileID: 2701890385304668032}
   personalityModeButton: {fileID: 3978456811368391106}
 --- !u!1 &254162685
 GameObject:
@@ -5964,7 +5964,7 @@ GameObject:
   - component: {fileID: 335172650}
   - component: {fileID: 2701890385304668032}
   m_Layer: 5
-  m_Name: ToggleAccesorry
+  m_Name: ToggleAccessory
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -6864,9 +6864,9 @@ MonoBehaviour:
   maneModeCpanel: {fileID: 21300000, guid: 5ceaaac7ff9cb544c9546b8fe2747e6a, type: 3}
   tailModeCpanel: {fileID: 21300000, guid: e29728fcbdc160d4e9c4b18abf4d759d, type: 3}
   outfitModeCpanel: {fileID: 21300000, guid: 0dd59c9b6d724734eb40c46ea6f594c8, type: 3}
-  accesorryModeCpanel: {fileID: 21300000, guid: 08e1fd8680cb8954a8f3842331bff7ad,
+  accessoryModeCpanel: {fileID: 21300000, guid: 08e1fd8680cb8954a8f3842331bff7ad,
     type: 3}
-  peronalityModeCpanel: {fileID: 21300000, guid: 84703c61ef11e804ca3fdc5a7fd55240,
+  personalityModeCpanel: {fileID: 21300000, guid: 84703c61ef11e804ca3fdc5a7fd55240,
     type: 3}
 --- !u!1 &2853137793394057366
 GameObject:
