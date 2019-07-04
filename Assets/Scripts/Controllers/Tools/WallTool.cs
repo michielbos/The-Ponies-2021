@@ -19,12 +19,12 @@ public class WallTool : MonoBehaviour, ITool {
     public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex) {
         if (wallPreset == null)
             return;
-        
+
         Vector2Int? tile;
-        if (tileIndex.x == -1 && tileIndex.y == -1) {
+        if (tilePosition == Vector3.zero) {
             tile = null;
         } else {
-            tile = tileIndex;
+            tile = new Vector2Int(Mathf.RoundToInt(tilePosition.x), Mathf.RoundToInt(tilePosition.z));
         }
 
         if (pressingTile) {

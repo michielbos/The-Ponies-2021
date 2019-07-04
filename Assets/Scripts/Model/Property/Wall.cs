@@ -7,7 +7,7 @@ namespace Model.Property {
 /// </summary>
 [System.Serializable]
 public class Wall : MonoBehaviour {
-    public WallDirection _direction;
+    private WallDirection _direction;
 
     public Vector2Int TilePosition {
         get {
