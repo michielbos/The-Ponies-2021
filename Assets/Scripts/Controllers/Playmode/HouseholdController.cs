@@ -30,6 +30,15 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         needsPanel.UpdateNeeds(pony.needs);
     }
 
+    /// <summary>
+    /// Called when all ponies (and other tick listers) have been ticked.
+    /// </summary>
+    public void AfterTick() {
+        if (selectedPony != null) {
+            needsPanel.UpdateNeeds(selectedPony.needs);
+        }
+    }
+
     private void Update() {
         if ((Input.GetMouseButtonDown(1) || Input.GetKeyDown(KeyCode.Escape)) && pieMenu != null) {
             Destroy(pieMenu.gameObject);

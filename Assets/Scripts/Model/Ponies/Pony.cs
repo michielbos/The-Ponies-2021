@@ -79,6 +79,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     }
 
     public void OnTick() {
+        needs.ApplyDecay();
         if (currentAction == null && queuedActions.Count > 0) {
             currentAction = queuedActions[0];
             currentAction.SetActive();

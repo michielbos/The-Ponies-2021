@@ -39,6 +39,7 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
             fullSeconds = (long) Math.Floor(currentGameTime);
             HUDController.Instance.UpdateTime();
             tickListeners.ForEach(listener => listener.OnTick());
+            HouseholdController.Instance.AfterTick();
         }
     }
 

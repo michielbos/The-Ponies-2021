@@ -27,14 +27,14 @@ public class NeedsPanel : MonoBehaviour {
     public Image moodFill;
 
     public void UpdateNeeds(Needs needs) {
-        UpdateNeed(hungerFill, needs.hunger);
-        UpdateNeed(energyFill, needs.energy);
-        UpdateNeed(comfortFill, needs.comfort);
-        UpdateNeed(funFill, needs.fun);
-        UpdateNeed(hygieneFill, needs.hygiene);
-        UpdateNeed(socialFill, needs.social);
-        UpdateNeed(bladderFill, needs.bladder);
-        UpdateNeed(roomFill, needs.room);
+        UpdateNeed(hungerFill, needs.Hunger);
+        UpdateNeed(energyFill, needs.Energy);
+        UpdateNeed(comfortFill, needs.Comfort);
+        UpdateNeed(funFill, needs.Fun);
+        UpdateNeed(hygieneFill, needs.Hygiene);
+        UpdateNeed(socialFill, needs.Social);
+        UpdateNeed(bladderFill, needs.Bladder);
+        UpdateNeed(roomFill, needs.Room);
         UpdateMood(needs.GetMood());
     }
 
