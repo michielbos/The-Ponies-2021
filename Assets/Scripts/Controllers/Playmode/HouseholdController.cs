@@ -1,4 +1,3 @@
-using Assets.Scripts.Controllers;
 using Assets.Scripts.Util;
 using JetBrains.Annotations;
 using Model.Actions;
@@ -18,6 +17,12 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
     [CanBeNull] public Pony selectedPony;
 
     private PieMenu pieMenu;
+
+    private void Start() {
+        if (selectedPony == null && Household?.ponies.Count > 0) {
+            SetSelectedPony(Household.ponies[0]);
+        }
+    }
 
     public void SetSelectedPony(Pony pony) {
         if (selectedPony != null) {
