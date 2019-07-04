@@ -111,6 +111,7 @@ public class BuyTool : MonoBehaviour, ITool {
         MarkerRotation = ObjectRotation.SouthEast;
         PlaceBuyMarkings();
         MarkerRotation = rotation;
+        buildMarker.transform.position = new Vector3(0, -100, 0);
     }
 
     private void PlaceBuyMarkings() {

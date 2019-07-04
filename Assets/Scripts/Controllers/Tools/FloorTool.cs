@@ -6,9 +6,6 @@ using UnityEngine;
 
 namespace Controllers.Tools {
 
-
-
-
 /// <summary>
 /// Tool for build mode that deals with placing and removing floors.
 /// </summary>
@@ -41,7 +38,11 @@ public class FloorTool : MonoBehaviour, ITool {
         placingPreset = null;
     }
 
-    public void Disable() { }
+    public void Disable() {
+        if (buildMarker != null) {
+            Destroy(buildMarker);
+        }
+    }
 
     private void CreateBuildMarker() {
         if (buildMarker != null) {
@@ -50,7 +51,7 @@ public class FloorTool : MonoBehaviour, ITool {
 
         buildMarker = Instantiate(buildMarkerPrefab);
         placingPreset.ApplyToGameObject(buildMarker);
-        SetBuildMarkerPosition(0, 0);
+        buildMarker.transform.position = new Vector3(0, -100, 0);
     }
 
     private void UpdateBuildMarker(TerrainTile newTargetTile) {
