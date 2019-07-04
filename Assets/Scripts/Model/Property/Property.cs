@@ -113,7 +113,7 @@ public class Property : MonoBehaviour {
 
 	private void LoadWalls (WallData[] wallDatas) {
 		foreach (WallData wd in wallDatas) {
-			PlaceWall(wd.x, wd.y, (WallDirection) wd.direction);
+			PlaceWall(wd.x, wd.y, wd.Direction);
 		}
 	}
 	

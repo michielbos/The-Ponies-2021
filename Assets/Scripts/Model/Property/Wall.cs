@@ -4,26 +4,31 @@ namespace Model.Property {
 
 /// <summary>
 /// A wall that can be placed on the border of a tile.
-/// The physical "dummy" of this wall is kept in the dummyWall attribute.
 /// </summary>
 [System.Serializable]
 public class Wall : MonoBehaviour {
-    public int x;
-    public int y;
     public WallDirection wallDirection;
 
-    public void Init (int x, int y, WallDirection wallDirection) {
-        this.x = x;
-        this.y = y;
+    public Vector2Int TilePosition {
+        get {
+            Vector3 position = transform.position;
+            return new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
+        }
+        set { transform.position = new Vector3(value.x, 0, value.y); }
+    }
+
+    public void Init(int x, int y, WallDirection wallDirection) {
+        TilePosition = new Vector2Int(x, y);
         this.wallDirection = wallDirection;
     }
 
-    public WallData GetWallData () {
-        return new WallData(x,
-            y,
-            (int)wallDirection,
-            -1,
-            -1);
+    public WallData GetWallData() {
+        Vector2Int tilePosition = TilePosition;
+        return new WallData(tilePosition.x,
+            tilePosition.y,
+            (int) wallDirection,
+            "",
+            "");
     }
 }
 

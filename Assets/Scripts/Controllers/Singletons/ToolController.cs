@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Controls.Tools;
-using Assets.Scripts.Util;
+﻿using Assets.Scripts.Util;
 using Controllers.Playmode;
 using Controllers.Tools;
 using JetBrains.Annotations;
@@ -54,6 +53,8 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
             SetTool(ToolType.Buy);
         } else if (objectCategory == ObjectCategory.Floors) {
             SetTool(ToolType.Floor);
+        } else if (objectCategory == ObjectCategory.Wall) {
+            SetTool(ToolType.Wall);
         } else {
             // [Ebunix] Replaces DisableTool();
             SetTool(ToolType.None);
