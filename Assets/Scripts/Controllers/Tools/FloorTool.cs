@@ -41,7 +41,11 @@ public class FloorTool : MonoBehaviour, ITool {
         placingPreset = null;
     }
 
-    public void Disable() { }
+    public void Disable() {
+        if (buildMarker != null) {
+            Destroy(buildMarker);
+        }
+    }
 
     private void CreateBuildMarker() {
         if (buildMarker != null) {
