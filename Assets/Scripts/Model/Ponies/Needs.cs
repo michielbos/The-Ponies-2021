@@ -30,6 +30,11 @@ public class Needs {
     public PonyData.NeedsData GetNeedsData() {
         return new PonyData.NeedsData(hunger, energy, comfort, fun, hygiene, social, bladder, room);
     }
+
+    public float GetMood() {
+        float total = hunger + energy + comfort + fun + hunger + social + bladder + room;
+        return total / 8f;
+    }
 }
 
 }
