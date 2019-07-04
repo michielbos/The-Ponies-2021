@@ -67,24 +67,23 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
     public void SetCheatFieldVisible(bool visible) {
         this.visible = visible;
         cheatField.interactable = visible;
-        //The active/enabled flag won't hide it, so we're just shrinking it to zero for now...
         if (visible) {
-            cheatField.transform.localScale = new Vector3(1, 1, 1);
+            cheatField.transform.gameObject.SetActive(true);
             cheatField.ActivateInputField();
             if (expanded) {
-                consolePanel.localScale = new Vector3(1, 1, 1);
+                consolePanel.gameObject.SetActive(true);
             }
         } else {
             cheatField.text = "";
-            cheatField.transform.localScale = new Vector3(0, 0, 0);
-            consolePanel.localScale = new Vector3(0, 0, 0);
+            cheatField.gameObject.SetActive(false);
+            consolePanel.gameObject.SetActive(false);
         }
     }
 
     public void SetExpanded(bool expanded) {
         this.expanded = expanded;
         if (visible) {
-            consolePanel.localScale = new Vector3(1, 1, 1);
+            consolePanel.gameObject.SetActive(true);;
         }
 
         RectTransform cheatFieldTransform = cheatField.GetComponent<RectTransform>();
@@ -193,14 +192,10 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
 
     private void SetShowFps(bool showFps) {
         this.showFps = showFps;
-        if (showFps) {
-            fpsText.rectTransform.localScale = new Vector3(1, 1, 1);
-        } else {
-            fpsText.rectTransform.localScale = new Vector3(0, 0, 0);
-        }
+        fpsText.rectTransform.gameObject.SetActive(showFps);
     }
 
-    void ClearConsole() {
+    private void ClearConsole() {
         consoleText.text = "";
     }
 }

@@ -36,7 +36,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
     }
 
     /// <summary>
-    /// Called when all ponies (and other tick listers) have been ticked.
+    /// Called when all ponies (and other tick listeners) have been ticked.
     /// </summary>
     public void AfterTick() {
         if (selectedPony != null) {
