@@ -7,7 +7,7 @@ namespace Model.Property {
 /// </summary>
 [System.Serializable]
 public class Wall : MonoBehaviour {
-    public WallDirection wallDirection;
+    public WallDirection _direction;
 
     public Vector2Int TilePosition {
         get {
@@ -17,16 +17,31 @@ public class Wall : MonoBehaviour {
         set { transform.position = new Vector3(value.x, 0, value.y); }
     }
 
+    public WallDirection Direction {
+        get { return _direction; }
+        set {
+            _direction = value;
+            float rotation;
+            if (value == WallDirection.NorthEast) {
+                rotation = 0;
+            } else { // NorthWest
+                rotation = 270;
+            }
+            // TODO: Add horizontal and vertical rotations
+            transform.rotation = Quaternion.Euler(0, rotation, 0);
+        }
+    }
+
     public void Init(int x, int y, WallDirection wallDirection) {
         TilePosition = new Vector2Int(x, y);
-        this.wallDirection = wallDirection;
+        Direction = wallDirection;
     }
 
     public WallData GetWallData() {
         Vector2Int tilePosition = TilePosition;
         return new WallData(tilePosition.x,
             tilePosition.y,
-            (int) wallDirection,
+            (int) Direction,
             "",
             "");
     }
