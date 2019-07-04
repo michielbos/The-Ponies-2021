@@ -1,9 +1,9 @@
 ﻿using Assets.Scripts.Util;
 using UI;
 
-namespace Controllers.Playmode {
+namespace Controllers.CAP {
 
-public class CAPModeController : SingletonMonoBehaviour<CAPModeController> {
+public class CapModeController : SingletonMonoBehaviour<CapModeController> {
     public ModeButton bodyModeButton;
     public ModeButton headModeButton;
     public ModeButton eyesModeButton;
@@ -29,7 +29,7 @@ public class CAPModeController : SingletonMonoBehaviour<CAPModeController> {
         accessoryModeButton.SetModeActive(mode == CapHudPanel.Accessory);
         personalityModeButton.SetModeActive(mode == CapHudPanel.Personality);
 
-        CAPHUDController.Instance.OnModeUpdate(mode);
+        CapHudController.Instance.OnModeUpdate(mode);
     }
 }
 

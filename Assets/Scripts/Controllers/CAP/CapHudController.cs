@@ -2,9 +2,9 @@
 using UnityEngine;
 using UnityEngine.UI;
 
-namespace Controllers.Playmode {
+namespace Controllers.CAP {
 
-public class CAPHUDController : SingletonMonoBehaviour<CAPHUDController> {
+public class CapHudController : SingletonMonoBehaviour<CapHudController> {
     public Image cpanel;
 
     public Sprite noModeCpanel;
@@ -23,7 +23,7 @@ public class CAPHUDController : SingletonMonoBehaviour<CAPHUDController> {
     }
 
     private static void ActivatePanel(CapHudPanel panel) {
-        CAPModeController.GetInstance().SwitchMode(panel);
+        CapModeController.GetInstance().SwitchMode(panel);
     }
 
     public void OnModeUpdate(CapHudPanel mode) {
