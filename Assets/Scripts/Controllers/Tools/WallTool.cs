@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.Controllers;
+﻿using System.Collections.Generic;
+using Assets.Scripts.Controllers;
+using Controllers.Singletons;
 using Model.Property;
 using UnityEngine;
 
@@ -97,14 +99,17 @@ public class WallTool : MonoBehaviour, ITool {
             Vector2Int end = target.Value;
             Vector2Int firstPos = new Vector2Int(Mathf.Min(start.x, end.x), Mathf.Min(start.y, end.y));
             Vector2Int lastPos = new Vector2Int(Mathf.Max(start.x, end.x), Mathf.Max(start.y, end.y));
-            
-            // TODO: Check money
+            List<WallPosition> wallPositions = GetWallsToPlace(start, firstPos, lastPos);
+
+            int cost = wallPositions.Count * wallPreset.price;
+            bool canAfford = MoneyController.Instance.CanAfford(cost);
             // TODO: Check collisions
-            bool canPlace = true;
+            bool canPlace = canAfford;
 
             if (Input.GetMouseButtonUp(0)) {
                 if (canPlace) {
-                    PlaceWalls(start, firstPos, lastPos);
+                    MoneyController.Instance.ChangeFunds(-cost);
+                    PlaceWalls(wallPositions);
                 }
             } else {
                 PlaceWallMarker(start, end, firstPos, lastPos);
@@ -151,19 +156,40 @@ public class WallTool : MonoBehaviour, ITool {
             buildMarker.transform.position  = new Vector3(start.x, 0, end.y);
         }
     }
-
-    private void PlaceWalls(Vector2Int start, Vector2Int firstPos, Vector2Int lastPos) {
+    
+    private List<WallPosition> GetWallsToPlace(Vector2Int start, Vector2Int firstPos, Vector2Int lastPos) {
         int deltaX = lastPos.x - firstPos.x;
         int deltaY = lastPos.y - firstPos.y;
+        List<WallPosition> walls = new List<WallPosition>();
 
         if (deltaX >= deltaY) {
             for (int x = firstPos.x; x < lastPos.x; x++) {
-                PropertyController.Instance.property.PlaceWall(x, start.y, WallDirection.NorthEast);
+                walls.Add(new WallPosition(x, start.y, WallDirection.NorthEast));
             }
+            return walls;
         } else {
             for (int y = firstPos.y; y < lastPos.y; y++) {
-                PropertyController.Instance.property.PlaceWall(start.x, y, WallDirection.NorthWest);
+                walls.Add(new WallPosition(start.x, y, WallDirection.NorthWest));
             }
+            return walls;
+        }
+    }
+    
+    private void PlaceWalls(List<WallPosition> walls) {
+        foreach (WallPosition wall in walls) {
+            PropertyController.Instance.property.PlaceWall(wall.x, wall.y, wall.wallDirection);
+        }
+    }
+
+    private struct WallPosition {
+        public int x;
+        public int y;
+        public WallDirection wallDirection;
+
+        public WallPosition(int x, int y, WallDirection wallDirection) {
+            this.x = x;
+            this.y = y;
+            this.wallDirection = wallDirection;
         }
     }
 }
