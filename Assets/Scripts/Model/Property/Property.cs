@@ -318,6 +318,24 @@ public class Property : MonoBehaviour {
     }
 
     /// <summary>
+    /// Get all walls that are inside the given array of tiles.
+    /// This includes only the inner borders (those between the tiles).
+    /// </summary>
+    public List<Wall> GetOccupiedWalls(IEnumerable<Vector2Int> tiles) {
+        Vector2Int[] tilesArray = tiles as Vector2Int[] ?? tiles.ToArray();
+        HashSet<TileBorder> borders = GetOccupiedBorders(tilesArray);
+        List<Wall> occupiedWalls = new List<Wall>();
+
+        foreach (Wall wall in walls) {
+            if (borders.Any(border => border.Equals(wall.TileBorder))) {
+                occupiedWalls.Add(wall);
+            }
+        }
+
+        return occupiedWalls;
+    }
+    
+    /// <summary>
     /// Get all tile borders that are occupied by the given array of tiles.
     /// This includes only the inner borders (those between the tiles).
     /// </summary>

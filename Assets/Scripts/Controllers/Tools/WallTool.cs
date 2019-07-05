@@ -115,7 +115,8 @@ public class WallTool : MonoBehaviour, ITool {
 
                 int cost = wallPositions.Count * wallPreset.price;
                 bool canAfford = MoneyController.Instance.CanAfford(cost);
-                bool collides = PropertyController.Instance.property.GetObjectsOnBorders(wallPositions).Any();
+                bool collides = !CheatsController.Instance.moveObjectsMode && 
+                                PropertyController.Instance.property.GetObjectsOnBorders(wallPositions).Any();
                 bool canPlace = canAfford && !collides;
 
                 if (Input.GetMouseButtonUp(0)) {
