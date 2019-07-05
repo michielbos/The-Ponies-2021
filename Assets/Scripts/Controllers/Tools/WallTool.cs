@@ -20,7 +20,7 @@ public class WallTool : MonoBehaviour, ITool {
     private CatalogItem wallPreset;
 
     private GameObject buildMarker;
-    private GameObject wallMarker;
+    private readonly GameObject[] wallMarkers = new GameObject[4];
     private Vector2Int? currentTarget;
     private bool pressingTile;
 
@@ -54,8 +54,27 @@ public class WallTool : MonoBehaviour, ITool {
         if (buildMarker != null) {
             Destroy(buildMarker);
         }
-        if (wallMarker != null) {
-            Destroy(wallMarker);
+        DestroyWallMarkers();
+    }
+
+    private void DestroyWallMarkers() {
+        foreach (GameObject wallMarker in wallMarkers) {
+            if (wallMarker != null) {
+                Destroy(wallMarker);
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Destroy all wall markers, except the main one.
+    /// </summary>
+    private void DestroyRoomWallMarkers() {
+        for (int i = 1; i < wallMarkers.Length; i++) {
+            if (i == 0)
+                continue;
+            if (wallMarkers[i] != null) {
+                Destroy(wallMarkers[i]);
+            }
         }
     }
 
@@ -63,9 +82,7 @@ public class WallTool : MonoBehaviour, ITool {
         if (buildMarker != null) {
             Destroy(buildMarker);
         }
-        if (wallMarker != null) {
-            Destroy(wallMarker);
-        }
+        DestroyWallMarkers();
 
         buildMarker = Instantiate(buildMarkerPrefab);
         buildMarker.transform.position = new Vector3(0, -100, 0);
@@ -96,17 +113,31 @@ public class WallTool : MonoBehaviour, ITool {
     private void HandlePlacementHolding(Vector2Int? target) {
         bool validTargets = currentTarget != null && target != null;
         bool destroyMode = Input.GetKey(KeyCode.LeftControl);
+        bool roomMode = !destroyMode && Input.GetKey(KeyCode.LeftShift);
 
         if (validTargets) {
             Vector2Int start = currentTarget.Value;
             Vector2Int end = target.Value;
             Vector2Int firstPos = new Vector2Int(Mathf.Min(start.x, end.x), Mathf.Min(start.y, end.y));
             Vector2Int lastPos = new Vector2Int(Mathf.Max(start.x, end.x), Mathf.Max(start.y, end.y));
+            int deltaX = lastPos.x - firstPos.x;
+            int deltaY = lastPos.y - firstPos.y;
 
-            List<TileBorder> wallPositions = GetTileBorders(start, firstPos, lastPos);
-            
+            List<TileBorder> wallPositions;
+            if (roomMode && firstPos.x != lastPos.x && firstPos.y != lastPos.y) {
+                wallPositions = GetRoomTileBorders(firstPos, lastPos);
+                PlaceRoomWallMarkers(firstPos, lastPos);
+                buildMarker.transform.position = new Vector3(end.x, 0, end.y);
+            } else {
+                wallPositions = GetTileBorders(start, firstPos, lastPos);
+                PlaceWallMarker(0, start, firstPos, lastPos);
+                DestroyRoomWallMarkers();
+                buildMarker.transform.position = deltaX >= deltaY ? new Vector3(end.x, 0, start.y) : 
+                    new Vector3(start.x, 0, end.y);
+            }
+
             if (destroyMode) {
-                PlaceWallMarker(start, end, firstPos, lastPos);
+                SetWallMarkerMaterial(wallDenyMaterial);
                 if (Input.GetMouseButtonUp(0) && SellWalls(wallPositions)) {
                     SoundController.Instance.PlaySound(SoundType.PlaceWall);
                 }
@@ -118,6 +149,8 @@ public class WallTool : MonoBehaviour, ITool {
                 bool collides = !CheatsController.Instance.moveObjectsMode && 
                                 PropertyController.Instance.property.GetObjectsOnBorders(wallPositions).Any();
                 bool canPlace = canAfford && !collides;
+                
+                SetWallMarkerMaterial(canPlace ? wallMarkerMaterial : wallDenyMaterial);
 
                 if (Input.GetMouseButtonUp(0)) {
                     if (canPlace) {
@@ -127,17 +160,13 @@ public class WallTool : MonoBehaviour, ITool {
                     } else {
                         SoundController.Instance.PlaySound(SoundType.Deny);
                     }
-                } else {
-                    PlaceWallMarker(start, end, firstPos, lastPos);
-                    wallMarker.GetComponentInChildren<Renderer>().material =
-                        canPlace ? wallMarkerMaterial : wallDenyMaterial;
                 }
             }
         }
 
         buildMarker.SetActive(validTargets);
-        if (wallMarker != null) {
-            wallMarker.SetActive(validTargets && !destroyMode);
+        if (!validTargets) {
+            DestroyWallMarkers();
         }
 
         if (Input.GetMouseButtonUp(0)) {
@@ -145,18 +174,26 @@ public class WallTool : MonoBehaviour, ITool {
         }
     }
 
+    private void SetWallMarkerMaterial(Material material) {
+        foreach (GameObject wallMarker in wallMarkers) {
+            if (wallMarker != null) {
+                wallMarker.GetComponentInChildren<Renderer>().material = material;
+            }
+        }
+    }
+
     /// <summary>
     /// Place ghosted walls to show the player where the walls will be built.
     /// </summary>
-    private void PlaceWallMarker(Vector2Int start, Vector2Int end, Vector2Int firstPos, Vector2Int lastPos) {
+    private void PlaceWallMarker(int index, Vector2Int start, Vector2Int firstPos, Vector2Int lastPos) {
         int deltaX = lastPos.x - firstPos.x;
         int deltaY = lastPos.y - firstPos.y;
         int length = Mathf.Max(deltaX, deltaY);
 
-        if (wallMarker == null) {
-            wallMarker = Instantiate(wallMarkerPrefab);
+        if (wallMarkers[index] == null) {
+            wallMarkers[index] = Instantiate(wallMarkerPrefab);
         }
-        Transform markerTransform = wallMarker.transform;
+        Transform markerTransform = wallMarkers[index].transform;
 
         // Rotate marker
         int angle = deltaX >= deltaY ? 0 : 90;
@@ -170,11 +207,24 @@ public class WallTool : MonoBehaviour, ITool {
         // Position markers
         if (deltaX >= deltaY) {
             markerTransform.position = new Vector3(firstPos.x + length / 2f, 0, start.y);
-            buildMarker.transform.position = new Vector3(end.x, 0, start.y);
         } else {
             markerTransform.position = new Vector3(start.x, 0, firstPos.y + length / 2f);
-            buildMarker.transform.position = new Vector3(start.x, 0, end.y);
         }
+    }
+    
+    private void PlaceWallMarker(int index, Vector2Int firstPos, Vector2Int lastPos) {
+        PlaceWallMarker(index, firstPos, firstPos, lastPos);
+    }
+
+    /// <summary>
+    /// Place ghosted walls in a room shape.
+    /// </summary>
+    private void PlaceRoomWallMarkers(Vector2Int firstPos, Vector2Int lastPos) {
+        PlaceWallMarker(0, firstPos, new Vector2Int(firstPos.x, lastPos.y));
+        PlaceWallMarker(1, firstPos, new Vector2Int(lastPos.x, firstPos.y));
+        PlaceWallMarker(2, new Vector2Int(firstPos.x, lastPos.y), lastPos);
+        PlaceWallMarker(3, new Vector2Int(lastPos.x, firstPos.y), lastPos);
+        
     }
 
     /// <summary>
@@ -199,6 +249,27 @@ public class WallTool : MonoBehaviour, ITool {
             }
             return walls;
         }
+    }
+    
+    /// <summary>
+    /// Get a list of all tile borders when drawing a square room from the firstPos to the lastPos.
+    /// </summary>
+    /// <param name="firstPos">The lower-left point of the two targets.</param>
+    /// <param name="lastPos">The upper-right point of the two targets.</param>
+    private List<TileBorder> GetRoomTileBorders(Vector2Int firstPos, Vector2Int lastPos) {
+        List<TileBorder> walls = new List<TileBorder>();
+        
+        for (int x = firstPos.x; x < lastPos.x; x++) {
+            walls.Add(new TileBorder(x, firstPos.y, WallDirection.NorthEast));
+            walls.Add(new TileBorder(x, lastPos.y, WallDirection.NorthEast));
+        }
+        
+        for (int y = firstPos.y; y < lastPos.y; y++) {
+            walls.Add(new TileBorder(firstPos.x, y, WallDirection.NorthWest));
+            walls.Add(new TileBorder(lastPos.x, y, WallDirection.NorthWest));
+        }
+        
+        return walls;
     }
 
     /// <summary>
