@@ -10,6 +10,8 @@ namespace Controllers.Tools {
 /// Tool for build mode that deals with placing and removing walls.
 /// </summary>
 public class WallTool : MonoBehaviour, ITool {
+    private const int SellValue = 10;
+    
     public GameObject buildMarkerPrefab;
     public GameObject wallMarkerPrefab;
     public Material wallMarkerMaterial;
@@ -93,6 +95,7 @@ public class WallTool : MonoBehaviour, ITool {
 
     private void HandlePlacementHolding(Vector2Int? target) {
         bool validTargets = currentTarget != null && target != null;
+        bool destroyMode = Input.GetKey(KeyCode.LeftControl);
 
         if (validTargets) {
             Vector2Int start = currentTarget.Value;
@@ -100,30 +103,40 @@ public class WallTool : MonoBehaviour, ITool {
             Vector2Int firstPos = new Vector2Int(Mathf.Min(start.x, end.x), Mathf.Min(start.y, end.y));
             Vector2Int lastPos = new Vector2Int(Mathf.Max(start.x, end.x), Mathf.Max(start.y, end.y));
 
-            List<TileBorder> wallPositions = GetWallsToPlace(start, firstPos, lastPos);
-            ExcludeExistingWalls(wallPositions);
-
-            int cost = wallPositions.Count * wallPreset.price;
-            bool canAfford = MoneyController.Instance.CanAfford(cost);
-            bool collides = PropertyController.Instance.property.GetObjectsOnBorders(wallPositions).Any();
-            bool canPlace = canAfford && !collides;
-
-            if (Input.GetMouseButtonUp(0)) {
-                if (canPlace) {
-                    MoneyController.Instance.ChangeFunds(-cost);
-                    PlaceWalls(wallPositions);
+            List<TileBorder> wallPositions = GetTileBorders(start, firstPos, lastPos);
+            
+            if (destroyMode) {
+                PlaceWallMarker(start, end, firstPos, lastPos);
+                if (Input.GetMouseButtonUp(0) && SellWalls(wallPositions)) {
                     SoundController.Instance.PlaySound(SoundType.PlaceWall);
                 }
             } else {
-                PlaceWallMarker(start, end, firstPos, lastPos);
-                wallMarker.GetComponentInChildren<Renderer>().material =
-                    canPlace ? wallMarkerMaterial : wallDenyMaterial;
+                ExcludeExistingWalls(wallPositions);
+
+                int cost = wallPositions.Count * wallPreset.price;
+                bool canAfford = MoneyController.Instance.CanAfford(cost);
+                bool collides = PropertyController.Instance.property.GetObjectsOnBorders(wallPositions).Any();
+                bool canPlace = canAfford && !collides;
+
+                if (Input.GetMouseButtonUp(0)) {
+                    if (canPlace) {
+                        MoneyController.Instance.ChangeFunds(-cost);
+                        PlaceWalls(wallPositions);
+                        SoundController.Instance.PlaySound(SoundType.PlaceWall);
+                    } else {
+                        SoundController.Instance.PlaySound(SoundType.Deny);
+                    }
+                } else {
+                    PlaceWallMarker(start, end, firstPos, lastPos);
+                    wallMarker.GetComponentInChildren<Renderer>().material =
+                        canPlace ? wallMarkerMaterial : wallDenyMaterial;
+                }
             }
         }
 
         buildMarker.SetActive(validTargets);
         if (wallMarker != null) {
-            wallMarker.SetActive(validTargets);
+            wallMarker.SetActive(validTargets && !destroyMode);
         }
 
         if (Input.GetMouseButtonUp(0)) {
@@ -164,12 +177,12 @@ public class WallTool : MonoBehaviour, ITool {
     }
 
     /// <summary>
-    /// Get a list of all walls to place when drawing a line from the firstPos to the lastPos.
+    /// Get a list of all tile borders when drawing a line from the firstPos to the lastPos.
     /// </summary>
     /// <param name="start">The original point where the player started drawing the wall.</param>
     /// <param name="firstPos">The lower-left point of the two targets.</param>
     /// <param name="lastPos">The upper-right point of the two targets.</param>
-    private List<TileBorder> GetWallsToPlace(Vector2Int start, Vector2Int firstPos, Vector2Int lastPos) {
+    private List<TileBorder> GetTileBorders(Vector2Int start, Vector2Int firstPos, Vector2Int lastPos) {
         int deltaX = lastPos.x - firstPos.x;
         int deltaY = lastPos.y - firstPos.y;
         List<TileBorder> walls = new List<TileBorder>();
@@ -192,7 +205,7 @@ public class WallTool : MonoBehaviour, ITool {
     /// </summary>
     private void ExcludeExistingWalls(List<TileBorder> wallPositions) {
         Property property = PropertyController.Instance.property;
-        wallPositions.RemoveAll(wall => property.GetWall(wall.x, wall.y, wall.wallDirection));
+        wallPositions.RemoveAll(tileBorder => property.GetWall(tileBorder));
     }
 
     /// <summary>
@@ -202,6 +215,25 @@ public class WallTool : MonoBehaviour, ITool {
         foreach (TileBorder wall in walls) {
             PropertyController.Instance.property.PlaceWall(wall.x, wall.y, wall.wallDirection);
         }
+    }
+    
+    /// <summary>
+    /// Sell any walls on the given tile borders.
+    /// </summary>
+    private bool SellWalls(List<TileBorder> borders) {
+        Property property = PropertyController.Instance.property;
+        bool sold = false;
+        
+        foreach (TileBorder border in borders) {
+            Wall wall = property.GetWall(border);
+            if (wall != null) {
+                MoneyController.Instance.ChangeFunds(SellValue);
+                property.RemoveWall(wall);
+                sold = true;
+            }
+        }
+
+        return sold;
     }
 }
 

@@ -85,6 +85,11 @@ public class Property : MonoBehaviour {
         terrainTiles[tilePosition.y, tilePosition.x].SetVisible(true);
     }
 
+    public void RemoveWall(Wall wall) {
+        Destroy(wall.gameObject);
+        walls.Remove(wall);
+    }
+
     public void RemovePropertyObject(PropertyObject propertyObject) {
         Destroy(propertyObject.gameObject);
         propertyObjects.Remove(propertyObject);
@@ -355,10 +360,9 @@ public class Property : MonoBehaviour {
     }
 
     [CanBeNull]
-    public Wall GetWall(int x, int y, WallDirection wallDirection) {
+    public Wall GetWall(TileBorder tileBorder) {
         foreach (Wall wall in walls) {
-            Vector2Int tilePosition = wall.TilePosition;
-            if (tilePosition.x == x && tilePosition.y == y && wall.Direction == wallDirection) {
+            if (wall.TileBorder.Equals(tileBorder)) {
                 return wall;
             }
         }

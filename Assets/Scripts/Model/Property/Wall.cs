@@ -16,6 +16,13 @@ public class Wall : MonoBehaviour {
         }
         set { transform.position = new Vector3(value.x, 0, value.y); }
     }
+    
+    public TileBorder TileBorder {
+        get {
+            Vector2Int tilePosition = TilePosition;
+            return new TileBorder(tilePosition.x, tilePosition.y, Direction);
+        }
+    }
 
     public WallDirection Direction {
         get { return _direction; }
