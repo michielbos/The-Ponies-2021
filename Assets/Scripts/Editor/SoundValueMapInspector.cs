@@ -1,4 +1,4 @@
-﻿using Assets.Scripts.Controllers;
+﻿using Controllers.Singletons;
 using UnityEditor;
 using UnityEngine;
 

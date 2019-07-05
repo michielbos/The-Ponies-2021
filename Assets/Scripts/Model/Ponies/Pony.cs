@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using Assets.Scripts.Controllers;
 using Controllers.Playmode;
+using Controllers.Singletons;
 using JetBrains.Annotations;
 using Model.Actions;
 using Model.Actions.Actions;

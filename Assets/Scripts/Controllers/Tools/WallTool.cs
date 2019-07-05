@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Assets.Scripts.Controllers;
 using Controllers.Singletons;
 using Model.Property;
 using UnityEngine;
@@ -113,6 +112,7 @@ public class WallTool : MonoBehaviour, ITool {
                 if (canPlace) {
                     MoneyController.Instance.ChangeFunds(-cost);
                     PlaceWalls(wallPositions);
+                    SoundController.Instance.PlaySound(SoundType.PlaceWall);
                 }
             } else {
                 PlaceWallMarker(start, end, firstPos, lastPos);

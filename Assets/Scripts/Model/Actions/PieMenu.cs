@@ -1,5 +1,5 @@
 using System.Collections.Generic;
-using Assets.Scripts.Controllers;
+using Controllers.Singletons;
 using Model.Ponies;
 using UnityEngine;
 using UnityEngine.UI;
