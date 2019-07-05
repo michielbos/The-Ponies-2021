@@ -316,6 +316,17 @@ public class Property : MonoBehaviour {
     public TerrainTile GetTerrainTile(int x, int y) {
         return terrainTiles[y, x];
     }
+    
+    [CanBeNull]
+    public Wall GetWall(int x, int y, WallDirection wallDirection) {
+        foreach (Wall wall in walls) {
+            Vector2Int tilePosition = wall.TilePosition;
+            if (tilePosition.x == x && tilePosition.y == y && wall.Direction == wallDirection) {
+                return wall;
+            }
+        }
+        return null;
+    }
 }
 
 }

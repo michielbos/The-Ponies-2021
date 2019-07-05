@@ -99,7 +99,9 @@ public class WallTool : MonoBehaviour, ITool {
             Vector2Int end = target.Value;
             Vector2Int firstPos = new Vector2Int(Mathf.Min(start.x, end.x), Mathf.Min(start.y, end.y));
             Vector2Int lastPos = new Vector2Int(Mathf.Max(start.x, end.x), Mathf.Max(start.y, end.y));
+
             List<WallPosition> wallPositions = GetWallsToPlace(start, firstPos, lastPos);
+            ExcludeExistingWalls(wallPositions);
 
             int cost = wallPositions.Count * wallPreset.price;
             bool canAfford = MoneyController.Instance.CanAfford(cost);
@@ -117,7 +119,7 @@ public class WallTool : MonoBehaviour, ITool {
                     canPlace ? wallMarkerMaterial : wallDenyMaterial;
             }
         }
-        
+
         buildMarker.SetActive(validTargets);
         if (wallMarker != null) {
             wallMarker.SetActive(validTargets);
@@ -128,6 +130,9 @@ public class WallTool : MonoBehaviour, ITool {
         }
     }
 
+    /// <summary>
+    /// Place ghosted walls to show the player where the walls will be built.
+    /// </summary>
     private void PlaceWallMarker(Vector2Int start, Vector2Int end, Vector2Int firstPos, Vector2Int lastPos) {
         int deltaX = lastPos.x - firstPos.x;
         int deltaY = lastPos.y - firstPos.y;
@@ -150,13 +155,19 @@ public class WallTool : MonoBehaviour, ITool {
         // Position markers
         if (deltaX >= deltaY) {
             markerTransform.position = new Vector3(firstPos.x + length / 2f, 0, start.y);
-            buildMarker.transform.position  = new Vector3(end.x, 0, start.y);
+            buildMarker.transform.position = new Vector3(end.x, 0, start.y);
         } else {
             markerTransform.position = new Vector3(start.x, 0, firstPos.y + length / 2f);
-            buildMarker.transform.position  = new Vector3(start.x, 0, end.y);
+            buildMarker.transform.position = new Vector3(start.x, 0, end.y);
         }
     }
-    
+
+    /// <summary>
+    /// Get a list of all walls to place when drawing a line from the firstPos to the lastPos.
+    /// </summary>
+    /// <param name="start">The original point where the player started drawing the wall.</param>
+    /// <param name="firstPos">The lower-left point of the two targets.</param>
+    /// <param name="lastPos">The upper-right point of the two targets.</param>
     private List<WallPosition> GetWallsToPlace(Vector2Int start, Vector2Int firstPos, Vector2Int lastPos) {
         int deltaX = lastPos.x - firstPos.x;
         int deltaY = lastPos.y - firstPos.y;
@@ -174,7 +185,18 @@ public class WallTool : MonoBehaviour, ITool {
             return walls;
         }
     }
-    
+
+    /// <summary>
+    /// Remove wall positions of walls that overlap with existing walls on the property.
+    /// </summary>
+    private void ExcludeExistingWalls(List<WallPosition> wallPositions) {
+        Property property = PropertyController.Instance.property;
+        wallPositions.RemoveAll(wall => property.GetWall(wall.x, wall.y, wall.wallDirection));
+    }
+
+    /// <summary>
+    /// Place the given walls on the property.
+    /// </summary>
     private void PlaceWalls(List<WallPosition> walls) {
         foreach (WallPosition wall in walls) {
             PropertyController.Instance.property.PlaceWall(wall.x, wall.y, wall.wallDirection);
