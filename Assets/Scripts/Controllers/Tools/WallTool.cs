@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Controllers;
 using Controllers.Singletons;
 using Model.Property;
@@ -100,13 +101,13 @@ public class WallTool : MonoBehaviour, ITool {
             Vector2Int firstPos = new Vector2Int(Mathf.Min(start.x, end.x), Mathf.Min(start.y, end.y));
             Vector2Int lastPos = new Vector2Int(Mathf.Max(start.x, end.x), Mathf.Max(start.y, end.y));
 
-            List<WallPosition> wallPositions = GetWallsToPlace(start, firstPos, lastPos);
+            List<TileBorder> wallPositions = GetWallsToPlace(start, firstPos, lastPos);
             ExcludeExistingWalls(wallPositions);
 
             int cost = wallPositions.Count * wallPreset.price;
             bool canAfford = MoneyController.Instance.CanAfford(cost);
-            // TODO: Check collisions
-            bool canPlace = canAfford;
+            bool collides = PropertyController.Instance.property.GetObjectsOnBorders(wallPositions).Any();
+            bool canPlace = canAfford && !collides;
 
             if (Input.GetMouseButtonUp(0)) {
                 if (canPlace) {
@@ -168,19 +169,19 @@ public class WallTool : MonoBehaviour, ITool {
     /// <param name="start">The original point where the player started drawing the wall.</param>
     /// <param name="firstPos">The lower-left point of the two targets.</param>
     /// <param name="lastPos">The upper-right point of the two targets.</param>
-    private List<WallPosition> GetWallsToPlace(Vector2Int start, Vector2Int firstPos, Vector2Int lastPos) {
+    private List<TileBorder> GetWallsToPlace(Vector2Int start, Vector2Int firstPos, Vector2Int lastPos) {
         int deltaX = lastPos.x - firstPos.x;
         int deltaY = lastPos.y - firstPos.y;
-        List<WallPosition> walls = new List<WallPosition>();
+        List<TileBorder> walls = new List<TileBorder>();
 
         if (deltaX >= deltaY) {
             for (int x = firstPos.x; x < lastPos.x; x++) {
-                walls.Add(new WallPosition(x, start.y, WallDirection.NorthEast));
+                walls.Add(new TileBorder(x, start.y, WallDirection.NorthEast));
             }
             return walls;
         } else {
             for (int y = firstPos.y; y < lastPos.y; y++) {
-                walls.Add(new WallPosition(start.x, y, WallDirection.NorthWest));
+                walls.Add(new TileBorder(start.x, y, WallDirection.NorthWest));
             }
             return walls;
         }
@@ -189,7 +190,7 @@ public class WallTool : MonoBehaviour, ITool {
     /// <summary>
     /// Remove wall positions of walls that overlap with existing walls on the property.
     /// </summary>
-    private void ExcludeExistingWalls(List<WallPosition> wallPositions) {
+    private void ExcludeExistingWalls(List<TileBorder> wallPositions) {
         Property property = PropertyController.Instance.property;
         wallPositions.RemoveAll(wall => property.GetWall(wall.x, wall.y, wall.wallDirection));
     }
@@ -197,21 +198,9 @@ public class WallTool : MonoBehaviour, ITool {
     /// <summary>
     /// Place the given walls on the property.
     /// </summary>
-    private void PlaceWalls(List<WallPosition> walls) {
-        foreach (WallPosition wall in walls) {
+    private void PlaceWalls(List<TileBorder> walls) {
+        foreach (TileBorder wall in walls) {
             PropertyController.Instance.property.PlaceWall(wall.x, wall.y, wall.wallDirection);
-        }
-    }
-
-    private struct WallPosition {
-        public int x;
-        public int y;
-        public WallDirection wallDirection;
-
-        public WallPosition(int x, int y, WallDirection wallDirection) {
-            this.x = x;
-            this.y = y;
-            this.wallDirection = wallDirection;
         }
     }
 }

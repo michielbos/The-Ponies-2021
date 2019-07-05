@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Controllers.Playmode;
 using JetBrains.Annotations;
 using Model.Data;
@@ -295,6 +296,42 @@ public class Property : MonoBehaviour {
     }
 
     /// <summary>
+    /// Get all property objects that have two tiles that overlap one of the given borders.
+    /// </summary>
+    public List<PropertyObject> GetObjectsOnBorders(IEnumerable<TileBorder> borders) {
+        TileBorder[] tileBorders = borders as TileBorder[] ?? borders.ToArray();
+        List<PropertyObject> objectsOnBorders = new List<PropertyObject>();
+
+        foreach (PropertyObject propertyObject in propertyObjects) {
+            HashSet<TileBorder> occupiedBorders = GetOccupiedBorders(propertyObject.GetOccupiedTiles());
+            if (occupiedBorders.Intersect(tileBorders).Any()) {
+                objectsOnBorders.Add(propertyObject);
+            }
+        }
+
+        return objectsOnBorders;
+    }
+
+    /// <summary>
+    /// Get all tile borders that are occupied by the given array of tiles.
+    /// This includes only the inner borders (those between the tiles).
+    /// </summary>
+    private HashSet<TileBorder> GetOccupiedBorders(Vector2Int[] tiles) {
+        HashSet<TileBorder> tileBorders = new HashSet<TileBorder>();
+        
+        foreach (Vector2Int tile in tiles) {
+            if (tiles.Contains(new Vector2Int(tile.x - 1, tile.y))) {
+                tileBorders.Add(new TileBorder(tile.x, tile.y, WallDirection.NorthWest));
+            }
+            if (tiles.Contains(new Vector2Int(tile.x, tile.y - 1))) {
+                tileBorders.Add(new TileBorder(tile.x, tile.y, WallDirection.NorthEast));
+            }
+        }
+        
+        return tileBorders;
+    }
+
+    /// <summary>
     /// Returns a map that specifies which tiles have an object on them.
     /// All free tiles are represented by a 0. All occupied tiles are represented by a -1.
     /// </summary>
@@ -316,7 +353,7 @@ public class Property : MonoBehaviour {
     public TerrainTile GetTerrainTile(int x, int y) {
         return terrainTiles[y, x];
     }
-    
+
     [CanBeNull]
     public Wall GetWall(int x, int y, WallDirection wallDirection) {
         foreach (Wall wall in walls) {
