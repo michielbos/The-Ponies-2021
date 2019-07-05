@@ -1,5 +1,7 @@
 ﻿using System;
 using Assets.Scripts.Util;
+using Controllers.Playmode;
+using Model.Ponies;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -18,14 +20,14 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
     private float initialCheatFieldX, initialCheatFieldY, initialCheatFieldWidth;
     private float lastConsoleHeight = 0;
 
-    void Start() {
+    private void Start() {
         RectTransform rectTransform = cheatField.GetComponent<RectTransform>();
         initialCheatFieldX = rectTransform.position.x;
         initialCheatFieldY = rectTransform.position.y;
         initialCheatFieldWidth = rectTransform.rect.width;
     }
 
-    void Update() {
+    private void Update() {
         if ((Application.isEditor || Input.GetKey(KeyCode.LeftControl)) && Input.GetKey(KeyCode.LeftShift) &&
             Input.GetKeyDown(KeyCode.C)) {
             SetCheatFieldVisible(!visible);
@@ -55,7 +57,7 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         }
     }
 
-    void LateUpdate() {
+    private void LateUpdate() {
         ScrollRect consoleScrollRect = consolePanel.GetComponent<ScrollRect>();
         if (Math.Abs(consoleScrollRect.verticalNormalizedPosition - lastConsoleHeight) > 0) {
             consoleScrollRect.verticalNormalizedPosition = 0;
@@ -65,24 +67,23 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
     public void SetCheatFieldVisible(bool visible) {
         this.visible = visible;
         cheatField.interactable = visible;
-        //The active/enabled flag won't hide it, so we're just shrinking it to zero for now...
         if (visible) {
-            cheatField.transform.localScale = new Vector3(1, 1, 1);
+            cheatField.transform.gameObject.SetActive(true);
             cheatField.ActivateInputField();
             if (expanded) {
-                consolePanel.localScale = new Vector3(1, 1, 1);
+                consolePanel.gameObject.SetActive(true);
             }
         } else {
             cheatField.text = "";
-            cheatField.transform.localScale = new Vector3(0, 0, 0);
-            consolePanel.localScale = new Vector3(0, 0, 0);
+            cheatField.gameObject.SetActive(false);
+            consolePanel.gameObject.SetActive(false);
         }
     }
 
     public void SetExpanded(bool expanded) {
         this.expanded = expanded;
         if (visible) {
-            consolePanel.localScale = new Vector3(1, 1, 1);
+            consolePanel.gameObject.SetActive(true);;
         }
 
         RectTransform cheatFieldTransform = cheatField.GetComponent<RectTransform>();
@@ -112,8 +113,8 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         return TryCheat(split[0].ToLower(), parameters);
     }
 
-    bool TryCheat(string command, string[] parameters) {
-        //Money cheats
+    private bool TryCheat(string command, string[] parameters) {
+        // Money cheats
         if (command == "rosebud")
             MoneyController.Instance.ChangeFunds(1000);
         else if (command == "motherlode")
@@ -124,10 +125,14 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
             return ChangeFundsCheat(parameters[0]);
         else if (command == "addfunds" && parameters.Length == 1)
             return AddFundsCheat(parameters[0]);
-        //Buying/building cheats
+        // Buying/building cheats
         else if (command == "moveobjects" && parameters.Length == 1)
             return MoveObjectsCheat(parameters[0]);
-        //Misc cheats
+        // Live cheats
+        else if (command == "maxmuffins") {
+            MaxNeeds();
+        }
+        // Misc cheats
         else if (command == "expand")
             SetExpanded(!expanded);
         else if (command == "help")
@@ -145,7 +150,7 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         return true;
     }
 
-    bool ChangeFundsCheat(string amountString) {
+    private bool ChangeFundsCheat(string amountString) {
         int amount;
         if (int.TryParse(amountString, out amount)) {
             MoneyController.Instance.SetFunds(amount);
@@ -154,7 +159,7 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
             return false;
     }
 
-    bool AddFundsCheat(string amountString) {
+    private bool AddFundsCheat(string amountString) {
         int amount;
         if (int.TryParse(amountString, out amount)) {
             MoneyController.Instance.ChangeFunds(amount);
@@ -163,7 +168,7 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
             return false;
     }
 
-    bool MoveObjectsCheat(string parameter) {
+    private bool MoveObjectsCheat(string parameter) {
         if (parameter.ToLower() == "on") {
             moveObjectsMode = true;
         } else if (parameter.ToLower() == "off") {
@@ -174,22 +179,23 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         return true;
     }
 
-    void ShowHelp() {
+    private void MaxNeeds() {
+        Household household = HouseholdController.Instance.Household;
+        household?.ponies.ForEach(pony => pony.needs.SetAll(1));
+    }
+
+    private void ShowHelp() {
         SetExpanded(true);
         TextAsset helpText = Resources.Load<TextAsset>("cheats_help");
         AddConsoleLine(helpText.text);
     }
 
-    void SetShowFps(bool showFps) {
+    private void SetShowFps(bool showFps) {
         this.showFps = showFps;
-        if (showFps) {
-            fpsText.rectTransform.localScale = new Vector3(1, 1, 1);
-        } else {
-            fpsText.rectTransform.localScale = new Vector3(0, 0, 0);
-        }
+        fpsText.rectTransform.gameObject.SetActive(showFps);
     }
 
-    void ClearConsole() {
+    private void ClearConsole() {
         consoleText.text = "";
     }
 }

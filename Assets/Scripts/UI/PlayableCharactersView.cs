@@ -17,11 +17,9 @@ public class PlayableCharactersView : MonoBehaviour {
     public RectTransform statsPane;
     public GameObject selectedCharacterPortrait;
 
-    private RectTransform charactersPane;
     private GameObject[] portraits = new GameObject[0];
 
     private void Start() {
-        charactersPane = GetComponent<RectTransform>();
         UpdateHousehold();
     }
 
@@ -55,6 +53,7 @@ public class PlayableCharactersView : MonoBehaviour {
     }
 
     private void UpdatePaneSize() {
+        RectTransform charactersPane = GetComponent<RectTransform>();
         float buttonWidth = portraitPrefab.GetComponent<RectTransform>().sizeDelta.x;
         float totalButtonWidth = (portraits.Length - 1) * SpaceBetweenPortraits + buttonWidth;
         charactersButtonsPane.sizeDelta = new Vector2(totalButtonWidth, charactersButtonsPane.sizeDelta.y);

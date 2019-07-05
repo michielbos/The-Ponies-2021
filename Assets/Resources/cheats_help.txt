@@ -6,6 +6,8 @@ AdjustFunds <amount> - Set household funds to the given amount.
 AddFunds <amount> - Increase/decrease household funds with the given amount.
 --- Buying/building cheats ---
 MoveObjects on/off - Enables/disables moving of unmovable objects, selling of unsellable objects and placing objects inside each other.
+--- Live mode cheats ---
+MaxMuffins - Restore the needs of all ponies in the household.
 --- Misc cheats ---
 Expand - Expands the console.
 Help - Display these commands.

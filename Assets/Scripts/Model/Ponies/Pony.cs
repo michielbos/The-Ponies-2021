@@ -21,6 +21,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     public PonyRace race;
     public Gender gender;
     public PonyAge age;
+    public Needs needs;
 
     [CanBeNull] private Path walkPath;
     private Vector2Int? nextWalkTile;
@@ -36,11 +37,12 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         set { transform.position = new Vector3(value.x, 0, value.y); }
     }
 
-    public void Init(string ponyName, PonyRace race, Gender gender, PonyAge age) {
+    public void Init(string ponyName, PonyRace race, Gender gender, PonyAge age, Needs needs) {
         this.ponyName = ponyName;
         this.race = race;
         this.gender = gender;
         this.age = age;
+        this.needs = needs;
         indicator.GetComponent<Renderer>().material = new Material(indicatorMaterial);
     }
 
@@ -77,6 +79,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     }
 
     public void OnTick() {
+        needs.ApplyDecay();
         if (currentAction == null && queuedActions.Count > 0) {
             currentAction = queuedActions[0];
             currentAction.SetActive();
@@ -94,7 +97,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     }
 
     public PonyData GetPonyData() {
-        return new PonyData(ponyName, (int) race, (int) gender, (int) age);
+        return new PonyData(ponyName, (int) race, (int) gender, (int) age, needs.GetNeedsData());
     }
 
     public void SetSelected(bool selected) {

@@ -1,4 +1,3 @@
-using Assets.Scripts.Controllers;
 using Assets.Scripts.Util;
 using JetBrains.Annotations;
 using Model.Actions;
@@ -13,10 +12,17 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
     public PieMenu pieMenuPrefab;
     public ActionQueue actionQueue;
     public PlayableCharactersView playableCharactersView;
+    public NeedsPanel needsPanel;
     [CanBeNull] public Household Household => PropertyController.Instance.property.household;
     [CanBeNull] public Pony selectedPony;
 
     private PieMenu pieMenu;
+
+    private void Start() {
+        if (selectedPony == null && Household?.ponies.Count > 0) {
+            SetSelectedPony(Household.ponies[0]);
+        }
+    }
 
     public void SetSelectedPony(Pony pony) {
         if (selectedPony != null) {
@@ -26,6 +32,16 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         selectedPony.SetSelected(true);
         actionQueue.UpdateActions(selectedPony.queuedActions);
         playableCharactersView.UpdateHousehold();
+        needsPanel.UpdateNeeds(pony.needs);
+    }
+
+    /// <summary>
+    /// Called when all ponies (and other tick listeners) have been ticked.
+    /// </summary>
+    public void AfterTick() {
+        if (selectedPony != null) {
+            needsPanel.UpdateNeeds(selectedPony.needs);
+        }
     }
 
     private void Update() {
