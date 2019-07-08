@@ -15,6 +15,7 @@ public class Property : MonoBehaviour {
     public string propertyName;
     public string description;
     public string streetName;
+    private long time;
     public PropertyType propertyType;
     public TerrainTile[,] terrainTiles;
     public FloorTile[,,] floorTiles;
@@ -26,13 +27,28 @@ public class Property : MonoBehaviour {
 
     public int TerrainWidth => terrainTiles.GetLength(1);
     public int TerrainHeight => terrainTiles.GetLength(0);
-
-    public void Init(int id, string propertyName, string description, string streetName, PropertyType propertyType) {
+    
+    /// <summary>
+    /// The current game time, in ingame minutes.
+    /// If time does not matter for this property (because there is no household), 0 is returned.
+    /// </summary>
+    public long GameTime {
+        get { return household != null ? time : 0; }
+        set {
+            if (household != null) {
+                time = value;
+            }
+        }
+    }
+    
+    public void Init(int id, string propertyName, string description, string streetName, PropertyType propertyType,
+        long time) {
         this.id = id;
         this.propertyName = propertyName;
         this.streetName = streetName;
         this.description = description;
         this.propertyType = propertyType;
+        this.time = time;
         walls = new List<Wall>();
         roofs = new List<Roof>();
         propertyObjects = new List<PropertyObject>();
@@ -190,6 +206,7 @@ public class Property : MonoBehaviour {
             description,
             streetName,
             propertyType == PropertyType.RESIDENTIAL ? 0 : 1,
+            time,
             CreateTerrainTileDataArray(terrainTiles),
             CreateFloorTileDataArray(floorTiles),
             CreateWallDataArray(walls),

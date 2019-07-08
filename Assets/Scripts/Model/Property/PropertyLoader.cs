@@ -1,4 +1,5 @@
 ﻿using System.IO;
+using Assets.Scripts.Controllers;
 using Model.Data;
 using UnityEngine;
 
@@ -41,14 +42,16 @@ public class PropertyLoader {
         }
 
         HouseholdData householdData = null;
+        long time = 0;
         if (id == 0) {
             PonyData[] ponies = {
                 new PonyData("Orange Butt", 2, 2, 1),
                 new PonyData("Gilheart", 3, 1, 1)
             };
             householdData = new HouseholdData("The Placeholders", 20000, ponies);
+            time = TimeController.StartingTime;
         }
-        return new PropertyData(id, "untitled", "", "untitled street " + id, 0, terrainTileDatas, floorTileDatas,
+        return new PropertyData(id, "untitled", "", "untitled street " + id, 0, time, terrainTileDatas, floorTileDatas,
             wallDatas, roofDatas, propertyObjectDatas, householdData);
     }
 

@@ -8,21 +8,35 @@ using UnityEngine;
 namespace Assets.Scripts.Controllers {
 
 public class TimeController : SingletonMonoBehaviour<TimeController> {
-    private const float REAL_TIME_TO_GAME_TIME_MULTIPLIER = 60;
+    // The time at which households start.
+    public const long StartingTime = 480; // 8 AM
+    // The time which is used when there is no household.
+    private const long DefaultTime = 600; // 10 AM
+    
     private Speed currentSpeed;
-    private long fullSeconds;
-    public double StaringGameTime = 720;
     public int DaysInOneMonth = 25;
     public int DaysInOneYear = 100;
     private double currentGameTime;
-    private float pauseTimer;
     private bool forcePaused;
     public bool twelveHourClock = true;
     private readonly List<ITimeTickListener> tickListeners = new List<ITimeTickListener>();
 
+    /// <summary>
+    /// The current game time, in ingame minutes.
+    /// If time does not matter for this property (because there is no household), a default time is returned.
+    /// </summary>
+    private long GameTime {
+        get {
+            long time = PropertyController.Instance.property.GameTime;
+            return time > 0 ? time : DefaultTime;
+        }
+        set { PropertyController.Instance.property.GameTime = value; }
+    }
+
     void Start() {
         currentSpeed = Speed.Normal;
-        currentGameTime = StaringGameTime;
+        currentGameTime = GameTime;
+        HUDController.Instance.UpdateTime();
     }
 
     public void Update() {
@@ -30,14 +44,13 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
             if (Time.timeScale != 0) {
                 Time.timeScale = 0;
             }
-            pauseTimer += Time.unscaledDeltaTime;
         } else if (Time.timeScale != currentSpeed.GetMultiplier()) {
             Time.timeScale = currentSpeed.GetMultiplier();
         }
 
         currentGameTime += Time.deltaTime;
-        if (Math.Floor(currentGameTime) > fullSeconds) {
-            fullSeconds = (long) Math.Floor(currentGameTime);
+        if (Math.Floor(currentGameTime) > GameTime) {
+            GameTime = (long) Math.Floor(currentGameTime);
             HUDController.Instance.UpdateTime();
             tickListeners.ForEach(listener => listener.OnTick());
             HouseholdController.Instance.AfterTick();
@@ -62,7 +75,6 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
         if (from != to) {
             PlaySpeedSound(from, to);
             currentSpeed = speed;
-            pauseTimer = 0;
             HUDController.Instance.UpdateSpeed();
         }
     }
@@ -131,23 +143,19 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
     }
 
     public int GetHourOfDay() {
-        return (int) (currentGameTime * REAL_TIME_TO_GAME_TIME_MULTIPLIER / 60 / 60 % 24);
+        return (int) (GameTime / 60 % 24);
     }
 
     public int GetMinuteOfHour() {
-        return (int) (currentGameTime * REAL_TIME_TO_GAME_TIME_MULTIPLIER / 60 % 60);
-    }
-
-    public int GetSecondOfMinute() {
-        return (int) (currentGameTime * REAL_TIME_TO_GAME_TIME_MULTIPLIER % 60);
+        return (int) (GameTime % 60);
     }
 
     public int GetDayOfYear() {
-        return (int) (currentGameTime * REAL_TIME_TO_GAME_TIME_MULTIPLIER / 60 / 60 / 24 % DaysInOneYear);
+        return (int) (GameTime / 60 / 24 % DaysInOneYear);
     }
 
     public int GetDay() {
-        return (int) (currentGameTime * REAL_TIME_TO_GAME_TIME_MULTIPLIER / 60 / 60 / 24);
+        return (int) (GameTime / 60 / 24);
     }
 
     private Day GetDayOfWeek() {
@@ -157,7 +165,7 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
     public void AddTickListener(ITimeTickListener listener) {
         tickListeners.Add(listener);
     }
-    
+
     public void RemoveTickListener(ITimeTickListener listener) {
         tickListeners.Remove(listener);
     }

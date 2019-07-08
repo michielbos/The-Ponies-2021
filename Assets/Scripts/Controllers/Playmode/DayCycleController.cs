@@ -106,23 +106,20 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         WINTER
     };
 
-    void Start() {
+    private void Start() {
         skyboxMaterial = new Material(skyboxMaterialBase);
         RenderSettings.skybox = skyboxMaterial;
         currentSettings = sripngSettings;
-
-        UpdateTime();
     }
 
-    public void UpdateTime() {
+    private void UpdateTime() {
         float hour = TimeController.Instance.GetHourOfDay();
         float minute = TimeController.Instance.GetMinuteOfHour();
-        float second = TimeController.Instance.GetSecondOfMinute();
 
-        currentTime = hour + ((minute / 60) + (second / 60 / 60));
+        currentTime = hour + minute / 60;
     }
 
-    void Update() {
+    private void Update() {
         UpdateTime();
 
         UpdateSeasons();
@@ -132,7 +129,7 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         UpdateSunAndMoon();
     }
 
-    void UpdateSunAndMoon() {
+    private void UpdateSunAndMoon() {
         if (currentTime < currentSettings.startingSunrise || currentTime > currentSettings.startingNight) {
             if (currentTime < 24 && currentTime > currentSettings.startingNight) {
                 nightTime = currentTime - currentSettings.startingNight;
@@ -155,7 +152,7 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         }
     }
 
-    void UpdateTimeset() {
+    private void UpdateTimeset() {
         if (currentTime >= currentSettings.startingSunrise && currentTime <= currentSettings.endingSunrise &&
             currTimeset != Timeset.SUNRISE) {
             SetCurrentTimeset(Timeset.SUNRISE);
@@ -183,8 +180,7 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         fNoonPhase = ((24 - currentSettings.startingDay) - (24 - currentSettings.startingNight));
     }
 
-    void UpdateSeasons() {
-        float DaysInOneYear = TimeController.Instance.DaysInOneYear;
+    private void UpdateSeasons() {
         float DaysInOneMonth = TimeController.Instance.DaysInOneMonth;
         float CurrDayOfYear = TimeController.Instance.GetDayOfYear();
 
@@ -210,24 +206,23 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         }
     }
 
-    void UpdateLightFadeOut() {
+    private void UpdateLightFadeOut() {
         if (currTimeset == Timeset.SUNRISE) {
             NightLight.shadowStrength = Mathf.Lerp(NightLight.shadowStrength, 0, Time.deltaTime / 10f);
             SunLight.shadowStrength = Mathf.Lerp(SunLight.shadowStrength, sunriseShadowStrength, Time.deltaTime / 30f);
 
             if (NightLight.shadowStrength <= 0.1 && NightLight.shadowStrength > 0.05)
                 SunLight.enabled = true;
-            if (NightLight.shadowStrength <= 0.05 && NightLight.intensity <= 0.05 && NightLight.enabled == true)
-                {
-                    NightLight.enabled = false;
-                    if (SunLight.enabled == false)
-                        SunLight.enabled = true;
-                }
+            if (NightLight.shadowStrength <= 0.05 && NightLight.intensity <= 0.05 && NightLight.enabled) {
+                NightLight.enabled = false;
+                if (SunLight.enabled == false)
+                    SunLight.enabled = true;
             }
+        }
         if (currTimeset == Timeset.SUNRISEENDING) {
             NightLight.shadowStrength = Mathf.Lerp(NightLight.shadowStrength, 0, Time.deltaTime / 10f);
             SunLight.shadowStrength = Mathf.Lerp(SunLight.shadowStrength, sunriseShadowStrength, Time.deltaTime / 30f);
-            if (NightLight.shadowStrength <= 0.05 && NightLight.enabled == true) {
+            if (NightLight.shadowStrength <= 0.05 && NightLight.enabled) {
                 SunLight.enabled = true;
                 NightLight.enabled = false;
             }
@@ -235,7 +230,7 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         if (currTimeset == Timeset.DAY) {
             NightLight.shadowStrength = Mathf.Lerp(NightLight.shadowStrength, 0, Time.deltaTime / 30f);
             SunLight.shadowStrength = Mathf.Lerp(SunLight.shadowStrength, dayShadowStrength, Time.deltaTime / 30f);
-            if (NightLight.shadowStrength <= 0.05 && NightLight.enabled == true) {
+            if (NightLight.shadowStrength <= 0.05 && NightLight.enabled) {
                 SunLight.enabled = true;
                 NightLight.enabled = false;
             }
@@ -243,7 +238,7 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         if (currTimeset == Timeset.SUNSET) {
             NightLight.shadowStrength = Mathf.Lerp(NightLight.shadowStrength, 0, Time.deltaTime / 30f);
             SunLight.shadowStrength = Mathf.Lerp(SunLight.shadowStrength, sunsetShadowStrength, Time.deltaTime / 30f);
-            if (NightLight.shadowStrength <= 0.05 && NightLight.enabled == true) {
+            if (NightLight.shadowStrength <= 0.05 && NightLight.enabled) {
                 SunLight.enabled = true;
                 NightLight.enabled = false;
             }
@@ -255,7 +250,7 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
 
             if (SunLight.shadowStrength <= 0.1 && SunLight.shadowStrength > 0.05)
                 NightLight.enabled = true;
-            if (SunLight.shadowStrength <= 0.05 && SunLight.intensity <= 0.05 && SunLight.enabled == true) {
+            if (SunLight.shadowStrength <= 0.05 && SunLight.intensity <= 0.05 && SunLight.enabled) {
                 SunLight.enabled = false;
                 if (NightLight.enabled == false)
                     NightLight.enabled = true;
@@ -263,15 +258,15 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         }
     }
 
-    void SetCurrentSeason(Seasons currentSeason) {
+    private void SetCurrentSeason(Seasons currentSeason) {
         currSeason = currentSeason;
     }
 
-    void SetCurrentTimeset(Timeset currTime) {
+    private void SetCurrentTimeset(Timeset currTime) {
         currTimeset = currTime;
     }
 
-    public void UpdateWeather() {
+    private void UpdateWeather() {
         if (currTimeset == Timeset.SUNRISE) {
             sunriseLightIntensity = currentSettings.sunriseLightIntensity;
             sunriseLightColor = currentSettings.sunriseLightColor;
@@ -321,7 +316,7 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         }
     }
 
-    public void UpdateAll(float sunIntensity, Color sunLightColor, float moonIntensity, Color moonLightColor,
+    private void UpdateAll(float sunIntensity, Color sunLightColor, float moonIntensity, Color moonLightColor,
         Color skyTint, float fadeTime) {
         // Sun Light
         SunLight.intensity = Mathf.Lerp(SunLight.intensity, sunIntensity, Time.deltaTime / fadeTime);
@@ -335,7 +330,7 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
             Color.Lerp(skyboxMaterial.GetColor(TintProperty), skyTint, Time.deltaTime / fadeTime));
     }
 
-    public void ActivateTimesetParticle(GameObject CurrParticles) {
+    private void ActivateTimesetParticle(GameObject CurrParticles) {
         if (CurrParticles != null) {
             if (CurrParticles.gameObject.GetComponent<ParticleSystem>() != false) {
                 CurrParticles.SetActive(true);
@@ -346,7 +341,7 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         }
     }
 
-    public void DeactivateTimesetParticle(GameObject CurrParticles) {
+    private void DeactivateTimesetParticle(GameObject CurrParticles) {
         if (CurrParticles != null) {
             if (CurrParticles.gameObject.GetComponent<ParticleSystem>() != false) {
                 CurrParticles.SetActive(false);

@@ -16,8 +16,8 @@ public class PropertyController : SingletonMonoBehaviour<PropertyController> {
     public void Initialize(int propertyId) {
         PropertyData propertyData = new PropertyLoader().LoadOrCreateProperty(propertyId);
         property = Instantiate(propertyPrefab);
-        property.Init(propertyData.id, propertyData.name, propertyData.description, propertyData.streetName,
-            propertyData.GetPropertyType());
+        property.Init(propertyData.id, propertyData.name, propertyData.description, propertyData.streetName, 
+            propertyData.GetPropertyType(), propertyData.time);
         property.SpawnObjects(propertyData);
     }
 
