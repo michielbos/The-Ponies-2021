@@ -277,44 +277,38 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
         DifferentFadeTimes();
     }
 
-    private void DifferentFadeTimes() {
-        if (currTimeset == Timeset.SUNRISE || currTimeset == Timeset.SUNRISEENDING) {
-            if (currTimeset == Timeset.SUNRISE)
-            UpdateAll(sunriseLightIntensity, sunriseLightColor, 0.0f, currentSettings.moonNightLightColor,
-                currentSettings.sunriseSkyTintColor, fadeTime);
-            else if (currTimeset == Timeset.SUNRISEENDING)
-            UpdateAll(sunriseLightIntensity, sunriseLightColor, 0.0f, currentSettings.moonNightLightColor,
-    currentSettings.daySkyTintColor, fadeTime);
+    private void DifferentFadeTimes()
+    {
+        if (currTimeset == Timeset.SUNRISE || currTimeset == Timeset.SUNRISEENDING)
+        {
+        if (currTimeset == Timeset.SUNRISE)
+        UpdateAll(sunriseLightIntensity, sunriseLightColor, 0.0f, currentSettings.moonNightLightColor,
+            currentSettings.sunriseSkyTintColor, fadeTime);
+        else if (currTimeset == Timeset.SUNRISEENDING)
+        UpdateAll(sunriseLightIntensity, sunriseLightColor, 0.0f, currentSettings.moonNightLightColor,
+currentSettings.daySkyTintColor, fadeTime);
+        } else if (currTimeset == Timeset.DAY)
+        {
+        UpdateAll(currentSettings.dayLightIntensity, currentSettings.dayLightColor, 0.0f,
+            currentSettings.moonNightLightColor, currentSettings.daySkyTintColor, fadeTime);
 
-            DeactivateTimesetParticle(nightParticle);
-            DeactivateTimesetParticle(dayParticle);
-            DeactivateTimesetParticle(sunsetParticle);
-            ActivateTimesetParticle(sunriseParticle);
-        } else if (currTimeset == Timeset.DAY) {
-            UpdateAll(currentSettings.dayLightIntensity, currentSettings.dayLightColor, 0.0f,
-                currentSettings.moonNightLightColor, currentSettings.daySkyTintColor, fadeTime);
-            DeactivateTimesetParticle(nightParticle);
-            DeactivateTimesetParticle(sunriseParticle);
-            DeactivateTimesetParticle(dayParticle);
-            ActivateTimesetParticle(dayParticle);
-        } else if (currTimeset == Timeset.SUNSET) {
-            UpdateAll(currentSettings.sunsetLightIntensity, currentSettings.sunsetLightColor, 0.0f,
-                currentSettings.moonNightLightColor, currentSettings.sunsetSkyTintColor, fadeTime);
-            DeactivateTimesetParticle(nightParticle);
-            DeactivateTimesetParticle(sunriseParticle);
-            DeactivateTimesetParticle(dayParticle);
-            ActivateTimesetParticle(sunsetParticle);
-        } else if (currTimeset == Timeset.NIGHT) {
+        } else if (currTimeset == Timeset.SUNSET)
+        {
+        UpdateAll(currentSettings.sunsetLightIntensity, currentSettings.sunsetLightColor, 0.0f,
+            currentSettings.moonNightLightColor, currentSettings.sunsetSkyTintColor, fadeTime);
+
+        } else if (currTimeset == Timeset.NIGHT)
+            {
             UpdateAll(currentSettings.nightLightIntensity, currentSettings.nightLightColor,
                 currentSettings.nightMoonLightIntensity, currentSettings.moonNightLightColor,
                 currentSettings.nightSkyTintColor, 20);
-
-            DeactivateTimesetParticle(sunriseParticle);
-            DeactivateTimesetParticle(dayParticle);
-            DeactivateTimesetParticle(sunsetParticle);
-            ActivateTimesetParticle(nightParticle);
         }
-    }
+
+        SetTimesetParticleActive(sunriseParticle, currTimeset == Timeset.SUNRISE || currTimeset == Timeset.SUNRISEENDING);
+        SetTimesetParticleActive(dayParticle, currTimeset == Timeset.DAY);
+        SetTimesetParticleActive(sunsetParticle, currTimeset == Timeset.SUNSET);
+        SetTimesetParticleActive(nightParticle, currTimeset == Timeset.NIGHT);
+}
 
     private void UpdateAll(float sunIntensity, Color sunLightColor, float moonIntensity, Color moonLightColor,
         Color skyTint, float fadeTime) {
@@ -330,27 +324,29 @@ public class DayCycleController : SingletonMonoBehaviour<DayCycleController> {
             Color.Lerp(skyboxMaterial.GetColor(TintProperty), skyTint, Time.deltaTime / fadeTime));
     }
 
-    private void ActivateTimesetParticle(GameObject CurrParticles) {
-        if (CurrParticles != null) {
-            if (CurrParticles.gameObject.GetComponent<ParticleSystem>() != false) {
-                CurrParticles.SetActive(true);
-                if (!CurrParticles.GetComponent<ParticleSystem>().isPlaying) {
-                    CurrParticles.GetComponent<ParticleSystem>().Play(true);
+    private void SetTimesetParticleActive(GameObject currParticles, bool active)
+    {
+        if (currParticles == null)
+            return;
+
+        ParticleSystem particleSystem = currParticles.gameObject.GetComponent<ParticleSystem>();
+        if (particleSystem != null)
+        {
+            currParticles.SetActive(active);
+            if (active)
+            { // Alternatively, you could combine the active and isPlaying into one if-else-if set.
+                if (!particleSystem.isPlaying)
+                {
+                    particleSystem.Play(true);
                 }
+            }
+            else if (particleSystem.isPlaying)
+            {
+                particleSystem.Stop(true);
             }
         }
     }
 
-    private void DeactivateTimesetParticle(GameObject CurrParticles) {
-        if (CurrParticles != null) {
-            if (CurrParticles.gameObject.GetComponent<ParticleSystem>() != false) {
-                CurrParticles.SetActive(false);
-                if (CurrParticles.GetComponent<ParticleSystem>().isPlaying) {
-                    CurrParticles.GetComponent<ParticleSystem>().Stop(true);
-                }
-            }
-        }
-    }
 }
 
 }
