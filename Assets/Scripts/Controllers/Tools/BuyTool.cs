@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using Assets.Scripts.Controllers;
 using Controllers.Playmode;
 using Controllers.Singletons;
 using JetBrains.Annotations;
@@ -185,12 +184,22 @@ public class BuyTool : MonoBehaviour, ITool {
     private bool CanPlaceObject() {
         FurniturePreset movingPreset = GetMovingPreset();
         Vector2Int[] requiredTiles = movingPreset.GetOccupiedTiles(targetTile.TilePosition, MarkerRotation);
-        List<PropertyObject> occupyingObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
+        
         bool canPlace = placingPreset == null || MoneyController.Instance.CanAfford(placingPreset.price);
-        if (canPlace && !CheatsController.Instance.moveObjectsMode) {
-            foreach (PropertyObject occupyingObject in occupyingObjects) {
-                if (occupyingObject != movingObject)
+
+        if (!canPlace)
+            return false;
+        
+        if (!CheatsController.Instance.moveObjectsMode) {
+            List<PropertyObject> tileObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
+            foreach (PropertyObject tileObject in tileObjects) {
+                if (tileObject != movingObject)
                     return false;
+            }
+
+            List<Wall> walls = PropertyController.Instance.property.GetOccupiedWalls(requiredTiles);
+            if (walls.Count > 0) {
+                return false;
             }
         }
 
@@ -202,7 +211,7 @@ public class BuyTool : MonoBehaviour, ITool {
         }
 
         //TODO: Check for floors, walls, tables, etc.
-        return canPlace && movingPreset.AllowsPlacement(PlacementRestriction.Terrain);
+        return movingPreset.AllowsPlacement(PlacementRestriction.Terrain);
     }
 
     private void SetBuildMarkerPosition(int x, int y) {

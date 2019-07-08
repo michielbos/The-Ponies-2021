@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using Controllers.Playmode;
+using Controllers.Singletons;
 using UnityEngine;
 
 namespace Assets.Scripts.Controllers {

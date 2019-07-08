@@ -53,3 +53,4 @@ MonoBehaviour:
     type: 3}
   ponyPrefab: {fileID: 413886584184770711, guid: 301b6c362037f5c8c8ad00761717eb16,
     type: 3}
+  wallIcon: {fileID: 2800000, guid: 7cc11897509b275439b9a4e9c4066333, type: 3}

@@ -5,7 +5,7 @@ using Assets.Scripts.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-namespace Assets.Scripts.Controllers {
+namespace Controllers.Singletons {
     public enum SoundType {
         Undefined,
         Sell,

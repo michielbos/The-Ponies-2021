@@ -1,20 +1,20 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using Model.Property;
 
 [System.Serializable]
 public class WallData {
 	public int x;
 	public int y;
 	public int direction;
-	public int coverFront;
-	public int coverBack;
+	public string coverFrontUuid;
+	public string coverBackUuid;
 
-	public WallData (int x, int y, int direction, int coverFront, int coverBack) {
+	public WallDirection Direction => (WallDirection) direction;
+
+	public WallData (int x, int y, int direction, string coverFrontUuid, string coverBackUuid) {
 		this.x = x;
 		this.y = y;
 		this.direction = direction;
-		this.coverFront = coverFront;
-		this.coverBack = coverBack;
+		this.coverFrontUuid = coverFrontUuid;
+		this.coverBackUuid = coverBackUuid;
 	}
 }

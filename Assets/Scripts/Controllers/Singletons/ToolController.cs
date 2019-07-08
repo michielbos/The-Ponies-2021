@@ -1,5 +1,4 @@
-﻿using Assets.Scripts.Controls.Tools;
-using Assets.Scripts.Util;
+﻿using Assets.Scripts.Util;
 using Controllers.Playmode;
 using Controllers.Tools;
 using JetBrains.Annotations;
@@ -54,6 +53,8 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
             SetTool(ToolType.Buy);
         } else if (objectCategory == ObjectCategory.Floors) {
             SetTool(ToolType.Floor);
+        } else if (objectCategory == ObjectCategory.Wall) {
+            SetTool(ToolType.Wall);
         } else {
             // [Ebunix] Replaces DisableTool();
             SetTool(ToolType.None);
@@ -81,7 +82,7 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
 
         bool hit;
         RaycastHit hitInfo = GetMouseTerrainHit(out hit);
-        Vector3 tilePosition = hit ? GetBuildMarkerPosition(hitInfo) : Vector3.zero;
+        Vector3 tilePosition = hit ? hitInfo.point : Vector3.zero;
         Vector2Int tileIndex = hit ? GetTileIndex(hitInfo) : new Vector2Int(-1, -1);
         ActiveTool.UpdateTool(tilePosition, tileIndex);
     }
@@ -92,14 +93,6 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
         hit = Physics.Raycast(ray, out raycastHit, 1000, 1 << LAYER_TERRAIN) &&
               !HUDController.GetInstance().IsMouseOverGui();
         return raycastHit;
-    }
-
-    private Vector3 GetBuildMarkerPosition(RaycastHit hitInfo) {
-        float hitX = hitInfo.point.x;
-        float hitY = hitInfo.point.z;
-        hitX = Mathf.Floor(hitX);
-        hitY = Mathf.Floor(hitY);
-        return new Vector3(hitX, 0, hitY);
     }
 
     private Vector2Int GetTileIndex(RaycastHit hitInfo) {

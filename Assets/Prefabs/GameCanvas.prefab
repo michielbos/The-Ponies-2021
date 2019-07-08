@@ -14254,6 +14254,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8cb30012d65f2744f81045ff5108c9a2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  buildMarkerPrefab: {fileID: 1824389368066718, guid: b975f1d6a83f04bcd881163ae7c0d9e1,
+    type: 3}
+  wallMarkerPrefab: {fileID: 1824389368066718, guid: c273746f3a465f524a56760a01a27365,
+    type: 3}
+  wallMarkerMaterial: {fileID: 2100000, guid: 5196e50254676801cb0abbd55250b014, type: 2}
+  wallDenyMaterial: {fileID: 2100000, guid: c14c6bc107665645bbd8843e97ac427b, type: 2}
 --- !u!1 &1688231456424592789
 GameObject:
   m_ObjectHideFlags: 0
