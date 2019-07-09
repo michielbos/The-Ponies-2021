@@ -108,7 +108,7 @@ public sealed class FastObjImporter {
                 {
                     int splitStart = 2;
 
-                    vertices.Add(new Vector3(GetFloat(sb, ref splitStart, ref sbFloat),
+                    vertices.Add(new Vector3(-GetFloat(sb, ref splitStart, ref sbFloat),
                         GetFloat(sb, ref splitStart, ref sbFloat), GetFloat(sb, ref splitStart, ref sbFloat)));
                 } else if (sb[0] == 'v' && sb[1] == 't' && sb[2] == ' ') // UV
                 {
