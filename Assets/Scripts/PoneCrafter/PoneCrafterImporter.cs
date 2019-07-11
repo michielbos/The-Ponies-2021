@@ -57,7 +57,8 @@ public class PoneCrafterImporter {
     }
 
     private bool DoesUuidExist(Guid uuid) {
-        return loadedFloors.Any(it => it.uuid == uuid) ||
+        return loadedFurniture.Any(it => it.uuid == uuid) ||
+               loadedFloors.Any(it => it.uuid == uuid) ||
                loadedRoofs.Any(it => it.uuid == uuid) ||
                loadedTerrains.Any(it => it.uuid == uuid);
     }
