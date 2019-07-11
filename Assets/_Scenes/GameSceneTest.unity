@@ -898,6 +898,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: WeatherController
       objectReference: {fileID: 0}
+    - target: {fileID: 6548251385265118198, guid: 925b1401930ad024bba58d647fb77bca,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 6548251385265118199, guid: 925b1401930ad024bba58d647fb77bca,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -954,6 +959,11 @@ PrefabInstance:
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 6548251384336380041, guid: 925b1401930ad024bba58d647fb77bca,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 6548251384391476592, guid: 925b1401930ad024bba58d647fb77bca,
         type: 3}
       propertyPath: m_IsActive
       value: 0

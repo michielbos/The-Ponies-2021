@@ -4,7 +4,7 @@ using UnityEngine;
 namespace Assets.Scripts.Controllers {
 
 public class DayCycleController:SingletonMonoBehaviour<DayCycleController> {
-    public Light SunLight;
+    public Light dirLight;
     public Material skyboxMaterialBase;
 
     private float currentTime;
@@ -61,14 +61,11 @@ public class DayCycleController:SingletonMonoBehaviour<DayCycleController> {
     public LightSettings autumnSettings;
     public LightSettings winterSettings;
 
-    private float sunriseShadowStrength = 0.25f;
+    private float sunriseShadowStrength = 0.3f;
     private float dayShadowStrength = 0.45f;
     private float sunsetShadowStrength = 0.4f;
-    private float nightShadowStrength = 0.2f;
+    private float nightShadowStrength = 0.25f;
 
-    private float sunriseLightIntensity;
-    private Color sunriseLightColor;
-    
     public GameObject sunriseParticle;
     public GameObject dayParticle;
     public GameObject sunsetParticle;
@@ -141,7 +138,7 @@ public class DayCycleController:SingletonMonoBehaviour<DayCycleController> {
                 yRot = xRot;
             }
         }
-        SunLight.transform.localRotation = Quaternion.Euler(xRot, yRot, 0);
+        dirLight.transform.localRotation = Quaternion.Euler(xRot, yRot, 0);
     }
 
     private void UpdateTimeset() {
@@ -230,9 +227,9 @@ public class DayCycleController:SingletonMonoBehaviour<DayCycleController> {
 
     private void UpdateAll(float sunIntensity, Color sunLightColor, float shadowStrength, Color skyTint) {
         // Light
-        SunLight.intensity = Mathf.Lerp(SunLight.intensity, sunIntensity, Time.unscaledDeltaTime / fadeTime);
-        SunLight.color = Color.Lerp(SunLight.color, sunLightColor, Time.unscaledDeltaTime / fadeTime);
-        SunLight.shadowStrength = Mathf.Lerp(SunLight.shadowStrength, shadowStrength, Time.unscaledDeltaTime / fadeTime);
+        dirLight.intensity = Mathf.Lerp(dirLight.intensity, sunIntensity, Time.unscaledDeltaTime / fadeTime);
+        dirLight.color = Color.Lerp(dirLight.color, sunLightColor, Time.unscaledDeltaTime / fadeTime);
+        dirLight.shadowStrength = Mathf.Lerp(dirLight.shadowStrength, shadowStrength, Time.unscaledDeltaTime / fadeTime);
 
         // Skybox settings
         skyboxMaterial.SetColor(TintProperty,

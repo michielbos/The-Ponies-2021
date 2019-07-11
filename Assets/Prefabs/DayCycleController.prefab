@@ -136,11 +136,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f584a402bef91874da545b6fbaab709b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  SunLight: {fileID: 5075057834360993549}
+  dirLight: {fileID: 5075057834360993549}
   skyboxMaterialBase: {fileID: 2100000, guid: c520765c828141c4bae4a956adbb32f3, type: 2}
   springSettings:
     startingSunrise: 6
-    endingSunrise: 10
+    endingSunrise: 9
     startingDay: 12
     startingSunset: 18
     startingNight: 20
@@ -152,9 +152,9 @@ MonoBehaviour:
     sunriseLightColor: {r: 1, g: 0.77647066, b: 0.53333336, a: 1}
     dayLightColor: {r: 1, g: 1, b: 1, a: 1}
     sunsetLightColor: {r: 1, g: 0.654902, b: 0.5372549, a: 1}
-    moonNightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 1}
+    moonNightLightColor: {r: 0.7264151, g: 0.3186632, b: 0.6069464, a: 1}
     sunriseSkyTintColor: {r: 1, g: 0.5647059, b: 0.36862746, a: 1}
-    daySkyTintColor: {r: 1, g: 1, b: 1, a: 1}
+    daySkyTintColor: {r: 0.654902, g: 0.91372555, b: 0.9725491, a: 1}
     sunsetSkyTintColor: {r: 0.86666673, g: 0.5764706, b: 0.6627451, a: 1}
     nightSkyTintColor: {r: 0.12941177, g: 0.050980397, b: 0.2392157, a: 1}
   summerSettings:
@@ -171,7 +171,7 @@ MonoBehaviour:
     sunriseLightColor: {r: 1, g: 0.77647066, b: 0.53333336, a: 1}
     dayLightColor: {r: 1, g: 1, b: 1, a: 1}
     sunsetLightColor: {r: 1, g: 0.654902, b: 0.5372549, a: 1}
-    moonNightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 1}
+    moonNightLightColor: {r: 0.7254902, g: 0.31764707, b: 0.60784316, a: 1}
     sunriseSkyTintColor: {r: 1, g: 0.5647059, b: 0.36862746, a: 1}
     daySkyTintColor: {r: 0.654902, g: 0.91372555, b: 0.9725491, a: 1}
     sunsetSkyTintColor: {r: 0.86666673, g: 0.5764706, b: 0.6627451, a: 1}
@@ -190,14 +190,14 @@ MonoBehaviour:
     sunriseLightColor: {r: 1, g: 0.77647066, b: 0.53333336, a: 1}
     dayLightColor: {r: 1, g: 1, b: 1, a: 1}
     sunsetLightColor: {r: 1, g: 0.654902, b: 0.5372549, a: 1}
-    moonNightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 1}
+    moonNightLightColor: {r: 0.5253911, g: 0, b: 1, a: 1}
     sunriseSkyTintColor: {r: 1, g: 0.5647059, b: 0.36862746, a: 1}
     daySkyTintColor: {r: 0.654902, g: 0.91372555, b: 0.9725491, a: 1}
     sunsetSkyTintColor: {r: 0.86666673, g: 0.5764706, b: 0.6627451, a: 1}
     nightSkyTintColor: {r: 0.12941177, g: 0.050980397, b: 0.2392157, a: 1}
   winterSettings:
     startingSunrise: 8
-    endingSunrise: 9
+    endingSunrise: 10
     startingDay: 12
     startingSunset: 20
     startingNight: 22
@@ -209,7 +209,7 @@ MonoBehaviour:
     sunriseLightColor: {r: 1, g: 0.77647066, b: 0.53333336, a: 1}
     dayLightColor: {r: 1, g: 1, b: 1, a: 1}
     sunsetLightColor: {r: 1, g: 0.654902, b: 0.5372549, a: 1}
-    moonNightLightColor: {r: 1, g: 0.38431376, b: 0.8196079, a: 1}
+    moonNightLightColor: {r: 0.12941177, g: 0.050980397, b: 0.2392157, a: 1}
     sunriseSkyTintColor: {r: 1, g: 0.5647059, b: 0.36862746, a: 1}
     daySkyTintColor: {r: 0.654902, g: 0.91372555, b: 0.9725491, a: 1}
     sunsetSkyTintColor: {r: 0.86666673, g: 0.5764706, b: 0.6627451, a: 1}
@@ -768,7 +768,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 500
+    maxNumParticles: 400
     size3D: 0
     rotation3D: 0
     gravityModifier:
@@ -4971,7 +4971,7 @@ ParticleSystem:
   serializedVersion: 6
   lengthInSec: 3
   simulationSpeed: 1
-  stopAction: 0
+  stopAction: 1
   cullingMode: 1
   ringBufferMode: 0
   ringBufferLoopRange: {x: 0, y: 1}
@@ -5493,7 +5493,7 @@ ParticleSystem:
         m_PostInfinity: 2
         m_RotationOrder: 4
     randomizeRotationDirection: 0
-    maxNumParticles: 500
+    maxNumParticles: 200
     size3D: 0
     rotation3D: 0
     gravityModifier:
