@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Controllers.Playmode;
 using Controllers.Singletons;
 using JetBrains.Annotations;
@@ -184,12 +185,12 @@ public class BuyTool : MonoBehaviour, ITool {
     private bool CanPlaceObject() {
         FurniturePreset movingPreset = GetMovingPreset();
         Vector2Int[] requiredTiles = movingPreset.GetOccupiedTiles(targetTile.TilePosition, MarkerRotation);
-        
+
         bool canPlace = placingPreset == null || MoneyController.Instance.CanAfford(placingPreset.price);
 
         if (!canPlace)
             return false;
-        
+
         if (!CheatsController.Instance.moveObjectsMode) {
             List<PropertyObject> tileObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
             foreach (PropertyObject tileObject in tileObjects) {
@@ -210,8 +211,18 @@ public class BuyTool : MonoBehaviour, ITool {
             }
         }
 
-        //TODO: Check for floors, walls, tables, etc.
-        return PlacementTypeUtil.CanPlaceOnTerrain(movingPreset.placementType);
+        if (movingPreset.placementType == PlacementType.Ground ||
+            movingPreset.placementType == PlacementType.GroundOrSurface)
+            return true;
+
+        if (movingPreset.placementType == PlacementType.Terrain)
+            return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) != null) == 0;
+
+        if (movingPreset.placementType == PlacementType.Floor)
+            return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) == null) == 0;
+
+        //TODO: Check for walls, surfaces, ceilings.
+        return false;
     }
 
     private void SetBuildMarkerPosition(int x, int y) {

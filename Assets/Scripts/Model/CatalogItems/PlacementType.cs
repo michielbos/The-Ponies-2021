@@ -12,16 +12,3 @@ public enum PlacementType {
     ThroughWall = 7,
     Ceiling = 8
 }
-
-/// <summary>
-/// Utility functions for PlacementType.
-/// </summary>
-public static class PlacementTypeUtil {
-    public static bool CanPlaceOnTerrain(PlacementType type) {
-        return type == PlacementType.Ground || type == PlacementType.Terrain || type == PlacementType.GroundOrSurface;
-    }
-    
-    public static bool CanPlaceOnFloor(PlacementType type) {
-        return type == PlacementType.Ground || type == PlacementType.Floor || type == PlacementType.GroundOrSurface;
-    }
-}

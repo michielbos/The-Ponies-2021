@@ -385,6 +385,7 @@ public class Property : MonoBehaviour {
         return occupancyMap;
     }
 
+    [CanBeNull]
     public FloorTile GetFloorTile(int x, int y) {
         //TODO: Add floor level
         return floorTiles[0, y, x];
