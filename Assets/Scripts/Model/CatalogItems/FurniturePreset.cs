@@ -12,7 +12,7 @@ public class FurniturePreset : Preset {
     public readonly bool pickupable;
     public readonly bool sellable;
     public readonly Vector2Int[] occupiedTiles;
-    public readonly PlacementRestriction[] placementRestrictions;
+    public readonly PlacementType placementType;
 
     private Mesh mesh;
 
@@ -28,7 +28,7 @@ public class FurniturePreset : Preset {
         pickupable = furniture.pickupable;
         sellable = furniture.sellable;
         occupiedTiles = furniture.occupiedTiles;
-        placementRestrictions = furniture.placementRestrictions;
+        placementType = furniture.placementType;
         mesh = furniture.mesh;
         texture = furniture.texture;
         materials = new Material[1][];
@@ -143,18 +143,5 @@ public class FurniturePreset : Preset {
         }
         // SouthEast
         return tile;
-    }
-
-    /// <summary>
-    /// Check whether the furniture preset supports the given type of placement.
-    /// </summary>
-    /// <param name="placementRestriction">The PlacementRestriction to check</param>
-    /// <returns>Whether the given PlacementRestriction is allowed.</returns>
-    public bool AllowsPlacement(PlacementRestriction placementRestriction) {
-        foreach (PlacementRestriction pr in placementRestrictions) {
-            if (placementRestriction == pr)
-                return true;
-        }
-        return false;
     }
 }

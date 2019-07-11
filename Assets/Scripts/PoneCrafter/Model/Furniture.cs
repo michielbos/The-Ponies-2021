@@ -1,4 +1,3 @@
-using System;
 using PoneCrafter.Json;
 using UnityEngine;
 
@@ -12,7 +11,7 @@ public class Furniture : BaseModel {
     public bool pickupable;
     public bool sellable;
     public Vector2Int[] occupiedTiles;
-    public PlacementRestriction[] placementRestrictions;
+    public PlacementType placementType;
     public NeedStats needStats;
     public SkillStats skillStats;
     public RequiredAge requiredAge;
@@ -30,7 +29,7 @@ public class Furniture : BaseModel {
         pickupable = jsonFurniture.pickupable;
         sellable = jsonFurniture.sellable;
         occupiedTiles = jsonFurniture.occupiedTiles;
-        placementRestrictions = jsonFurniture.placementRestrictions;
+        placementType = jsonFurniture.placementType;
         this.mesh = mesh;
         this.texture = texture;
     }

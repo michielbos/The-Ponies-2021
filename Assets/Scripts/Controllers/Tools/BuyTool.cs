@@ -211,7 +211,7 @@ public class BuyTool : MonoBehaviour, ITool {
         }
 
         //TODO: Check for floors, walls, tables, etc.
-        return movingPreset.AllowsPlacement(PlacementRestriction.Terrain);
+        return PlacementTypeUtil.CanPlaceOnTerrain(movingPreset.placementType);
     }
 
     private void SetBuildMarkerPosition(int x, int y) {
