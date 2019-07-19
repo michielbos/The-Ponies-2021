@@ -1,22 +1,22 @@
-Shader "Cel Shading/RegularV2"
+Shader "Cel Shading/RegularV2Opacity"
 {
 	Properties
 	{
 		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("MainTex", 2D) = "white" {}
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
-		_AlphaCutout("AlphaCutout", Range( 0 , 0.75)) = 0
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
 
 	SubShader
 	{
-		Tags{ "RenderType" = "TransparentCutout"  "Queue" = "Geometry+0" }
+		Tags{ "RenderType" = "Transparent"  "Queue" = "Geometry+0" "IgnoreProjector" = "True" }
 		LOD 200
 		Cull Off
-		Blend One OneMinusSrcAlpha
-		
+		Blend SrcAlpha OneMinusSrcAlpha , SrcAlpha OneMinusSrcAlpha
+		BlendOp Add , Add
+		AlphaToMask On
 		CGINCLUDE
 		#include "UnityPBSLighting.cginc"
 		#include "UnityShaderVariables.cginc"
@@ -56,7 +56,6 @@ Shader "Cel Shading/RegularV2"
 		uniform sampler2D _MainTex;
 		uniform half4 _MainTex_ST;
 		uniform half4 _Color;
-		uniform half _AlphaCutout;
 
 		inline half4 LightingStandardCustomLighting( inout SurfaceOutputCustomLightingCustom s, half3 viewDir, UnityGI gi )
 		{
@@ -79,8 +78,7 @@ Shader "Cel Shading/RegularV2"
 			#endif
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
 			half4 tex2DNode29 = tex2D( _MainTex, uv_MainTex );
-			half AlphaValue43 = ( tex2DNode29.a * _Color.a );
-			half AlphaClipVar54 = saturate( ( (0.0 + (_AlphaCutout - 1.0) * (1.0 - 0.0) / (0.0 - 1.0)) + AlphaValue43 ) );
+			half AlphaValue59 = tex2DNode29.a;
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
 			float4 ase_lightColor = 0;
 			#else //aselc
@@ -103,13 +101,11 @@ Shader "Cel Shading/RegularV2"
 			float dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
 			half NdotL10 = dotResult8;
 			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( ( NdotL10 + 0.0 ) / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
-			half3 InputColor48 = (( tex2DNode29 * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb;
+			half3 InputColor48 = (( tex2DNode29 * ( _Color * float4( 0.7,0.7,0.7,1 ) ) )).rgb;
 			half3 BaseColorOutput55 = ( ( ( IndirDiffLight34 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * InputColor48 );
 			float3 temp_output_57_0 = BaseColorOutput55;
 			c.rgb = temp_output_57_0;
-			c.a = 1;
-			c.rgb *= c.a;
-			clip( AlphaClipVar54 - _AlphaCutout );
+			c.a = AlphaValue59;
 			return c;
 		}
 
@@ -141,7 +137,7 @@ Shader "Cel Shading/RegularV2"
 			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( ( NdotL10 + 0.0 ) / 0.001 ) ) * 1 ) , _ShadowValue);
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
 			half4 tex2DNode29 = tex2D( _MainTex, uv_MainTex );
-			half3 InputColor48 = (( tex2DNode29 * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb;
+			half3 InputColor48 = (( tex2DNode29 * ( _Color * float4( 0.7,0.7,0.7,1 ) ) )).rgb;
 			half3 BaseColorOutput55 = ( ( ( IndirDiffLight34 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * InputColor48 );
 			float3 temp_output_57_0 = BaseColorOutput55;
 			o.Albedo = temp_output_57_0;
@@ -157,6 +153,7 @@ Shader "Cel Shading/RegularV2"
 			Name "ShadowCaster"
 			Tags{ "LightMode" = "ShadowCaster" }
 			ZWrite On
+			AlphaToMask Off
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -171,6 +168,7 @@ Shader "Cel Shading/RegularV2"
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "UnityPBSLighting.cginc"
+			sampler3D _DitherMaskLOD;
 			struct v2f
 			{
 				V2F_SHADOW_CASTER;
@@ -226,10 +224,12 @@ Shader "Cel Shading/RegularV2"
 				#if defined( CAN_SKIP_VPOS )
 				float2 vpos = IN.pos;
 				#endif
+				half alphaRef = tex3D( _DitherMaskLOD, float3( vpos.xy * 0.25, o.Alpha * 0.9375 ) ).a;
+				clip( alphaRef - 0.01 );
 				SHADOW_CASTER_FRAGMENT( IN )
 			}
 			ENDCG
 		}
 	}
-	Fallback "Legacy Shaders/Diffuse"
+	Fallback "Cel Shading/RegularV2"
 }
