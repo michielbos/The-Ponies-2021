@@ -2,7 +2,7 @@ Shader "Cel Shading/RegularV2SingleSide"
 {
 	Properties
 	{
-		_Color("Color", Color) = (0.7,0.7,0.7,1)
+		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("MainTex", 2D) = "white" {}
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
