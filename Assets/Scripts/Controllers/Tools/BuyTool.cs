@@ -6,6 +6,7 @@ using Controllers.Singletons;
 using JetBrains.Annotations;
 using Model.Property;
 using UnityEngine;
+using Util;
 
 namespace Controllers.Tools {
 
@@ -211,18 +212,20 @@ public class BuyTool : MonoBehaviour, ITool {
             }
         }
 
-        if (movingPreset.placementType == PlacementType.Ground ||
-            movingPreset.placementType == PlacementType.GroundOrSurface)
-            return true;
-
-        if (movingPreset.placementType == PlacementType.Terrain)
-            return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) != null) == 0;
-
-        if (movingPreset.placementType == PlacementType.Floor)
-            return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) == null) == 0;
-
-        //TODO: Check for walls, surfaces, ceilings.
-        return false;
+        switch (movingPreset.placementType) {
+            case PlacementType.Ground:
+            case PlacementType.GroundOrSurface:
+                return true;
+            case PlacementType.Terrain:
+                return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) != null) == 0;
+            case PlacementType.Floor:
+                return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) == null) == 0;
+            case PlacementType.Wall:
+                return property.AllBordersContainWalls(TileUtils.GetBorders(requiredTiles, MarkerRotation));
+            default:
+                //TODO: Check for surfaces, ceilings.
+                return false;
+        }
     }
 
     private void SetBuildMarkerPosition(int x, int y) {

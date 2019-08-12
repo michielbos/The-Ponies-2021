@@ -370,6 +370,14 @@ public class Property : MonoBehaviour {
         
         return tileBorders;
     }
+    
+    /// <summary>
+    /// Returns true if every border in the given collection contains a wall.
+    /// False if one or more items to not have a matching walls.
+    /// </summary>
+    public bool AllBordersContainWalls(IEnumerable<TileBorder> tileBorders) {
+        return tileBorders.All(tileBorder => GetWall(tileBorder) != null);
+    }
 
     /// <summary>
     /// Returns a map that specifies which tiles have an object on them.
