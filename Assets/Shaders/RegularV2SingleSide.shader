@@ -5,24 +5,23 @@ Shader "Cel Shading/RegularV2SingleSide"
 		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("MainTex", 2D) = "white" {}
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
-		_AlphaCutout("AlphaCutout", Range( 0 , 0.75)) = 0
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
 
 	SubShader
 	{
-		Tags{ "RenderType" = "TransparentCutout"  "Queue" = "Geometry+0" }
+		Tags{ "RenderType" = "Opaque"  "Queue" = "Geometry+0" }
 		LOD 200
 		Cull Back
-		Blend One OneMinusSrcAlpha
+		Blend SrcAlpha OneMinusSrcAlpha
 		
 		CGINCLUDE
 		#include "UnityPBSLighting.cginc"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 		#include "Lighting.cginc"
-		#pragma target 3.0
+		#pragma target 2.0
 		#ifdef UNITY_PASS_SHADOWCASTER
 			#undef INTERNAL_DATA
 			#undef WorldReflectionVector
@@ -56,7 +55,6 @@ Shader "Cel Shading/RegularV2SingleSide"
 		uniform sampler2D _MainTex;
 		uniform half4 _MainTex_ST;
 		uniform half4 _Color;
-		uniform half _AlphaCutout;
 
 		inline half4 LightingStandardCustomLighting( inout SurfaceOutputCustomLightingCustom s, half3 viewDir, UnityGI gi )
 		{
@@ -77,21 +75,17 @@ Shader "Cel Shading/RegularV2SingleSide"
 			float fadeDist = UnityComputeShadowFadeDistance(data.worldPos, zDist);
 			ase_lightAtten = UnityMixRealtimeAndBakedShadows(data.atten, bakedAtten, UnityComputeShadowFade(fadeDist));
 			#endif
-			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			half4 tex2DNode29 = tex2D( _MainTex, uv_MainTex );
-			float AlphaValue43 = ( tex2DNode29.a * _Color.a );
-			float AlphaClipVar54 = saturate( ( (0.0 + (_AlphaCutout - 1.0) * (1.0 - 0.0) / (0.0 - 1.0)) + AlphaValue43 ) );
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
 			float4 ase_lightColor = 0;
 			#else //aselc
 			float4 ase_lightColor = _LightColor0;
 			#endif //aselc
-			float3 LightColorData17 = ( ase_lightColor.rgb * ase_lightAtten );
+			half3 LightColorData17 = ( ase_lightColor.rgb * ase_lightAtten );
 			UnityGI gi30 = gi;
 			float3 diffNorm30 = LightColorData17;
 			gi30 = UnityGI_Base( data, 1, diffNorm30 );
 			float3 indirectDiffuse30 = gi30.indirect.diffuse + diffNorm30 * 0.0001;
-			float3 IndirDiffLight34 = indirectDiffuse30;
+			half3 IndirDiffLight34 = indirectDiffuse30;
 			float temp_output_35_0 = ( 1.0 - ( ( 1.0 - ase_lightAtten ) * _WorldSpaceLightPos0.w ) );
 			half3 ase_worldNormal = WorldNormalVector( i, half3( 0, 0, 1 ) );
 			float3 ase_worldPos = i.worldPos;
@@ -101,15 +95,14 @@ Shader "Cel Shading/RegularV2SingleSide"
 			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
 			float dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
-			float NdotL10 = dotResult8;
+			half NdotL10 = dotResult8;
 			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( ( NdotL10 + 0.0 ) / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
-			float3 InputColor48 = (( tex2DNode29 * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb;
-			float3 BaseColorOutput55 = ( ( ( IndirDiffLight34 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * InputColor48 );
+			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
+			half3 InputColor48 = (( tex2D( _MainTex, uv_MainTex ) * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb;
+			half3 BaseColorOutput55 = ( ( ( IndirDiffLight34 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * InputColor48 );
 			float3 temp_output_57_0 = BaseColorOutput55;
 			c.rgb = temp_output_57_0;
 			c.a = 1;
-			c.rgb *= c.a;
-			clip( AlphaClipVar54 - _AlphaCutout );
 			return c;
 		}
 
@@ -122,7 +115,7 @@ Shader "Cel Shading/RegularV2SingleSide"
 		{
 			o.SurfInput = i;
 			o.Normal = float3(0,0,1);
-			float3 IndirDiffLight34 = float3(0,0,0);
+			half3 IndirDiffLight34 = float3(0,0,0);
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
 			float4 ase_lightColor = 0;
 			#else //aselc
@@ -137,19 +130,18 @@ Shader "Cel Shading/RegularV2SingleSide"
 			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
 			float dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
-			float NdotL10 = dotResult8;
+			half NdotL10 = dotResult8;
 			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( ( NdotL10 + 0.0 ) / 0.001 ) ) * 1 ) , _ShadowValue);
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			half4 tex2DNode29 = tex2D( _MainTex, uv_MainTex );
-			float3 InputColor48 = (( tex2DNode29 * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb;
-			float3 BaseColorOutput55 = ( ( ( IndirDiffLight34 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * InputColor48 );
+			half3 InputColor48 = (( tex2D( _MainTex, uv_MainTex ) * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb;
+			half3 BaseColorOutput55 = ( ( ( IndirDiffLight34 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * InputColor48 );
 			float3 temp_output_57_0 = BaseColorOutput55;
 			o.Albedo = temp_output_57_0;
 		}
 
 		ENDCG
 		CGPROGRAM
-		#pragma surface surf StandardCustomLighting keepalpha fullforwardshadows 
+		#pragma surface surf StandardCustomLighting keepalpha fullforwardshadows novertexlights 
 
 		ENDCG
 		Pass
@@ -160,7 +152,7 @@ Shader "Cel Shading/RegularV2SingleSide"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma target 3.0
+			#pragma target 2.0
 			#pragma multi_compile_shadowcaster
 			#pragma multi_compile UNITY_PASS_SHADOWCASTER
 			#pragma skip_variants FOG_LINEAR FOG_EXP FOG_EXP2
@@ -220,9 +212,6 @@ Shader "Cel Shading/RegularV2SingleSide"
 				SurfaceOutputCustomLightingCustom o;
 				UNITY_INITIALIZE_OUTPUT( SurfaceOutputCustomLightingCustom, o )
 				surf( surfIN, o );
-				UnityGI gi;
-				UNITY_INITIALIZE_OUTPUT( UnityGI, gi );
-				o.Alpha = LightingStandardCustomLighting( o, worldViewDir, gi ).a;
 				#if defined( CAN_SKIP_VPOS )
 				float2 vpos = IN.pos;
 				#endif
@@ -231,5 +220,5 @@ Shader "Cel Shading/RegularV2SingleSide"
 			ENDCG
 		}
 	}
-	Fallback "Legacy Shaders/Diffuse"
+	Fallback "Cel Shading/RegularV2"
 }
