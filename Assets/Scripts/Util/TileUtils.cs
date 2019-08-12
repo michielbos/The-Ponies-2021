@@ -26,31 +26,33 @@ public static class TileUtils {
         }
     }
 
-    private static IEnumerable<Vector2Int> GetBorderTiles(IEnumerable<Vector2Int> tiles, ObjectRotation direction) {
+    private static IEnumerable<Vector2Int> GetBorderTiles(IEnumerable<Vector2Int> tiles, ObjectRotation direction,
+        int distanceFromEnd = 0) {
         int borderHeight;
         switch (direction) {
             case ObjectRotation.SouthEast:
-                borderHeight = tiles.Max(tile => tile.y);
+                borderHeight = tiles.Max(tile => tile.y) - distanceFromEnd;
                 return tiles.Where(tile => tile.y == borderHeight);
             case ObjectRotation.SouthWest:
-                borderHeight = tiles.Max(tile => tile.x);
+                borderHeight = tiles.Max(tile => tile.x) - distanceFromEnd;
                 return tiles.Where(tile => tile.x == borderHeight);
             case ObjectRotation.NorthWest:
-                borderHeight = tiles.Min(tile => tile.y);
+                borderHeight = tiles.Min(tile => tile.y) + distanceFromEnd;
                 return tiles.Where(tile => tile.y == borderHeight);
             case ObjectRotation.NorthEast:
-                borderHeight = tiles.Min(tile => tile.x);
+                borderHeight = tiles.Min(tile => tile.x) + distanceFromEnd;
                 return tiles.Where(tile => tile.x == borderHeight);
             default:
                 throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
         }
     }
-    
+
     /// <summary>
     /// Get all TileBorders for the furthest border in the given direction in the tile collection.
     /// </summary>
-    public static IEnumerable<TileBorder> GetBorders(IEnumerable<Vector2Int> tiles, ObjectRotation direction) {
-        return GetBorderTiles(tiles, direction).Select(tile => GetNorthWestBorder(tile, direction));
+    public static IEnumerable<TileBorder> GetBorders(IEnumerable<Vector2Int> tiles, ObjectRotation direction,
+        int distanceFromEnd = 0) {
+        return GetBorderTiles(tiles, direction, distanceFromEnd).Select(tile => GetNorthWestBorder(tile, direction));
     }
 }
 

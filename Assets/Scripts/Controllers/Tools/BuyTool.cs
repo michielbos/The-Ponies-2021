@@ -186,6 +186,7 @@ public class BuyTool : MonoBehaviour, ITool {
     private bool CanPlaceObject() {
         FurniturePreset movingPreset = GetMovingPreset();
         Vector2Int[] requiredTiles = movingPreset.GetOccupiedTiles(targetTile.TilePosition, MarkerRotation);
+        List<Wall> walls = PropertyController.Instance.property.GetOccupiedWalls(requiredTiles);
 
         bool canPlace = placingPreset == null || MoneyController.Instance.CanAfford(placingPreset.price);
 
@@ -199,8 +200,8 @@ public class BuyTool : MonoBehaviour, ITool {
                     return false;
             }
 
-            List<Wall> walls = PropertyController.Instance.property.GetOccupiedWalls(requiredTiles);
-            if (walls.Count > 0) {
+            // If this is a ThroughWall type, we will deal with wall collisions when handling the placement type.
+            if (walls.Count > 0 && movingPreset.placementType != PlacementType.ThroughWall) {
                 return false;
             }
         }
@@ -222,6 +223,14 @@ public class BuyTool : MonoBehaviour, ITool {
                 return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) == null) == 0;
             case PlacementType.Wall:
                 return property.AllBordersContainWalls(TileUtils.GetBorders(requiredTiles, MarkerRotation));
+            case PlacementType.ThroughWall:
+                IEnumerable<TileBorder> tileBorders = TileUtils.GetBorders(requiredTiles, MarkerRotation, 1);
+                // Do the wall collision check that was skipped before.
+                if (!CheatsController.Instance.moveObjectsMode &&
+                    walls.Select(wall => wall.TileBorder).Except(tileBorders).Any()) {
+                    return false;
+                }
+                return property.AllBordersContainWalls(tileBorders);
             default:
                 //TODO: Check for surfaces, ceilings.
                 return false;
