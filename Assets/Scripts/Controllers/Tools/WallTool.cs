@@ -16,6 +16,7 @@ public class WallTool : MonoBehaviour, ITool {
     public GameObject wallMarkerPrefab;
     public Material wallMarkerMaterial;
     public Material wallDenyMaterial;
+    public Material wallDemolishMaterial;
 
     private CatalogItem wallPreset;
 
@@ -137,7 +138,7 @@ public class WallTool : MonoBehaviour, ITool {
             }
 
             if (destroyMode) {
-                SetWallMarkerMaterial(wallDenyMaterial);
+                SetWallMarkerMaterial(wallDemolishMaterial);
                 if (Input.GetMouseButtonUp(0) && SellWalls(wallPositions)) {
                     SoundController.Instance.PlaySound(SoundType.PlaceWall);
                 }

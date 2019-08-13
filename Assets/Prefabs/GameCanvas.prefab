@@ -5644,7 +5644,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3882e212a7f8ca046a8a87fdde8dfbae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StaringGameTime: 720
   DaysInOneMonth: 25
   DaysInOneYear: 100
   twelveHourClock: 1
@@ -14260,6 +14259,8 @@ MonoBehaviour:
     type: 3}
   wallMarkerMaterial: {fileID: 2100000, guid: 5196e50254676801cb0abbd55250b014, type: 2}
   wallDenyMaterial: {fileID: 2100000, guid: c14c6bc107665645bbd8843e97ac427b, type: 2}
+  wallDemolishMaterial: {fileID: 2100000, guid: 2ddc87004f8ebab5cbb940f4033f5866,
+    type: 2}
 --- !u!1 &1688231456424592789
 GameObject:
   m_ObjectHideFlags: 0
