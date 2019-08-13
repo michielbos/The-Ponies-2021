@@ -192,6 +192,14 @@ public class BuyTool : MonoBehaviour, ITool {
 
         if (!canPlace)
             return false;
+        
+        Property property = PropertyController.Instance.property;
+        
+        // Check if the required walls for Wall and ThroughWall types are in place.
+        IEnumerable<TileBorder> tileBorders = movingPreset.GetRequiredWallBorders(requiredTiles, MarkerRotation);
+        if (!property.AllBordersContainWalls(tileBorders)) {
+            return false;
+        }
 
         if (!CheatsController.Instance.moveObjectsMode) {
             List<PropertyObject> tileObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
@@ -200,13 +208,16 @@ public class BuyTool : MonoBehaviour, ITool {
                     return false;
             }
 
-            // If this is a ThroughWall type, we will deal with wall collisions when handling the placement type.
-            if (walls.Count > 0 && movingPreset.placementType != PlacementType.ThroughWall) {
-                return false;
+            if (walls.Count > 0) {
+                if (movingPreset.placementType != PlacementType.ThroughWall) {
+                    return false;
+                }
+                if (walls.Select(wall => wall.TileBorder).Except(tileBorders).Any()) {
+                    return false;
+                }
             }
         }
 
-        Property property = PropertyController.Instance.property;
         foreach (Vector2Int tile in requiredTiles) {
             if (tile.x < 0 || tile.y < 0 || tile.x >= property.TerrainWidth || tile.y >= property.TerrainHeight) {
                 return false;
@@ -216,21 +227,13 @@ public class BuyTool : MonoBehaviour, ITool {
         switch (movingPreset.placementType) {
             case PlacementType.Ground:
             case PlacementType.GroundOrSurface:
+            case PlacementType.Wall:
+            case PlacementType.ThroughWall:
                 return true;
             case PlacementType.Terrain:
                 return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) != null) == 0;
             case PlacementType.Floor:
                 return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) == null) == 0;
-            case PlacementType.Wall:
-                return property.AllBordersContainWalls(TileUtils.GetBorders(requiredTiles, MarkerRotation));
-            case PlacementType.ThroughWall:
-                IEnumerable<TileBorder> tileBorders = TileUtils.GetBorders(requiredTiles, MarkerRotation, 1);
-                // Do the wall collision check that was skipped before.
-                if (!CheatsController.Instance.moveObjectsMode &&
-                    walls.Select(wall => wall.TileBorder).Except(tileBorders).Any()) {
-                    return false;
-                }
-                return property.AllBordersContainWalls(tileBorders);
             default:
                 //TODO: Check for surfaces, ceilings.
                 return false;

@@ -58,6 +58,14 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     public Vector2Int[] GetOccupiedTiles() {
         return preset.GetOccupiedTiles(TilePosition, Rotation);
     }
+    
+    /// <summary>
+    /// Get the coordinates of the tiles occupied by this PropertyObject.
+    /// </summary>
+    /// <returns>A Vector2Int array of all occupied coordinates.</returns>
+    public IEnumerable<TileBorder> GetRequiredWallBorders() {
+        return preset.GetRequiredWallBorders(GetOccupiedTiles(), Rotation);
+    }
 
     public void SetVisibility(bool visible) {
         model.gameObject.SetActive(visible);

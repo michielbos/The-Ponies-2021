@@ -378,6 +378,17 @@ public class Property : MonoBehaviour {
     public bool AllBordersContainWalls(IEnumerable<TileBorder> tileBorders) {
         return tileBorders.All(tileBorder => GetWall(tileBorder) != null);
     }
+    
+    public bool CanRemoveWalls(List<TileBorder> wallPositions) {
+        foreach (PropertyObject propertyObject in propertyObjects) {
+            foreach (TileBorder requiredWallBorder in propertyObject.GetRequiredWallBorders()) {
+                if (wallPositions.Contains(requiredWallBorder)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     /// <summary>
     /// Returns a map that specifies which tiles have an object on them.

@@ -137,9 +137,15 @@ public class WallTool : MonoBehaviour, ITool {
                     new Vector3(start.x, 0, end.y);
             }
 
+            Property property = PropertyController.Instance.property;
             if (destroyMode) {
-                SetWallMarkerMaterial(wallDemolishMaterial);
-                if (Input.GetMouseButtonUp(0) && SellWalls(wallPositions)) {
+                wallPositions.RemoveAll(border => property.GetWall(border) == null);
+                bool canDestroy = property.CanRemoveWalls(wallPositions);
+                
+                SetWallMarkerMaterial(canDestroy ? wallDemolishMaterial : wallDenyMaterial);
+                
+                if (Input.GetMouseButtonUp(0) && canDestroy) {
+                    SellWalls(wallPositions);
                     SoundController.Instance.PlaySound(SoundType.PlaceWall);
                 }
             } else {
@@ -148,7 +154,7 @@ public class WallTool : MonoBehaviour, ITool {
                 int cost = wallPositions.Count * wallPreset.price;
                 bool canAfford = MoneyController.Instance.CanAfford(cost);
                 bool collides = !CheatsController.Instance.moveObjectsMode && 
-                                PropertyController.Instance.property.GetObjectsOnBorders(wallPositions).Any();
+                                property.GetObjectsOnBorders(wallPositions).Any();
                 bool canPlace = canAfford && !collides;
                 
                 SetWallMarkerMaterial(canPlace ? wallMarkerMaterial : wallDenyMaterial);
@@ -293,20 +299,14 @@ public class WallTool : MonoBehaviour, ITool {
     /// <summary>
     /// Sell any walls on the given tile borders.
     /// </summary>
-    private bool SellWalls(List<TileBorder> borders) {
+    private void SellWalls(List<TileBorder> borders) {
         Property property = PropertyController.Instance.property;
-        bool sold = false;
         
         foreach (TileBorder border in borders) {
             Wall wall = property.GetWall(border);
-            if (wall != null) {
-                MoneyController.Instance.ChangeFunds(SellValue);
-                property.RemoveWall(wall);
-                sold = true;
-            }
+            MoneyController.Instance.ChangeFunds(SellValue);
+            property.RemoveWall(wall);
         }
-
-        return sold;
     }
 }
 
