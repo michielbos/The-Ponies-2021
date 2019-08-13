@@ -11,15 +11,18 @@ namespace Controllers.Playmode {
 public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnterHandler, IPointerExitHandler {
     public List<GameObject> speedButtons;
     
-    public Text fundsText;
-    public Text timeText;
-    public Image cpanel;
-
     public Sprite noModeCpanel;
     public Sprite liveModeCpanel;
     public Sprite buyModeCpanel;
     public Sprite buildModeCpanel;
+    public Sprite[] wallVisibilityIcons;
     
+    public Text fundsText;
+    public Text timeText;
+    public Image cpanel;
+    public Button wallVisibilityButton;
+    
+    public WallVisibility wallVisibility = WallVisibility.Partially;
     private bool touchingGui;
 
     void Start() {
@@ -54,15 +57,22 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
         SoundController.Instance.PlaySound(SoundType.Click);
         CameraController.Instance.Rotate(counterClockwise);
     }
+    
+    // Called from Unity GUI Button
+    public void ToggleWallVisibility() {
+        SoundController.Instance.PlaySound(SoundType.Click);
+        SetWallVisibility(wallVisibility < WallVisibility.Roof ? wallVisibility + 1 : WallVisibility.Low);
+    }
+
+    private void SetWallVisibility(WallVisibility visibility) {
+        wallVisibility = visibility;
+        PropertyController.Instance.property.walls.ForEach(wall => wall.UpdateVisibility(visibility));
+        wallVisibilityButton.image.sprite = wallVisibilityIcons[(int) visibility];
+    }
 
     // Called from Unity GUI Button
     public void SetClocks() {
-        if (TimeController.Instance.twelveHourClock) {
-            TimeController.Instance.twelveHourClock = false;
-        } else {
-            TimeController.Instance.twelveHourClock = true;
-        }
-
+        TimeController.Instance.twelveHourClock = !TimeController.Instance.twelveHourClock;
         UpdateTime();
     }
 
@@ -119,6 +129,13 @@ public enum HudPanel {
     Build = 2,
     Camera = 3,
     Options = 4
+}
+
+public enum WallVisibility {
+    Low,
+    Partially,
+    Full,
+    Roof
 }
 
 }

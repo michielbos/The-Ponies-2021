@@ -4793,8 +4793,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 114113357470691672}
-        m_MethodName: SetRoofButton
-        m_Mode: 3
+        m_MethodName: ToggleWallVisibility
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -6960,13 +6960,20 @@ MonoBehaviour:
   - {fileID: 1215308966411122}
   - {fileID: 1271965056360436}
   - {fileID: 1693901015380642}
-  fundsText: {fileID: 114000812847085396}
-  timeText: {fileID: 114336257830083344}
-  cpanel: {fileID: 114908403165648786}
   noModeCpanel: {fileID: 21300000, guid: 9b7798aba7b92546a80c97e69e15ed11, type: 3}
   liveModeCpanel: {fileID: 21300000, guid: 64b9eb12c8b7607bb935613bca87935f, type: 3}
   buyModeCpanel: {fileID: 21300000, guid: a5c1aed67327fbd6d92c002014c5b8c1, type: 3}
   buildModeCpanel: {fileID: 21300000, guid: 4d8db10e6e6026010bdebb0b793b9035, type: 3}
+  wallVisibilityIcons:
+  - {fileID: 21300000, guid: 2903e7cd1b36f9955bcb3f68cf6e36f2, type: 3}
+  - {fileID: 21300000, guid: db71037d08c20048097eb8084a354ab8, type: 3}
+  - {fileID: 21300000, guid: 0a4452c2aa4f63a2d906eef459dbc683, type: 3}
+  - {fileID: 21300000, guid: 229b4b20e20d490ad94cb9bb4518ffb8, type: 3}
+  fundsText: {fileID: 114000812847085396}
+  timeText: {fileID: 114336257830083344}
+  cpanel: {fileID: 114908403165648786}
+  wallVisibilityButton: {fileID: 114588780003510648}
+  wallVisibility: 1
 --- !u!114 &114542114524124648
 MonoBehaviour:
   m_ObjectHideFlags: 0

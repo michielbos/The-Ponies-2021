@@ -1,12 +1,17 @@
-﻿using UnityEngine;
+﻿using System;
+using Controllers.Playmode;
+using UnityEngine;
 
 namespace Model.Property {
 
 /// <summary>
 /// A wall that can be placed on the border of a tile.
 /// </summary>
-[System.Serializable]
+[Serializable]
 public class Wall : MonoBehaviour {
+    public Mesh fullWallMesh;
+    public Mesh shortWallMesh;
+    public MeshFilter meshFilter;
     private WallDirection _direction;
 
     public Vector2Int TilePosition {
@@ -39,9 +44,22 @@ public class Wall : MonoBehaviour {
         }
     }
 
+    private void Start() {
+        UpdateVisibility(HUDController.Instance.wallVisibility);
+    }
+
     public void Init(int x, int y, WallDirection wallDirection) {
         TilePosition = new Vector2Int(x, y);
         Direction = wallDirection;
+    }
+
+    public void UpdateVisibility(WallVisibility visibility) {
+        // TODO: Implement partial walls.
+        if (visibility == WallVisibility.Low) {
+            meshFilter.sharedMesh = shortWallMesh;
+        } else {
+            meshFilter.sharedMesh = fullWallMesh;
+        }
     }
 
     public WallData GetWallData() {
