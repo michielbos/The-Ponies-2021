@@ -443,6 +443,13 @@ public class Property : MonoBehaviour {
     public Room GetRoom(Vector2Int tile) {
         return Rooms.FirstOrDefault(room => room.tiles.Contains(tile));
     }
+    
+    /// <summary>
+    /// Returns true if the given tile is inside a room.
+    /// </summary>
+    public bool IsInsideRoom(Vector2Int tile) {
+        return GetRoom(tile) != null;
+    }
 
     /// <summary>
     /// Update the rooms list.
@@ -469,6 +476,8 @@ public class Property : MonoBehaviour {
                 }
             }
         }
+        
+        WallVisibilityController.Instance.UpdateWallVisibility();
     }
 
     private Vector2Int? FindNextRoomlessTile(int[,] roomMap) {

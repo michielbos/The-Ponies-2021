@@ -45,7 +45,7 @@ public class Wall : MonoBehaviour {
     }
 
     private void Start() {
-        UpdateVisibility(HUDController.Instance.wallVisibility);
+        UpdateVisibility();
     }
 
     public void Init(int x, int y, WallDirection wallDirection) {
@@ -53,12 +53,41 @@ public class Wall : MonoBehaviour {
         Direction = wallDirection;
     }
 
+    public void UpdateVisibility() {
+        UpdateVisibility(WallVisibilityController.Instance.wallVisibility);
+    }
+    
     public void UpdateVisibility(WallVisibility visibility) {
-        // TODO: Implement partial walls.
-        if (visibility == WallVisibility.Low) {
+        if (visibility == WallVisibility.Low)
             meshFilter.sharedMesh = shortWallMesh;
-        } else {
+        else if (visibility == WallVisibility.Partially)
+            meshFilter.sharedMesh = HasRoomBehindWall() ? shortWallMesh : fullWallMesh;
+        else 
             meshFilter.sharedMesh = fullWallMesh;
+        
+    }
+
+    private bool HasRoomBehindWall() {
+        Property property = PropertyController.Instance.property;
+        CameraRotation cameraRotation = CameraController.Instance.CameraRotation;
+        switch (cameraRotation) {
+            case CameraRotation.North:
+                return property.IsInsideRoom(TileBorder.StartPosition);
+            case CameraRotation.East:
+                return Direction == WallDirection.NorthWest && property.IsInsideRoom(TileBorder.StartPosition) ||
+                    Direction == WallDirection.NorthEast && property.IsInsideRoom(TileBorder.StartPosition + Vector2Int.down);
+            case CameraRotation.South:
+                return Direction == WallDirection.NorthWest &&
+                       property.IsInsideRoom(TileBorder.StartPosition + Vector2Int.left) ||
+                       Direction == WallDirection.NorthEast &&
+                       property.IsInsideRoom(TileBorder.StartPosition + Vector2Int.down);
+            case CameraRotation.West:
+                return Direction == WallDirection.NorthWest &&
+                       property.IsInsideRoom(TileBorder.StartPosition + Vector2Int.left) ||
+                       Direction == WallDirection.NorthEast &&
+                       property.IsInsideRoom(TileBorder.StartPosition);
+            default:
+                throw new ArgumentOutOfRangeException();
         }
     }
 

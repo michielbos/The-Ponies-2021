@@ -25,6 +25,8 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
         }
     }
 
+    public CameraRotation CameraRotation => (CameraRotation) (Mathf.FloorToInt((holder.eulerAngles.y + 45f) / 90f % 4f) * 90);
+
     private void Start() {
         camera = Camera.main;
     }
@@ -86,6 +88,7 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
 
     public void Rotate(bool counterClockwise) {
         holder.Rotate(0, counterClockwise ? -90 : 90, 0);
+        WallVisibilityController.Instance.UpdateWallVisibility();
     }
 
     public void Zoom(int zoomDir) {
@@ -102,6 +105,13 @@ public class CameraController : SingletonMonoBehaviour<CameraController> {
     private Vector3 LevelVector(Vector3 v) {
         return Vector3.ProjectOnPlane(v, Vector3.up).normalized;
     }
+}
+
+public enum CameraRotation {
+    North = 0,
+    East = 90,
+    South = 180,
+    West = 270
 }
 
 }

@@ -16,17 +16,14 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
     public Sprite liveModeCpanel;
     public Sprite buyModeCpanel;
     public Sprite buildModeCpanel;
-    public Sprite[] wallVisibilityIcons;
     
     public Text fundsText;
     public Text timeText;
     public Image cpanel;
-    public Button wallVisibilityButton;
     
-    public WallVisibility wallVisibility = WallVisibility.Partially;
     private bool touchingGui;
 
-    void Start() {
+    private void Start() {
         UpdateSpeed();
         UpdateFunds();
     }
@@ -59,20 +56,6 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
         CameraController.Instance.Rotate(counterClockwise);
     }
     
-    // Called from Unity GUI Button
-    public void ToggleWallVisibility() {
-        SoundController.Instance.PlaySound(SoundType.Click);
-        SetWallVisibility(wallVisibility < WallVisibility.Roof ? wallVisibility + 1 : WallVisibility.Low);
-    }
-
-    private void SetWallVisibility(WallVisibility visibility) {
-        wallVisibility = visibility;
-        foreach(Wall wall in PropertyController.Instance.property.walls.Values) {
-            wall.UpdateVisibility(visibility);
-        }
-        wallVisibilityButton.image.sprite = wallVisibilityIcons[(int) visibility];
-    }
-
     // Called from Unity GUI Button
     public void SetClocks() {
         TimeController.Instance.twelveHourClock = !TimeController.Instance.twelveHourClock;
@@ -132,13 +115,6 @@ public enum HudPanel {
     Build = 2,
     Camera = 3,
     Options = 4
-}
-
-public enum WallVisibility {
-    Low,
-    Partially,
-    Full,
-    Roof
 }
 
 }
