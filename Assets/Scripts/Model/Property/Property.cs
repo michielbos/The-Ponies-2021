@@ -450,7 +450,6 @@ public class Property : MonoBehaviour {
     /// The add/remove wall functions have a parameter for doing this automatically. 
     /// </summary>
     public void UpdateRooms() {
-        float startTime = Time.realtimeSinceStartup;
         int[,] roomMap = new int[TerrainHeight, TerrainWidth];
         int roomNumber = 0;
         Vector2Int? nextRoomless = FindNextRoomlessTile(roomMap);
@@ -470,7 +469,6 @@ public class Property : MonoBehaviour {
                 }
             }
         }
-        Debug.Log(Mathf.Round((Time.realtimeSinceStartup - startTime) * 1000f) + " ms" );
     }
 
     private Vector2Int? FindNextRoomlessTile(int[,] roomMap) {
