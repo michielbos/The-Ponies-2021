@@ -234,6 +234,8 @@ public class BuyTool : MonoBehaviour, ITool {
                 return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) != null) == 0;
             case PlacementType.Floor:
                 return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) == null) == 0;
+            case PlacementType.Ceiling:
+                return requiredTiles.All(tile => property.GetRoom(tile) != null);
             default:
                 //TODO: Check for surfaces, ceilings.
                 return false;

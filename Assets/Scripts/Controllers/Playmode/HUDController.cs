@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Controllers;
 using Assets.Scripts.Util;
 using Controllers.Singletons;
+using Model.Property;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -66,7 +67,9 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
 
     private void SetWallVisibility(WallVisibility visibility) {
         wallVisibility = visibility;
-        PropertyController.Instance.property.walls.ForEach(wall => wall.UpdateVisibility(visibility));
+        foreach(Wall wall in PropertyController.Instance.property.walls.Values) {
+            wall.UpdateVisibility(visibility);
+        }
         wallVisibilityButton.image.sprite = wallVisibilityIcons[(int) visibility];
     }
 

@@ -1,3 +1,5 @@
+using UnityEngine;
+
 namespace Model.Property {
 
 /// <summary>
@@ -14,6 +16,12 @@ public struct TileBorder {
         this.y = y;
         this.wallDirection = wallDirection;
     }
+
+    public Vector2Int StartPosition => new Vector2Int(x, y);
+
+    public Vector2Int EndPosition => new Vector2Int(wallDirection != WallDirection.NorthWest ? x + 1 : x,
+        wallDirection == WallDirection.NorthWest || wallDirection == WallDirection.Vertical ? y + 1 :
+        wallDirection == WallDirection.Horizontal ? y - 1 : y);
 
     public bool Equals(TileBorder other) {
         return x == other.x && y == other.y && wallDirection == other.wallDirection;
@@ -32,6 +40,10 @@ public struct TileBorder {
             hashCode = (hashCode * 397) ^ (int) wallDirection;
             return hashCode;
         }
+    }
+
+    public override string ToString() {
+        return $"{nameof(x)}: {x}, {nameof(y)}: {y}, {nameof(wallDirection)}: {wallDirection}";
     }
 }
 

@@ -292,8 +292,9 @@ public class WallTool : MonoBehaviour, ITool {
     /// </summary>
     private void PlaceWalls(List<TileBorder> walls) {
         foreach (TileBorder wall in walls) {
-            PropertyController.Instance.property.PlaceWall(wall.x, wall.y, wall.wallDirection);
+            PropertyController.Instance.property.PlaceWall(wall.x, wall.y, wall.wallDirection, false);
         }
+        PropertyController.Instance.property.UpdateRooms();
     }
     
     /// <summary>
@@ -305,8 +306,9 @@ public class WallTool : MonoBehaviour, ITool {
         foreach (TileBorder border in borders) {
             Wall wall = property.GetWall(border);
             MoneyController.Instance.ChangeFunds(SellValue);
-            property.RemoveWall(wall);
+            property.RemoveWall(wall, false);
         }
+        property.UpdateRooms();
     }
 }
 
