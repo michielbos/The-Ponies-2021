@@ -16,6 +16,7 @@ namespace Controllers.Tools {
 /// 
 public class BuyTool : MonoBehaviour, ITool {
     private const int LAYER_TERRAIN = 8;
+    private int defaultLayer;
 
     public GameObject buildMarkerPrefab;
     public GameObject buyMarkingPrefab;
@@ -48,6 +49,10 @@ public class BuyTool : MonoBehaviour, ITool {
 
     public BuyTool() {
         buyMarkings = new List<GameObject>();
+    }
+
+    private void Start() {
+        defaultLayer = LayerMask.GetMask("Default");
     }
 
     public void OnDisable() {
@@ -294,7 +299,7 @@ public class BuyTool : MonoBehaviour, ITool {
     private void HandleHovering() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (HUDController.GetInstance().IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000))
+        if (HUDController.GetInstance().IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000, defaultLayer))
             return;
         PropertyObject propertyObject = hit.collider.transform.GetComponentInParent<PropertyObject>();
         if (propertyObject == null)

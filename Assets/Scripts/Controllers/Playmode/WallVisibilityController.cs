@@ -9,11 +9,17 @@ using UnityEngine.UI;
 namespace Controllers.Playmode {
 
 public class WallVisibilityController : SingletonMonoBehaviour<WallVisibilityController> {
+    private int wallLayer;
+    
     public WallVisibility wallVisibility = WallVisibility.Partially;
     public Sprite[] wallVisibilityIcons;
 
     public Button wallVisibilityButton;
     private Wall[] hoveredWalls = new Wall[0];
+
+    private void Start() {
+        wallLayer = LayerMask.GetMask("Walls");
+    }
 
     private void Update() {
         if (wallVisibility == WallVisibility.Partially) {
@@ -24,7 +30,7 @@ public class WallVisibilityController : SingletonMonoBehaviour<WallVisibilityCon
     private void HandleWallHover() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit[] hits = !HUDController.GetInstance().IsMouseOverGui()
-            ? Physics.RaycastAll(ray, 1000)
+            ? Physics.RaycastAll(ray, 1000, wallLayer)
             : new RaycastHit[0];
         Wall[] walls = hits.SelectMany(hit => hit.collider.GetComponent<Wall>()?.GetConnectedWalls(true) ?? new Wall[0])
             .ToArray();
