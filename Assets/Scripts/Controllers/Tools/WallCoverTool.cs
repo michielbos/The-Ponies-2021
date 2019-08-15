@@ -1,4 +1,5 @@
-﻿using Controllers.Singletons;
+﻿using System.Collections.Generic;
+using Controllers.Singletons;
 using Model.Property;
 using UnityEngine;
 
@@ -12,25 +13,45 @@ public class WallCoverTool : MonoBehaviour, ITool {
     private int wallLayer;
 
     private WallCoverPreset selectedPreset;
+    private List<Wall> selectedWalls = new List<Wall>();
 
     private void Start() {
         wallLayer = LayerMask.GetMask("Walls");
     }
 
     public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex) {
-        if (selectedPreset == null)
+        if (selectedPreset == null) {
+            ClearSelectedWalls();
             return;
-        
+        }
+
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        if (!Physics.Raycast(ray, out RaycastHit hit, 1000, wallLayer))
+        if (!Physics.Raycast(ray, out RaycastHit hit, 1000, wallLayer)) {
+            ClearSelectedWalls();
             return;
-        
+        }
+
         Wall wall = hit.transform.GetComponent<Wall>();
+        bool isFrontWall = wall.IsFrontOfWall(hit.point);
+        List<Wall> newWalls = new List<Wall>(new[] {wall});
+        
+        selectedWalls.ForEach(removedWall => removedWall.RemovePreviewCovers());
+        selectedWalls = newWalls;
+        newWalls.ForEach(addedWall => {
+            addedWall.RemovePreviewCovers();
+            addedWall.SetVisibleCoverMaterial(isFrontWall, selectedPreset);
+        });
+
         if (Input.GetMouseButtonDown(0)) {
-            if (ApplyPreset(wall, wall.IsFrontOfWall(hit.point))) {
+            if (ApplyPreset(wall, isFrontWall)) {
                 SoundController.Instance.PlaySound(SoundType.PlaceFloor);
             }
         }
+    }
+
+    private void ClearSelectedWalls() {
+        selectedWalls.ForEach(wall => wall.RemovePreviewCovers());
+        selectedWalls.Clear();
     }
 
     public bool ApplyPreset(Wall wall, bool front) {

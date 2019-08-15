@@ -54,9 +54,7 @@ public class Wall : MonoBehaviour {
     public WallCoverPreset CoverFront {
         set {
             _coverFront = value;
-            // Unity returns a copied array, so we solve things the fancy way.
-            meshRenderer.sharedMaterials =
-                meshRenderer.sharedMaterials.Also(it => it[0] = value?.GetMaterial() ?? unpaintedMaterial);
+            SetVisibleCoverMaterial(false, CoverFront);
         }
         get => _coverFront;
     }
@@ -64,9 +62,7 @@ public class Wall : MonoBehaviour {
     public WallCoverPreset CoverBack {
         set {
             _coverBack = value;
-            // Unity returns a copied array, so we solve things the fancy way.
-            meshRenderer.sharedMaterials =
-                meshRenderer.sharedMaterials.Also(it => it[1] = value?.GetMaterial() ?? unpaintedMaterial);
+            SetVisibleCoverMaterial(false, CoverBack);
         }
         get => _coverBack;
     }
@@ -139,6 +135,24 @@ public class Wall : MonoBehaviour {
         
         // Horizontal/vertical walls not implemented yet.
         return false;
+    }
+    
+    /// <summary>
+    /// Reset the wall covers of this wall to the real ones.
+    /// </summary>
+    public void RemovePreviewCovers() {
+        SetVisibleCoverMaterial(true, CoverFront);
+        SetVisibleCoverMaterial(false, CoverBack);
+    }
+
+    /// <summary>
+    /// Update the cover material on the specified side to match the given preset.
+    /// This does only changes the displayed material. Not the real cover preset of this wall.
+    /// </summary>
+    public void SetVisibleCoverMaterial(bool front, WallCoverPreset preset) {
+        Material material = preset?.GetMaterial() ?? unpaintedMaterial;
+        // Unity returns a copied array, so we solve things the fancy way.
+        meshRenderer.sharedMaterials = meshRenderer.sharedMaterials.Also(it => it[front ? 0 : 1] = material);
     }
 
     public WallData GetWallData() {
