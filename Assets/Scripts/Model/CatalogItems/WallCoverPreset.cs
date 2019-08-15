@@ -29,7 +29,7 @@ public class WallCoverPreset : Preset {
 
 	public Material GetMaterial () {
 		if (material == null) {
-			material = new Material(Shader.Find("Cel Shading/RegularV2"));
+			material = new Material(Shader.Find("Cel Shading/RegularV2Walls"));
             material.mainTexture = GetTexture();
 		}
 		return material;
