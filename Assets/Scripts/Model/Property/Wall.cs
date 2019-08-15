@@ -66,7 +66,7 @@ public class Wall : MonoBehaviour {
             _coverBack = value;
             // Unity returns a copied array, so we solve things the fancy way.
             meshRenderer.sharedMaterials =
-                meshRenderer.sharedMaterials.Also(it => it[0] = value?.GetMaterial() ?? unpaintedMaterial);
+                meshRenderer.sharedMaterials.Also(it => it[1] = value?.GetMaterial() ?? unpaintedMaterial);
         }
         get => _coverBack;
     }
@@ -125,6 +125,20 @@ public class Wall : MonoBehaviour {
     public IEnumerable<Wall> GetConnectedWalls(bool includeSelf) {
         List<TileBorder> borders = TileBorder.GetConnectedBorders(includeSelf);
         return PropertyController.Instance.property.GetWalls(borders);
+    }
+
+    /// <summary>
+    /// Returns true if the given point touches the front side of the wall.
+    /// Returns false if it touches the back side of the wall.
+    /// </summary>
+    public bool IsFrontOfWall(Vector3 point) {
+        if (Direction == WallDirection.NorthEast)
+            return point.z < transform.position.z;
+        if (Direction == WallDirection.NorthWest)
+            return point.x > transform.position.x;
+        
+        // Horizontal/vertical walls not implemented yet.
+        return false;
     }
 
     public WallData GetWallData() {
