@@ -424,15 +424,11 @@ public class Property : MonoBehaviour {
 
     [CanBeNull]
     public Wall GetWall(TileBorder tileBorder) {
-        if (!WallExists(tileBorder)) {
-            return null;
-        }
-        foreach (Wall wall in walls.Values) {
-            if (wall.TileBorder.Equals(tileBorder)) {
-                return wall;
-            }
-        }
-        return null;
+        return WallExists(tileBorder) ? walls[tileBorder] : null;
+    }
+
+    public IEnumerable<Wall> GetWalls(IEnumerable<TileBorder> tileBorders) {
+        return tileBorders.Select(GetWall).Where(wall => wall != null);
     }
 
     /// <summary>

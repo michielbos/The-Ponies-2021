@@ -26,7 +26,8 @@ public class WallVisibilityController : SingletonMonoBehaviour<WallVisibilityCon
         RaycastHit[] hits = !HUDController.GetInstance().IsMouseOverGui()
             ? Physics.RaycastAll(ray, 1000)
             : new RaycastHit[0];
-        Wall[] walls = hits.Select(hit => hit.collider.GetComponent<Wall>()).Where(wall => wall != null).ToArray();
+        Wall[] walls = hits.SelectMany(hit => hit.collider.GetComponent<Wall>()?.GetConnectedWalls(true) ?? new Wall[0])
+            .ToArray();
         IEnumerable<Wall> addedWalls = walls.Except(hoveredWalls);
         IEnumerable<Wall> removedWalls = hoveredWalls.Except(walls);
         foreach (Wall addedWall in addedWalls) {

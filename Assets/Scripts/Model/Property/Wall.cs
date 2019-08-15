@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Controllers.Playmode;
 using UnityEngine;
 
@@ -93,6 +94,11 @@ public class Wall : MonoBehaviour {
             default:
                 throw new ArgumentOutOfRangeException();
         }
+    }
+    
+    public IEnumerable<Wall> GetConnectedWalls(bool includeSelf) {
+        List<TileBorder> borders = TileBorder.GetConnectedBorders(includeSelf);
+        return PropertyController.Instance.property.GetWalls(borders);
     }
 
     public WallData GetWallData() {
