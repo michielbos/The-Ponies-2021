@@ -59,12 +59,16 @@ public class Wall : MonoBehaviour {
     
     public void UpdateVisibility(WallVisibility visibility) {
         if (visibility == WallVisibility.Low)
-            meshFilter.sharedMesh = shortWallMesh;
-        else if (visibility == WallVisibility.Partially)
-            meshFilter.sharedMesh = HasRoomBehindWall() ? shortWallMesh : fullWallMesh;
-        else 
-            meshFilter.sharedMesh = fullWallMesh;
+            SetLowered(true);
+        else if (visibility == WallVisibility.Partially) {
+            SetLowered(HasRoomBehindWall());
+        } else 
+            SetLowered(false);
         
+    }
+
+    public void SetLowered(bool lowered) {
+        meshFilter.sharedMesh = lowered ? shortWallMesh : fullWallMesh;
     }
 
     private bool HasRoomBehindWall() {

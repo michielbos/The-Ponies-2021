@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Util;
 using Controllers.Singletons;
 using Model.Property;
@@ -9,15 +11,39 @@ namespace Controllers.Playmode {
 public class WallVisibilityController : SingletonMonoBehaviour<WallVisibilityController> {
     public WallVisibility wallVisibility = WallVisibility.Partially;
     public Sprite[] wallVisibilityIcons;
-    
+
     public Button wallVisibilityButton;
-    
+    private Wall[] hoveredWalls = new Wall[0];
+
+    private void Update() {
+        if (wallVisibility == WallVisibility.Partially) {
+            HandleWallHover();
+        }
+    }
+
+    private void HandleWallHover() {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        RaycastHit[] hits = !HUDController.GetInstance().IsMouseOverGui()
+            ? Physics.RaycastAll(ray, 1000)
+            : new RaycastHit[0];
+        Wall[] walls = hits.Select(hit => hit.collider.GetComponent<Wall>()).Where(wall => wall != null).ToArray();
+        IEnumerable<Wall> addedWalls = walls.Except(hoveredWalls);
+        IEnumerable<Wall> removedWalls = hoveredWalls.Except(walls);
+        foreach (Wall addedWall in addedWalls) {
+            addedWall.SetLowered(true);
+        }
+        foreach (Wall removedWall in removedWalls) {
+            removedWall.UpdateVisibility();
+        }
+        hoveredWalls = walls;
+    }
+
     // Called from Unity GUI Button
     public void ToggleWallVisibility() {
         SoundController.Instance.PlaySound(SoundType.Click);
         SetWallVisibility(wallVisibility < WallVisibility.Full ? wallVisibility + 1 : WallVisibility.Low);
     }
-    
+
     public void SetWallVisibility(WallVisibility visibility) {
         wallVisibility = visibility;
         wallVisibilityButton.image.sprite = wallVisibilityIcons[(int) visibility];
@@ -25,7 +51,8 @@ public class WallVisibilityController : SingletonMonoBehaviour<WallVisibilityCon
     }
 
     public void UpdateWallVisibility() {
-        foreach(Wall wall in PropertyController.Instance.property.walls.Values) {
+        hoveredWalls = new Wall[0];
+        foreach (Wall wall in PropertyController.Instance.property.walls.Values) {
             wall.UpdateVisibility(wallVisibility);
         }
     }
