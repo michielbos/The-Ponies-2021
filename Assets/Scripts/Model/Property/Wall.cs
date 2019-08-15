@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Controllers.Playmode;
 using UnityEngine;
+using Util;
 
 namespace Model.Property {
 
@@ -12,8 +13,13 @@ namespace Model.Property {
 public class Wall : MonoBehaviour {
     public Mesh fullWallMesh;
     public Mesh shortWallMesh;
+    public Material unpaintedMaterial;
     public MeshFilter meshFilter;
+    public MeshRenderer meshRenderer;
+
     private WallDirection _direction;
+    private WallCoverPreset _coverFront;
+    private WallCoverPreset _coverBack;
 
     public Vector2Int TilePosition {
         get {
@@ -43,6 +49,26 @@ public class Wall : MonoBehaviour {
             // TODO: Add horizontal and vertical rotations
             transform.rotation = Quaternion.Euler(0, rotation, 0);
         }
+    }
+
+    public WallCoverPreset CoverFront {
+        set {
+            _coverFront = value;
+            // Unity returns a copied array, so we solve things the fancy way.
+            meshRenderer.sharedMaterials =
+                meshRenderer.sharedMaterials.Also(it => it[0] = value?.GetMaterial() ?? unpaintedMaterial);
+        }
+        get => _coverFront;
+    }
+
+    public WallCoverPreset CoverBack {
+        set {
+            _coverBack = value;
+            // Unity returns a copied array, so we solve things the fancy way.
+            meshRenderer.sharedMaterials =
+                meshRenderer.sharedMaterials.Also(it => it[0] = value?.GetMaterial() ?? unpaintedMaterial);
+        }
+        get => _coverBack;
     }
 
     private void Start() {
@@ -106,8 +132,8 @@ public class Wall : MonoBehaviour {
         return new WallData(tilePosition.x,
             tilePosition.y,
             (int) Direction,
-            "",
-            "");
+            CoverFront?.guid.ToString(),
+            CoverBack?.guid.ToString());
     }
 }
 

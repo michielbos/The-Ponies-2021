@@ -74,13 +74,14 @@ public class Property : MonoBehaviour {
         terrainTiles[y, x].SetVisible(false);
     }
 
-    public void PlaceWall(int x, int y, WallDirection wallDirection, bool updateRooms) {
+    public Wall PlaceWall(int x, int y, WallDirection wallDirection, bool updateRooms) {
         Wall wall = Instantiate(Prefabs.Instance.wallPrefab, transform);
         wall.Init(x, y, wallDirection);
         walls.Add(wall.TileBorder, wall);
         if (updateRooms) {
             UpdateRooms();
         }
+        return wall;
     }
 
     public void PlacePropertyObject(int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
@@ -144,7 +145,11 @@ public class Property : MonoBehaviour {
 
     private void LoadWalls(WallData[] wallDatas) {
         foreach (WallData wd in wallDatas) {
-            PlaceWall(wd.x, wd.y, wd.Direction, false);
+            Wall wall = PlaceWall(wd.x, wd.y, wd.Direction, false);
+            if (!string.IsNullOrEmpty(wd.coverFrontUuid))
+                wall.CoverFront = WallCoverPresets.Instance.GetWallCoverPreset(new Guid(wd.coverFrontUuid));
+            if (!string.IsNullOrEmpty(wd.coverBackUuid))
+                wall.CoverBack = WallCoverPresets.Instance.GetWallCoverPreset(new Guid(wd.coverBackUuid));
         }
         UpdateRooms();
     }

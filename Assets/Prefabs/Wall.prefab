@@ -49,7 +49,9 @@ MonoBehaviour:
     type: 3}
   shortWallMesh: {fileID: -5495902117074765545, guid: 173a5f3d73abcc7a38ebb41272c2ec09,
     type: 3}
+  unpaintedMaterial: {fileID: 2100000, guid: 36165e9207aeae78396b17ef1c0eccf7, type: 2}
   meshFilter: {fileID: 5492775371682571708}
+  meshRenderer: {fileID: 2235697957417294149}
 --- !u!65 &5298911229695805681
 BoxCollider:
   m_ObjectHideFlags: 0
