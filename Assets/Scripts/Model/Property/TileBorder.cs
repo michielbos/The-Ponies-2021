@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -38,6 +39,59 @@ public struct TileBorder {
         borderList.Add(new TileBorder(point.x, point.y, WallDirection.NorthWest));
         borderList.Add(new TileBorder(point.x - 1, point.y, WallDirection.NorthEast));
         borderList.Add(new TileBorder(point.x, point.y - 1, WallDirection.NorthWest));
+    }
+
+    /// <summary>
+    /// Get the border from this border's end position into the left direction.
+    /// If forward is false, the border will be searched from the start tile rather than the end tile.
+    /// </summary>
+    public TileBorder GetLeftBorder(bool forward) {
+        Vector2Int position = forward ? EndPosition : StartPosition;
+        
+        if (forward && wallDirection == WallDirection.NorthWest)
+            position.x--;
+        else if (!forward && wallDirection == WallDirection.NorthEast)
+            position.y--;
+
+        WallDirection direction = wallDirection == WallDirection.NorthEast
+            ? WallDirection.NorthWest
+            : WallDirection.NorthEast;
+        
+        return new TileBorder(position.x, position.y, direction);
+    }
+    
+    /// <summary>
+    /// Get the border from this border's end position into the forward direction.
+    /// If forward is false, the border will be searched from the start tile rather than the end tile.
+    /// </summary>
+    public TileBorder GetForwardBorder(bool forward) {
+        Vector2Int position = forward ? EndPosition : StartPosition;
+        if (forward)
+            return new TileBorder(position.x, position.y, wallDirection);
+        if (wallDirection == WallDirection.NorthEast)
+            return new TileBorder(position.x - 1, position.y, wallDirection);
+        if (wallDirection == WallDirection.NorthWest)
+            return new TileBorder(position.x, position.y - 1, wallDirection);
+        throw new Exception("Horizontal/Vertical walls are not implemented yet.");
+    }
+    
+    /// <summary>
+    /// Get the border from this border's end position into the right direction.
+    /// If forward is false, the border will be searched from the start tile rather than the end tile.
+    /// </summary>
+    public TileBorder GetRightBorder(bool forward) {
+        Vector2Int position = forward ? EndPosition : StartPosition;
+        
+        if (forward && wallDirection == WallDirection.NorthEast)
+            position.y--;
+        else if (!forward && wallDirection == WallDirection.NorthWest)
+            position.x--;
+        
+        WallDirection direction = wallDirection == WallDirection.NorthEast
+            ? WallDirection.NorthWest
+            : WallDirection.NorthEast;
+        
+        return new TileBorder(position.x, position.y, direction);
     }
 
     public bool Equals(TileBorder other) {

@@ -437,6 +437,53 @@ public class Property : MonoBehaviour {
     }
 
     /// <summary>
+    /// Attempt to get a loop with the given wallside.
+    /// This is used by the wallcover fill tool to paint whole rooms.
+    /// Returns the list of walls in the loop, or null if the loop was incomplete.
+    /// </summary>
+    [CanBeNull]
+    public List<WallSide> GetWallSideLoop(WallSide start) {
+        List<WallSide> wallList = new List<WallSide>();
+        return AddNextWallInLoop(start.wall, start.wall, start.front, wallList) ? wallList : null;
+    }
+
+    private bool AddNextWallInLoop(Wall start, Wall current, bool front, List<WallSide> wallList) {
+        wallList.Add(new WallSide(current, front));
+        TileBorder currentBorder = current.TileBorder;
+        Wall nextWall;
+        bool nextFront;
+        
+        nextWall = GetWall(currentBorder.GetRightBorder(front));
+        if (nextWall != null) {
+            nextFront = front && current.Direction == WallDirection.NorthWest || !front && current.Direction == WallDirection.NorthEast;
+        } else {
+            nextWall = nextWall ?? GetWall(currentBorder.GetForwardBorder(front));
+            if (nextWall != null) {
+                nextFront = front;
+            } else {
+                nextWall = nextWall ?? GetWall(currentBorder.GetLeftBorder(front));
+                if (nextWall != null) {
+                    nextFront = front && current.Direction == WallDirection.NorthEast || !front && current.Direction == WallDirection.NorthWest;
+                } else
+                    return false;
+            }
+        }
+        
+        if (nextWall == start) {
+            return true;
+        }
+        if (wallList.Any(side => side.wall == nextWall)) {
+            return false;
+        }
+        if (wallList.Count > 2000) {
+            Debug.LogWarning("Very large room. Canceling wall loop calculation.");
+            return false;
+        }
+        
+        return AddNextWallInLoop(start, nextWall, nextFront, wallList);
+    }
+
+    /// <summary>
     /// Returns the room that the given tile is part of, if any.
     /// Returns null if the tile is not inside a room.
     /// </summary>

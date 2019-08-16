@@ -169,4 +169,28 @@ public class Wall : MonoBehaviour {
     }
 }
 
+/// <summary>
+/// Simple class to define the front or back side of a wall.
+/// </summary>
+public class WallSide {
+    public readonly Wall wall;
+    public readonly bool front;
+
+    public WallSide(Wall wall, bool front) {
+        this.wall = wall;
+        this.front = front;
+    }
+
+    public void ApplyCoverPreset(WallCoverPreset preset) {
+        if (front)
+            wall.CoverFront = preset;
+        else
+            wall.CoverBack = preset;
+    }
+    
+    public bool HasThisPreset(WallCoverPreset preset) {
+        return front ? wall.CoverFront == preset : wall.CoverBack == preset;
+    }
+}
+
 }
