@@ -37,9 +37,11 @@ public class WallCoverTool : MonoBehaviour, ITool {
 
         Wall wall = hit.transform.GetComponent<Wall>();
         bool isFrontWall = wall.IsFrontOfWall(hit.point);
+        bool demolishing = Input.GetKey(KeyCode.LeftControl);
 
         if (Input.GetMouseButtonDown(0)) {
             draggingWallStart = wall;
+            SoundController.Instance.PlaySound(SoundType.DragStart);
         }
 
         List<Wall> newWalls = draggingWallStart != null
@@ -50,14 +52,21 @@ public class WallCoverTool : MonoBehaviour, ITool {
         selectedWalls = newWalls;
         newWalls.ForEach(addedWall => {
             addedWall.RemovePreviewCovers();
-            addedWall.SetVisibleCoverMaterial(isFrontWall, selectedPreset);
+            addedWall.SetVisibleCoverMaterial(isFrontWall, demolishing ? null : selectedPreset);
         });
         
         if (Input.GetMouseButtonUp(0) && draggingWallStart != null) {
-            if (BuyWallCovers(newWalls, isFrontWall)) {
-                SoundController.Instance.PlaySound(SoundType.PlaceFloor);
+            if (demolishing) {
+                if (newWalls.Count > 0) {
+                    RemoveWallCovers(newWalls, isFrontWall);
+                    SoundController.Instance.PlaySound(SoundType.PlaceFloor);
+                }
             } else {
-                SoundController.Instance.PlaySound(SoundType.Deny);
+                if (BuyWallCovers(newWalls, isFrontWall)) {
+                    SoundController.Instance.PlaySound(SoundType.PlaceFloor);
+                } else {
+                    SoundController.Instance.PlaySound(SoundType.Deny);
+                }
             }
             draggingWallStart = null;
         }
@@ -101,15 +110,21 @@ public class WallCoverTool : MonoBehaviour, ITool {
         return true;
     }
     
+    private void RemoveWallCovers(List<Wall> walls, bool front) {
+        int refund = walls.Sum(wall => wall.GetCoverPreset(front)?.GetSellValue() ?? 0);
+        walls.ForEach(wall => ApplyPreset(wall, front, null));
+        MoneyController.Instance.ChangeFunds(refund);
+    }
+
     private bool HasThisPreset(Wall wall, bool front, WallCoverPreset preset) {
         return front ? wall.CoverFront == preset : wall.CoverBack == preset;
     }
 
     private void ApplyPreset(Wall wall, bool front, WallCoverPreset preset) {
         if (front)
-            wall.CoverFront = selectedPreset;
+            wall.CoverFront = preset;
         else
-            wall.CoverBack = selectedPreset;
+            wall.CoverBack = preset;
     }
 
     public void Enable() {

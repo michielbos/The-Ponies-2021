@@ -155,6 +155,10 @@ public class Wall : MonoBehaviour {
         meshRenderer.sharedMaterials = meshRenderer.sharedMaterials.Also(it => it[front ? 0 : 1] = material);
     }
 
+    public WallCoverPreset GetCoverPreset(bool front) {
+        return front ? CoverFront : CoverBack;
+    }
+
     public WallData GetWallData() {
         Vector2Int tilePosition = TilePosition;
         return new WallData(tilePosition.x,
