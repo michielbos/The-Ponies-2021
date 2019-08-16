@@ -1,10 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Controllers.Playmode;
 using Controllers.Singletons;
 using JetBrains.Annotations;
 using Model.Property;
 using UnityEngine;
+using Util;
 
 namespace Controllers.Tools {
 
@@ -14,6 +16,7 @@ namespace Controllers.Tools {
 /// 
 public class BuyTool : MonoBehaviour, ITool {
     private const int LAYER_TERRAIN = 8;
+    private int defaultLayer;
 
     public GameObject buildMarkerPrefab;
     public GameObject buyMarkingPrefab;
@@ -46,6 +49,10 @@ public class BuyTool : MonoBehaviour, ITool {
 
     public BuyTool() {
         buyMarkings = new List<GameObject>();
+    }
+
+    private void Start() {
+        defaultLayer = LayerMask.GetMask("Default");
     }
 
     public void OnDisable() {
@@ -184,12 +191,21 @@ public class BuyTool : MonoBehaviour, ITool {
     private bool CanPlaceObject() {
         FurniturePreset movingPreset = GetMovingPreset();
         Vector2Int[] requiredTiles = movingPreset.GetOccupiedTiles(targetTile.TilePosition, MarkerRotation);
-        
+        List<Wall> walls = PropertyController.Instance.property.GetOccupiedWalls(requiredTiles);
+
         bool canPlace = placingPreset == null || MoneyController.Instance.CanAfford(placingPreset.price);
 
         if (!canPlace)
             return false;
         
+        Property property = PropertyController.Instance.property;
+        
+        // Check if the required walls for Wall and ThroughWall types are in place.
+        IEnumerable<TileBorder> tileBorders = movingPreset.GetRequiredWallBorders(requiredTiles, MarkerRotation);
+        if (!property.AllBordersContainWalls(tileBorders)) {
+            return false;
+        }
+
         if (!CheatsController.Instance.moveObjectsMode) {
             List<PropertyObject> tileObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
             foreach (PropertyObject tileObject in tileObjects) {
@@ -197,21 +213,38 @@ public class BuyTool : MonoBehaviour, ITool {
                     return false;
             }
 
-            List<Wall> walls = PropertyController.Instance.property.GetOccupiedWalls(requiredTiles);
             if (walls.Count > 0) {
-                return false;
+                if (movingPreset.placementType != PlacementType.ThroughWall) {
+                    return false;
+                }
+                if (walls.Select(wall => wall.TileBorder).Except(tileBorders).Any()) {
+                    return false;
+                }
             }
         }
 
-        Property property = PropertyController.Instance.property;
         foreach (Vector2Int tile in requiredTiles) {
             if (tile.x < 0 || tile.y < 0 || tile.x >= property.TerrainWidth || tile.y >= property.TerrainHeight) {
                 return false;
             }
         }
 
-        //TODO: Check for floors, walls, tables, etc.
-        return PlacementTypeUtil.CanPlaceOnTerrain(movingPreset.placementType);
+        switch (movingPreset.placementType) {
+            case PlacementType.Ground:
+            case PlacementType.GroundOrSurface:
+            case PlacementType.Wall:
+            case PlacementType.ThroughWall:
+                return true;
+            case PlacementType.Terrain:
+                return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) != null) == 0;
+            case PlacementType.Floor:
+                return requiredTiles.Count(tile => property.GetFloorTile(tile.x, tile.y) == null) == 0;
+            case PlacementType.Ceiling:
+                return requiredTiles.All(tile => property.IsInsideRoom(tile));
+            default:
+                //TODO: Check for surfaces, ceilings.
+                return false;
+        }
     }
 
     private void SetBuildMarkerPosition(int x, int y) {
@@ -266,7 +299,7 @@ public class BuyTool : MonoBehaviour, ITool {
     private void HandleHovering() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (HUDController.GetInstance().IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000))
+        if (HUDController.GetInstance().IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000, defaultLayer))
             return;
         PropertyObject propertyObject = hit.collider.transform.GetComponentInParent<PropertyObject>();
         if (propertyObject == null)

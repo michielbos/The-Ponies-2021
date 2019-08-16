@@ -1,12 +1,18 @@
-﻿using UnityEngine;
+﻿using System;
+using System.Collections.Generic;
+using Controllers.Playmode;
+using UnityEngine;
 
 namespace Model.Property {
 
 /// <summary>
 /// A wall that can be placed on the border of a tile.
 /// </summary>
-[System.Serializable]
+[Serializable]
 public class Wall : MonoBehaviour {
+    public Mesh fullWallMesh;
+    public Mesh shortWallMesh;
+    public MeshFilter meshFilter;
     private WallDirection _direction;
 
     public Vector2Int TilePosition {
@@ -39,9 +45,60 @@ public class Wall : MonoBehaviour {
         }
     }
 
+    private void Start() {
+        UpdateVisibility();
+    }
+
     public void Init(int x, int y, WallDirection wallDirection) {
         TilePosition = new Vector2Int(x, y);
         Direction = wallDirection;
+    }
+
+    public void UpdateVisibility() {
+        UpdateVisibility(WallVisibilityController.Instance.wallVisibility);
+    }
+    
+    public void UpdateVisibility(WallVisibility visibility) {
+        if (visibility == WallVisibility.Low)
+            SetLowered(true);
+        else if (visibility == WallVisibility.Partially) {
+            SetLowered(HasRoomBehindWall());
+        } else 
+            SetLowered(false);
+        
+    }
+
+    public void SetLowered(bool lowered) {
+        meshFilter.sharedMesh = lowered ? shortWallMesh : fullWallMesh;
+    }
+
+    private bool HasRoomBehindWall() {
+        Property property = PropertyController.Instance.property;
+        CameraRotation cameraRotation = CameraController.Instance.CameraRotation;
+        switch (cameraRotation) {
+            case CameraRotation.North:
+                return property.IsInsideRoom(TileBorder.StartPosition);
+            case CameraRotation.East:
+                return Direction == WallDirection.NorthWest && property.IsInsideRoom(TileBorder.StartPosition) ||
+                    Direction == WallDirection.NorthEast && property.IsInsideRoom(TileBorder.StartPosition + Vector2Int.down);
+            case CameraRotation.South:
+                return Direction == WallDirection.NorthWest &&
+                       property.IsInsideRoom(TileBorder.StartPosition + Vector2Int.left) ||
+                       Direction == WallDirection.NorthEast &&
+                       property.IsInsideRoom(TileBorder.StartPosition + Vector2Int.down);
+            case CameraRotation.West:
+                return Direction == WallDirection.NorthWest &&
+                       property.IsInsideRoom(TileBorder.StartPosition + Vector2Int.left) ||
+                       Direction == WallDirection.NorthEast &&
+                       property.IsInsideRoom(TileBorder.StartPosition);
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+    }
+    
+    public IEnumerable<Wall> GetConnectedWalls(bool includeSelf) {
+        List<TileBorder> borders = TileBorder.GetConnectedBorders(includeSelf);
+        return PropertyController.Instance.property.GetWalls(borders);
     }
 
     public WallData GetWallData() {

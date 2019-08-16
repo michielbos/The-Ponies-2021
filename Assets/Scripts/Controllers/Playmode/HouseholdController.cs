@@ -9,6 +9,8 @@ using UnityEngine;
 namespace Controllers.Playmode {
 
 public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
+    private int interactionLayer;
+    
     public PieMenu pieMenuPrefab;
     public ActionQueue actionQueue;
     public PlayableCharactersView playableCharactersView;
@@ -19,6 +21,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
     private PieMenu pieMenu;
 
     private void Start() {
+        interactionLayer = LayerMask.GetMask("Default", "Terrain");
         if (selectedPony == null && Household?.ponies.Count > 0) {
             SetSelectedPony(Household.ponies[0]);
         }
@@ -57,7 +60,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         CursorController cursorController = CursorController.Instance;
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
-        if (HUDController.GetInstance().IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000)) {
+        if (HUDController.GetInstance().IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000, interactionLayer)) {
             cursorController.SetCursor(CursorType.Normal);
             return;
         }

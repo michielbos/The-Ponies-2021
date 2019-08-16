@@ -38,6 +38,13 @@ public static class ObjectRotationUtil {
         }
         return ObjectRotation.NorthEast;
     }
+
+    /// <summary>
+    /// Apply the given number of clockwise turns to the given rotation.
+    /// </summary>
+    public static ObjectRotation Add(ObjectRotation current, int turns) {
+        return (ObjectRotation) (((int) current - 1 + turns) % 4 + 1);
+    }
 }
 
 }

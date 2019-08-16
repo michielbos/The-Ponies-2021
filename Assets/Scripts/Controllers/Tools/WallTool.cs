@@ -16,6 +16,7 @@ public class WallTool : MonoBehaviour, ITool {
     public GameObject wallMarkerPrefab;
     public Material wallMarkerMaterial;
     public Material wallDenyMaterial;
+    public Material wallDemolishMaterial;
 
     private CatalogItem wallPreset;
 
@@ -136,9 +137,15 @@ public class WallTool : MonoBehaviour, ITool {
                     new Vector3(start.x, 0, end.y);
             }
 
+            Property property = PropertyController.Instance.property;
             if (destroyMode) {
-                SetWallMarkerMaterial(wallDenyMaterial);
-                if (Input.GetMouseButtonUp(0) && SellWalls(wallPositions)) {
+                wallPositions.RemoveAll(border => property.GetWall(border) == null);
+                bool canDestroy = property.CanRemoveWalls(wallPositions);
+                
+                SetWallMarkerMaterial(canDestroy ? wallDemolishMaterial : wallDenyMaterial);
+                
+                if (Input.GetMouseButtonUp(0) && canDestroy) {
+                    SellWalls(wallPositions);
                     SoundController.Instance.PlaySound(SoundType.PlaceWall);
                 }
             } else {
@@ -147,7 +154,7 @@ public class WallTool : MonoBehaviour, ITool {
                 int cost = wallPositions.Count * wallPreset.price;
                 bool canAfford = MoneyController.Instance.CanAfford(cost);
                 bool collides = !CheatsController.Instance.moveObjectsMode && 
-                                PropertyController.Instance.property.GetObjectsOnBorders(wallPositions).Any();
+                                property.GetObjectsOnBorders(wallPositions).Any();
                 bool canPlace = canAfford && !collides;
                 
                 SetWallMarkerMaterial(canPlace ? wallMarkerMaterial : wallDenyMaterial);
@@ -285,27 +292,23 @@ public class WallTool : MonoBehaviour, ITool {
     /// </summary>
     private void PlaceWalls(List<TileBorder> walls) {
         foreach (TileBorder wall in walls) {
-            PropertyController.Instance.property.PlaceWall(wall.x, wall.y, wall.wallDirection);
+            PropertyController.Instance.property.PlaceWall(wall.x, wall.y, wall.wallDirection, false);
         }
+        PropertyController.Instance.property.UpdateRooms();
     }
     
     /// <summary>
     /// Sell any walls on the given tile borders.
     /// </summary>
-    private bool SellWalls(List<TileBorder> borders) {
+    private void SellWalls(List<TileBorder> borders) {
         Property property = PropertyController.Instance.property;
-        bool sold = false;
         
         foreach (TileBorder border in borders) {
             Wall wall = property.GetWall(border);
-            if (wall != null) {
-                MoneyController.Instance.ChangeFunds(SellValue);
-                property.RemoveWall(wall);
-                sold = true;
-            }
+            MoneyController.Instance.ChangeFunds(SellValue);
+            property.RemoveWall(wall, false);
         }
-
-        return sold;
+        property.UpdateRooms();
     }
 }
 

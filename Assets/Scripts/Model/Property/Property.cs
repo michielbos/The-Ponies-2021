@@ -19,9 +19,10 @@ public class Property : MonoBehaviour {
     public PropertyType propertyType;
     public TerrainTile[,] terrainTiles;
     public FloorTile[,,] floorTiles;
-    public List<Wall> walls;
+    public Dictionary<TileBorder, Wall> walls;
     public List<Roof> roofs;
     public List<PropertyObject> propertyObjects;
+    public Room[] Rooms { get; private set; } = new Room[0];
     [CanBeNull] public Household household;
     private int nextObjectId;
 
@@ -49,7 +50,7 @@ public class Property : MonoBehaviour {
         this.description = description;
         this.propertyType = propertyType;
         this.time = time;
-        walls = new List<Wall>();
+        walls = new Dictionary<TileBorder, Wall>();
         roofs = new List<Roof>();
         propertyObjects = new List<PropertyObject>();
     }
@@ -73,10 +74,13 @@ public class Property : MonoBehaviour {
         terrainTiles[y, x].SetVisible(false);
     }
 
-    public void PlaceWall(int x, int y, WallDirection wallDirection) {
+    public void PlaceWall(int x, int y, WallDirection wallDirection, bool updateRooms) {
         Wall wall = Instantiate(Prefabs.Instance.wallPrefab, transform);
         wall.Init(x, y, wallDirection);
-        walls.Add(wall);
+        walls.Add(wall.TileBorder, wall);
+        if (updateRooms) {
+            UpdateRooms();
+        }
     }
 
     public void PlacePropertyObject(int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
@@ -101,9 +105,12 @@ public class Property : MonoBehaviour {
         terrainTiles[tilePosition.y, tilePosition.x].SetVisible(true);
     }
 
-    public void RemoveWall(Wall wall) {
+    public void RemoveWall(Wall wall, bool updateRooms) {
         Destroy(wall.gameObject);
-        walls.Remove(wall);
+        walls.Remove(wall.TileBorder);
+        if (updateRooms) {
+            UpdateRooms();
+        }
     }
 
     public void RemovePropertyObject(PropertyObject propertyObject) {
@@ -137,8 +144,9 @@ public class Property : MonoBehaviour {
 
     private void LoadWalls(WallData[] wallDatas) {
         foreach (WallData wd in wallDatas) {
-            PlaceWall(wd.x, wd.y, wd.Direction);
+            PlaceWall(wd.x, wd.y, wd.Direction, false);
         }
+        UpdateRooms();
     }
 
     private void LoadFloorTiles(FloorTileData[] floorTileDatas) {
@@ -257,12 +265,8 @@ public class Property : MonoBehaviour {
         return floorCount;
     }
 
-    private WallData[] CreateWallDataArray(List<Wall> walls) {
-        WallData[] wallDataArr = new WallData[walls.Count];
-        for (int i = 0; i < walls.Count; i++) {
-            wallDataArr[i] = walls[i].GetWallData();
-        }
-        return wallDataArr;
+    private WallData[] CreateWallDataArray(Dictionary<TileBorder, Wall> walls) {
+        return walls.Values.Select(wall => wall.GetWallData()).ToArray();
     }
 
     private RoofData[] CreateRoofDataArray(List<Roof> roofs) {
@@ -343,7 +347,7 @@ public class Property : MonoBehaviour {
         HashSet<TileBorder> borders = GetOccupiedBorders(tilesArray);
         List<Wall> occupiedWalls = new List<Wall>();
 
-        foreach (Wall wall in walls) {
+        foreach (Wall wall in walls.Values) {
             if (borders.Any(border => border.Equals(wall.TileBorder))) {
                 occupiedWalls.Add(wall);
             }
@@ -370,6 +374,25 @@ public class Property : MonoBehaviour {
         
         return tileBorders;
     }
+    
+    /// <summary>
+    /// Returns true if every border in the given collection contains a wall.
+    /// False if one or more items to not have a matching walls.
+    /// </summary>
+    public bool AllBordersContainWalls(IEnumerable<TileBorder> tileBorders) {
+        return tileBorders.All(tileBorder => GetWall(tileBorder) != null);
+    }
+    
+    public bool CanRemoveWalls(List<TileBorder> wallPositions) {
+        foreach (PropertyObject propertyObject in propertyObjects) {
+            foreach (TileBorder requiredWallBorder in propertyObject.GetRequiredWallBorders()) {
+                if (wallPositions.Contains(requiredWallBorder)) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
 
     /// <summary>
     /// Returns a map that specifies which tiles have an object on them.
@@ -385,6 +408,7 @@ public class Property : MonoBehaviour {
         return occupancyMap;
     }
 
+    [CanBeNull]
     public FloorTile GetFloorTile(int x, int y) {
         //TODO: Add floor level
         return floorTiles[0, y, x];
@@ -394,14 +418,95 @@ public class Property : MonoBehaviour {
         return terrainTiles[y, x];
     }
 
+    public bool WallExists(TileBorder tileBorder) {
+        return walls.ContainsKey(tileBorder);
+    }
+
     [CanBeNull]
     public Wall GetWall(TileBorder tileBorder) {
-        foreach (Wall wall in walls) {
-            if (wall.TileBorder.Equals(tileBorder)) {
-                return wall;
+        return WallExists(tileBorder) ? walls[tileBorder] : null;
+    }
+
+    public IEnumerable<Wall> GetWalls(IEnumerable<TileBorder> tileBorders) {
+        return tileBorders.Select(GetWall).Where(wall => wall != null);
+    }
+
+    /// <summary>
+    /// Returns the room that the given tile is part of, if any.
+    /// Returns null if the tile is not inside a room.
+    /// </summary>
+    [CanBeNull]
+    public Room GetRoom(Vector2Int tile) {
+        return Rooms.FirstOrDefault(room => room.tiles.Contains(tile));
+    }
+    
+    /// <summary>
+    /// Returns true if the given tile is inside a room.
+    /// </summary>
+    public bool IsInsideRoom(Vector2Int tile) {
+        return GetRoom(tile) != null;
+    }
+
+    /// <summary>
+    /// Update the rooms list.
+    /// This method should be called each time walls are added or removed to the property.
+    /// The add/remove wall functions have a parameter for doing this automatically. 
+    /// </summary>
+    public void UpdateRooms() {
+        int[,] roomMap = new int[TerrainHeight, TerrainWidth];
+        int roomNumber = 0;
+        Vector2Int? nextRoomless = FindNextRoomlessTile(roomMap);
+        while (nextRoomless != null) {
+            MarkConnectedTiles(roomMap, nextRoomless.Value, ++roomNumber);
+            nextRoomless = FindNextRoomlessTile(roomMap);
+        }
+
+        Rooms = new Room[roomNumber - 1];
+        for (int i = 0; i < Rooms.Length; i++) {
+            Rooms[i] = new Room();
+        }
+        for (int y = 0; y < TerrainHeight; y++) {
+            for (int x = 0; x < TerrainWidth; x++) {
+                if (roomMap[y, x] > 1) {
+                    Rooms[roomMap[y, x] - 2].tiles.Add(new Vector2Int(x, y));
+                }
+            }
+        }
+        
+        WallVisibilityController.Instance.UpdateWallVisibility();
+    }
+
+    private Vector2Int? FindNextRoomlessTile(int[,] roomMap) {
+        for (int y = 0; y < TerrainHeight; y++) {
+            for (int x = 0; x < TerrainWidth; x++) {
+                if (roomMap[y, x] == 0) {
+                    return new Vector2Int(x, y);
+                }
             }
         }
         return null;
+    }
+
+    private void MarkConnectedTiles(int[,] roomMap, Vector2Int tile, int roomNumber) {
+        roomMap[tile.y, tile.x] = roomNumber;
+        foreach (Vector2Int neighbour in GetConnectedTiles(tile)) {
+            if (roomMap[neighbour.y, neighbour.x] == 0) {
+                MarkConnectedTiles(roomMap, neighbour, roomNumber);
+            }
+        }
+    }
+    
+    private List<Vector2Int> GetConnectedTiles(Vector2Int tile) {
+        List<Vector2Int> tiles = new List<Vector2Int>(4);
+        if (tile.x > 0 && !WallExists(new TileBorder(tile.x, tile.y, WallDirection.NorthWest)))
+            tiles.Add(new Vector2Int(tile.x - 1, tile.y));
+        if (tile.x < TerrainWidth - 1 && !WallExists(new TileBorder(tile.x + 1, tile.y, WallDirection.NorthWest)))
+            tiles.Add(new Vector2Int(tile.x + 1, tile.y));
+        if (tile.y > 0 && !WallExists(new TileBorder(tile.x, tile.y, WallDirection.NorthEast)))
+            tiles.Add(new Vector2Int(tile.x, tile.y - 1));
+        if (tile.y < TerrainHeight - 1 && !WallExists(new TileBorder(tile.x, tile.y + 1, WallDirection.NorthEast)))
+            tiles.Add(new Vector2Int(tile.x, tile.y + 1));
+        return tiles;
     }
 }
 

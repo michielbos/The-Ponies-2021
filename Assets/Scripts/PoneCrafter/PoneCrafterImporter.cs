@@ -15,6 +15,7 @@ public class PoneCrafterImporter {
     private const string PROPERTIES_FILE = "properties.json";
     private const string PCC_EXTENSION = ".pcc";
     public List<Floor> loadedFloors;
+    public List<WallCover> loadedWallCovers;
     public List<Roof> loadedRoofs;
     public List<Terrain> loadedTerrains;
     public List<Furniture> loadedFurniture;
@@ -22,6 +23,7 @@ public class PoneCrafterImporter {
 
     private PoneCrafterImporter() {
         loadedFloors = new List<Floor>();
+        loadedWallCovers = new List<WallCover>();
         loadedRoofs = new List<Roof>();
         loadedTerrains = new List<Terrain>();
         loadedFurniture = new List<Furniture>();
@@ -57,7 +59,9 @@ public class PoneCrafterImporter {
     }
 
     private bool DoesUuidExist(Guid uuid) {
-        return loadedFloors.Any(it => it.uuid == uuid) ||
+        return loadedFurniture.Any(it => it.uuid == uuid) ||
+               loadedFloors.Any(it => it.uuid == uuid) ||
+               loadedWallCovers.Any(it => it.uuid == uuid) ||
                loadedRoofs.Any(it => it.uuid == uuid) ||
                loadedTerrains.Any(it => it.uuid == uuid);
     }
@@ -89,6 +93,9 @@ public class PoneCrafterImporter {
             case "floor":
                 loadedFloors.Add(LoadFloor(zipArchive, properties));
                 break;
+            case "wallcover":
+                loadedWallCovers.Add(LoadWallCover(zipArchive, properties));
+                break;
             case "roof":
                 loadedRoofs.Add(LoadRoof(zipArchive, properties));
                 break;
@@ -107,6 +114,12 @@ public class PoneCrafterImporter {
         JsonFloor jsonFloor = JsonUtility.FromJson<JsonFloor>(properties);
         Texture2D texture = LoadTexture(zipArchive);
         return new Floor(jsonFloor, texture);
+    }
+    
+    private WallCover LoadWallCover(ZipArchive zipArchive, string properties) {
+        JsonWallCover jsonFloor = JsonUtility.FromJson<JsonWallCover>(properties);
+        Texture2D texture = LoadTexture(zipArchive);
+        return new WallCover(jsonFloor, texture);
     }
 
     private Roof LoadRoof(ZipArchive zipArchive, string properties) {

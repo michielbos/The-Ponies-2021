@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using Assets.Scripts.Controllers;
 using Assets.Scripts.Util;
 using Controllers.Singletons;
+using Model.Property;
 using UnityEngine;
 using UnityEngine.EventSystems;
 using UnityEngine.UI;
@@ -11,18 +12,18 @@ namespace Controllers.Playmode {
 public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnterHandler, IPointerExitHandler {
     public List<GameObject> speedButtons;
     
-    public Text fundsText;
-    public Text timeText;
-    public Image cpanel;
-
     public Sprite noModeCpanel;
     public Sprite liveModeCpanel;
     public Sprite buyModeCpanel;
     public Sprite buildModeCpanel;
     
+    public Text fundsText;
+    public Text timeText;
+    public Image cpanel;
+    
     private bool touchingGui;
 
-    void Start() {
+    private void Start() {
         UpdateSpeed();
         UpdateFunds();
     }
@@ -54,15 +55,10 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
         SoundController.Instance.PlaySound(SoundType.Click);
         CameraController.Instance.Rotate(counterClockwise);
     }
-
+    
     // Called from Unity GUI Button
     public void SetClocks() {
-        if (TimeController.Instance.twelveHourClock) {
-            TimeController.Instance.twelveHourClock = false;
-        } else {
-            TimeController.Instance.twelveHourClock = true;
-        }
-
+        TimeController.Instance.twelveHourClock = !TimeController.Instance.twelveHourClock;
         UpdateTime();
     }
 

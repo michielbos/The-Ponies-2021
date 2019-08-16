@@ -4792,9 +4792,9 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 114113357470691672}
-        m_MethodName: SetRoofButton
-        m_Mode: 3
+      - m_Target: {fileID: 913442756527784499}
+        m_MethodName: ToggleWallVisibility
+        m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -5410,6 +5410,7 @@ GameObject:
   - component: {fileID: 114086576077371470}
   - component: {fileID: 8243250806356457648}
   - component: {fileID: 7785438659274785964}
+  - component: {fileID: 913442756527784499}
   m_Layer: 5
   m_Name: HouseGameController
   m_TagString: GameController
@@ -5644,7 +5645,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 3882e212a7f8ca046a8a87fdde8dfbae, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  StaringGameTime: 720
   DaysInOneMonth: 25
   DaysInOneYear: 100
   twelveHourClock: 1
@@ -5683,6 +5683,24 @@ MonoBehaviour:
     hotspot: {x: 0, y: 0}
   - texture: {fileID: 2800000, guid: 370457a2b2714b24284c5e1c19e86724, type: 3}
     hotspot: {x: 0, y: 0}
+--- !u!114 &913442756527784499
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383177691709652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 661f7a4805fc4d9d9559afa700b0daf4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallVisibility: 1
+  wallVisibilityIcons:
+  - {fileID: 21300000, guid: 2903e7cd1b36f9955bcb3f68cf6e36f2, type: 3}
+  - {fileID: 21300000, guid: db71037d08c20048097eb8084a354ab8, type: 3}
+  - {fileID: 21300000, guid: 0a4452c2aa4f63a2d906eef459dbc683, type: 3}
+  wallVisibilityButton: {fileID: 114588780003510648}
 --- !u!1 &1400994035058900
 GameObject:
   m_ObjectHideFlags: 0
@@ -6961,13 +6979,13 @@ MonoBehaviour:
   - {fileID: 1215308966411122}
   - {fileID: 1271965056360436}
   - {fileID: 1693901015380642}
-  fundsText: {fileID: 114000812847085396}
-  timeText: {fileID: 114336257830083344}
-  cpanel: {fileID: 114908403165648786}
   noModeCpanel: {fileID: 21300000, guid: 9b7798aba7b92546a80c97e69e15ed11, type: 3}
   liveModeCpanel: {fileID: 21300000, guid: 64b9eb12c8b7607bb935613bca87935f, type: 3}
   buyModeCpanel: {fileID: 21300000, guid: a5c1aed67327fbd6d92c002014c5b8c1, type: 3}
   buildModeCpanel: {fileID: 21300000, guid: 4d8db10e6e6026010bdebb0b793b9035, type: 3}
+  fundsText: {fileID: 114000812847085396}
+  timeText: {fileID: 114336257830083344}
+  cpanel: {fileID: 114908403165648786}
 --- !u!114 &114542114524124648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -7161,7 +7179,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &224478035911268998
 RectTransform:
   m_ObjectHideFlags: 0
@@ -7171,7 +7189,7 @@ RectTransform:
   m_GameObject: {fileID: 1526610495114938}
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 224276144353645192}
   m_RootOrder: 2
@@ -14260,6 +14278,8 @@ MonoBehaviour:
     type: 3}
   wallMarkerMaterial: {fileID: 2100000, guid: 5196e50254676801cb0abbd55250b014, type: 2}
   wallDenyMaterial: {fileID: 2100000, guid: c14c6bc107665645bbd8843e97ac427b, type: 2}
+  wallDemolishMaterial: {fileID: 2100000, guid: 2ddc87004f8ebab5cbb940f4033f5866,
+    type: 2}
 --- !u!1 &1688231456424592789
 GameObject:
   m_ObjectHideFlags: 0

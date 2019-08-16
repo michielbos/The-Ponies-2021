@@ -1,3 +1,6 @@
+using System.Collections.Generic;
+using UnityEngine;
+
 namespace Model.Property {
 
 /// <summary>
@@ -13,6 +16,28 @@ public struct TileBorder {
         this.x = x;
         this.y = y;
         this.wallDirection = wallDirection;
+    }
+
+    public Vector2Int StartPosition => new Vector2Int(x, y);
+
+    public Vector2Int EndPosition => new Vector2Int(wallDirection != WallDirection.NorthWest ? x + 1 : x,
+        wallDirection == WallDirection.NorthWest || wallDirection == WallDirection.Vertical ? y + 1 :
+        wallDirection == WallDirection.Horizontal ? y - 1 : y);
+    
+    public List<TileBorder> GetConnectedBorders(bool includeSelf) {
+        List<TileBorder> borders = new List<TileBorder>(8);
+        AddConnectedBorders(StartPosition, borders);
+        AddConnectedBorders(EndPosition, borders);
+        if (!includeSelf)
+            borders.Remove(this);
+        return borders;
+    }
+
+    private void AddConnectedBorders(Vector2Int point, List<TileBorder> borderList) {
+        borderList.Add(new TileBorder(point.x, point.y, WallDirection.NorthEast));
+        borderList.Add(new TileBorder(point.x, point.y, WallDirection.NorthWest));
+        borderList.Add(new TileBorder(point.x - 1, point.y, WallDirection.NorthEast));
+        borderList.Add(new TileBorder(point.x, point.y - 1, WallDirection.NorthWest));
     }
 
     public bool Equals(TileBorder other) {
@@ -32,6 +57,10 @@ public struct TileBorder {
             hashCode = (hashCode * 397) ^ (int) wallDirection;
             return hashCode;
         }
+    }
+
+    public override string ToString() {
+        return $"{nameof(x)}: {x}, {nameof(y)}: {y}, {nameof(wallDirection)}: {wallDirection}";
     }
 }
 

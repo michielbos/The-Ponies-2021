@@ -1,7 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using Model.Property;
 using PoneCrafter.Model;
 using UnityEngine;
+using Util;
 
 /// <summary>
 /// Preset for furniture items. These are the objects that are displayed in the catalog.
@@ -128,6 +130,19 @@ public class FurniturePreset : Preset {
             occupied[i] = position + RotateTile(occupiedTiles[i], objectRotation);
         }
         return occupied;
+    }
+    
+    /// <summary>
+    /// Get the tile borders on which this PropertyObject would require walls to be placed on the given tiles.
+    /// </summary>
+    public IEnumerable<TileBorder> GetRequiredWallBorders(IEnumerable<Vector2Int> tiles, ObjectRotation objectRotation) {
+        if (placementType == PlacementType.Wall) {
+            return TileUtils.GetBorders(tiles, objectRotation);
+        }
+        if (placementType == PlacementType.ThroughWall) {
+            return TileUtils.GetBorders(tiles, objectRotation, 1);
+        }
+        return new TileBorder[0];
     }
 
     private Vector2Int RotateTile(Vector2Int tile, ObjectRotation rotation) {
