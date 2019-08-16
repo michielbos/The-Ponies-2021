@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Controllers.Playmode;
 using Controllers.Singletons;
 using Model.Property;
 using UnityEngine;
@@ -54,13 +55,14 @@ public class WallCoverTool : MonoBehaviour, ITool {
             ? GetWallsForDragging(draggingWallStart, wall, isFrontWall)
             : new List<WallSide>(new[] {wallSide});
         
-        selectedWalls.ForEach(removedWall => removedWall.wall.RemovePreviewCovers());
+        ClearSelectedWalls();
         selectedWalls = newWalls;
         newWalls.ForEach(addedWall => {
             addedWall.wall.RemovePreviewCovers();
             addedWall.wall.SetVisibleCoverMaterial(addedWall.front, demolishing ? null : selectedPreset);
+            addedWall.wall.UpdateVisibility(WallVisibility.Full);
         });
-        
+
         if (Input.GetMouseButtonUp(0) && draggingWallStart != null) {
             if (demolishing) {
                 if (newWalls.Count > 0) {
@@ -104,7 +106,10 @@ public class WallCoverTool : MonoBehaviour, ITool {
     }
 
     private void ClearSelectedWalls() {
-        selectedWalls.ForEach(wallSide => wallSide.wall.RemovePreviewCovers());
+        selectedWalls.ForEach(wallSide => {
+            wallSide.wall.UpdateVisibility();
+            wallSide.wall.RemovePreviewCovers();
+        });
         selectedWalls.Clear();
     }
 

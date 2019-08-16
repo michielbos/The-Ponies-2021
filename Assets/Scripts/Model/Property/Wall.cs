@@ -84,7 +84,7 @@ public class Wall : MonoBehaviour {
         if (visibility == WallVisibility.Low)
             SetLowered(true);
         else if (visibility == WallVisibility.Partially) {
-            SetLowered(HasRoomBehindWall());
+            SetLowered(HasRoomBehindWall() || WallVisibilityController.Instance.IsWallLoweredByMouse(this));
         } else 
             SetLowered(false);
         
