@@ -88,7 +88,7 @@ public class Property : MonoBehaviour {
         PlacePropertyObject(nextObjectId++, x, y, objectRotation, preset, skin);
     }
 
-    public void PlacePropertyObject(int id, int x, int y, ObjectRotation objectRotation, FurniturePreset preset,
+    private void PlacePropertyObject(int id, int x, int y, ObjectRotation objectRotation, FurniturePreset preset,
         int skin) {
         if (id >= nextObjectId) {
             nextObjectId = id + 1;

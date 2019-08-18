@@ -6,7 +6,6 @@ using System.Linq;
 using PoneCrafter.Json;
 using PoneCrafter.Model;
 using UnityEngine;
-using Util;
 using Terrain = PoneCrafter.Model.Terrain;
 
 namespace PoneCrafter {
@@ -136,9 +135,8 @@ public class PoneCrafterImporter {
     
     private Furniture LoadFurniture(ZipArchive zipArchive, string properties) {
         JsonFurniture jsonFurniture = JsonUtility.FromJson<JsonFurniture>(properties);
-        Texture2D texture = LoadTexture(zipArchive);
-        Mesh mesh = LoadMesh(zipArchive);
-        return new Furniture(jsonFurniture, mesh, texture);
+        // TODO: Replace cylinder by imported model.
+        return new Furniture(jsonFurniture, GameObject.CreatePrimitive(PrimitiveType.Cylinder));
     }
 
     private Texture2D LoadTexture(ZipArchive zipArchive, string filename = "texture.png") {
@@ -155,20 +153,6 @@ public class PoneCrafterImporter {
                 throw new ImportException("Failed to import texture.");
             }
             return texture;
-        }
-    }
-    
-    private Mesh LoadMesh(ZipArchive zipArchive, string filename = "model.obj") {
-        ZipArchiveEntry meshEntry = zipArchive.GetEntry(filename);
-        if (meshEntry == null) {
-            throw new ImportException("File did not contain a " + filename + " entry.");
-        }
-        using (Stream stream = meshEntry.Open()) {
-            MemoryStream memoryStream = new MemoryStream();
-            stream.CopyTo(memoryStream);
-            byte[] bytes = memoryStream.ToArray();
-            Mesh mesh = FastObjImporter.Instance.ImportMesh(bytes);
-            return mesh;
         }
     }
 }

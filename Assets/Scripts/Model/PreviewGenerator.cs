@@ -1,10 +1,16 @@
 ﻿using UnityEngine;
+using Util;
 
 /// <summary>
 /// Class for generating preview images for furniture. 
 /// </summary>
 public class PreviewGenerator : MonoBehaviour {
-    public GameObject previewObject;
+    private int previewLayer;
+    public ModelContainer previewObject;
+
+    private void Awake() {
+        previewLayer = LayerMask.NameToLayer("Preview");
+    }
 
     /// <summary>
     /// Create a preview for the given furniture preset.
@@ -15,6 +21,7 @@ public class PreviewGenerator : MonoBehaviour {
     public RenderTexture CreatePreview (FurniturePreset furniturePreset, int skin) {
         Camera camera = GetComponent<Camera>();
         furniturePreset.ApplyToModel(previewObject, skin);
+        previewObject.Model.layer = previewLayer;
         RenderTexture renderTexture = new RenderTexture(180, 180, 24, RenderTextureFormat.ARGB32);
         camera.enabled = true;
         camera.targetTexture = renderTexture;

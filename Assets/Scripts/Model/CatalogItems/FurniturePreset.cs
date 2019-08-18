@@ -16,11 +16,11 @@ public class FurniturePreset : Preset {
     public readonly Vector2Int[] occupiedTiles;
     public readonly PlacementType placementType;
 
-    private Mesh mesh;
+    public GameObject prefab;
 
     // TODO: Bring back skins.
-    private Texture2D texture;
-    private Material[][] materials;
+    //private Texture2D texture;
+    //private Material[][] materials;
     private RenderTexture[] previewTextures;
 
     // TODO: Import missing fields
@@ -31,29 +31,7 @@ public class FurniturePreset : Preset {
         sellable = furniture.sellable;
         occupiedTiles = furniture.occupiedTiles;
         placementType = furniture.placementType;
-        mesh = furniture.mesh;
-        texture = furniture.texture;
-        materials = new Material[1][];
-    }
-
-    public Mesh GetMesh() {
-        return mesh;
-    }
-
-    /// <summary>
-    /// Get the materials for the given skin.
-    /// </summary>
-    /// <param name="skin"></param>
-    /// <returns></returns>
-    public Material[] GetMaterials(int skin) {
-        if (materials[skin] == null) {
-            materials[skin] = new Material[1];
-            //TODO: Use the right shader or use a source material.
-            materials[skin][0] = new Material(Shader.Find("Cel Shading/RegularV2"));
-            materials[skin][0].SetFloat(ShaderCutoutProperty, 0.75f);
-            materials[skin][0].mainTexture = texture;
-        }
-        return materials[skin];
+        prefab = furniture.prefab;
     }
 
     public override Texture[] GetPreviewTextures() {
@@ -73,24 +51,13 @@ public class FurniturePreset : Preset {
         return textures;
     }
 
-    public void ApplyToPropertyObject(PropertyObject propertyObject) {
-        ApplyToModel(propertyObject.model.gameObject, propertyObject.skin);
-    }
-
     /// <summary>
-    /// Update a GameObject by applying the rotation/position offsets, model and materials of this furniture preset to it.
+    /// Instantiate this preset's prefab into the given model container.
     /// </summary>
     /// <param name="model">The GameObject to apply the update to.</param>
     /// <param name="skin">The skin of the furniture item.</param>
-    public void ApplyToModel(GameObject model, int skin) {
-        if (GetMesh() != null) {
-            model.GetComponent<MeshFilter>().mesh = GetMesh();
-            model.GetComponent<MeshRenderer>().materials = GetMaterials(skin);
-            MeshCollider meshCollider = model.GetComponent<MeshCollider>();
-            if (meshCollider != null) {
-                meshCollider.sharedMesh = GetMesh();
-            }
-        }
+    public void ApplyToModel(ModelContainer modelContainer, int skin) {
+        modelContainer.InstantiateModel(prefab);
     }
 
     /// <summary>

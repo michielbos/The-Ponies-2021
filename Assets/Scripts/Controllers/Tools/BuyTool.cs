@@ -29,7 +29,7 @@ public class BuyTool : MonoBehaviour, ITool {
     private PropertyObject movingObject;
 
     private GameObject buildMarker;
-    private Transform buildMarkerModel;
+    private ModelContainer buildMarkerModel;
     private ObjectRotation markerRotation = ObjectRotation.SouthEast;
     private readonly List<GameObject> buyMarkings;
     private TerrainTile targetTile;
@@ -41,7 +41,7 @@ public class BuyTool : MonoBehaviour, ITool {
         set {
             markerRotation = value;
             if (buildMarkerModel != null) {
-                GetMovingPreset().FixModelTransform(buildMarkerModel, markerRotation);
+                GetMovingPreset().FixModelTransform(buildMarkerModel.Model.transform, markerRotation);
                 UpdateCanPlace();
             }
         }
@@ -110,8 +110,8 @@ public class BuyTool : MonoBehaviour, ITool {
 
     private void CreateBuildMarker(FurniturePreset preset) {
         buildMarker = Instantiate(buildMarkerPrefab);
-        buildMarkerModel = buildMarker.transform.GetChild(0);
-        preset.ApplyToModel(buildMarkerModel.gameObject, placingSkin);
+        buildMarkerModel = buildMarker.GetComponent<ModelContainer>();
+        preset.ApplyToModel(buildMarkerModel, placingSkin);
         SetBuildMarkerPosition(0, 0);
         ObjectRotation rotation = MarkerRotation;
         MarkerRotation = ObjectRotation.SouthEast;

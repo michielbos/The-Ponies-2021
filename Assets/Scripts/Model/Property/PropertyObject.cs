@@ -3,6 +3,7 @@ using Model.Actions;
 using Model.Actions.Actions;
 using Model.Ponies;
 using UnityEngine;
+using Util;
 
 namespace Model.Property {
 
@@ -10,13 +11,14 @@ namespace Model.Property {
 /// An object that can be placed on a lot, usually a piece of furniture.
 /// </summary>
 [System.Serializable]
+[RequireComponent(typeof(ModelContainer))]
 public class PropertyObject : MonoBehaviour, IActionProvider {
     public int id;
     private ObjectRotation rotation;
     public FurniturePreset preset;
     public int skin;
     public int value;
-    public Transform model;
+    public Transform Model => GetComponent<ModelContainer>().Model.transform;
 
     public Vector2Int TilePosition {
         get {
@@ -30,8 +32,8 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         get { return rotation; }
         set {
             rotation = value;
-            model.rotation = Quaternion.identity;
-            preset.FixModelTransform(model, Rotation);
+            Model.rotation = Quaternion.identity;
+            preset.FixModelTransform(Model, Rotation);
         }
     }
 
@@ -41,7 +43,7 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         this.preset = preset;
         this.skin = skin;
         value = preset.price;
-        preset.ApplyToPropertyObject(this);
+        preset.ApplyToModel(GetComponent<ModelContainer>(), skin);
         Rotation = rotation;
     }
 
@@ -68,7 +70,7 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     }
 
     public void SetVisibility(bool visible) {
-        model.gameObject.SetActive(visible);
+        Model.gameObject.SetActive(visible);
     }
 
     public List<PonyAction> GetActions(Pony pony) {
