@@ -1,8 +1,5 @@
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Threading.Tasks;
 using UnityEngine;
 using UnityGLTF;
@@ -14,7 +11,7 @@ public class GltfLoader : MonoBehaviour {
 
     public int maximumLod = 300;
     public int timeout = 8;
-    public GLTFSceneImporter.ColliderType Collider = GLTFSceneImporter.ColliderType.None;
+    public GLTFSceneImporter.ColliderType Collider = GLTFSceneImporter.ColliderType.MeshConvex;
     private AsyncCoroutineHelper asyncCoroutineHelper;
 
     public void Prepare() {
