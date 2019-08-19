@@ -8,6 +8,7 @@ using PoneCrafter.Json;
 using PoneCrafter.Model;
 using UnityEngine;
 using Util.Importer;
+using Object = UnityEngine.Object;
 using Terrain = PoneCrafter.Model.Terrain;
 
 namespace PoneCrafter {
@@ -44,6 +45,7 @@ public class PoneCrafterImporter {
     public async void Import() {
         // TODO: Apply content UUID checks on content folder.
         gltfLoader = new GameObject("GltfLoader").AddComponent<GltfLoader>();
+        Object.DontDestroyOnLoad(gltfLoader.gameObject);
         gltfLoader.Prepare();
         await ImportFolder(Application.dataPath + "/Content/");
         await ImportFolder(Application.dataPath + "/../Mods/");
