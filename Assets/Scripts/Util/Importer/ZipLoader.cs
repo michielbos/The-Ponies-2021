@@ -2,6 +2,7 @@ using System;
 using System.IO;
 using System.IO.Compression;
 using System.Threading.Tasks;
+using PoneCrafter;
 using UnityGLTF.Loader;
 
 namespace Util.Importer {
@@ -21,7 +22,7 @@ class ZipLoader : ILoader {
     public Task LoadStream(string entryName) {
         ZipArchiveEntry entry = zipArchive.GetEntry(entryName);
         if (entry == null) {
-            throw new ArgumentNullException("Archive did not contain a " + entryName + " entry.");
+            throw new ImportException("Archive did not contain a " + entryName + " entry.");
         }
         // Apparently the Zip stream has unsupported methods.
         using (Stream stream = entry.Open()) {
@@ -34,7 +35,7 @@ class ZipLoader : ILoader {
     public void LoadStreamSync(string entryName) {
         ZipArchiveEntry entry = zipArchive.GetEntry(entryName);
         if (entry == null) {
-            throw new ArgumentNullException("Archive did not contain a " + entryName + " entry.");
+            throw new ImportException("Archive did not contain a " + entryName + " entry.");
         }
         // Apparently the Zip stream has unsupported methods.
         using (Stream stream = entry.Open()) {
