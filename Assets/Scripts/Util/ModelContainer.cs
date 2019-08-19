@@ -12,6 +12,7 @@ public class ModelContainer : MonoBehaviour {
         if (Model != null)
             Destroy(Model);
         Model = Instantiate(prefab, transform);
+        Model.SetActive(true);
     }
 }
 
