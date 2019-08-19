@@ -123,7 +123,7 @@ public class BuyTool : MonoBehaviour, ITool {
     private void PlaceBuyMarkings() {
         foreach (Vector2Int tile in GetMovingPreset().occupiedTiles) {
             buyMarkings.Add(Instantiate(buyMarkingPrefab, new Vector3(tile.x + 0.5f, 0.01f, tile.y + 0.5f),
-                buyMarkingPrefab.transform.rotation, buildMarkerModel.transform));
+                buyMarkingPrefab.transform.rotation, buildMarkerModel.Model.transform));
         }
     }
 
