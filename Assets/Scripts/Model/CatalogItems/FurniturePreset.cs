@@ -11,7 +11,6 @@ using Util;
 /// </summary>
 [Serializable]
 public class FurniturePreset : Preset {
-    private static readonly int ShaderCutoutProperty = Shader.PropertyToID("_AlphaCutout");
     public readonly bool pickupable;
     public readonly bool sellable;
     public readonly Vector2Int[] occupiedTiles;
@@ -55,10 +54,10 @@ public class FurniturePreset : Preset {
     /// <summary>
     /// Instantiate this preset's prefab into the given model container.
     /// </summary>
-    /// <param name="model">The GameObject to apply the update to.</param>
-    /// <param name="skin">The skin of the furniture item.</param>
     public void ApplyToModel(ModelContainer modelContainer, int skin) {
         modelContainer.InstantiateModel(prefab);
+        // It's a bit dirty to do it here, but models from Blender and Max are rotated by 180 degrees.
+        modelContainer.Model.transform.Rotate(new Vector3(0, 180, 0));
     }
 
     /// <summary>
@@ -70,6 +69,8 @@ public class FurniturePreset : Preset {
         Vector2Int tileSize = GetTileSize();
         model.localPosition = new Vector3(tileSize.x * 0.5f, 0, tileSize.y * 0.5f);
         model.rotation = Quaternion.identity;
+        // It's a bit dirty to do it here, but models from Blender and Max are rotated by 180 degrees.
+        model.Rotate(new Vector3(0, 180, 0));
         Vector3 pivot = parent.position + new Vector3(0.5f, 0, 0.5f);
         model.RotateAround(pivot, Vector3.up, ObjectRotationUtil.GetRotationAngle(rotation));
     }
