@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: buy-tilemarker-disallowed
-  m_Shader: {fileID: 4800000, guid: 16cc9e8fe5b86d6448a4f2afcc688b81, type: 3}
+  m_Shader: {fileID: 4800000, guid: c65b7daefe653304a9449060beaf9933, type: 3}
   m_ShaderKeywords: _ALPHATEST_ON _GLOSSYREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
