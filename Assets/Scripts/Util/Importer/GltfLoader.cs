@@ -20,7 +20,7 @@ public class GltfLoader : MonoBehaviour {
         asyncCoroutineHelper.BudgetPerFrameInSeconds = 0.4f;
     }
 
-    public async Task<GameObject> LoadItem(ZipArchive zipArchive, string modelFile = "model.gltf") {
+    public async Task<GameObject> LoadItem(ZipArchive zipArchive, string modelFile) {
         ImportOptions importOptions = new ImportOptions {
             AsyncCoroutineHelper = asyncCoroutineHelper,
             ExternalDataLoader = null,

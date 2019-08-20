@@ -158,7 +158,8 @@ public class PoneCrafterImporter {
     
     private async Task<Furniture> LoadFurniture(ZipArchive zipArchive, string properties) {
         JsonFurniture jsonFurniture = JsonUtility.FromJson<JsonFurniture>(properties);
-        Task<GameObject> task = gltfLoader.LoadItem(zipArchive);
+        string modelName = zipArchive.GetEntry("model.gltf") != null ? "model.gltf" : "model.glb";
+        Task<GameObject> task = gltfLoader.LoadItem(zipArchive, modelName);
         await task;
         GameObject loadedObject = task.Result;
         return new Furniture(jsonFurniture, loadedObject);
