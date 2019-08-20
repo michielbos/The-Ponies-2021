@@ -2024,7 +2024,8 @@ namespace UnityGLTF
 				}
 			}
 
-			mapper.EmissiveFactor = def.EmissiveFactor.ToUnityColorRaw();
+			// Removed because our shader does not use this field and will trigger a warning.
+			// mapper.EmissiveFactor = def.EmissiveFactor.ToUnityColorRaw();
 
 			var vertColorMapper = mapper.Clone();
 			vertColorMapper.VertexColorsEnabled = true;
