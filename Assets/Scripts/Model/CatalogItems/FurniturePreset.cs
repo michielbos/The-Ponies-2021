@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Model.Property;
 using PoneCrafter.Model;
 using UnityEngine;
+using UnityGLTF;
 using Util;
 
 /// <summary>
@@ -16,7 +17,7 @@ public class FurniturePreset : Preset {
     public readonly Vector2Int[] occupiedTiles;
     public readonly PlacementType placementType;
 
-    public GameObject prefab;
+    public InstantiatedGLTFObject prefab;
 
     // TODO: Bring back skins.
     //private Texture2D texture;

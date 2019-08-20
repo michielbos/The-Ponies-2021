@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using PoneCrafter.Json;
 using PoneCrafter.Model;
 using UnityEngine;
+using UnityGLTF;
 using Util.Importer;
 using Object = UnityEngine.Object;
 using Terrain = PoneCrafter.Model.Terrain;
@@ -162,7 +163,7 @@ public class PoneCrafterImporter {
         Task<GameObject> task = gltfLoader.LoadItem(zipArchive, modelName);
         await task;
         GameObject loadedObject = task.Result;
-        return new Furniture(jsonFurniture, loadedObject);
+        return new Furniture(jsonFurniture, loadedObject.GetComponent<InstantiatedGLTFObject>());
     }
 
     private Texture2D LoadTexture(ZipArchive zipArchive, string filename = "texture.png") {

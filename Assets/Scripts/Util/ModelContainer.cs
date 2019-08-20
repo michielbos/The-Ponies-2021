@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityGLTF;
 
 namespace Util {
 
@@ -8,13 +9,14 @@ namespace Util {
 public class ModelContainer : MonoBehaviour {
     public GameObject Model { get; private set; }
 
-    public void InstantiateModel(GameObject prefab) {
+    public void InstantiateModel(InstantiatedGLTFObject prefab) {
         if (Model != null) {
             // Deactivate the model, to hide it before the delayed destruction is completed.
             Model.SetActive(false);
             Destroy(Model);
         }
-        Model = Instantiate(prefab, transform);
+        Model = prefab.Duplicate().gameObject;
+        Model.transform.SetParent(gameObject.transform, false);
         Model.SetActive(true);
     }
 }

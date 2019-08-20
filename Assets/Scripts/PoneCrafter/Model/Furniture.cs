@@ -1,5 +1,6 @@
 using PoneCrafter.Json;
 using UnityEngine;
+using UnityGLTF;
 
 namespace PoneCrafter.Model {
 
@@ -15,9 +16,9 @@ public class Furniture : BaseModel {
     public NeedStats needStats;
     public SkillStats skillStats;
     public RequiredAge requiredAge;
-    public GameObject prefab;
+    public InstantiatedGLTFObject prefab;
 
-    public Furniture(JsonFurniture jsonFurniture, GameObject prefab) : base(jsonFurniture.GetUuid()) {
+    public Furniture(JsonFurniture jsonFurniture, InstantiatedGLTFObject prefab) : base(jsonFurniture.GetUuid()) {
         name = jsonFurniture.name;
         description = jsonFurniture.description;
         price = jsonFurniture.price;
