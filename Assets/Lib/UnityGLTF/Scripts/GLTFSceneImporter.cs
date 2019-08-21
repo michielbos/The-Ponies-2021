@@ -1891,8 +1891,16 @@ namespace UnityGLTF
 
 				if (pbr.BaseColorTexture != null)
 				{
+					// This ugly material holder fixes whatever witchcraft causes the material to be disposed in some cases.
+					Renderer uglyMaterialHolder = new GameObject().AddComponent<MeshRenderer>();
+					uglyMaterialHolder.material = ((StandardMap)mrMapper)._material;
+					
 					TextureId textureId = pbr.BaseColorTexture.Index;
 					await ConstructTexture(textureId.Value, textureId.Id, !KeepCPUCopyOfTexture, false);
+					
+					// Clean up our dirty fix
+					Object.Destroy(uglyMaterialHolder.gameObject);
+					
 					mrMapper.BaseColorTexture = _assetCache.TextureCache[textureId.Id].Texture;
 					mrMapper.BaseColorTexCoord = pbr.BaseColorTexture.TexCoord;
 

@@ -9,7 +9,7 @@ namespace UnityGLTF
 {
 	public class StandardMap : IUniformMap
 	{
-		protected Material _material;
+		public Material _material;
 		private AlphaMode _alphaMode = AlphaMode.OPAQUE;
 		private double _alphaCutoff = 0.5;
 
