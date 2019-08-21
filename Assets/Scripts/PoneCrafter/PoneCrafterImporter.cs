@@ -160,10 +160,14 @@ public class PoneCrafterImporter {
     private async Task<Furniture> LoadFurniture(ZipArchive zipArchive, string properties) {
         JsonFurniture jsonFurniture = JsonUtility.FromJson<JsonFurniture>(properties);
         string modelName = zipArchive.GetEntry("model.gltf") != null ? "model.gltf" : "model.glb";
-        Task<GameObject> task = gltfLoader.LoadItem(zipArchive, modelName);
-        await task;
-        GameObject loadedObject = task.Result;
-        return new Furniture(jsonFurniture, loadedObject.GetComponent<InstantiatedGLTFObject>());
+        try {
+            Task<GameObject> task = gltfLoader.LoadItem(zipArchive, modelName);
+            await task;
+            GameObject loadedObject = task.Result;
+            return new Furniture(jsonFurniture, loadedObject.GetComponent<InstantiatedGLTFObject>());
+        } catch (Exception e) {
+            throw new ImportException("Unexpected import error: " + e.Message);
+        }
     }
 
     private Texture2D LoadTexture(ZipArchive zipArchive, string filename = "texture.png") {
