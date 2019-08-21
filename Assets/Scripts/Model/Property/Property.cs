@@ -74,13 +74,14 @@ public class Property : MonoBehaviour {
         terrainTiles[y, x].SetVisible(false);
     }
 
-    public void PlaceWall(int x, int y, WallDirection wallDirection, bool updateRooms) {
+    public Wall PlaceWall(int x, int y, WallDirection wallDirection, bool updateRooms) {
         Wall wall = Instantiate(Prefabs.Instance.wallPrefab, transform);
         wall.Init(x, y, wallDirection);
         walls.Add(wall.TileBorder, wall);
         if (updateRooms) {
             UpdateRooms();
         }
+        return wall;
     }
 
     public void PlacePropertyObject(int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
@@ -144,7 +145,11 @@ public class Property : MonoBehaviour {
 
     private void LoadWalls(WallData[] wallDatas) {
         foreach (WallData wd in wallDatas) {
-            PlaceWall(wd.x, wd.y, wd.Direction, false);
+            Wall wall = PlaceWall(wd.x, wd.y, wd.Direction, false);
+            if (!string.IsNullOrEmpty(wd.coverFrontUuid))
+                wall.CoverFront = WallCoverPresets.Instance.GetWallCoverPreset(new Guid(wd.coverFrontUuid));
+            if (!string.IsNullOrEmpty(wd.coverBackUuid))
+                wall.CoverBack = WallCoverPresets.Instance.GetWallCoverPreset(new Guid(wd.coverBackUuid));
         }
         UpdateRooms();
     }
@@ -429,6 +434,53 @@ public class Property : MonoBehaviour {
 
     public IEnumerable<Wall> GetWalls(IEnumerable<TileBorder> tileBorders) {
         return tileBorders.Select(GetWall).Where(wall => wall != null);
+    }
+
+    /// <summary>
+    /// Attempt to get a loop with the given wallside.
+    /// This is used by the wallcover fill tool to paint whole rooms.
+    /// Returns the list of walls in the loop, or null if the loop was incomplete.
+    /// </summary>
+    [CanBeNull]
+    public List<WallSide> GetWallSideLoop(WallSide start) {
+        List<WallSide> wallList = new List<WallSide>();
+        return AddNextWallInLoop(start.wall, start.wall, start.front, wallList) ? wallList : null;
+    }
+
+    private bool AddNextWallInLoop(Wall start, Wall current, bool front, List<WallSide> wallList) {
+        wallList.Add(new WallSide(current, front));
+        TileBorder currentBorder = current.TileBorder;
+        Wall nextWall;
+        bool nextFront;
+        
+        nextWall = GetWall(currentBorder.GetRightBorder(front));
+        if (nextWall != null) {
+            nextFront = front && current.Direction == WallDirection.NorthWest || !front && current.Direction == WallDirection.NorthEast;
+        } else {
+            nextWall = nextWall ?? GetWall(currentBorder.GetForwardBorder(front));
+            if (nextWall != null) {
+                nextFront = front;
+            } else {
+                nextWall = nextWall ?? GetWall(currentBorder.GetLeftBorder(front));
+                if (nextWall != null) {
+                    nextFront = front && current.Direction == WallDirection.NorthEast || !front && current.Direction == WallDirection.NorthWest;
+                } else
+                    return false;
+            }
+        }
+        
+        if (nextWall == start) {
+            return true;
+        }
+        if (wallList.Any(side => side.wall == nextWall)) {
+            return false;
+        }
+        if (wallList.Count > 2000) {
+            Debug.LogWarning("Very large room. Canceling wall loop calculation.");
+            return false;
+        }
+        
+        return AddNextWallInLoop(start, nextWall, nextFront, wallList);
     }
 
     /// <summary>

@@ -16,6 +16,7 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
     public BuyTool buyTool;
     public FloorTool floorTool;
     public WallTool wallTool;
+    public WallCoverTool wallCoverTool;
 
     private ITool tool;
     private ToolType activeToolType;
@@ -55,6 +56,8 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
             SetTool(ToolType.Floor);
         } else if (objectCategory == ObjectCategory.Wall) {
             SetTool(ToolType.Wall);
+        } else if (objectCategory == ObjectCategory.WallCover) {
+            SetTool(ToolType.WallCover);
         } else {
             // [Ebunix] Replaces DisableTool();
             SetTool(ToolType.None);
@@ -70,6 +73,8 @@ public class ToolController : SingletonMonoBehaviour<ToolController> {
                 return buyTool;
             case ToolType.Wall:
                 return wallTool;
+            case ToolType.WallCover:
+                return wallCoverTool;
         }
 
         return null;

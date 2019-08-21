@@ -5488,6 +5488,7 @@ MonoBehaviour:
   buyTool: {fileID: 3243086503995323200}
   floorTool: {fileID: 5330451863640075731}
   wallTool: {fileID: 4886249894062840747}
+  wallCoverTool: {fileID: 4761469689840204633}
 --- !u!114 &114586363656697466
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -14200,6 +14201,7 @@ GameObject:
   - component: {fileID: 3243086503995323200}
   - component: {fileID: 5330451863640075731}
   - component: {fileID: 4886249894062840747}
+  - component: {fileID: 4761469689840204633}
   m_Layer: 0
   m_Name: Tools
   m_TagString: Untagged
@@ -14280,6 +14282,19 @@ MonoBehaviour:
   wallDenyMaterial: {fileID: 2100000, guid: c14c6bc107665645bbd8843e97ac427b, type: 2}
   wallDemolishMaterial: {fileID: 2100000, guid: 2ddc87004f8ebab5cbb940f4033f5866,
     type: 2}
+--- !u!114 &4761469689840204633
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1627915513569456364}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 032dec11307d460aa01500b7934648cf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buildMarkerPrefab: {fileID: 0}
 --- !u!1 &1688231456424592789
 GameObject:
   m_ObjectHideFlags: 0

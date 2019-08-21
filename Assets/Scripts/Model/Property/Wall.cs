@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Controllers.Playmode;
 using UnityEngine;
+using Util;
 
 namespace Model.Property {
 
@@ -12,8 +13,13 @@ namespace Model.Property {
 public class Wall : MonoBehaviour {
     public Mesh fullWallMesh;
     public Mesh shortWallMesh;
+    public Material unpaintedMaterial;
     public MeshFilter meshFilter;
+    public MeshRenderer meshRenderer;
+
     private WallDirection _direction;
+    private WallCoverPreset _coverFront;
+    private WallCoverPreset _coverBack;
 
     public Vector2Int TilePosition {
         get {
@@ -45,6 +51,22 @@ public class Wall : MonoBehaviour {
         }
     }
 
+    public WallCoverPreset CoverFront {
+        set {
+            _coverFront = value;
+            SetVisibleCoverMaterial(false, CoverFront);
+        }
+        get => _coverFront;
+    }
+
+    public WallCoverPreset CoverBack {
+        set {
+            _coverBack = value;
+            SetVisibleCoverMaterial(false, CoverBack);
+        }
+        get => _coverBack;
+    }
+
     private void Start() {
         UpdateVisibility();
     }
@@ -62,7 +84,7 @@ public class Wall : MonoBehaviour {
         if (visibility == WallVisibility.Low)
             SetLowered(true);
         else if (visibility == WallVisibility.Partially) {
-            SetLowered(HasRoomBehindWall());
+            SetLowered(HasRoomBehindWall() || WallVisibilityController.Instance.IsWallLoweredByMouse(this));
         } else 
             SetLowered(false);
         
@@ -101,13 +123,73 @@ public class Wall : MonoBehaviour {
         return PropertyController.Instance.property.GetWalls(borders);
     }
 
+    /// <summary>
+    /// Returns true if the given point touches the front side of the wall.
+    /// Returns false if it touches the back side of the wall.
+    /// </summary>
+    public bool IsFrontOfWall(Vector3 point) {
+        if (Direction == WallDirection.NorthEast)
+            return point.z < transform.position.z;
+        if (Direction == WallDirection.NorthWest)
+            return point.x > transform.position.x;
+        
+        // Horizontal/vertical walls not implemented yet.
+        return false;
+    }
+    
+    /// <summary>
+    /// Reset the wall covers of this wall to the real ones.
+    /// </summary>
+    public void RemovePreviewCovers() {
+        SetVisibleCoverMaterial(true, CoverFront);
+        SetVisibleCoverMaterial(false, CoverBack);
+    }
+
+    /// <summary>
+    /// Update the cover material on the specified side to match the given preset.
+    /// This does only changes the displayed material. Not the real cover preset of this wall.
+    /// </summary>
+    public void SetVisibleCoverMaterial(bool front, WallCoverPreset preset) {
+        Material material = preset?.GetMaterial() ?? unpaintedMaterial;
+        // Unity returns a copied array, so we solve things the fancy way.
+        meshRenderer.sharedMaterials = meshRenderer.sharedMaterials.Also(it => it[front ? 0 : 1] = material);
+    }
+
+    public WallCoverPreset GetCoverPreset(bool front) {
+        return front ? CoverFront : CoverBack;
+    }
+
     public WallData GetWallData() {
         Vector2Int tilePosition = TilePosition;
         return new WallData(tilePosition.x,
             tilePosition.y,
             (int) Direction,
-            "",
-            "");
+            CoverFront?.guid.ToString(),
+            CoverBack?.guid.ToString());
+    }
+}
+
+/// <summary>
+/// Simple class to define the front or back side of a wall.
+/// </summary>
+public class WallSide {
+    public readonly Wall wall;
+    public readonly bool front;
+
+    public WallSide(Wall wall, bool front) {
+        this.wall = wall;
+        this.front = front;
+    }
+
+    public void ApplyCoverPreset(WallCoverPreset preset) {
+        if (front)
+            wall.CoverFront = preset;
+        else
+            wall.CoverBack = preset;
+    }
+    
+    public bool HasThisPreset(WallCoverPreset preset) {
+        return front ? wall.CoverFront == preset : wall.CoverBack == preset;
     }
 }
 

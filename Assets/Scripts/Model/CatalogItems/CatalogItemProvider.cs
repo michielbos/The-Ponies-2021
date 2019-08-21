@@ -25,6 +25,11 @@ public static class CatalogItemProvider {
             catalogItems.Sort((a, b) => a.price.CompareTo(b.price));
             return catalogItems;
         }
+        if (objectCategory == ObjectCategory.WallCover) {
+            List<CatalogItem> catalogItems = WallCoverPresets.Instance.GetWallCoverPresets().Cast<CatalogItem>().ToList();
+            catalogItems.Sort((a, b) => a.price.CompareTo(b.price));
+            return catalogItems;
+        }
         if (objectCategory == ObjectCategory.Wall) {
             return new List<CatalogItem> {new WallPreset("Wall", "This is a wall.", 20)};
         }

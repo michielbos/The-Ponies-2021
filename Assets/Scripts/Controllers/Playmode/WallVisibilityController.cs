@@ -36,13 +36,13 @@ public class WallVisibilityController : SingletonMonoBehaviour<WallVisibilityCon
             .ToArray();
         IEnumerable<Wall> addedWalls = walls.Except(hoveredWalls);
         IEnumerable<Wall> removedWalls = hoveredWalls.Except(walls);
+        hoveredWalls = walls;
         foreach (Wall addedWall in addedWalls) {
             addedWall.SetLowered(true);
         }
         foreach (Wall removedWall in removedWalls) {
             removedWall.UpdateVisibility();
         }
-        hoveredWalls = walls;
     }
 
     // Called from Unity GUI Button
@@ -62,6 +62,13 @@ public class WallVisibilityController : SingletonMonoBehaviour<WallVisibilityCon
         foreach (Wall wall in PropertyController.Instance.property.walls.Values) {
             wall.UpdateVisibility(wallVisibility);
         }
+    }
+
+    /// <summary>
+    /// Whether the given wall should be lowered because of the mouse position in partial mode.
+    /// </summary>
+    public bool IsWallLoweredByMouse(Wall wall) {
+        return wallVisibility == WallVisibility.Partially && hoveredWalls.Contains(wall);
     }
 }
 
