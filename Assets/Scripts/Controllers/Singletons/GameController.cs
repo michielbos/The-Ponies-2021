@@ -22,6 +22,7 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 
 	/// <summary>
 	/// Code that may take long to run that should be executed before the game is started.
+	/// Note that the import function runs in the background, so that the Unity scene continues.
 	/// This will later probably be moved to a loading screen.
 	/// </summary>
 	private void InitializeGame() {

@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Threading.Tasks;
 using PoneCrafter.Json;
 using PoneCrafter.Model;
 using UnityEngine;
-using Util;
+using UnityGLTF;
+using Util.Importer;
+using Object = UnityEngine.Object;
 using Terrain = PoneCrafter.Model.Terrain;
 
 namespace PoneCrafter {
@@ -14,12 +17,17 @@ namespace PoneCrafter {
 public class PoneCrafterImporter {
     private const string PROPERTIES_FILE = "properties.json";
     private const string PCC_EXTENSION = ".pcc";
+    // The number of tasks to run asynchronously.
+    private const int TaskPoolSize = 16;
+    
     public List<Floor> loadedFloors;
     public List<WallCover> loadedWallCovers;
     public List<Roof> loadedRoofs;
     public List<Terrain> loadedTerrains;
     public List<Furniture> loadedFurniture;
     private static PoneCrafterImporter instance;
+
+    private GltfLoader gltfLoader;
 
     private PoneCrafterImporter() {
         loadedFloors = new List<Floor>();
@@ -35,29 +43,33 @@ public class PoneCrafterImporter {
     /// Import all PoneCrafter files.
     /// This should be done only once, at the start of the game.
     /// </summary>
-    public void Import() {
+    public async void Import() {
         // TODO: Apply content UUID checks on content folder.
-        ImportFolder(Application.dataPath + "/Content/");
-        ImportFolder(Application.dataPath + "/../Mods/");
+        gltfLoader = new GameObject("GltfLoader").AddComponent<GltfLoader>();
+        Object.DontDestroyOnLoad(gltfLoader.gameObject);
+        gltfLoader.Prepare();
+        await ImportFolder(Application.dataPath + "/Content/");
+        await ImportFolder(Application.dataPath + "/../Mods/");
     }
 
-    private void ImportFolder(string path) {
+    private async Task ImportFolder(string path) {
         if (!Directory.Exists(path)) {
             Directory.CreateDirectory(path);
         }
+        List<Task> tasks = new List<Task>(TaskPoolSize);
         foreach (string file in Directory.GetFiles(path)) {
             if (!file.ToLower().EndsWith(PCC_EXTENSION)) {
                 continue;
             }
-            try {
-                ReadZip(file);
-            } catch (ImportException e) {
-                // TODO: Collect and forward errors to user.
-                Debug.LogWarning("Failed to import " + file + ": " + e.Message);
+            tasks.Add(StartImportZipTask(file));
+            if (tasks.Count >= TaskPoolSize) {
+                Task task = tasks.First();
+                await task;
+                tasks.Remove(task);
             }
         }
     }
-
+    
     private bool DoesUuidExist(Guid uuid) {
         return loadedFurniture.Any(it => it.uuid == uuid) ||
                loadedFloors.Any(it => it.uuid == uuid) ||
@@ -66,7 +78,16 @@ public class PoneCrafterImporter {
                loadedTerrains.Any(it => it.uuid == uuid);
     }
 
-    private void ReadZip(string file) {
+    private async Task StartImportZipTask(string zipFilePath) {
+        try {
+            await ImportZip(zipFilePath);
+        } catch (ImportException e) {
+            // TODO: Collect and forward errors to user.
+            Debug.LogWarning("Failed to import " + zipFilePath + ": " + e.Message);
+        }
+    }
+
+    private async Task ImportZip(string file) {
         using (ZipArchive zipArchive = ZipFile.Open(file, ZipArchiveMode.Read)) {
             ZipArchiveEntry propertiesEntry = zipArchive.GetEntry("properties.json");
             if (propertiesEntry == null) {
@@ -74,12 +95,12 @@ public class PoneCrafterImporter {
             }
             using (StreamReader reader = new StreamReader(propertiesEntry.Open())) {
                 string properties = reader.ReadToEnd();
-                LoadContent(zipArchive, properties);
+                await LoadContent(zipArchive, properties);
             }
         }
     }
 
-    private void LoadContent(ZipArchive zipArchive, string properties) {
+    private async Task LoadContent(ZipArchive zipArchive, string properties) {
         BaseJsonModel baseModel = JsonUtility.FromJson<BaseJsonModel>(properties);
         Guid uuid = baseModel.GetUuid();
         if (!GuidUtil.IsPackagelessContent(uuid)) {
@@ -103,7 +124,9 @@ public class PoneCrafterImporter {
                 loadedTerrains.Add(LoadTerrain(zipArchive, properties));
                 break;
             case "furniture":
-                loadedFurniture.Add(LoadFurniture(zipArchive, properties));
+                Task<Furniture> task = LoadFurniture(zipArchive, properties);
+                await task;
+                loadedFurniture.Add(task.Result);
                 break;
             default:
                 throw new ImportException("Invalid content type: " + baseModel.type);
@@ -134,11 +157,17 @@ public class PoneCrafterImporter {
         return new Terrain(jsonTerrain, texture);
     }
     
-    private Furniture LoadFurniture(ZipArchive zipArchive, string properties) {
+    private async Task<Furniture> LoadFurniture(ZipArchive zipArchive, string properties) {
         JsonFurniture jsonFurniture = JsonUtility.FromJson<JsonFurniture>(properties);
-        Texture2D texture = LoadTexture(zipArchive);
-        Mesh mesh = LoadMesh(zipArchive);
-        return new Furniture(jsonFurniture, mesh, texture);
+        string modelName = zipArchive.GetEntry("model.gltf") != null ? "model.gltf" : "model.glb";
+        try {
+            Task<GameObject> task = gltfLoader.LoadItem(zipArchive, modelName);
+            await task;
+            GameObject loadedObject = task.Result;
+            return new Furniture(jsonFurniture, loadedObject.GetComponent<InstantiatedGLTFObject>());
+        } catch (Exception e) {
+            throw new ImportException("Unexpected import error: " + e.Message);
+        }
     }
 
     private Texture2D LoadTexture(ZipArchive zipArchive, string filename = "texture.png") {
@@ -155,20 +184,6 @@ public class PoneCrafterImporter {
                 throw new ImportException("Failed to import texture.");
             }
             return texture;
-        }
-    }
-    
-    private Mesh LoadMesh(ZipArchive zipArchive, string filename = "model.obj") {
-        ZipArchiveEntry meshEntry = zipArchive.GetEntry(filename);
-        if (meshEntry == null) {
-            throw new ImportException("File did not contain a " + filename + " entry.");
-        }
-        using (Stream stream = meshEntry.Open()) {
-            MemoryStream memoryStream = new MemoryStream();
-            stream.CopyTo(memoryStream);
-            byte[] bytes = memoryStream.ToArray();
-            Mesh mesh = FastObjImporter.Instance.ImportMesh(bytes);
-            return mesh;
         }
     }
 }
