@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using Assets.Scripts.Util;
 using Controllers.Playmode;
 using Model.Ponies;
@@ -18,7 +19,6 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
     private bool hadFocus;
     private bool showFps;
     private float initialCheatFieldX, initialCheatFieldY, initialCheatFieldWidth;
-    private float lastConsoleHeight = 0;
 
     private void Start() {
         RectTransform rectTransform = cheatField.GetComponent<RectTransform>();
@@ -57,13 +57,6 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         }
     }
 
-    private void LateUpdate() {
-        ScrollRect consoleScrollRect = consolePanel.GetComponent<ScrollRect>();
-        if (Math.Abs(consoleScrollRect.verticalNormalizedPosition - lastConsoleHeight) > 0) {
-            consoleScrollRect.verticalNormalizedPosition = 0;
-        }
-    }
-
     public void SetCheatFieldVisible(bool visible) {
         this.visible = visible;
         cheatField.interactable = visible;
@@ -98,6 +91,17 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
 
     public void AddConsoleLine(string text) {
         consoleText.text += "\n" + text;
+        ScrollRect consoleScrollRect = consolePanel.GetComponent<ScrollRect>();
+        if (Math.Abs(consoleScrollRect.verticalNormalizedPosition) < 0.0001) {
+            StartCoroutine(ScrollConsoleToBottom());
+        }
+    }
+
+    private IEnumerator ScrollConsoleToBottom() {
+        // For some reason, LateUpdate doesn't work, but WaitForEndOfFrame does.
+        yield return new WaitForEndOfFrame();
+        ScrollRect consoleScrollRect = consolePanel.GetComponent<ScrollRect>();
+        consoleScrollRect.verticalNormalizedPosition = 0;
     }
 
     public bool EnterCheat(string cheat) {
