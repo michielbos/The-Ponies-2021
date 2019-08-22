@@ -9,6 +9,10 @@ using UnityEngine.UI;
 namespace Controllers.Singletons {
 
 public class CheatsController : SingletonMonoBehaviour<CheatsController> {
+    // The max number of characters on the console panel text.
+    // We use 10000 for now to not get too close to the geometry limit.
+    private const int CharacterLimit = 10000;
+    
     public InputField cheatField;
     public RectTransform consolePanel;
     public Text consoleText;
@@ -25,6 +29,15 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         initialCheatFieldX = rectTransform.position.x;
         initialCheatFieldY = rectTransform.position.y;
         initialCheatFieldWidth = rectTransform.rect.width;
+        Application.logMessageReceived += OnLogMessage;
+    }
+
+    private void OnDestroy() {
+        Application.logMessageReceived -= OnLogMessage;
+    }
+
+    private void OnLogMessage(string logString, string stackTrace, LogType logType) {
+        AddConsoleLine(logString, GetLogTypeColor(logType));
     }
 
     private void Update() {
@@ -89,11 +102,40 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         }
     }
 
-    public void AddConsoleLine(string text) {
-        consoleText.text += "\n" + text;
+    public void AddConsoleLine(string text, string color = "white") {
+        string lineText = "<color=" + color + ">" + text + "</color>";
+        string panelText = consoleText.text;
+        
+        if (panelText.Length > 0)
+            lineText = "\n" + lineText;
+        panelText += lineText;
+        if (panelText.Length > CharacterLimit) {
+            int newStart = panelText.IndexOf("</color>\n", panelText.Length - CharacterLimit, StringComparison.Ordinal) + 9;
+            if (newStart == 0)
+                panelText = "";
+            panelText = panelText.Substring(newStart);
+        }
+        consoleText.text = panelText;
+        
+        // Make sure the scroll view scrolls automatically if it's at the bottom.
         ScrollRect consoleScrollRect = consolePanel.GetComponent<ScrollRect>();
         if (Math.Abs(consoleScrollRect.verticalNormalizedPosition) < 0.0001) {
             StartCoroutine(ScrollConsoleToBottom());
+        }
+    }
+
+    private string GetLogTypeColor(LogType logType) {
+        switch (logType) {
+            case LogType.Error:
+                return "orange";
+            case LogType.Assert:
+                return "red";
+            case LogType.Warning:
+                return "yellow";
+            case LogType.Exception:
+                return "magenta";
+            default:
+                return "white";
         }
     }
 
