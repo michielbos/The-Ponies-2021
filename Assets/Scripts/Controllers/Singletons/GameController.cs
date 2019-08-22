@@ -61,6 +61,7 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 
 	void OnEnteredLot (int lotId) {
 		PropertyController.Instance.Initialize(lotId);
+		ScriptManager.Instance.OnPropertyLoaded();
 	}
 
     private void Update()

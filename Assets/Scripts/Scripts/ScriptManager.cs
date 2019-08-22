@@ -9,13 +9,19 @@ namespace Scripts {
 
 public class ScriptManager {
     private static ScriptManager _instance;
+    public readonly Hooks hooks = new Hooks();
 
     public static ScriptManager Instance => _instance ?? (_instance = new ScriptManager());
 
     public void Init() {
         //Script.DefaultOptions.ScriptLoader = new InvalidScriptLoader();
         Script.DefaultOptions.DebugPrint = s => Debug.Log("Lua: " + s);
+        UserData.RegisterAssembly();
         RegisterProxies();
+    }
+
+    public void OnPropertyLoaded() {
+        hooks.RegisterHookCallbacks();
     }
 
     private void RegisterProxies() {
@@ -40,6 +46,7 @@ public class ScriptManager {
     private void AddGlobalVariables(Script script) {
         script.Globals["property"] = PropertyController.Instance.property;
         script.Globals["household"] = HouseholdController.Instance.Household;
+        script.Globals["hooks"] = hooks;
     }
 }
 
