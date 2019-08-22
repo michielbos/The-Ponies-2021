@@ -17,8 +17,12 @@ public enum ObjectRotation {
 /// Util class for ObjectRotation because C# doesn't seem to support any enum methods.
 /// </summary>
 public static class ObjectRotationUtil {
-    public static float GetRotationAngle(ObjectRotation objectRotation) {
+    public static int GetRotationAngle(ObjectRotation objectRotation) {
         return ((int) objectRotation - 1) * 90;
+    }
+    
+    public static ObjectRotation FromRotationAngle(int angle) {
+        return (ObjectRotation)(angle / 90 % 4 + 1);
     }
 
     public static Vector3 GetRotationVector(ObjectRotation objectRotation) {
