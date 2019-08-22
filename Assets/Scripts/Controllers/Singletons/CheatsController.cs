@@ -3,6 +3,7 @@ using System.Collections;
 using Assets.Scripts.Util;
 using Controllers.Playmode;
 using Model.Ponies;
+using Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -156,10 +157,10 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
             parameters = new string[0];
         }
 
-        return TryCheat(split[0].ToLower(), parameters);
+        return TryCheat(split[0].ToLower(), parameters, cheat);
     }
 
-    private bool TryCheat(string command, string[] parameters) {
+    private bool TryCheat(string command, string[] parameters, string wholeCommand) {
         // Money cheats
         if (command == "rosebud")
             MoneyController.Instance.ChangeFunds(1000);
@@ -191,7 +192,9 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
             SetCheatFieldVisible(false);
         else if (command == "forcequit")
             Application.Quit();
-        else
+        else if (command == "lua" && wholeCommand.Length > 4) {
+            ScriptManager.Instance.RunScript(wholeCommand.Substring(4));
+        } else
             return false;
         return true;
     }

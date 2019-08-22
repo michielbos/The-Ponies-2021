@@ -15,3 +15,4 @@ ShowFPS - Toggles FPS display.
 Clear - Clears all text from the console.
 Close - Closes the console.
 ForceQuit - Quit the game.
+Lua <code> - Execute a piece of Lua code.
