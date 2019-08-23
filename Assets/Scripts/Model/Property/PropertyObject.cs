@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using Model.Actions;
-using Model.Actions.Actions;
 using Model.Ponies;
+using Scripts;
 using UnityEngine;
 using Util;
 
@@ -74,9 +74,7 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     }
 
     public List<PonyAction> GetActions(Pony pony) {
-        return new List<PonyAction>() {
-            new FakeAction(pony, "View")
-        };
+        return ScriptManager.Instance.hooks.RequestObjectActions(pony, this);
     }
 }
 

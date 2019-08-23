@@ -15,6 +15,7 @@ public class ScriptManager {
     public static ScriptManager Instance => _instance ?? (_instance = new ScriptManager());
 
     public void Init() {
+        // TODO: Configure correct scriptloader and test security.
         //Script.DefaultOptions.ScriptLoader = new InvalidScriptLoader();
         Script.DefaultOptions.DebugPrint = s => Debug.Log("Lua: " + s);
         UserData.RegisterAssembly();
@@ -30,6 +31,7 @@ public class ScriptManager {
         UserData.RegisterProxyType<HouseholdProxy, Household>(v => new HouseholdProxy(v));
         UserData.RegisterProxyType<PonyProxy, Pony>(v => new PonyProxy(v));
         UserData.RegisterProxyType<PropertyObjectProxy, PropertyObject>(v => new PropertyObjectProxy(v));
+        UserData.RegisterProxyType<ScriptPonyActionProxy, ScriptPonyAction>(v => new ScriptPonyActionProxy(v));
     }
 
     public void RunScript(string content) {
@@ -52,6 +54,7 @@ public class ScriptManager {
         
         // Constructor functions
         script.Globals["Vector2"] = (Func<float, float, Vector2Wrapper>) Vector2Wrapper.Create;
+        script.Globals["Action"] = (Func<string, Closure, ScriptAction>) ScriptAction.Create;
     }
 }
 

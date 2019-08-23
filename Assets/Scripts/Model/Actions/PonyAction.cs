@@ -8,7 +8,7 @@ public abstract class PonyAction {
     public bool active;
     public bool canceled;
     public bool finished;
-    protected int tickCount;
+    public int tickCount;
 
     protected PonyAction(Pony pony, string name) {
         this.pony = pony;
