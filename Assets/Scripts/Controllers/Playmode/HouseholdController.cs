@@ -72,7 +72,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         }
         Transform hitParent = hit.transform.parent;
         if (hitParent != null) {
-            PropertyObject propertyObject = hit.transform.parent.GetComponent<PropertyObject>();
+            PropertyObject propertyObject = hit.transform.parent.parent?.GetComponent<PropertyObject>();
             if (propertyObject != null) {
                 cursorController.SetCursor(CursorType.Interact);
                 HandleHover(propertyObject);
