@@ -1,7 +1,5 @@
-using System.Collections.Generic;
 using Model.Property;
 using MoonSharp.Interpreter;
-using UnityEngine;
 
 namespace Scripts.Proxies {
 
@@ -15,22 +13,9 @@ class PropertyObjectProxy {
     
     public string uuid => propertyObject.preset.guid.ToString();
 
-    public int x {
-        get => propertyObject.TilePosition.x;
-        set {
-            Vector2Int tilePosition = propertyObject.TilePosition;
-            tilePosition.x = value;
-            propertyObject.TilePosition = tilePosition;
-        }
-    }
-    
-    public int y {
-        get => propertyObject.TilePosition.y;
-        set {
-            Vector2Int tilePosition = propertyObject.TilePosition;
-            tilePosition.y = value;
-            propertyObject.TilePosition = tilePosition;
-        }
+    public Vector2Wrapper position {
+        get => new Vector2Wrapper(propertyObject.TilePosition);
+        set => propertyObject.TilePosition = value.GetVector2Int();
     }
 
     public int rotation {

@@ -1,3 +1,4 @@
+using System;
 using Controllers.Playmode;
 using Model.Ponies;
 using Model.Property;
@@ -34,7 +35,7 @@ public class ScriptManager {
     public void RunScript(string content) {
         try {
             Script script = new Script();
-            AddGlobalVariables(script);
+            AddGlobals(script);
             Debug.Log("> " + script.DoString(content));
         } catch (SyntaxErrorException e) {
             Debug.LogWarning("Syntax error: " + e.Message);
@@ -43,10 +44,14 @@ public class ScriptManager {
         }
     }
 
-    private void AddGlobalVariables(Script script) {
+    private void AddGlobals(Script script) {
+        // Global variables
         script.Globals["property"] = PropertyController.Instance.property;
         script.Globals["household"] = HouseholdController.Instance.Household;
         script.Globals["hooks"] = hooks;
+        
+        // Constructor functions
+        script.Globals["Vector2"] = (Func<float, float, Vector2Wrapper>) Vector2Wrapper.Create;
     }
 }
 

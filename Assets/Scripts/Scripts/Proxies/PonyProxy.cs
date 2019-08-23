@@ -33,42 +33,21 @@ public class PonyProxy {
         set => pony.age = Enum.IsDefined(typeof(PonyAge), value) ? (PonyAge) value : PonyAge.Adult;
     }
     
-    public float x {
-        get => pony.transform.position.x;
+    public Vector2Wrapper position {
+        get {
+            Vector3 pos = pony.transform.position;
+            return new Vector2Wrapper(pos.x, pos.z);
+        }
         set {
             Transform transform = pony.transform;
-            Vector3 position = transform.position;
-            position.x = value;
-            transform.position = position;
+            Vector3 pos = transform.position;
+            transform.position = value != null ? new Vector3(value.x, pos.y, value.y) : new Vector3(0, pos.y, 0);
         }
     }
-    
-    public float y {
-        get => pony.transform.position.y;
-        set {
-            Transform transform = pony.transform;
-            Vector3 position = transform.position;
-            position.z = value;
-            transform.position = position;
-        }
-    }
-    
-    public int tileX {
-        get => pony.TilePosition.x;
-        set {
-            Vector2Int tilePosition = pony.TilePosition;
-            tilePosition.x = value;
-            pony.TilePosition = tilePosition;
-        }
-    }
-    
-    public int tileY {
-        get => pony.TilePosition.y;
-        set {
-            Vector2Int tilePosition = pony.TilePosition;
-            tilePosition.y = value;
-            pony.TilePosition = tilePosition;
-        }
+
+    public Vector2Wrapper tilePosition {
+        get => new Vector2Wrapper(pony.TilePosition);
+        set => pony.TilePosition = value.GetVector2Int();
     }
     
     public float rotation {
