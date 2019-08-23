@@ -31,15 +31,22 @@ public class Hooks : ITimeTickListener {
         List<PonyAction> actions = new List<PonyAction>();
         onObjectActionFunctions.ForEach(function => {
             DynValue result = function.Call(pony, propertyObject);
-            if (result.Type == DataType.UserData && result.UserData.Object is ScriptAction) {
-                ScriptAction scriptAction = (ScriptAction) result.UserData.Object;
-                actions.Add(new ScriptPonyAction(scriptAction.name, scriptAction.function, pony, propertyObject));
-            } else if (result.Type == DataType.Table) {
-              // TODO: Implement
-              Debug.Log("Not implemented.");
+            if (result.Type == DataType.Table) {
+                foreach (DynValue value in result.Table.Values) {
+                    AddActionToList(actions, value, pony, propertyObject);
+                }
+            } else {
+                AddActionToList(actions, result, pony, propertyObject);
             }
         });
         return actions;
+    }
+
+    private void AddActionToList(List<PonyAction> actions, DynValue value, Pony pony, PropertyObject propertyObject) {
+        if (value.Type == DataType.UserData && value.UserData.Object is ScriptAction) {
+            ScriptAction scriptAction = (ScriptAction) value.UserData.Object;
+            actions.Add(new ScriptPonyAction(scriptAction.name, scriptAction.function, pony, propertyObject));
+        }
     }
 
     public void onTick(Closure function) {
