@@ -6,7 +6,7 @@ using UnityEngine;
 namespace Scripts.Proxies {
 
 public class PonyProxy {
-    private Pony pony;
+    private readonly Pony pony;
 
     [MoonSharpHidden]
     public PonyProxy(Pony pony) {

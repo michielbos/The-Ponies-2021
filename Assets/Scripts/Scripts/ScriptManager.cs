@@ -31,6 +31,7 @@ public class ScriptManager {
         UserData.RegisterProxyType<HouseholdProxy, Household>(v => new HouseholdProxy(v));
         UserData.RegisterProxyType<PonyProxy, Pony>(v => new PonyProxy(v));
         UserData.RegisterProxyType<PropertyObjectProxy, PropertyObject>(v => new PropertyObjectProxy(v));
+        UserData.RegisterProxyType<TerrainTileProxy, TerrainTile>(v => new TerrainTileProxy(v));
         UserData.RegisterProxyType<ScriptPonyActionProxy, ScriptPonyAction>(v => new ScriptPonyActionProxy(v));
     }
 

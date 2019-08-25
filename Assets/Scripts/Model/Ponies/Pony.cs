@@ -4,8 +4,8 @@ using Controllers.Playmode;
 using Controllers.Singletons;
 using JetBrains.Annotations;
 using Model.Actions;
-using Model.Actions.Actions;
 using Model.Data;
+using Scripts;
 using UnityEngine;
 
 namespace Model.Ponies {
@@ -114,16 +114,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     }
     
     public List<PonyAction> GetActions(Pony pony) {
-        if (pony == this) {
-            return new List<PonyAction>() {
-                new FakeAction(pony, "Why am I a cube?")
-            };
-        }
-        return new List<PonyAction>() {
-            new SocialAction(pony, "Chat", this),
-            new SocialAction(pony, "Slap", this),
-            new SocialAction(pony, "Flirt", this),
-        };
+        return ScriptManager.Instance.hooks.RequestPonyActions(pony, this);
     }
 
     public void CancelAction(PonyAction action) {

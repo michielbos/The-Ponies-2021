@@ -1,6 +1,5 @@
 using Model.Actions;
 using Model.Ponies;
-using Model.Property;
 using MoonSharp.Interpreter;
 using UnityEngine;
 
@@ -8,9 +7,9 @@ namespace Scripts.Proxies {
 
 public class ScriptPonyAction : PonyAction {
     private readonly Closure function;
-    public readonly object target;
+    public readonly IActionProvider target;
     
-    public ScriptPonyAction(string name, Closure function, Pony pony, PropertyObject target) : base(pony, name) {
+    public ScriptPonyAction(string name, Closure function, Pony pony, IActionProvider target) : base(pony, name) {
         this.function = function;
         this.target = target;
     }
