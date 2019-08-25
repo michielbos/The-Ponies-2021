@@ -28,6 +28,11 @@ class PropertyProxy {
     }
 
     public IEnumerable<PropertyObject> objects => property.propertyObjects;
+
+    public long time {
+        get => property.GameTime;
+        set => property.GameTime = value;
+    }
 }
 
 }
