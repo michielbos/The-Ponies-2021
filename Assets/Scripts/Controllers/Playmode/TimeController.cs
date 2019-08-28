@@ -1,8 +1,8 @@
 ﻿using Assets.Scripts.Util;
-using System;
 using System.Collections.Generic;
 using Controllers.Playmode;
 using Controllers.Singletons;
+using Scripts;
 using UnityEngine;
 
 namespace Assets.Scripts.Controllers {
@@ -54,6 +54,7 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
             timeToNextMinute--;
             GameTime++;
             HUDController.Instance.UpdateTime();
+            ScriptManager.Instance.hooks.OnTickCallback();
             tickListeners.ForEach(listener => listener.OnTick());
             HouseholdController.Instance.AfterTick();
         }

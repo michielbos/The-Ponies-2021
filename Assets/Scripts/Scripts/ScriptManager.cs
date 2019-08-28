@@ -1,4 +1,5 @@
 using System;
+using System.IO;
 using Controllers.Playmode;
 using Model.Ponies;
 using Model.Property;
@@ -10,7 +11,7 @@ namespace Scripts {
 
 public class ScriptManager {
     private static ScriptManager _instance;
-    public readonly Hooks hooks = new Hooks();
+    public Hooks hooks;
 
     public static ScriptManager Instance => _instance ?? (_instance = new ScriptManager());
 
@@ -23,9 +24,9 @@ public class ScriptManager {
     }
 
     public void OnPropertyLoaded() {
-        hooks.RegisterHookCallbacks();
+        ReloadAllScripts();
     }
-
+    
     private void RegisterProxies() {
         UserData.RegisterProxyType<PropertyProxy, Property>(v => new PropertyProxy(v));
         UserData.RegisterProxyType<HouseholdProxy, Household>(v => new HouseholdProxy(v));
@@ -36,11 +37,39 @@ public class ScriptManager {
         UserData.RegisterProxyType<FurniturePresetProxy, FurniturePreset>(v => new FurniturePresetProxy(v));
     }
 
-    public void RunScript(string content) {
+    public void ReloadAllScripts() {
+        hooks = new Hooks();
+        LoadScripts(Application.dataPath + "/Content/Scripts/");
+        LoadScripts(Application.dataPath + "/../Mods/Scripts/");
+    }
+    
+    private void LoadScripts(string folderPath) {
+        if (!Directory.Exists(folderPath)) {
+            Directory.CreateDirectory(folderPath);
+        }
+        foreach (string file in Directory.GetFiles(folderPath)) {
+            if (!file.ToLower().EndsWith(".lua"))
+                continue;
+            string content = File.ReadAllText(file);
+            try {
+                RunScript(content);
+            } catch (SyntaxErrorException e) {
+                Debug.LogWarning("Syntax error in " + file + ": " + e.Message);
+            } catch (ScriptRuntimeException e) {
+                Debug.LogWarning("Lua error in " + file + ": " + e.Message);
+            }
+        }
+    }
+
+    private DynValue RunScript(string content) {
+        Script script = new Script();
+        AddGlobals(script);
+        return script.DoString(content);
+    }
+
+    public void RunConsoleScript(string content) {
         try {
-            Script script = new Script();
-            AddGlobals(script);
-            Debug.Log("> " + script.DoString(content));
+            Debug.Log("> " + RunScript(content));
         } catch (SyntaxErrorException e) {
             Debug.LogWarning("Syntax error: " + e.Message);
         } catch (ScriptRuntimeException e) {

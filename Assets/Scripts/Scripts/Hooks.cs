@@ -12,19 +12,14 @@ using UnityEngine;
 namespace Scripts {
 
 [MoonSharpUserData]
-public class Hooks : ITimeTickListener {
+public class Hooks {
     private readonly List<Closure> onTickFunctions = new List<Closure>();
     private readonly List<Closure> onObjectActionFunctions = new List<Closure>();
     private readonly List<Closure> onPonyActionFunctions = new List<Closure>();
     private readonly List<Closure> onTileActionFunctions = new List<Closure>();
 
     [MoonSharpVisible(false)]
-    public void RegisterHookCallbacks() {
-        TimeController.Instance.AddTickListener(this);
-    }
-
-    [MoonSharpVisible(false)]
-    public void OnTick() {
+    public void OnTickCallback() {
         onTickFunctions.ForEach(function => {
             try {
                 function.Call();

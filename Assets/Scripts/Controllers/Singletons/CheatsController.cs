@@ -193,7 +193,7 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         else if (command == "forcequit")
             Application.Quit();
         else if (command == "lua" && wholeCommand.Length > 4) {
-            ScriptManager.Instance.RunScript(wholeCommand.Substring(4));
+            ScriptManager.Instance.RunConsoleScript(wholeCommand.Substring(4));
         } else
             return false;
         return true;
