@@ -15,6 +15,7 @@ public class FurniturePreset : Preset {
     public readonly bool sellable;
     public readonly Vector2Int[] occupiedTiles;
     public readonly PlacementType placementType;
+    public readonly Dictionary<string, string> tags;
 
     public InstantiatedGLTFObject prefab;
 
@@ -31,6 +32,7 @@ public class FurniturePreset : Preset {
         sellable = furniture.sellable;
         occupiedTiles = furniture.occupiedTiles;
         placementType = furniture.placementType;
+        tags = furniture.tags;
         prefab = furniture.prefab;
     }
 

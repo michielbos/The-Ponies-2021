@@ -3,7 +3,7 @@ using MoonSharp.Interpreter;
 
 namespace Scripts.Proxies {
 
-class PropertyObjectProxy {
+public class PropertyObjectProxy {
     private PropertyObject propertyObject;
 
     [MoonSharpHidden]
@@ -27,6 +27,8 @@ class PropertyObjectProxy {
         get => propertyObject.value;
         set => propertyObject.value = value;
     }
+
+    public FurniturePreset preset => propertyObject.preset;
 }
 
 }

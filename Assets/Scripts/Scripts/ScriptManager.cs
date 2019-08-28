@@ -33,6 +33,7 @@ public class ScriptManager {
         UserData.RegisterProxyType<PropertyObjectProxy, PropertyObject>(v => new PropertyObjectProxy(v));
         UserData.RegisterProxyType<TerrainTileProxy, TerrainTile>(v => new TerrainTileProxy(v));
         UserData.RegisterProxyType<ScriptPonyActionProxy, ScriptPonyAction>(v => new ScriptPonyActionProxy(v));
+        UserData.RegisterProxyType<FurniturePresetProxy, FurniturePreset>(v => new FurniturePresetProxy(v));
     }
 
     public void RunScript(string content) {
