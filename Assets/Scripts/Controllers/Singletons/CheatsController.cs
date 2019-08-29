@@ -194,6 +194,8 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
             Application.Quit();
         else if (command == "lua" && wholeCommand.Length > 4) {
             ScriptManager.Instance.RunConsoleScript(wholeCommand.Substring(4));
+        } else if (command == "reloadscripts") {
+            ScriptManager.Instance.ReloadAllScripts();
         } else
             return false;
         return true;
