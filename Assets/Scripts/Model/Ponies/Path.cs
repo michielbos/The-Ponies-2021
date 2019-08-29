@@ -6,6 +6,8 @@ namespace Model.Ponies {
 public class Path {
     private readonly Vector2Int[] tiles;
     private int progress = 0;
+    
+    public Vector2Int Destination => tiles[tiles.Length - 1];
 
     public Path(Vector2Int[] tiles) {
         this.tiles = tiles;

@@ -99,6 +99,24 @@ public class PonyProxy {
         get => pony.needs.Room;
         set => pony.needs.Room = value;
     }
+
+    public bool setWalkTarget(Vector2Wrapper target) => pony.SetWalkTarget(target.GetVector2Int());
+    
+    public void clearWalkTarget() => pony.ClearWalkTarget();
+
+    public Vector2Wrapper walkTarget => pony.WalkTarget != null ? new Vector2Wrapper(pony.WalkTarget.Value) : null;
+    
+    public bool isWalking => pony.IsWalking;
+
+    public bool walkingFailed => pony.WalkingFailed;
+
+    public bool walkTo(Vector2Wrapper target) {
+        if (Equals(tilePosition, target))
+            return true;
+        if (!Equals(walkTarget, target))
+            setWalkTarget(target);
+        return false;
+    }
 }
 
 }

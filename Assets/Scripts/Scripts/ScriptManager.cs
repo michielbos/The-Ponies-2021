@@ -54,9 +54,9 @@ public class ScriptManager {
             try {
                 RunScript(content);
             } catch (SyntaxErrorException e) {
-                Debug.LogWarning("Syntax error in " + file + ": " + e.Message);
+                Debug.LogWarning("Syntax error in " + file + ": " + e.DecoratedMessage);
             } catch (ScriptRuntimeException e) {
-                Debug.LogWarning("Lua error in " + file + ": " + e.Message);
+                Debug.LogWarning("Lua error in " + file + ": " + e.DecoratedMessage);
             }
         }
     }
@@ -71,9 +71,9 @@ public class ScriptManager {
         try {
             Debug.Log("> " + RunScript(content));
         } catch (SyntaxErrorException e) {
-            Debug.LogWarning("Syntax error: " + e.Message);
+            Debug.LogWarning("Syntax error: " + e.DecoratedMessage);
         } catch (ScriptRuntimeException e) {
-            Debug.LogWarning("Lua error: " + e.Message);
+            Debug.LogWarning("Lua error: " + e.DecoratedMessage);
         }
     }
 

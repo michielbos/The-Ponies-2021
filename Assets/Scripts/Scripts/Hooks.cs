@@ -1,6 +1,4 @@
 using System.Collections.Generic;
-using Assets.Scripts.Controllers;
-using Controllers.Playmode;
 using Model.Actions;
 using Model.Ponies;
 using Model.Property;
@@ -70,7 +68,7 @@ public class Hooks {
     }
     
     private void HookError(string hookName, ScriptRuntimeException exception) {
-        Debug.LogWarning("Lua " + hookName + " error: " + exception.Message);
+        Debug.LogWarning("Lua " + hookName + " error: " + exception.DecoratedMessage);
     }
 
     public void onTick(Closure function) {

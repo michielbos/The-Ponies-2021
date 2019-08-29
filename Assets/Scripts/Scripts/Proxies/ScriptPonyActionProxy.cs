@@ -1,3 +1,4 @@
+using Model.Ponies;
 using MoonSharp.Interpreter.Interop;
 
 namespace Scripts.Proxies {
@@ -10,6 +11,8 @@ public class ScriptPonyActionProxy {
         this.scriptPonyAction = scriptPonyAction;
     }
 
+    public Pony pony => scriptPonyAction.pony;
+    
     public object target => scriptPonyAction.target;
 
     public int tickCount => scriptPonyAction.tickCount;

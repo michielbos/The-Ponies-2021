@@ -29,6 +29,8 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
 
     public bool IsSelected => HouseholdController.Instance.selectedPony == this;
     public bool IsWalking => nextWalkTile != null || walkPath != null;
+    public Vector2Int? WalkTarget => walkPath?.Destination;
+    public bool WalkingFailed { get; private set;  }
     
     public Vector2Int TilePosition {
         get {
@@ -92,6 +94,8 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
             if (currentAction.finished) {
                 queuedActions.Remove(currentAction);
                 currentAction = null;
+                // Ponies shouldn't walk without an action.
+                ClearWalkTarget();
                 UpdateQueue();
             }
         }
@@ -139,7 +143,12 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
 
     public bool SetWalkTarget(Vector2Int target) {
         walkPath = Pathfinding.PathToTile(TilePosition, target);
-        return walkPath != null;
+        WalkingFailed = walkPath == null;
+        return !WalkingFailed;
+    }
+    
+    public void ClearWalkTarget() {
+        walkPath = null;
     }
     
     /// <summary>

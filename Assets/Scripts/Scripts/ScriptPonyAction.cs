@@ -19,7 +19,7 @@ public class ScriptPonyAction : PonyAction {
             if (result.Type != DataType.Boolean || result.Boolean)
                 Finish();
         } catch (ScriptRuntimeException e) {
-            Debug.LogWarning("Lua error on action: " + e.Message);
+            Debug.LogWarning("Lua error on action: " + e.DecoratedMessage);
         }
     }
 }
