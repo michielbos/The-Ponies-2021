@@ -109,11 +109,29 @@ public class PonyProxy {
     public bool walkingFailed => pony.WalkingFailed;
 
     public bool walkTo(Vector2Wrapper target) {
-        if (Equals(tilePosition, target))
+        if (position.Equals(target))
             return true;
         if (!Equals(walkTarget, target))
             setWalkTarget(target);
         return false;
+    }
+
+    protected bool Equals(PonyProxy other) {
+        return Equals(pony, other.pony);
+    }
+
+    public override bool Equals(object obj) {
+        if (ReferenceEquals(null, obj))
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj.GetType() != GetType())
+            return false;
+        return Equals((PonyProxy) obj);
+    }
+
+    public override int GetHashCode() {
+        return (pony != null ? pony.GetHashCode() : 0);
     }
 }
 

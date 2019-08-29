@@ -18,6 +18,8 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     public FurniturePreset preset;
     public int skin;
     public int value;
+    public readonly IDictionary<object, object> data = new Dictionary<object, object>();
+    
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
 
     public Vector2Int TilePosition {
