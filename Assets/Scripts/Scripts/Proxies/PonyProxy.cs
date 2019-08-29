@@ -105,8 +105,6 @@ public class PonyProxy {
     public void clearWalkTarget() => pony.ClearWalkTarget();
 
     public Vector2Wrapper walkTarget => pony.WalkTarget != null ? new Vector2Wrapper(pony.WalkTarget.Value) : null;
-    
-    public bool isWalking => pony.IsWalking;
 
     public bool walkingFailed => pony.WalkingFailed;
 
