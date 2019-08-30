@@ -33,11 +33,11 @@ public class PropertyObjectProxy {
 
     public FurniturePreset preset => propertyObject.preset;
 
-    public IDictionary<object, object> data => propertyObject.data;
+    public IDictionary<DynValue, DynValue> data => propertyObject.data;
 
-    public void putData(object key, object value) => propertyObject.data[key] = value;
+    public void putData(DynValue key, DynValue value) => propertyObject.data[key] = value;
     
-    public void removeData(object key) => propertyObject.data.Remove(key);
+    public void removeData(DynValue key) => propertyObject.data.Remove(key);
 
     protected bool Equals(PropertyObjectProxy other) {
         return Equals(propertyObject, other.propertyObject);

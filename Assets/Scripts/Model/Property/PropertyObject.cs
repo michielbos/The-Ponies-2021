@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using Model.Actions;
 using Model.Ponies;
+using MoonSharp.Interpreter;
 using Scripts;
 using UnityEngine;
 using Util;
@@ -18,7 +19,7 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     public FurniturePreset preset;
     public int skin;
     public int value;
-    public readonly IDictionary<object, object> data = new Dictionary<object, object>();
+    public readonly IDictionary<DynValue, DynValue> data = new Dictionary<DynValue, DynValue>();
     
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
 

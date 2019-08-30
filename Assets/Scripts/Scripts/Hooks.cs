@@ -6,15 +6,16 @@ using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Interop;
 using Scripts.Proxies;
 using UnityEngine;
+using Util;
 
 namespace Scripts {
 
 [MoonSharpUserData]
 public class Hooks {
     private readonly List<Closure> onTickFunctions = new List<Closure>();
-    private readonly List<Closure> onObjectActionFunctions = new List<Closure>();
-    private readonly List<Closure> onPonyActionFunctions = new List<Closure>();
-    private readonly List<Closure> onTileActionFunctions = new List<Closure>();
+    private readonly Dictionary<string, ScriptAction> objectActions = new Dictionary<string, ScriptAction>();
+    private readonly Dictionary<string, ScriptAction> ponyActions = new Dictionary<string, ScriptAction>();
+    private readonly Dictionary<string, ScriptAction> tileActions = new Dictionary<string, ScriptAction>();
 
     [MoonSharpVisible(false)]
     public void OnTickCallback() {
@@ -29,46 +30,42 @@ public class Hooks {
     
     [MoonSharpVisible(false)]
     public List<PonyAction> RequestObjectActions(Pony pony, PropertyObject targetObject) {
-        return RequestActions(onObjectActionFunctions, pony, targetObject, "onObjectActionMenu");
+        return RequestActions(objectActions, pony, targetObject, "object action");
     }
     
     [MoonSharpVisible(false)]
     public List<PonyAction> RequestPonyActions(Pony pony, Pony targetPony) {
-        return RequestActions(onPonyActionFunctions, pony, targetPony, "onPonyActionMenu");
+        return RequestActions(ponyActions, pony, targetPony, "pony action");
     }
     
     [MoonSharpVisible(false)]
     public List<PonyAction> RequestTileActions(Pony pony, TerrainTile targetTile) {
-        return RequestActions(onTileActionFunctions, pony, targetTile, "onTileActionMenu");
+        return RequestActions(tileActions, pony, targetTile, "tile action");
     }
 
-    private List<PonyAction> RequestActions(List<Closure> functions, Pony pony, IActionProvider target, string hookName) {
+    private List<PonyAction> RequestActions(Dictionary<string, ScriptAction> scriptActions, Pony pony, IActionProvider target, string hookName) {
         List<PonyAction> actions = new List<PonyAction>();
-        functions.ForEach(function => {
+        foreach (KeyValuePair<string, ScriptAction> actionPair in scriptActions) {
             try {
-                DynValue result = function.Call(pony, target);
-                if (result.Type == DataType.Table) {
-                    foreach (DynValue value in result.Table.Values) {
-                        AddActionToList(actions, value, pony, target);
-                    }
-                } else {
-                    AddActionToList(actions, result, pony, target);
-                }
+                string identifier = actionPair.Key;
+                ScriptAction scriptAction = actionPair.Value;
+                DynValue conditionResult = scriptAction.conditionFunction.Call(pony, target);
+                if (conditionResult.Type == DataType.Boolean && conditionResult.Boolean)
+                    actions.Add(new ScriptPonyAction(scriptAction.name, identifier, pony, target));
             } catch (ScriptRuntimeException e) {
                 HookError(hookName, e);
             }
-        });
+        }
         return actions;
     }
 
-    private void AddActionToList(List<PonyAction> actions, DynValue value, Pony pony, IActionProvider propertyObject) {
-        if (value.Type == DataType.UserData && value.UserData.Object is ScriptAction scriptAction) {
-            actions.Add(new ScriptPonyAction(scriptAction.name, scriptAction.function, pony, propertyObject));
-        }
-    }
-    
     private void HookError(string hookName, ScriptRuntimeException exception) {
         Debug.LogWarning("Lua " + hookName + " error: " + exception.DecoratedMessage);
+    }
+    
+    [MoonSharpVisible(false)]
+    public ScriptAction GetScriptAction(string identifier) {
+        return objectActions.Get(identifier) ?? ponyActions.Get(identifier) ?? tileActions.Get(identifier);
     }
 
     public void onTick(Closure function) {
@@ -76,19 +73,19 @@ public class Hooks {
             onTickFunctions.Add(function);
     }
 
-    public void onObjectActionMenu(Closure function) {
-        if (function != null)
-            onObjectActionFunctions.Add(function);
+    public void registerObjectAction(string identifier, ScriptAction scriptAction) {
+        if (scriptAction != null)
+            objectActions.Add(identifier, scriptAction);
     }
     
-    public void onPonyActionMenu(Closure function) {
-        if (function != null)
-            onPonyActionFunctions.Add(function);
+    public void registerPonyAction(string identifier, ScriptAction scriptAction) {
+        if (scriptAction != null)
+            ponyActions.Add(identifier, scriptAction);
     }
     
-    public void onTileActionMenu(Closure function) {
-        if (function != null)
-            onTileActionFunctions.Add(function);
+    public void registerTileAction(string identifier, ScriptAction scriptAction) {
+        if (scriptAction != null)
+            tileActions.Add(identifier, scriptAction);
     }
 }
 
