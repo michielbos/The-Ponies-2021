@@ -1,6 +1,8 @@
+using Model.Property;
 using MoonSharp.Interpreter;
 using MoonSharp.Interpreter.Interop;
 using UnityEngine;
+using Util;
 
 namespace Scripts.Proxies {
 
@@ -36,6 +38,10 @@ public class Vector2Wrapper {
     public float x => vector2.x;
 
     public float y => vector2.y;
+
+    public Vector2Wrapper getNeighbourTile(int direction) {
+        return new Vector2Wrapper(GetVector2Int().GetNeighbourTile(ObjectRotationUtil.FromRotationAngle(direction)));
+    }
 
     public static Vector2Wrapper operator +(Vector2Wrapper o1, Vector2Wrapper o2) =>
         new Vector2Wrapper(o1.vector2 + o2.vector2);

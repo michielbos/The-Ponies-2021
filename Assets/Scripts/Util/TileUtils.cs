@@ -54,6 +54,28 @@ public static class TileUtils {
         int distanceFromEnd = 0) {
         return GetBorderTiles(tiles, direction, distanceFromEnd).Select(tile => GetNorthWestBorder(tile, direction));
     }
+    
+    /// <summary>
+    /// Get the tile that would be next to this one, when moving 1 tile into the given direction.
+    /// </summary>
+    public static Vector2Int GetNeighbourTile(this Vector2Int tile, ObjectRotation direction) {
+        return tile + GetTileForDirection(direction);
+    }
+    
+    private static Vector2Int GetTileForDirection(ObjectRotation direction) {
+        switch (direction) {
+            case ObjectRotation.SouthEast:
+                return new Vector2Int(0, -1);
+            case ObjectRotation.SouthWest:
+                return new Vector2Int(-1, 0);
+            case ObjectRotation.NorthWest:
+                return new Vector2Int(0, 1);
+            case ObjectRotation.NorthEast:
+                return new Vector2Int(1, 0);
+            default:
+                throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
+        }
+    }
 }
 
 }
