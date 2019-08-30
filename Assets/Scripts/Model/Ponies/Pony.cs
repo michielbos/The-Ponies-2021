@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Assets.Scripts.Controllers;
 using Controllers.Playmode;
@@ -17,7 +18,8 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     public Material indicatorMaterial;
     public List<PonyAction> queuedActions = new List<PonyAction>();
     [CanBeNull] public PonyAction currentAction;
-    
+
+    public Guid uuid;
     public string ponyName;
     public PonyRace race;
     public Gender gender;
@@ -40,13 +42,18 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         set { transform.position = new Vector3(value.x, 0, value.y); }
     }
 
-    public void Init(string ponyName, PonyRace race, Gender gender, PonyAge age, Needs needs) {
+    public void Init(Guid uuid, string ponyName, PonyRace race, Gender gender, PonyAge age) {
+        this.uuid = uuid;
         this.ponyName = ponyName;
         this.race = race;
         this.gender = gender;
         this.age = age;
-        this.needs = needs;
         indicator.GetComponent<Renderer>().material = new Material(indicatorMaterial);
+    }
+
+    public void InitGamePony(float x, float y, Needs needs) {
+        this.needs = needs;
+        transform.position = new Vector3(x, 0, y);
     }
 
     private void OnEnable() {
@@ -102,7 +109,8 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     }
 
     public PonyData GetPonyData() {
-        return new PonyData(ponyName, (int) race, (int) gender, (int) age, needs.GetNeedsData());
+        return new PonyData(uuid.ToString(), ponyName, (int) race, (int) gender, (int) age,
+            new GamePonyData(transform.position.x, transform.position.z, needs.GetNeedsData()));
     }
 
     public void SetSelected(bool selected) {

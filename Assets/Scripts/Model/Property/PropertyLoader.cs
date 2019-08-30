@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Assets.Scripts.Controllers;
 using Model.Data;
 using UnityEngine;
@@ -45,8 +46,10 @@ public class PropertyLoader {
         long time = 0;
         if (id == 0) {
             PonyData[] ponies = {
-                new PonyData("Orange Butt", 2, 2, 1),
-                new PonyData("Gilheart", 3, 1, 1)
+                new PonyData(Guid.NewGuid().ToString(), "Orange Butt", 2, 2, 1,
+                    new GamePonyData(4, 6, new GamePonyData.NeedsData())),
+                new PonyData(Guid.NewGuid().ToString(), "Gilheart", 3, 1, 1,
+                    new GamePonyData(4, 3, new GamePonyData.NeedsData())),
             };
             householdData = new HouseholdData("The Placeholders", 20000, ponies);
             time = TimeController.StartingTime;

@@ -207,7 +207,9 @@ public class Property : MonoBehaviour {
         List<Pony> ponies = new List<Pony>();
         foreach (PonyData ponyData in data.ponies) {
             Pony pony = Instantiate(Prefabs.Instance.ponyPrefab);
-            pony.Init(ponyData.ponyName, ponyData.Race, ponyData.Gender, ponyData.Age, new Needs(ponyData.needs));
+            pony.Init(new Guid(ponyData.uuid), ponyData.ponyName, ponyData.Race, ponyData.Gender, ponyData.Age);
+            GamePonyData gameData = ponyData.gamePony;
+            pony.InitGamePony(gameData.x, gameData.y, new Needs(gameData.needs));
             ponies.Add(pony);
         }
         household = new Household(data.householdName, data.money, ponies);
