@@ -213,11 +213,14 @@ public class Property : MonoBehaviour {
             PonyInfoData ponyInfo = householdData.ponies.First(householdPony => householdPony.uuid == ponyData.uuid);
             Pony pony = Instantiate(Prefabs.Instance.ponyPrefab);
             pony.InitInfo(new Guid(ponyData.uuid), ponyInfo.ponyName, ponyInfo.Race, ponyInfo.Gender, ponyInfo.Age);
-            pony.InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue);
             ponies.Add(pony);
         }
         this.ponies = ponies;
         household = new Household(householdData.householdName, householdData.money, ponies);
+        for (int i = 0; i < ponyDatas.Length; i++) {
+            GamePonyData ponyData = ponyDatas[i];
+            ponies[i].InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue);
+        }
     }
 
     public PropertyData GetPropertyData() {
