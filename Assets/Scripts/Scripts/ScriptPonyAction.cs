@@ -35,8 +35,7 @@ public class ScriptPonyAction : PonyAction {
             case PonyActionData.TargetType.Object:
                 return PropertyController.Instance.property.GetPropertyObject(data.targetObjectid);
             case PonyActionData.TargetType.Pony:
-                // TODO: Fix this.
-                throw new NotImplementedException("Loading pony references in actions needs to be fixed!!!");
+                return PropertyController.Instance.property.GetPony(new Guid(data.targetPonyUuid));
             case PonyActionData.TargetType.Tile:
                 return PropertyController.Instance.property.GetTerrainTile(data.targetTileX, data.targetTileY);
             default:

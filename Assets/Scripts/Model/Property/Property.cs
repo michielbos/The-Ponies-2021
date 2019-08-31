@@ -23,6 +23,7 @@ public class Property : MonoBehaviour {
     public Dictionary<TileBorder, Wall> walls;
     public List<Roof> roofs;
     public List<PropertyObject> propertyObjects;
+    public List<Pony> ponies;
     public Room[] Rooms { get; private set; } = new Room[0];
     [CanBeNull] public Household household;
     private int nextObjectId;
@@ -61,7 +62,7 @@ public class Property : MonoBehaviour {
         LoadWalls(propertyData.wallDatas);
         LoadFloorTiles(propertyData.floorTileDatas);
         LoadPropertyObjects(propertyData.propertyObjectDatas);
-        LoadHousehold(propertyData.householdData);
+        LoadPonies(propertyData.ponies, propertyData.householdData);
     }
 
     public void PlaceFloor(int x, int y, FloorPreset preset) {
@@ -200,20 +201,23 @@ public class Property : MonoBehaviour {
         }
     }
 
-    private void LoadHousehold(HouseholdData data) {
-        if (data == null) {
+    private void LoadPonies(GamePonyData[] ponyDatas, HouseholdData householdData) {
+        // Pony loading currently depends completely on the household.
+        // This method should be replaced when non-household ponies are implemented.
+        if (householdData == null) {
             ModeController.Instance.LockLiveMode(true);
             return;
         }
         List<Pony> ponies = new List<Pony>();
-        foreach (PonyData ponyData in data.ponies) {
+        foreach (GamePonyData ponyData in ponyDatas) {
+            PonyInfoData ponyInfo = householdData.ponies.First(householdPony => householdPony.uuid == ponyData.uuid);
             Pony pony = Instantiate(Prefabs.Instance.ponyPrefab);
-            pony.Init(new Guid(ponyData.uuid), ponyData.ponyName, ponyData.Race, ponyData.Gender, ponyData.Age);
-            GamePonyData gameData = ponyData.gamePony;
-            pony.InitGamePony(gameData.x, gameData.y, new Needs(gameData.needs), gameData.actionQueue);
+            pony.InitInfo(new Guid(ponyData.uuid), ponyInfo.ponyName, ponyInfo.Race, ponyInfo.Gender, ponyInfo.Age);
+            pony.InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue);
             ponies.Add(pony);
         }
-        household = new Household(data.householdName, data.money, ponies);
+        this.ponies = ponies;
+        household = new Household(householdData.householdName, householdData.money, ponies);
     }
 
     public PropertyData GetPropertyData() {
@@ -228,6 +232,7 @@ public class Property : MonoBehaviour {
             CreateWallDataArray(walls),
             CreateRoofDataArray(roofs),
             CreatePropertyObjectDataArray(propertyObjects),
+            ponies.Select(pony => pony.GetGamePonyData()).ToArray(),
             household?.GetHouseholdData());
     }
 
@@ -429,6 +434,8 @@ public class Property : MonoBehaviour {
     public IActionProvider GetPropertyObject(int objectId) {
         return propertyObjects.Find(propertyObject => propertyObject.id == objectId);
     }
+    
+    public Pony GetPony(Guid uuid) => ponies.Find(pony => pony.uuid == uuid);
 
     public bool WallExists(TileBorder tileBorder) {
         return walls.ContainsKey(tileBorder);

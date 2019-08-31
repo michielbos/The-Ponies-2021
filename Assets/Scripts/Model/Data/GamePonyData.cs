@@ -4,6 +4,7 @@ namespace Model.Data {
 
 [Serializable]
 public class GamePonyData {
+    public string uuid;
     public float x;
     public float y;
     public NeedsData needs;
@@ -12,7 +13,8 @@ public class GamePonyData {
     /// <summary>
     /// Constructor for creating a GamePonyData with all fields.
     /// </summary>
-    public GamePonyData(float x, float y, NeedsData needs, PonyActionData[] actionQueue) {
+    public GamePonyData(string uuid, float x, float y, NeedsData needs, PonyActionData[] actionQueue) {
+        this.uuid = uuid;
         this.x = x;
         this.y = y;
         this.needs = needs;
@@ -22,7 +24,8 @@ public class GamePonyData {
     /// <summary>
     /// Shorter constructor that fills optional fields with default data.
     /// </summary>
-    public GamePonyData(float x, float y) {
+    public GamePonyData(string uuid, float x, float y) {
+        this.uuid = uuid;
         this.x = x;
         this.y = y;
         needs = new NeedsData();

@@ -15,9 +15,9 @@ public class Household {
     }
 
     public HouseholdData GetHouseholdData() {
-        PonyData[] ponyDatas = new PonyData[ponies.Count];
+        PonyInfoData[] ponyDatas = new PonyInfoData[ponies.Count];
         for (int i = 0; i < ponies.Count; i++) {
-            ponyDatas[i] = ponies[i].GetPonyData();
+            ponyDatas[i] = ponies[i].GetPonyInfoData();
         }
         return new HouseholdData(householdName, money, ponyDatas);
     }

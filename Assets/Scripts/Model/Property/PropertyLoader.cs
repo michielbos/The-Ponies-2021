@@ -43,17 +43,24 @@ public class PropertyLoader {
         }
 
         HouseholdData householdData = null;
+        string[] ponyUuids = {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
         long time = 0;
         if (id == 0) {
-            PonyData[] ponies = {
-                new PonyData(Guid.NewGuid().ToString(), "Orange Butt", 2, 2, 1, new GamePonyData(4, 6)),
-                new PonyData(Guid.NewGuid().ToString(), "Gilheart", 3, 1, 1, new GamePonyData(4, 3)),
+            PonyInfoData[] ponyInfos = {
+                new PonyInfoData(ponyUuids[0], "Orange Butt", 2, 2, 1),
+                new PonyInfoData(ponyUuids[1], "Gilheart", 3, 1, 1),
             };
-            householdData = new HouseholdData("The Placeholders", 20000, ponies);
+            householdData = new HouseholdData("The Placeholders", 20000, ponyInfos);
             time = TimeController.StartingTime;
         }
+
+        GamePonyData[] ponyDatas = {
+            new GamePonyData(ponyUuids[0], 4, 6),
+            new GamePonyData(ponyUuids[1], 4, 3)
+        };
+        
         return new PropertyData(id, "untitled", "", "untitled street " + id, 0, time, terrainTileDatas, floorTileDatas,
-            wallDatas, roofDatas, propertyObjectDatas, householdData);
+            wallDatas, roofDatas, propertyObjectDatas, ponyDatas, householdData);
     }
 
     public PropertyData LoadProperty(int id) {

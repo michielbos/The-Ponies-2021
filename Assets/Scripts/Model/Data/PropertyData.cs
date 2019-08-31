@@ -16,11 +16,12 @@ public class PropertyData : ISerializationCallbackReceiver {
     public WallData[] wallDatas;
     public RoofData[] roofDatas;
     public PropertyObjectData[] propertyObjectDatas;
+    public GamePonyData[] ponies;
     [CanBeNull] public HouseholdData householdData;
 
     public PropertyData(int id, string name, string description, string streetName, int propertyType, long time,
         TerrainTileData[] terrainTileDatas, FloorTileData[] floorTileDatas, WallData[] wallDatas, RoofData[] roofDatas,
-        PropertyObjectData[] propertyObjectDatas, HouseholdData householdData) {
+        PropertyObjectData[] propertyObjectDatas, GamePonyData[] ponyDatas, HouseholdData householdData) {
         this.id = id;
         this.name = name;
         this.description = description;
@@ -32,6 +33,7 @@ public class PropertyData : ISerializationCallbackReceiver {
         this.wallDatas = wallDatas;
         this.roofDatas = roofDatas;
         this.propertyObjectDatas = propertyObjectDatas;
+        this.ponies = ponyDatas;
         this.householdData = householdData;
     }
 

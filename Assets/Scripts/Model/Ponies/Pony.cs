@@ -44,7 +44,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         set { transform.position = new Vector3(value.x, 0, value.y); }
     }
 
-    public void Init(Guid uuid, string ponyName, PonyRace race, Gender gender, PonyAge age) {
+    public void InitInfo(Guid uuid, string ponyName, PonyRace race, Gender gender, PonyAge age) {
         this.uuid = uuid;
         this.ponyName = ponyName;
         this.race = race;
@@ -111,10 +111,14 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         }
     }
 
-    public PonyData GetPonyData() {
+    public GamePonyData GetGamePonyData() {
         PonyActionData[] queueData = queuedActions.Select(action => action.GetData()).ToArray();
-        return new PonyData(uuid.ToString(), ponyName, (int) race, (int) gender, (int) age,
-            new GamePonyData(transform.position.x, transform.position.z, needs.GetNeedsData(), queueData));
+        return new GamePonyData(uuid.ToString(), transform.position.x, transform.position.z, needs.GetNeedsData(),
+            queueData);
+    }
+    
+    public PonyInfoData GetPonyInfoData() {
+        return new PonyInfoData(uuid.ToString(), ponyName, (int) race, (int) gender, (int) age);
     }
 
     public void SetSelected(bool selected) {
