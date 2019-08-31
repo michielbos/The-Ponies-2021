@@ -46,10 +46,8 @@ public class PropertyLoader {
         long time = 0;
         if (id == 0) {
             PonyData[] ponies = {
-                new PonyData(Guid.NewGuid().ToString(), "Orange Butt", 2, 2, 1,
-                    new GamePonyData(4, 6, new GamePonyData.NeedsData())),
-                new PonyData(Guid.NewGuid().ToString(), "Gilheart", 3, 1, 1,
-                    new GamePonyData(4, 3, new GamePonyData.NeedsData())),
+                new PonyData(Guid.NewGuid().ToString(), "Orange Butt", 2, 2, 1, new GamePonyData(4, 6)),
+                new PonyData(Guid.NewGuid().ToString(), "Gilheart", 3, 1, 1, new GamePonyData(4, 3)),
             };
             householdData = new HouseholdData("The Placeholders", 20000, ponies);
             time = TimeController.StartingTime;

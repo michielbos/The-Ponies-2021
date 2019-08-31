@@ -7,11 +7,26 @@ public class GamePonyData {
     public float x;
     public float y;
     public NeedsData needs;
+    public PonyActionData[] actionQueue;
 
-    public GamePonyData(float x, float y, NeedsData needs) {
+    /// <summary>
+    /// Constructor for creating a GamePonyData with all fields.
+    /// </summary>
+    public GamePonyData(float x, float y, NeedsData needs, PonyActionData[] actionQueue) {
         this.x = x;
         this.y = y;
         this.needs = needs;
+        this.actionQueue = actionQueue;
+    }
+    
+    /// <summary>
+    /// Shorter constructor that fills optional fields with default data.
+    /// </summary>
+    public GamePonyData(float x, float y) {
+        this.x = x;
+        this.y = y;
+        needs = new NeedsData();
+        actionQueue = new PonyActionData[0];
     }
 
     [Serializable]

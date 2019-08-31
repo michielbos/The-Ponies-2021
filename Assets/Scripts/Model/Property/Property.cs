@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Controllers.Playmode;
 using JetBrains.Annotations;
+using Model.Actions;
 using Model.Data;
 using Model.Ponies;
 using UnityEngine;
@@ -209,7 +210,7 @@ public class Property : MonoBehaviour {
             Pony pony = Instantiate(Prefabs.Instance.ponyPrefab);
             pony.Init(new Guid(ponyData.uuid), ponyData.ponyName, ponyData.Race, ponyData.Gender, ponyData.Age);
             GamePonyData gameData = ponyData.gamePony;
-            pony.InitGamePony(gameData.x, gameData.y, new Needs(gameData.needs));
+            pony.InitGamePony(gameData.x, gameData.y, new Needs(gameData.needs), gameData.actionQueue);
             ponies.Add(pony);
         }
         household = new Household(data.householdName, data.money, ponies);
@@ -423,6 +424,10 @@ public class Property : MonoBehaviour {
 
     public TerrainTile GetTerrainTile(int x, int y) {
         return terrainTiles[y, x];
+    }
+    
+    public IActionProvider GetPropertyObject(int objectId) {
+        return propertyObjects.Find(propertyObject => propertyObject.id == objectId);
     }
 
     public bool WallExists(TileBorder tileBorder) {

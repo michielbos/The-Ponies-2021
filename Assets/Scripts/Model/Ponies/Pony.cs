@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Controllers;
 using Controllers.Playmode;
 using Controllers.Singletons;
@@ -7,6 +8,7 @@ using JetBrains.Annotations;
 using Model.Actions;
 using Model.Data;
 using Scripts;
+using Scripts.Proxies;
 using UnityEngine;
 
 namespace Model.Ponies {
@@ -51,9 +53,10 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         indicator.GetComponent<Renderer>().material = new Material(indicatorMaterial);
     }
 
-    public void InitGamePony(float x, float y, Needs needs) {
+    public void InitGamePony(float x, float y, Needs needs, PonyActionData[] actionQueue) {
         this.needs = needs;
         transform.position = new Vector3(x, 0, y);
+        queuedActions.AddRange(actionQueue.Select(data => ScriptPonyAction.FromData(this, data)));
     }
 
     private void OnEnable() {
@@ -109,8 +112,9 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     }
 
     public PonyData GetPonyData() {
+        PonyActionData[] queueData = queuedActions.Select(action => action.GetData()).ToArray();
         return new PonyData(uuid.ToString(), ponyName, (int) race, (int) gender, (int) age,
-            new GamePonyData(transform.position.x, transform.position.z, needs.GetNeedsData()));
+            new GamePonyData(transform.position.x, transform.position.z, needs.GetNeedsData(), queueData));
     }
 
     public void SetSelected(bool selected) {
