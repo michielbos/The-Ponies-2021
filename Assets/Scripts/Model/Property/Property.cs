@@ -63,7 +63,7 @@ public class Property : MonoBehaviour {
         LoadFloorTiles(propertyData.floorTileDatas);
         LoadPropertyObjects(propertyData.propertyObjectDatas);
         LoadPonies(propertyData.ponies, propertyData.householdData);
-        //LoadScriptData(propertyData.propertyObjectDatas);
+        LoadScriptData(propertyData.propertyObjectDatas);
     }
 
     public void PlaceFloor(int x, int y, FloorPreset preset) {
@@ -221,6 +221,12 @@ public class Property : MonoBehaviour {
         foreach (GamePonyData ponyData in ponyDatas) {
             ponies[new Guid(ponyData.uuid)]
                 .InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue);
+        }
+    }
+
+    private void LoadScriptData(PropertyObjectData[] objectDatas) {
+        foreach (PropertyObjectData objectData in objectDatas) {
+            propertyObjects[objectData.id].InitScriptData(objectData.data, this);
         }
     }
 

@@ -52,9 +52,9 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         Rotation = rotation;
     }
 
-    public void InitScriptData(DataPair[] data) {
+    public void InitScriptData(DataPair[] data, Property property) {
         foreach (DataPair pair in data) {
-            this.data[pair.GetDynKey()] = pair.GetDynValue();
+            this.data[pair.GetDynKey(property)] = pair.GetDynValue(property);
         }
     }
 
