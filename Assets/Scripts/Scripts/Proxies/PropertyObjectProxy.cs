@@ -1,6 +1,8 @@
 using System.Collections.Generic;
+using Model.Data;
 using Model.Property;
 using MoonSharp.Interpreter;
+using UnityEngine;
 
 namespace Scripts.Proxies {
 
@@ -35,8 +37,15 @@ public class PropertyObjectProxy {
 
     public IDictionary<DynValue, DynValue> data => propertyObject.data;
 
-    public void putData(DynValue key, DynValue value) => propertyObject.data[key] = value;
-    
+    public void putData(DynValue key, DynValue value) {
+        if (DataPair.IsTypeSupported(key) && DataPair.IsTypeSupported(value)) {
+            propertyObject.data[key] = value;
+        } else {
+            Debug.LogWarning("Unsupported type in data key/value.");
+            propertyObject.data[key] = DynValue.Nil;
+        }
+    }
+
     public void removeData(DynValue key) => propertyObject.data.Remove(key);
 
     protected bool Equals(PropertyObjectProxy other) {

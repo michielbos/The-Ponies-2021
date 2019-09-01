@@ -1,5 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model.Actions;
+using Model.Data;
 using Model.Ponies;
 using MoonSharp.Interpreter;
 using Scripts;
@@ -39,21 +41,34 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
             preset.FixModelTransform(Model, Rotation);
         }
     }
-
-    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin) {
+    
+    /// <summary>
+    /// Full init function, to use when loading an object.
+    /// </summary>
+    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value, DataPair[] data) {
         this.id = id;
         TilePosition = new Vector2Int(x, y);
         this.preset = preset;
         this.skin = skin;
-        value = preset.price;
+        this.value = value;
+        foreach (DataPair pair in data) {
+            this.data[pair.GetDynKey()] = pair.GetDynValue();
+        }
         preset.ApplyToModel(GetComponent<ModelContainer>(), skin);
         Rotation = rotation;
+    }
+
+    /// <summary>
+    /// Shorter init function, to use when creating a new object.
+    /// </summary>
+    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin) {
+        Init(id, x, y, rotation, preset, skin, preset.price, new DataPair[0]);
     }
 
     public PropertyObjectData GetPropertyObjectData() {
         Vector2Int tilePosition = TilePosition;
         return new PropertyObjectData(id, tilePosition.x, tilePosition.y, (int) Rotation, preset.guid.ToString(), skin,
-            value);
+            value, data.Select(pair => DataPair.FromDynValues(pair.Key, pair.Value)).ToArray());
     }
 
     /// <summary>

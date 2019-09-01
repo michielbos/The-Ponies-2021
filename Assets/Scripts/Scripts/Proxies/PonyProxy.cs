@@ -13,6 +13,8 @@ public class PonyProxy {
         this.pony = pony;
     }
 
+    public string uuid => pony.uuid.ToString();
+
     public string name {
         get => pony.ponyName;
         set => pony.ponyName = value;
