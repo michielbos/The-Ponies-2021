@@ -8,15 +8,15 @@ namespace Model.Property {
 
 public class PropertyLoader {
     const string propertyPrefix = "Property";
-    const string dataPath = "Assets/Resources/SaveData/";
-    const string propertyPath = dataPath + "Property/";
+    private static string SaveDataPath = Application.dataPath + "/../SaveData/";
+    private static string PropertyPath = SaveDataPath + "Property/";
 
     public PropertyLoader() {
-        TryCreateDirectory(propertyPath);
+        TryCreateDirectory(PropertyPath);
     }
 
     public bool PropertyExists(int id) {
-        return File.Exists(propertyPath + propertyPrefix + id);
+        return File.Exists(PropertyPath + propertyPrefix + id);
     }
 
     public void SaveProperty(PropertyData propertyData) {
@@ -68,11 +68,11 @@ public class PropertyLoader {
     }
 
     void SavePropertyData(PropertyData propertyData) {
-        WriteFile(propertyPath + propertyPrefix + propertyData.id, JsonUtility.ToJson(propertyData));
+        WriteFile(PropertyPath + propertyPrefix + propertyData.id, JsonUtility.ToJson(propertyData));
     }
 
     PropertyData LoadPropertyData(int id) {
-        return JsonUtility.FromJson<PropertyData>(ReadFile(propertyPath + propertyPrefix + id));
+        return JsonUtility.FromJson<PropertyData>(ReadFile(PropertyPath + propertyPrefix + id));
     }
 
     void WriteFile(string path, string data) {
