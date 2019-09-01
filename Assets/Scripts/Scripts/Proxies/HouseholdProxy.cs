@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Controllers.Singletons;
 using Model.Ponies;
 using MoonSharp.Interpreter;
@@ -23,7 +24,7 @@ class HouseholdProxy {
         set => MoneyController.Instance.SetFunds(value);
     }
 
-    public IEnumerable<Pony> ponies => household.ponies;
+    public Dictionary<string, Pony> ponies => household.ponies.Values.ToDictionary(pony => pony.uuid.ToString());
 }
 
 }

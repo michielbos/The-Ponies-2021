@@ -42,27 +42,20 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         }
     }
     
-    /// <summary>
-    /// Full init function, to use when loading an object.
-    /// </summary>
-    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value, DataPair[] data) {
+    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value) {
         this.id = id;
         TilePosition = new Vector2Int(x, y);
         this.preset = preset;
         this.skin = skin;
         this.value = value;
-        foreach (DataPair pair in data) {
-            this.data[pair.GetDynKey()] = pair.GetDynValue();
-        }
         preset.ApplyToModel(GetComponent<ModelContainer>(), skin);
         Rotation = rotation;
     }
 
-    /// <summary>
-    /// Shorter init function, to use when creating a new object.
-    /// </summary>
-    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin) {
-        Init(id, x, y, rotation, preset, skin, preset.price, new DataPair[0]);
+    public void InitScriptData(DataPair[] data) {
+        foreach (DataPair pair in data) {
+            this.data[pair.GetDynKey()] = pair.GetDynValue();
+        }
     }
 
     public PropertyObjectData GetPropertyObjectData() {

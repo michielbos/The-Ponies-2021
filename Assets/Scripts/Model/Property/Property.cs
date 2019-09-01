@@ -22,8 +22,8 @@ public class Property : MonoBehaviour {
     public FloorTile[,,] floorTiles;
     public Dictionary<TileBorder, Wall> walls;
     public List<Roof> roofs;
-    public List<PropertyObject> propertyObjects;
-    public List<Pony> ponies;
+    public Dictionary<int, PropertyObject> propertyObjects;
+    public Dictionary<Guid, Pony> ponies;
     public Room[] Rooms { get; private set; } = new Room[0];
     [CanBeNull] public Household household;
     private int nextObjectId;
@@ -54,7 +54,7 @@ public class Property : MonoBehaviour {
         this.time = time;
         walls = new Dictionary<TileBorder, Wall>();
         roofs = new List<Roof>();
-        propertyObjects = new List<PropertyObject>();
+        propertyObjects = new Dictionary<int, PropertyObject>();
     }
 
     public void SpawnObjects(PropertyData propertyData) {
@@ -63,6 +63,7 @@ public class Property : MonoBehaviour {
         LoadFloorTiles(propertyData.floorTileDatas);
         LoadPropertyObjects(propertyData.propertyObjectDatas);
         LoadPonies(propertyData.ponies, propertyData.householdData);
+        //LoadScriptData(propertyData.propertyObjectDatas);
     }
 
     public void PlaceFloor(int x, int y, FloorPreset preset) {
@@ -87,17 +88,17 @@ public class Property : MonoBehaviour {
     }
 
     public void PlacePropertyObject(int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
-        PlacePropertyObject(nextObjectId++, x, y, objectRotation, preset, skin);
+        PlacePropertyObject(nextObjectId++, x, y, objectRotation, preset, skin, preset.price);
     }
 
     private void PlacePropertyObject(int id, int x, int y, ObjectRotation objectRotation, FurniturePreset preset,
-        int skin) {
+        int skin, int value) {
         if (id >= nextObjectId) {
             nextObjectId = id + 1;
         }
         PropertyObject propertyObject = Instantiate(Prefabs.Instance.propertyObjectPrefab, transform);
-        propertyObject.Init(id, x, y, objectRotation, preset, skin);
-        propertyObjects.Add(propertyObject);
+        propertyObject.Init(id, x, y, objectRotation, preset, skin, value);
+        propertyObjects[id] = propertyObject;
     }
 
     public void RemoveFloor(FloorTile floorTile) {
@@ -118,7 +119,7 @@ public class Property : MonoBehaviour {
 
     public void RemovePropertyObject(PropertyObject propertyObject) {
         Destroy(propertyObject.gameObject);
-        propertyObjects.Remove(propertyObject);
+        propertyObjects.Remove(propertyObject.id);
     }
 
     private void LoadTerrainTiles(TerrainTileData[] terrainTileDatas) {
@@ -188,7 +189,7 @@ public class Property : MonoBehaviour {
             try {
                 FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(new Guid(pod.furnitureGuid));
                 if (preset != null) {
-                    PlacePropertyObject(pod.id, pod.x, pod.y, pod.GetObjectRotation(), preset, pod.skin);
+                    PlacePropertyObject(pod.id, pod.x, pod.y, pod.GetObjectRotation(), preset, pod.skin, pod.value);
                 } else {
                     Debug.LogWarning("No furniture preset for GUID " + pod.furnitureGuid +
                                      ". Not loading property object " + pod.id + ".");
@@ -208,18 +209,18 @@ public class Property : MonoBehaviour {
             ModeController.Instance.LockLiveMode(true);
             return;
         }
-        List<Pony> ponies = new List<Pony>();
+        Dictionary<Guid, Pony> ponies = new Dictionary<Guid, Pony>();
         foreach (GamePonyData ponyData in ponyDatas) {
             PonyInfoData ponyInfo = householdData.ponies.First(householdPony => householdPony.uuid == ponyData.uuid);
             Pony pony = Instantiate(Prefabs.Instance.ponyPrefab);
             pony.InitInfo(new Guid(ponyData.uuid), ponyInfo.ponyName, ponyInfo.Race, ponyInfo.Gender, ponyInfo.Age);
-            ponies.Add(pony);
+            ponies[pony.uuid] = pony;
         }
         this.ponies = ponies;
         household = new Household(householdData.householdName, householdData.money, ponies);
-        for (int i = 0; i < ponyDatas.Length; i++) {
-            GamePonyData ponyData = ponyDatas[i];
-            ponies[i].InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue);
+        foreach (GamePonyData ponyData in ponyDatas) {
+            ponies[new Guid(ponyData.uuid)]
+                .InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue);
         }
     }
 
@@ -232,10 +233,10 @@ public class Property : MonoBehaviour {
             time,
             CreateTerrainTileDataArray(terrainTiles),
             CreateFloorTileDataArray(floorTiles),
-            CreateWallDataArray(walls),
+            walls.Values.Select(wall => wall.GetWallData()).ToArray(),
             CreateRoofDataArray(roofs),
-            CreatePropertyObjectDataArray(propertyObjects),
-            ponies.Select(pony => pony.GetGamePonyData()).ToArray(),
+            propertyObjects.Values.Select(propertyObject => propertyObject.GetPropertyObjectData()).ToArray(),
+            ponies.Values.Select(pony => pony.GetGamePonyData()).ToArray(),
             household?.GetHouseholdData());
     }
 
@@ -281,24 +282,12 @@ public class Property : MonoBehaviour {
         return floorCount;
     }
 
-    private WallData[] CreateWallDataArray(Dictionary<TileBorder, Wall> walls) {
-        return walls.Values.Select(wall => wall.GetWallData()).ToArray();
-    }
-
     private RoofData[] CreateRoofDataArray(List<Roof> roofs) {
         RoofData[] roofDataArr = new RoofData[roofs.Count];
         for (int i = 0; i < roofs.Count; i++) {
             roofDataArr[i] = roofs[i].GetRoofData();
         }
         return roofDataArr;
-    }
-
-    private PropertyObjectData[] CreatePropertyObjectDataArray(List<PropertyObject> propertyObjects) {
-        PropertyObjectData[] propertyObjectDataArr = new PropertyObjectData[propertyObjects.Count];
-        for (int i = 0; i < propertyObjects.Count; i++) {
-            propertyObjectDataArr[i] = propertyObjects[i].GetPropertyObjectData();
-        }
-        return propertyObjectDataArr;
     }
 
     /// <summary>
@@ -320,7 +309,7 @@ public class Property : MonoBehaviour {
         //This might come with a performance overhead when there are a lot of objects.
         //If performance becomes an issue, we could remember all overlapping objects inside each terrain tile.
         List<PropertyObject> objectsOnTiles = new List<PropertyObject>();
-        foreach (PropertyObject propertyObject in propertyObjects) {
+        foreach (PropertyObject propertyObject in propertyObjects.Values) {
             foreach (Vector2Int occupiedTile in propertyObject.GetOccupiedTiles()) {
                 bool overlaps = false;
                 foreach (Vector2Int tile in tiles) {
@@ -344,7 +333,7 @@ public class Property : MonoBehaviour {
         TileBorder[] tileBorders = borders as TileBorder[] ?? borders.ToArray();
         List<PropertyObject> objectsOnBorders = new List<PropertyObject>();
 
-        foreach (PropertyObject propertyObject in propertyObjects) {
+        foreach (PropertyObject propertyObject in propertyObjects.Values) {
             HashSet<TileBorder> occupiedBorders = GetOccupiedBorders(propertyObject.GetOccupiedTiles());
             if (occupiedBorders.Intersect(tileBorders).Any()) {
                 objectsOnBorders.Add(propertyObject);
@@ -400,7 +389,7 @@ public class Property : MonoBehaviour {
     }
     
     public bool CanRemoveWalls(List<TileBorder> wallPositions) {
-        foreach (PropertyObject propertyObject in propertyObjects) {
+        foreach (PropertyObject propertyObject in propertyObjects.Values) {
             foreach (TileBorder requiredWallBorder in propertyObject.GetRequiredWallBorders()) {
                 if (wallPositions.Contains(requiredWallBorder)) {
                     return false;
@@ -416,7 +405,7 @@ public class Property : MonoBehaviour {
     /// </summary>
     public int[,] GetTileOccupancyMap() {
         int[,] occupancyMap = new int[TerrainHeight, TerrainWidth];
-        foreach (PropertyObject propertyObject in propertyObjects) {
+        foreach (PropertyObject propertyObject in propertyObjects.Values) {
             foreach (Vector2Int occupiedTile in propertyObject.GetOccupiedTiles()) {
                 occupancyMap[occupiedTile.y, occupiedTile.x] = -1;
             }
@@ -434,11 +423,9 @@ public class Property : MonoBehaviour {
         return terrainTiles[y, x];
     }
     
-    public IActionProvider GetPropertyObject(int objectId) {
-        return propertyObjects.Find(propertyObject => propertyObject.id == objectId);
-    }
+    public PropertyObject GetPropertyObject(int objectId) => propertyObjects[objectId];
     
-    public Pony GetPony(Guid uuid) => ponies.Find(pony => pony.uuid == uuid);
+    public Pony GetPony(Guid uuid) => ponies[uuid];
 
     public bool WallExists(TileBorder tileBorder) {
         return walls.ContainsKey(tileBorder);

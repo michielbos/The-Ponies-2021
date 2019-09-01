@@ -232,7 +232,11 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
 
     private void MaxNeeds() {
         Household household = HouseholdController.Instance.Household;
-        household?.ponies.ForEach(pony => pony.needs.SetAll(1));
+        if (household == null)
+            return;
+        foreach (Pony pony in household.ponies.Values) {
+            pony.needs.SetAll(1);
+        }
     }
 
     private void ShowHelp() {

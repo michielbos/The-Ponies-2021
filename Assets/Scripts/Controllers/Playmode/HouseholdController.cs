@@ -1,3 +1,4 @@
+using System.Linq;
 using Assets.Scripts.Util;
 using JetBrains.Annotations;
 using Model.Actions;
@@ -23,7 +24,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
     private void Start() {
         interactionLayer = LayerMask.GetMask("Default", "Terrain");
         if (selectedPony == null && Household?.ponies.Count > 0) {
-            SetSelectedPony(Household.ponies[0]);
+            SetSelectedPony(Household.ponies.Values.First());
         }
     }
 

@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Controllers.Playmode;
 using Model.Ponies;
@@ -24,12 +25,12 @@ public class PlayableCharactersView : MonoBehaviour {
     }
 
     public void UpdateHousehold() {
-        List<Pony> ponies = PropertyController.Instance.property.household.ponies;
-        UpdatePortraits(ponies);
+        Dictionary<Guid, Pony> ponies = PropertyController.Instance.property.household.ponies;
+        UpdatePortraits(ponies.Values);
         UpdatePaneSize();
     }
 
-    private void UpdatePortraits(List<Pony> ponies) {
+    private void UpdatePortraits(IReadOnlyCollection<Pony> ponies) {
         foreach (GameObject portrait in portraits) {
             Destroy(portrait);
         }

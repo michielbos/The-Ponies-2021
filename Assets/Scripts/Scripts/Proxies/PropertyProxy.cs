@@ -27,7 +27,7 @@ class PropertyProxy {
         set => property.streetName = value;
     }
 
-    public IEnumerable<PropertyObject> objects => property.propertyObjects;
+    public Dictionary<int, PropertyObject> objects => property.propertyObjects;
 
     public long time {
         get => property.GameTime;
