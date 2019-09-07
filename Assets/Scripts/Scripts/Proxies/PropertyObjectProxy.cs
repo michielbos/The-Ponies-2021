@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using Model.Data;
 using Model.Property;
 using MoonSharp.Interpreter;
@@ -34,6 +35,9 @@ public class PropertyObjectProxy {
     }
 
     public FurniturePreset preset => propertyObject.preset;
+
+    public Vector2Wrapper[] tiles =>
+        propertyObject.GetOccupiedTiles().Select(tile => new Vector2Wrapper(tile)).ToArray();
 
     public IDictionary<DynValue, DynValue> data => propertyObject.data;
 

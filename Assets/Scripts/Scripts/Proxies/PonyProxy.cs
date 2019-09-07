@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 using Model.Ponies;
 using MoonSharp.Interpreter;
 using UnityEngine;
@@ -103,6 +105,11 @@ public class PonyProxy {
     }
 
     public bool setWalkTarget(Vector2Wrapper target) => pony.SetWalkTarget(target.GetVector2Int());
+
+    public bool setWalkTargetToNearest(IEnumerable<Vector2Wrapper> targets) =>
+        pony.SetWalkTargetToNearest(targets.Select(target => target.GetVector2Int()));
+    
+    public bool setWalkTargetNextTo(Vector2Wrapper target) => pony.SetWalkTargetNextTo(target.GetVector2Int());
     
     public void clearWalkTarget() => pony.ClearWalkTarget();
 
@@ -115,6 +122,14 @@ public class PonyProxy {
             return true;
         if (!Equals(walkTarget, target))
             setWalkTarget(target);
+        return false;
+    }
+
+    public bool walkToNearest(Vector2Wrapper[] targets) {
+        if (targets.Any(target => target.Equals(position)))
+            return true;
+        if (!targets.Any(target => Equals(walkTarget, target)))
+            setWalkTargetToNearest(targets);
         return false;
     }
 
