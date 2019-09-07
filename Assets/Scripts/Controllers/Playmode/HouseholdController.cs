@@ -1,4 +1,7 @@
+using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Util;
+using Controllers.Singletons;
 using JetBrains.Annotations;
 using Model.Actions;
 using Model.Ponies;
@@ -23,7 +26,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
     private void Start() {
         interactionLayer = LayerMask.GetMask("Default", "Terrain");
         if (selectedPony == null && Household?.ponies.Count > 0) {
-            SetSelectedPony(Household.ponies[0]);
+            SetSelectedPony(Household.ponies.Values.First());
         }
     }
 
@@ -66,32 +69,39 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         }
         TerrainTile terrainTile = hit.transform.GetComponent<TerrainTile>();
         if (terrainTile != null) {
-            cursorController.SetCursor(CursorType.GoHere);
-            HandleHover(terrainTile);
+            List<PonyAction> actions = terrainTile.GetActions(selectedPony);
+            cursorController.SetCursor(actions.Count > 0 ? CursorType.GoHere : CursorType.Unavailable);
+            HandleHover(actions);
             return;
         }
         Transform hitParent = hit.transform.parent;
         if (hitParent != null) {
-            PropertyObject propertyObject = hit.transform.parent.GetComponent<PropertyObject>();
+            PropertyObject propertyObject = hit.transform.parent.parent?.GetComponent<PropertyObject>();
             if (propertyObject != null) {
-                cursorController.SetCursor(CursorType.Interact);
-                HandleHover(propertyObject);
+                List<PonyAction> actions = propertyObject.GetActions(selectedPony);
+                cursorController.SetCursor(actions.Count > 0 ? CursorType.Interact : CursorType.Unavailable);
+                HandleHover(actions);
                 return;
             }
             Pony pony = hit.transform.parent.GetComponent<Pony>();
             if (pony != null) {
-                cursorController.SetCursor(CursorType.InteractPony);
-                HandleHover(pony);
+                List<PonyAction> actions = pony.GetActions(selectedPony);
+                cursorController.SetCursor(actions.Count > 0 ? CursorType.InteractPony : CursorType.Unavailable);
+                HandleHover(actions);
                 return;
             }
         }
         cursorController.SetCursor(CursorType.Normal);
     }
 
-    private void HandleHover(IActionProvider actionProvider) {
+    private void HandleHover(List<PonyAction> actions) {
         if (Input.GetMouseButtonUp(0)) {
             if (pieMenu != null) {
                 Destroy(pieMenu.gameObject);
+            }
+            if (actions.Count == 0) {
+                SoundController.Instance.PlaySound(SoundType.Deny);
+                return;
             }
             pieMenu = Instantiate(pieMenuPrefab, transform.parent);
             RectTransform pieTransform = pieMenu.GetComponent<RectTransform>();
@@ -104,7 +114,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
             position.y = Mathf.Clamp(position.y, size.y / 2, canvasSize.y - size.y / 2);
             
             pieTransform.anchoredPosition = position;
-            pieMenu.Init(selectedPony, actionProvider.GetActions(selectedPony));
+            pieMenu.Init(selectedPony, actions);
         }
     }
 }

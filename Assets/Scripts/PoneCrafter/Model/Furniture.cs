@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using PoneCrafter.Json;
 using UnityEngine;
 using UnityGLTF;
@@ -16,6 +18,7 @@ public class Furniture : BaseModel {
     public NeedStats needStats;
     public SkillStats skillStats;
     public RequiredAge requiredAge;
+    public Dictionary<string, string> tags;
     public InstantiatedGLTFObject prefab;
 
     public Furniture(JsonFurniture jsonFurniture, InstantiatedGLTFObject prefab) : base(jsonFurniture.GetUuid()) {
@@ -30,6 +33,7 @@ public class Furniture : BaseModel {
         sellable = jsonFurniture.sellable;
         occupiedTiles = jsonFurniture.occupiedTiles;
         placementType = jsonFurniture.placementType;
+        tags = jsonFurniture.tags.ToDictionary(tag => tag.name, tag => tag.value);
         this.prefab = prefab;
     }
 }

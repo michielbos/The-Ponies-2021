@@ -67,11 +67,11 @@ public class Needs {
         Room = room;
     }
 
-    public Needs(PonyData.NeedsData needsData) : this(needsData.hunger, needsData.energy, needsData.comfort,
+    public Needs(GamePonyData.NeedsData needsData) : this(needsData.hunger, needsData.energy, needsData.comfort,
         needsData.fun, needsData.hygiene, needsData.social, needsData.bladder, needsData.room) { }
 
-    public PonyData.NeedsData GetNeedsData() {
-        return new PonyData.NeedsData(Hunger, Energy, Comfort, Fun, Hygiene, Social, Bladder, Room);
+    public GamePonyData.NeedsData GetNeedsData() {
+        return new GamePonyData.NeedsData(Hunger, Energy, Comfort, Fun, Hygiene, Social, Bladder, Room);
     }
 
     public float GetMood() {

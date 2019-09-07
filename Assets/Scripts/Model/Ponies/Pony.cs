@@ -1,11 +1,14 @@
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using Assets.Scripts.Controllers;
 using Controllers.Playmode;
 using Controllers.Singletons;
 using JetBrains.Annotations;
 using Model.Actions;
-using Model.Actions.Actions;
 using Model.Data;
+using Scripts;
+using Scripts.Proxies;
 using UnityEngine;
 
 namespace Model.Ponies {
@@ -17,7 +20,8 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     public Material indicatorMaterial;
     public List<PonyAction> queuedActions = new List<PonyAction>();
     [CanBeNull] public PonyAction currentAction;
-    
+
+    public Guid uuid;
     public string ponyName;
     public PonyRace race;
     public Gender gender;
@@ -29,6 +33,8 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
 
     public bool IsSelected => HouseholdController.Instance.selectedPony == this;
     public bool IsWalking => nextWalkTile != null || walkPath != null;
+    public Vector2Int? WalkTarget => walkPath?.Destination;
+    public bool WalkingFailed { get; private set;  }
     
     public Vector2Int TilePosition {
         get {
@@ -38,13 +44,19 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         set { transform.position = new Vector3(value.x, 0, value.y); }
     }
 
-    public void Init(string ponyName, PonyRace race, Gender gender, PonyAge age, Needs needs) {
+    public void InitInfo(Guid uuid, string ponyName, PonyRace race, Gender gender, PonyAge age) {
+        this.uuid = uuid;
         this.ponyName = ponyName;
         this.race = race;
         this.gender = gender;
         this.age = age;
-        this.needs = needs;
         indicator.GetComponent<Renderer>().material = new Material(indicatorMaterial);
+    }
+
+    public void InitGamePony(float x, float y, Needs needs, PonyActionData[] actionQueue) {
+        this.needs = needs;
+        transform.position = new Vector3(x, 0, y);
+        queuedActions.AddRange(actionQueue.Select(data => ScriptPonyAction.FromData(this, data)));
     }
 
     private void OnEnable() {
@@ -92,13 +104,21 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
             if (currentAction.finished) {
                 queuedActions.Remove(currentAction);
                 currentAction = null;
+                // Ponies shouldn't walk without an action.
+                ClearWalkTarget();
                 UpdateQueue();
             }
         }
     }
 
-    public PonyData GetPonyData() {
-        return new PonyData(ponyName, (int) race, (int) gender, (int) age, needs.GetNeedsData());
+    public GamePonyData GetGamePonyData() {
+        PonyActionData[] queueData = queuedActions.Select(action => action.GetData()).ToArray();
+        return new GamePonyData(uuid.ToString(), transform.position.x, transform.position.z, needs.GetNeedsData(),
+            queueData);
+    }
+    
+    public PonyInfoData GetPonyInfoData() {
+        return new PonyInfoData(uuid.ToString(), ponyName, (int) race, (int) gender, (int) age);
     }
 
     public void SetSelected(bool selected) {
@@ -114,16 +134,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     }
     
     public List<PonyAction> GetActions(Pony pony) {
-        if (pony == this) {
-            return new List<PonyAction>() {
-                new FakeAction(pony, "Why am I a cube?")
-            };
-        }
-        return new List<PonyAction>() {
-            new SocialAction(pony, "Chat", this),
-            new SocialAction(pony, "Slap", this),
-            new SocialAction(pony, "Flirt", this),
-        };
+        return ScriptManager.Instance.hooks.RequestPonyActions(pony, this);
     }
 
     public void CancelAction(PonyAction action) {
@@ -148,7 +159,12 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
 
     public bool SetWalkTarget(Vector2Int target) {
         walkPath = Pathfinding.PathToTile(TilePosition, target);
-        return walkPath != null;
+        WalkingFailed = walkPath == null;
+        return !WalkingFailed;
+    }
+    
+    public void ClearWalkTarget() {
+        walkPath = null;
     }
     
     /// <summary>

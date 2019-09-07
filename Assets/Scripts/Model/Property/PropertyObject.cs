@@ -1,7 +1,10 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using Model.Actions;
-using Model.Actions.Actions;
+using Model.Data;
 using Model.Ponies;
+using MoonSharp.Interpreter;
+using Scripts;
 using UnityEngine;
 using Util;
 
@@ -18,6 +21,8 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     public FurniturePreset preset;
     public int skin;
     public int value;
+    public readonly IDictionary<DynValue, DynValue> data = new Dictionary<DynValue, DynValue>();
+    
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
 
     public Vector2Int TilePosition {
@@ -36,21 +41,27 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
             preset.FixModelTransform(Model, Rotation);
         }
     }
-
-    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin) {
+    
+    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value) {
         this.id = id;
         TilePosition = new Vector2Int(x, y);
         this.preset = preset;
         this.skin = skin;
-        value = preset.price;
+        this.value = value;
         preset.ApplyToModel(GetComponent<ModelContainer>(), skin);
         Rotation = rotation;
+    }
+
+    public void InitScriptData(DataPair[] data, Property property) {
+        foreach (DataPair pair in data) {
+            this.data[pair.GetDynKey(property)] = pair.GetDynValue(property);
+        }
     }
 
     public PropertyObjectData GetPropertyObjectData() {
         Vector2Int tilePosition = TilePosition;
         return new PropertyObjectData(id, tilePosition.x, tilePosition.y, (int) Rotation, preset.guid.ToString(), skin,
-            value);
+            value, data.Select(pair => DataPair.FromDynValues(pair.Key, pair.Value)).ToArray());
     }
 
     /// <summary>
@@ -74,9 +85,7 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     }
 
     public List<PonyAction> GetActions(Pony pony) {
-        return new List<PonyAction>() {
-            new FakeAction(pony, "View")
-        };
+        return ScriptManager.Instance.hooks.RequestObjectActions(pony, this);
     }
 }
 

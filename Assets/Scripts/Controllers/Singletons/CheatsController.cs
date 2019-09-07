@@ -1,13 +1,19 @@
 ﻿using System;
+using System.Collections;
 using Assets.Scripts.Util;
 using Controllers.Playmode;
 using Model.Ponies;
+using Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 
 namespace Controllers.Singletons {
 
 public class CheatsController : SingletonMonoBehaviour<CheatsController> {
+    // The max number of characters on the console panel text.
+    // We use 10000 for now to not get too close to the geometry limit.
+    private const int CharacterLimit = 10000;
+    
     public InputField cheatField;
     public RectTransform consolePanel;
     public Text consoleText;
@@ -18,13 +24,21 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
     private bool hadFocus;
     private bool showFps;
     private float initialCheatFieldX, initialCheatFieldY, initialCheatFieldWidth;
-    private float lastConsoleHeight = 0;
 
     private void Start() {
         RectTransform rectTransform = cheatField.GetComponent<RectTransform>();
         initialCheatFieldX = rectTransform.position.x;
         initialCheatFieldY = rectTransform.position.y;
         initialCheatFieldWidth = rectTransform.rect.width;
+        Application.logMessageReceived += OnLogMessage;
+    }
+
+    private void OnDestroy() {
+        Application.logMessageReceived -= OnLogMessage;
+    }
+
+    private void OnLogMessage(string logString, string stackTrace, LogType logType) {
+        AddConsoleLine(logString, GetLogTypeColor(logType));
     }
 
     private void Update() {
@@ -54,13 +68,6 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         hadFocus = cheatField.isFocused;
         if (showFps) {
             fpsText.text = "FPS: " + Mathf.RoundToInt(1f / Time.unscaledDeltaTime);
-        }
-    }
-
-    private void LateUpdate() {
-        ScrollRect consoleScrollRect = consolePanel.GetComponent<ScrollRect>();
-        if (Math.Abs(consoleScrollRect.verticalNormalizedPosition - lastConsoleHeight) > 0) {
-            consoleScrollRect.verticalNormalizedPosition = 0;
         }
     }
 
@@ -96,8 +103,48 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         }
     }
 
-    public void AddConsoleLine(string text) {
-        consoleText.text += "\n" + text;
+    public void AddConsoleLine(string text, string color = "white") {
+        string lineText = "<color=" + color + ">" + text + "</color>";
+        string panelText = consoleText.text;
+        
+        if (panelText.Length > 0)
+            lineText = "\n" + lineText;
+        panelText += lineText;
+        if (panelText.Length > CharacterLimit) {
+            int newStart = panelText.IndexOf("</color>\n", panelText.Length - CharacterLimit, StringComparison.Ordinal) + 9;
+            if (newStart == 0)
+                panelText = "";
+            panelText = panelText.Substring(newStart);
+        }
+        consoleText.text = panelText;
+        
+        // Make sure the scroll view scrolls automatically if it's at the bottom.
+        ScrollRect consoleScrollRect = consolePanel.GetComponent<ScrollRect>();
+        if (Math.Abs(consoleScrollRect.verticalNormalizedPosition) < 0.0001) {
+            StartCoroutine(ScrollConsoleToBottom());
+        }
+    }
+
+    private string GetLogTypeColor(LogType logType) {
+        switch (logType) {
+            case LogType.Error:
+                return "orange";
+            case LogType.Assert:
+                return "red";
+            case LogType.Warning:
+                return "yellow";
+            case LogType.Exception:
+                return "magenta";
+            default:
+                return "white";
+        }
+    }
+
+    private IEnumerator ScrollConsoleToBottom() {
+        // For some reason, LateUpdate doesn't work, but WaitForEndOfFrame does.
+        yield return new WaitForEndOfFrame();
+        ScrollRect consoleScrollRect = consolePanel.GetComponent<ScrollRect>();
+        consoleScrollRect.verticalNormalizedPosition = 0;
     }
 
     public bool EnterCheat(string cheat) {
@@ -110,10 +157,10 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
             parameters = new string[0];
         }
 
-        return TryCheat(split[0].ToLower(), parameters);
+        return TryCheat(split[0].ToLower(), parameters, cheat);
     }
 
-    private bool TryCheat(string command, string[] parameters) {
+    private bool TryCheat(string command, string[] parameters, string wholeCommand) {
         // Money cheats
         if (command == "rosebud")
             MoneyController.Instance.ChangeFunds(1000);
@@ -145,7 +192,11 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
             SetCheatFieldVisible(false);
         else if (command == "forcequit")
             Application.Quit();
-        else
+        else if (command == "lua" && wholeCommand.Length > 4) {
+            ScriptManager.Instance.RunConsoleScript(wholeCommand.Substring(4));
+        } else if (command == "reloadscripts") {
+            ScriptManager.Instance.ReloadAllScripts();
+        } else
             return false;
         return true;
     }
@@ -181,7 +232,11 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
 
     private void MaxNeeds() {
         Household household = HouseholdController.Instance.Household;
-        household?.ponies.ForEach(pony => pony.needs.SetAll(1));
+        if (household == null)
+            return;
+        foreach (Pony pony in household.ponies.Values) {
+            pony.needs.SetAll(1);
+        }
     }
 
     private void ShowHelp() {

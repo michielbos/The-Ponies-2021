@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Util;
 using PoneCrafter;
+using Scripts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -27,6 +28,7 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 	/// </summary>
 	private void InitializeGame() {
 		PoneCrafterImporter.Instance.Import();
+		ScriptManager.Instance.Init();
 	}
 
 	public void EnterLot (int id) {
@@ -59,6 +61,7 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 
 	void OnEnteredLot (int lotId) {
 		PropertyController.Instance.Initialize(lotId);
+		ScriptManager.Instance.OnPropertyLoaded();
 	}
 
     private void Update()

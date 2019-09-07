@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using Assets.Scripts.Controllers;
 using Model.Data;
 using UnityEngine;
@@ -7,15 +8,15 @@ namespace Model.Property {
 
 public class PropertyLoader {
     const string propertyPrefix = "Property";
-    const string dataPath = "Assets/Resources/SaveData/";
-    const string propertyPath = dataPath + "Property/";
+    private static string SaveDataPath = Application.dataPath + "/../SaveData/";
+    private static string PropertyPath = SaveDataPath + "Property/";
 
     public PropertyLoader() {
-        TryCreateDirectory(propertyPath);
+        TryCreateDirectory(PropertyPath);
     }
 
     public bool PropertyExists(int id) {
-        return File.Exists(propertyPath + propertyPrefix + id);
+        return File.Exists(PropertyPath + propertyPrefix + id);
     }
 
     public void SaveProperty(PropertyData propertyData) {
@@ -42,17 +43,24 @@ public class PropertyLoader {
         }
 
         HouseholdData householdData = null;
+        string[] ponyUuids = {Guid.NewGuid().ToString(), Guid.NewGuid().ToString()};
         long time = 0;
         if (id == 0) {
-            PonyData[] ponies = {
-                new PonyData("Orange Butt", 2, 2, 1),
-                new PonyData("Gilheart", 3, 1, 1)
+            PonyInfoData[] ponyInfos = {
+                new PonyInfoData(ponyUuids[0], "Orange Butt", 2, 2, 1),
+                new PonyInfoData(ponyUuids[1], "Gilheart", 3, 1, 1),
             };
-            householdData = new HouseholdData("The Placeholders", 20000, ponies);
+            householdData = new HouseholdData("The Placeholders", 20000, ponyInfos);
             time = TimeController.StartingTime;
         }
+
+        GamePonyData[] ponyDatas = {
+            new GamePonyData(ponyUuids[0], 4, 6),
+            new GamePonyData(ponyUuids[1], 4, 3)
+        };
+        
         return new PropertyData(id, "untitled", "", "untitled street " + id, 0, time, terrainTileDatas, floorTileDatas,
-            wallDatas, roofDatas, propertyObjectDatas, householdData);
+            wallDatas, roofDatas, propertyObjectDatas, ponyDatas, householdData);
     }
 
     public PropertyData LoadProperty(int id) {
@@ -60,11 +68,11 @@ public class PropertyLoader {
     }
 
     void SavePropertyData(PropertyData propertyData) {
-        WriteFile(propertyPath + propertyPrefix + propertyData.id, JsonUtility.ToJson(propertyData));
+        WriteFile(PropertyPath + propertyPrefix + propertyData.id, JsonUtility.ToJson(propertyData));
     }
 
     PropertyData LoadPropertyData(int id) {
-        return JsonUtility.FromJson<PropertyData>(ReadFile(propertyPath + propertyPrefix + id));
+        return JsonUtility.FromJson<PropertyData>(ReadFile(PropertyPath + propertyPrefix + id));
     }
 
     void WriteFile(string path, string data) {

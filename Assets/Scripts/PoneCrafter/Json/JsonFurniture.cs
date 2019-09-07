@@ -17,6 +17,13 @@ public class JsonFurniture : BaseJsonModel {
     public NeedStats needStats;
     public SkillStats skillStats;
     public RequiredAge requiredAge;
+    public TagJson[] tags;
+    
+    [Serializable]
+    public class TagJson {
+        public string name;
+        public string value;
+    }
 }
 
 }

@@ -1,8 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
 using Model.Actions;
-using Model.Actions.Actions;
 using Model.Ponies;
+using Scripts;
 using UnityEngine;
 
 namespace Model.Property {
@@ -40,7 +40,7 @@ public class TerrainTile : MonoBehaviour, IActionProvider {
     }
 
     public List<PonyAction> GetActions(Pony pony) {
-        return new List<PonyAction> {new MoveAction(pony, "Go here", this), new MoveAction(pony, "Gallop here", this)};
+        return ScriptManager.Instance.hooks.RequestTileActions(pony, this);
     }
 }
 

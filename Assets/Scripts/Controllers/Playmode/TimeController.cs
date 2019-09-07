@@ -1,8 +1,8 @@
 ﻿using Assets.Scripts.Util;
-using System;
 using System.Collections.Generic;
 using Controllers.Playmode;
 using Controllers.Singletons;
+using Scripts;
 using UnityEngine;
 
 namespace Assets.Scripts.Controllers {
@@ -16,7 +16,7 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
     private Speed currentSpeed;
     public int DaysInOneMonth = 25;
     public int DaysInOneYear = 100;
-    private double currentGameTime;
+    private double timeToNextMinute;
     private bool forcePaused;
     public bool twelveHourClock = true;
     private readonly List<ITimeTickListener> tickListeners = new List<ITimeTickListener>();
@@ -35,7 +35,6 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
 
     void Start() {
         currentSpeed = Speed.Normal;
-        currentGameTime = GameTime;
         HUDController.Instance.UpdateTime();
     }
 
@@ -48,10 +47,14 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
             Time.timeScale = currentSpeed.GetMultiplier();
         }
 
-        currentGameTime += Time.deltaTime;
-        if (Math.Floor(currentGameTime) > GameTime) {
-            GameTime = (long) Math.Floor(currentGameTime);
+        timeToNextMinute += Time.deltaTime;
+        // In cases of bad lag, it would be possible to have deltaTimes larger than a second
+        // This could happen as soon as the framerate drops below 10 FPS at 10x speed.
+        while (timeToNextMinute > 1.0) {
+            timeToNextMinute--;
+            GameTime++;
             HUDController.Instance.UpdateTime();
+            ScriptManager.Instance.hooks.OnTickCallback();
             tickListeners.ForEach(listener => listener.OnTick());
             HouseholdController.Instance.AfterTick();
         }

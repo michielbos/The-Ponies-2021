@@ -1,18 +1,28 @@
+using Model.Data;
 using Model.Ponies;
 
 namespace Model.Actions {
 
 public abstract class PonyAction {
-    public Pony pony;
-    public string name;
+    public readonly Pony pony;
+    public readonly string name;
     public bool active;
     public bool canceled;
     public bool finished;
-    protected int tickCount;
+    public int tickCount;
 
     protected PonyAction(Pony pony, string name) {
         this.pony = pony;
         this.name = name;
+    }
+    
+    protected PonyAction(Pony pony, string name, int tickCount, bool canceled) {
+        this.pony = pony;
+        this.name = name;
+        this.tickCount = tickCount;
+        this.canceled = canceled;
+        if (tickCount > 0)
+            active = true;
     }
 
     public void TickAction() {
@@ -59,6 +69,8 @@ public abstract class PonyAction {
     protected virtual void OnFinish() {
         // Override for additional finish behaviour.
     }
+
+    public abstract PonyActionData GetData();
 }
 
 }
