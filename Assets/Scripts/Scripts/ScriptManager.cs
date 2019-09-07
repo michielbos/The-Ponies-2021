@@ -17,7 +17,7 @@ public class ScriptManager {
 
     public void Init() {
         // TODO: Configure correct scriptloader and test security.
-        //Script.DefaultOptions.ScriptLoader = new InvalidScriptLoader();
+        Script.DefaultOptions.ScriptLoader = new ContentScriptLoader();
         Script.DefaultOptions.DebugPrint = s => Debug.Log("Lua: " + s);
         UserData.RegisterAssembly();
         RegisterProxies();
@@ -57,6 +57,8 @@ public class ScriptManager {
                 Debug.LogWarning("Syntax error in " + file + ": " + e.DecoratedMessage);
             } catch (ScriptRuntimeException e) {
                 Debug.LogWarning("Lua error in " + file + ": " + e.DecoratedMessage);
+            } catch (IOException e) {
+                Debug.LogWarning("IO error in " + file + ": " + e.Message);
             }
         }
     }
@@ -74,6 +76,8 @@ public class ScriptManager {
             Debug.LogWarning("Syntax error: " + e.DecoratedMessage);
         } catch (ScriptRuntimeException e) {
             Debug.LogWarning("Lua error: " + e.DecoratedMessage);
+        } catch (IOException e) {
+            Debug.LogWarning("IO error: " + e.Message);
         }
     }
 
