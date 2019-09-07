@@ -125,11 +125,12 @@ public class PonyProxy {
         return false;
     }
 
-    public bool walkToNearest(Vector2Wrapper[] targets) {
-        if (targets.Any(target => target.Equals(position)))
+    public bool walkToNearest(IDictionary<DynValue, Vector2Wrapper> targets) {
+        ICollection<Vector2Wrapper> targetValues = targets.Values;
+        if (targetValues.Any(target => target.Equals(position)))
             return true;
-        if (!targets.Any(target => Equals(walkTarget, target)))
-            setWalkTargetToNearest(targets);
+        if (!targetValues.Any(target => Equals(walkTarget, target)))
+            setWalkTargetToNearest(targetValues);
         return false;
     }
 
