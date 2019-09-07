@@ -19,6 +19,8 @@ public static class Pathfinding {
         int height = property.TerrainHeight;
         int[,] stepMap = property.GetTileOccupancyMap();
         targets = RemoveTilesOutsideMap(targets, width, height);
+        HashSet<TileBorder> occupiedBorders = property.GetImpassableBorders(); 
+        
         stepMap[start.y, start.x] = 1;
         int step;
         for (step = 1; step <= MaxPathLength; step++) {
@@ -28,19 +30,19 @@ public static class Pathfinding {
                         continue;
                     }
                     if (y + 1 < height && stepMap[y + 1, x] == 0 &&
-                        !property.WallExists(new TileBorder(x, y + 1, WallDirection.NorthEast))) {
+                        !occupiedBorders.Contains(new TileBorder(x, y + 1, WallDirection.NorthEast))) {
                         stepMap[y + 1, x] = step + 1;
                     }
                     if (x + 1 < width && stepMap[y, x + 1] == 0 &&
-                        !property.WallExists(new TileBorder(x + 1, y, WallDirection.NorthWest))) {
+                        !occupiedBorders.Contains(new TileBorder(x + 1, y, WallDirection.NorthWest))) {
                         stepMap[y, x + 1] = step + 1;
                     }
                     if (y > 0 && stepMap[y - 1, x] == 0 &&
-                        !property.WallExists(new TileBorder(x, y, WallDirection.NorthEast))) {
+                        !occupiedBorders.Contains(new TileBorder(x, y, WallDirection.NorthEast))) {
                         stepMap[y - 1, x] = step + 1;
                     }
                     if (x > 0 && stepMap[y, x - 1] == 0 &&
-                        !property.WallExists(new TileBorder(x, y, WallDirection.NorthWest))) {
+                        !occupiedBorders.Contains(new TileBorder(x, y, WallDirection.NorthWest))) {
                         stepMap[y, x - 1] = step + 1;
                     }
                 }
@@ -48,7 +50,7 @@ public static class Pathfinding {
 
             foreach (Vector2Int target in targets) {
                 if (stepMap[target.y, target.x] > 0) {
-                    return CreatePathFromStepMap(stepMap, width, height, target, property);
+                    return CreatePathFromStepMap(stepMap, width, height, target, occupiedBorders);
                 }
             }
         }
@@ -63,7 +65,7 @@ public static class Pathfinding {
     }
 
     private static Path CreatePathFromStepMap(int[,] stepMap, int width, int height, Vector2Int target,
-        Property.Property property) {
+        HashSet<TileBorder> occupiedBorders) {
         int startStep = stepMap[target.y, target.x];
         Vector2Int[] tiles = new Vector2Int[startStep];
         tiles[startStep - 1] = target;
@@ -72,16 +74,16 @@ public static class Pathfinding {
             int x = currentTile.x;
             int y = currentTile.y;
             if (y + 1 < height && stepMap[y + 1, x] == step &&
-                !property.WallExists(new TileBorder(x, y + 1, WallDirection.NorthEast))) {
+                !occupiedBorders.Contains(new TileBorder(x, y + 1, WallDirection.NorthEast))) {
                 currentTile = new Vector2Int(x, y + 1);
             } else if (x + 1 < width && stepMap[y, x + 1] == step &&
-                       !property.WallExists(new TileBorder(x + 1, y, WallDirection.NorthWest))) {
+                       !occupiedBorders.Contains(new TileBorder(x + 1, y, WallDirection.NorthWest))) {
                 currentTile = new Vector2Int(x + 1, y);
             } else if (y > 0 && stepMap[y - 1, x] == step &&
-                       !property.WallExists(new TileBorder(x, y, WallDirection.NorthEast))) {
+                       !occupiedBorders.Contains(new TileBorder(x, y, WallDirection.NorthEast))) {
                 currentTile = new Vector2Int(x, y - 1);
             } else if (x > 0 && stepMap[y, x - 1] == step &&
-                       !property.WallExists(new TileBorder(x, y, WallDirection.NorthWest))) {
+                       !occupiedBorders.Contains(new TileBorder(x, y, WallDirection.NorthWest))) {
                 currentTile = new Vector2Int(x - 1, y);
             } else {
                 throw new Exception("Failed to find tile for step " + step + " at " + target);

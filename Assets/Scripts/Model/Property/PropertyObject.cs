@@ -71,6 +71,17 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     public Vector2Int[] GetOccupiedTiles() {
         return preset.GetOccupiedTiles(TilePosition, Rotation);
     }
+
+    /// <summary>
+    /// Get the coordinates of the tiles occupied by this PropertyObject.
+    /// Excludes the ones that ponies can walk through, such as doors.
+    /// </summary>
+    public Vector2Int[] GetImpassableTiles() {
+        string type = preset.tags.Get("type");
+        if (type == "door")
+            return new Vector2Int[0];
+        return preset.GetOccupiedTiles(TilePosition, Rotation);
+    }
     
     /// <summary>
     /// Get the coordinates of the tiles occupied by this PropertyObject.
