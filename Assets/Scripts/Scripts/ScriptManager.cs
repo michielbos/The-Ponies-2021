@@ -6,6 +6,7 @@ using Model.Property;
 using MoonSharp.Interpreter;
 using Scripts.Proxies;
 using UnityEngine;
+using Util;
 
 namespace Scripts {
 
@@ -39,8 +40,8 @@ public class ScriptManager {
 
     public void ReloadAllScripts() {
         hooks = new Hooks();
-        LoadScripts(Application.dataPath + "/Content/Scripts/");
-        LoadScripts(Application.dataPath + "/../Mods/Scripts/");
+        LoadScripts(ContentLoader.ContentFolder + "Scripts/");
+        LoadScripts(ContentLoader.ModsFolder + "Scripts/");
     }
     
     private void LoadScripts(string folderPath) {
