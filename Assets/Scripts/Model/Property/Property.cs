@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using System.Linq;
 using Controllers.Playmode;
 using JetBrains.Annotations;
-using Model.Actions;
 using Model.Data;
 using Model.Ponies;
 using UnityEngine;
+using Util;
 
 namespace Model.Property {
 
@@ -406,17 +406,33 @@ public class Property : MonoBehaviour {
     }
 
     /// <summary>
-    /// Returns a map that specifies which tiles have an object on them.
+    /// Returns a map that specifies which tiles have an impassable object on them.
     /// All free tiles are represented by a 0. All occupied tiles are represented by a -1.
     /// </summary>
     public int[,] GetTileOccupancyMap() {
         int[,] occupancyMap = new int[TerrainHeight, TerrainWidth];
         foreach (PropertyObject propertyObject in propertyObjects.Values) {
-            foreach (Vector2Int occupiedTile in propertyObject.GetOccupiedTiles()) {
+            foreach (Vector2Int occupiedTile in propertyObject.GetImpassableTiles()) {
                 occupancyMap[occupiedTile.y, occupiedTile.x] = -1;
             }
         }
         return occupancyMap;
+    }
+
+    /// <summary>
+    /// Returns a HashSet of all impassible borders.
+    /// Borders with a wall are impassible, unless they have a door.
+    /// </summary>
+    public HashSet<TileBorder> GetImpassableBorders() {
+        HashSet<TileBorder> borders = new HashSet<TileBorder>(walls.Keys);
+        foreach (PropertyObject propertyObject in propertyObjects.Values) {
+            if (propertyObject.preset.tags.Get("type") == "door") {
+                foreach (TileBorder border in propertyObject.GetRequiredWallBorders()) {
+                    borders.Remove(border);
+                }
+            }
+        }
+        return borders;
     }
 
     [CanBeNull]
