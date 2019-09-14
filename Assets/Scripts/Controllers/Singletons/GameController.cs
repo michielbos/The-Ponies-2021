@@ -15,6 +15,7 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 		if (!HasInstance) {
 			base.Awake();
 			DontDestroyOnLoad(gameObject);
+			gameObject.AddComponent<MusicController>();
 			InitializeGame();
 		} else {
 			Destroy(gameObject);

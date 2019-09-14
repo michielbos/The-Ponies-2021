@@ -3,6 +3,7 @@ using System.Linq;
 using Assets.Scripts.Util;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using Util;
 using Random = UnityEngine.Random;
 
 /// <summary>
@@ -18,11 +19,11 @@ public enum MusicType {
 }
 
 public class MusicController : SingletonMonoBehaviour<MusicController> {
-    public AudioClip[] neighbourhoodSongs;
-    public AudioClip[] capSongs;
-    public AudioClip[] buyModeSongs;
-    public AudioClip[] buildModeSongs;
-    public AudioClip[] communityBuildSongs;
+    private AudioClip[] neighbourhoodSongs = new AudioClip[0];
+    private AudioClip[] capSongs = new AudioClip[0];
+    private AudioClip[] buyModeSongs = new AudioClip[0];
+    private AudioClip[] buildModeSongs = new AudioClip[0];
+    private AudioClip[] communityBuildSongs = new AudioClip[0];
     private MusicType currentMusicType = MusicType.NoMusic;
 
     private AudioClip[][] playingClips;
@@ -41,9 +42,23 @@ public class MusicController : SingletonMonoBehaviour<MusicController> {
         int numberOfTypes = Enum.GetNames(typeof(MusicType)).Length;
         playingClips = new AudioClip[numberOfTypes][];
         playingIndex = new int[numberOfTypes];
-        for (int i = 0; i < numberOfTypes; i++) {
-            ShufflePlayingList((MusicType) i);
-        }
+        LoadAllMusic();
+    }
+
+    private void LoadAllMusic() {
+        LoadAllMusicOfType("Music/Buy/", MusicType.BuyMode, songs => buyModeSongs = songs);
+        LoadAllMusicOfType("Music/Build/", MusicType.BuildMode, songs => buildModeSongs = songs);
+        LoadAllMusicOfType("Music/CAP/", MusicType.CreateAPony, songs => capSongs = songs);
+        LoadAllMusicOfType("Music/Community/", MusicType.CommunityBuildMode, songs => communityBuildSongs = songs);
+        LoadAllMusicOfType("Music/Neighbourhood/", MusicType.Neighbourhood, songs => neighbourhoodSongs = songs);
+    }
+
+    private void LoadAllMusicOfType(string folder, MusicType musicType, Action<AudioClip[]> onFinish) {
+        ContentLoader contentLoader = new ContentLoader();
+        StartCoroutine(contentLoader.LoadAudioClips(folder, list => {
+            onFinish(list.ToArray());
+            ShufflePlayingList(musicType);
+        }));
     }
 
     private void Update() {
