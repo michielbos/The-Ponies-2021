@@ -20,6 +20,7 @@ public class ContentController : SingletonMonoBehaviour<ContentController> {
             audioLoaded = true;
             audioLoadedListeners.ForEach(action => action());
             audioLoadedListeners.Clear();
+            Debug.Log("Loaded audio.");
         }));
     }
 

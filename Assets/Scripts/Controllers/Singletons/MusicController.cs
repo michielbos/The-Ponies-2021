@@ -53,10 +53,10 @@ public class MusicController : SingletonMonoBehaviour<MusicController> {
             capSongs = contentController.GetAudioClips("Music/CAP/").ToArray();
             communityBuildSongs = contentController.GetAudioClips("Music/Community/").ToArray();
             neighbourhoodSongs = contentController.GetAudioClips("Music/Neighbourhood/").ToArray();
+            foreach (MusicType musicType in Enum.GetValues(typeof(MusicType))) {
+                ShufflePlayingList(musicType);
+            }
         });
-        foreach (MusicType musicType in Enum.GetValues(typeof(MusicType))) {
-            ShufflePlayingList(musicType);
-        }
     }
 
     private void Update() {
