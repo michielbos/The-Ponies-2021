@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using Assets.Scripts.Util;
+using Controllers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-using Util;
 using Random = UnityEngine.Random;
 
 /// <summary>
@@ -46,19 +46,17 @@ public class MusicController : SingletonMonoBehaviour<MusicController> {
     }
 
     private void LoadAllMusic() {
-        LoadAllMusicOfType("Music/Buy/", MusicType.BuyMode, songs => buyModeSongs = songs);
-        LoadAllMusicOfType("Music/Build/", MusicType.BuildMode, songs => buildModeSongs = songs);
-        LoadAllMusicOfType("Music/CAP/", MusicType.CreateAPony, songs => capSongs = songs);
-        LoadAllMusicOfType("Music/Community/", MusicType.CommunityBuildMode, songs => communityBuildSongs = songs);
-        LoadAllMusicOfType("Music/Neighbourhood/", MusicType.Neighbourhood, songs => neighbourhoodSongs = songs);
-    }
-
-    private void LoadAllMusicOfType(string folder, MusicType musicType, Action<AudioClip[]> onFinish) {
-        ContentLoader contentLoader = new ContentLoader();
-        StartCoroutine(contentLoader.LoadAudioClips(folder, list => {
-            onFinish(list.ToArray());
+        ContentController contentController = ContentController.Instance;
+        contentController.OnAudioLoaded(() => {
+            buyModeSongs = contentController.GetAudioClips("Music/Buy/").ToArray();
+            buildModeSongs = contentController.GetAudioClips("Music/Build/").ToArray();
+            capSongs = contentController.GetAudioClips("Music/CAP/").ToArray();
+            communityBuildSongs = contentController.GetAudioClips("Music/Community/").ToArray();
+            neighbourhoodSongs = contentController.GetAudioClips("Music/Neighbourhood/").ToArray();
+        });
+        foreach (MusicType musicType in Enum.GetValues(typeof(MusicType))) {
             ShufflePlayingList(musicType);
-        }));
+        }
     }
 
     private void Update() {

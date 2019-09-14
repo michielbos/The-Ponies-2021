@@ -1,4 +1,5 @@
 ﻿using Assets.Scripts.Util;
+using Controllers;
 using PoneCrafter;
 using Scripts;
 using UnityEngine;
@@ -15,6 +16,7 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 		if (!HasInstance) {
 			base.Awake();
 			DontDestroyOnLoad(gameObject);
+			gameObject.AddComponent<ContentController>();
 			gameObject.AddComponent<MusicController>();
 			InitializeGame();
 		} else {

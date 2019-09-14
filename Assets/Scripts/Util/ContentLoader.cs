@@ -12,20 +12,21 @@ public class ContentLoader {
     public static readonly string ModsFolder = Application.dataPath + "/../Mods/";
 
     /// <summary>
-    /// Coroutine to load OGG AudioClips from the given folder.
+    /// Coroutine to load OGG AudioClips from the content folder.
     /// The onFinish action is executed when the loading is complete.
     /// If one or more items failed to load, those will not be included in the list and instead logged to the console.
     /// </summary>
-    public IEnumerator LoadAudioClips(string folder, Action<List<AudioClip>> onFinish) {
-        string path = ContentFolder + folder;
+    public IEnumerator LoadAudioClips(Action<Dictionary<string, AudioClip>> onFinish) {
+        string path = ContentFolder;
         if (!Directory.Exists(path))
             Directory.CreateDirectory(path);
-        string[] files = Directory.GetFiles(path);
-        List<AudioClip> clips = new List<AudioClip>();
+        string[] files = Directory.GetFiles(path, "*", SearchOption.AllDirectories);
+        Dictionary<string, AudioClip> clips = new Dictionary<string, AudioClip>();
         foreach (string file in files) {
             if (!file.EndsWith(".ogg"))
                 continue;
-            yield return LoadAudioClip(file, clip => clips.Add(clip), Debug.LogException);
+            string name = file.Substring(path.Length);
+            yield return LoadAudioClip(file, clip => clips[name] = clip, Debug.LogException);
         }
         onFinish(clips);
     }
