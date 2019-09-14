@@ -39,13 +39,15 @@ public class ContentLoader {
     public IEnumerator LoadAudioClip(string file, Action<AudioClip> onSuccess, Action<ContentLoaderException> onFail) {
         string filePath = "file://" + file;
         using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(filePath, AudioType.OGGVORBIS)) {
+            DownloadHandlerAudioClip downloadHandler = (DownloadHandlerAudioClip) www.downloadHandler;
+            downloadHandler.streamAudio = true;
             yield return www.SendWebRequest();
             try {
                 if (www.isNetworkError || www.isHttpError) {
                     throw new ContentLoaderException("Couldn't load file: " + filePath + " (" + www.error + ")");
                 }
 
-                AudioClip clip = DownloadHandlerAudioClip.GetContent(www);
+                AudioClip clip = downloadHandler.audioClip;
                 if (clip.samples == 0)
                     throw new ContentLoaderException("Failed to load file: " + filePath);
                 onSuccess(clip);
