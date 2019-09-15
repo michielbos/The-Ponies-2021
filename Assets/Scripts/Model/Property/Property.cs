@@ -87,17 +87,25 @@ public class Property : MonoBehaviour {
         return wall;
     }
 
+    /// <summary>
+    /// Place a property object with only the necessary fields. Other fields will receive a calculated/default value.
+    /// This is useful when placing new objects via the buy tool.
+    /// </summary>
     public void PlacePropertyObject(int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
-        PlacePropertyObject(nextObjectId++, x, y, objectRotation, preset, skin, preset.price);
+        PlacePropertyObject(nextObjectId++, x, y, objectRotation, preset, skin, preset.price, null);
     }
 
+    /// <summary>
+    /// Place a property object, with all data filled in.
+    /// This should be used when loading an existing propery object from a save.
+    /// </summary>
     private void PlacePropertyObject(int id, int x, int y, ObjectRotation objectRotation, FurniturePreset preset,
-        int skin, int value) {
+        int skin, int value, string animation) {
         if (id >= nextObjectId) {
             nextObjectId = id + 1;
         }
         PropertyObject propertyObject = Instantiate(Prefabs.Instance.propertyObjectPrefab, transform);
-        propertyObject.Init(id, x, y, objectRotation, preset, skin, value);
+        propertyObject.Init(id, x, y, objectRotation, preset, skin, value, animation);
         propertyObjects[id] = propertyObject;
     }
 
@@ -189,7 +197,7 @@ public class Property : MonoBehaviour {
             try {
                 FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(new Guid(pod.furnitureGuid));
                 if (preset != null) {
-                    PlacePropertyObject(pod.id, pod.x, pod.y, pod.GetObjectRotation(), preset, pod.skin, pod.value);
+                    PlacePropertyObject(pod.id, pod.x, pod.y, pod.GetObjectRotation(), preset, pod.skin, pod.value, pod.animation);
                 } else {
                     Debug.LogWarning("No furniture preset for GUID " + pod.furnitureGuid +
                                      ". Not loading property object " + pod.id + ".");

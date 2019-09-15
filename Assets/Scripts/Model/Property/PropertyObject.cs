@@ -43,7 +43,8 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         }
     }
     
-    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value) {
+    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value,
+        string animation) {
         this.id = id;
         TilePosition = new Vector2Int(x, y);
         this.preset = preset;
@@ -51,6 +52,8 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         this.value = value;
         preset.ApplyToModel(GetComponent<ModelContainer>(), skin);
         Rotation = rotation;
+        if (animation != null)
+            PlayAnimation(animation);
     }
 
     public void InitScriptData(DataPair[] data, Property property) {
@@ -62,7 +65,7 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     public PropertyObjectData GetPropertyObjectData() {
         Vector2Int tilePosition = TilePosition;
         return new PropertyObjectData(id, tilePosition.x, tilePosition.y, (int) Rotation, preset.guid.ToString(), skin,
-            value, data.Select(pair => DataPair.FromDynValues(pair.Key, pair.Value)).ToArray());
+            value, data.Select(pair => DataPair.FromDynValues(pair.Key, pair.Value)).ToArray(), GetAnimation());
     }
 
     /// <summary>
@@ -121,6 +124,19 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         if (animation == null)
             return false;
         return animation.Play(name);
+    }
+
+    private string GetAnimation() {
+        Animation animation = GetComponentInChildren<Animation>();
+        if (animation == null || !animation.isPlaying)
+            return null;
+        // Unity doesn't properly allow you to get the currently playing animation,
+        // because multiple animations can be playing.
+        foreach (AnimationState animationState in animation) {
+            if (animation.IsPlaying(animationState.name))
+                return animationState.name;
+        }
+        return null;
     }
 }
 
