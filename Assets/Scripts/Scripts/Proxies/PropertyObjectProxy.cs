@@ -56,8 +56,20 @@ public class PropertyObjectProxy {
         return propertyObject.PlaySound(name);
     }
 
+    public void stopSound() {
+        propertyObject.StopSound();
+    }
+    
+    public string getPlayingSound() {
+        return propertyObject.GetPlayingSound();
+    }
+
     public bool playAnimation(string name) {
         return propertyObject.PlayAnimation(name);
+    }
+    
+    public string getAnimation() {
+        return propertyObject.GetAnimation();
     }
 
     protected bool Equals(PropertyObjectProxy other) {

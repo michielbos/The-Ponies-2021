@@ -23,6 +23,10 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     public int skin;
     public int value;
     public readonly IDictionary<DynValue, DynValue> data = new Dictionary<DynValue, DynValue>();
+
+    private AudioSource audioSource;
+    private string lastAnimation;
+    private string lastSound;
     
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
 
@@ -44,7 +48,7 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     }
     
     public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value,
-        string animation) {
+        string animation, string sound) {
         this.id = id;
         TilePosition = new Vector2Int(x, y);
         this.preset = preset;
@@ -54,6 +58,9 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         Rotation = rotation;
         if (animation != null)
             PlayAnimation(animation);
+        if (sound != null)
+            PlaySound(sound);
+
     }
 
     public void InitScriptData(DataPair[] data, Property property) {
@@ -65,7 +72,8 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     public PropertyObjectData GetPropertyObjectData() {
         Vector2Int tilePosition = TilePosition;
         return new PropertyObjectData(id, tilePosition.x, tilePosition.y, (int) Rotation, preset.guid.ToString(), skin,
-            value, data.Select(pair => DataPair.FromDynValues(pair.Key, pair.Value)).ToArray(), GetAnimation());
+            value, data.Select(pair => DataPair.FromDynValues(pair.Key, pair.Value)).ToArray(), GetAnimation(),
+            GetPlayingSound());
     }
 
     /// <summary>
@@ -108,34 +116,40 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         if (audioClip == null)
             return false;
         PlaySound(audioClip);
+        lastSound = name;
         return true;
     }
 
     private void PlaySound(AudioClip clip) {
-        AudioSource audioSource = GetComponent<AudioSource>();
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.clip = clip;
         audioSource.Play();
     }
 
-    public bool PlayAnimation(string name) {
-        Animation animation = GetComponentInChildren<Animation>();
-        if (animation == null)
-            return false;
-        return animation.Play(name);
+    public void StopSound() {
+        if (audioSource != null && audioSource.isPlaying)
+            audioSource.Stop();
+    }
+    
+    public string GetPlayingSound() {
+        if (audioSource == null || !audioSource.isPlaying)
+            return null;
+        return lastSound;
     }
 
-    private string GetAnimation() {
+    public bool PlayAnimation(string name) {
         Animation animation = GetComponentInChildren<Animation>();
-        if (animation == null || !animation.isPlaying)
-            return null;
-        // Unity doesn't properly allow you to get the currently playing animation,
-        // because multiple animations can be playing.
-        foreach (AnimationState animationState in animation) {
-            if (animation.IsPlaying(animationState.name))
-                return animationState.name;
-        }
+        if (animation == null || !animation.Play(name))
+            return false;
+        lastAnimation = name;
+        return true;
+    }
+
+    public string GetAnimation() {
+        Animation animation = GetComponentInChildren<Animation>();
+        if (animation != null && animation.IsPlaying(lastAnimation))
+            return lastAnimation;
         return null;
     }
 }

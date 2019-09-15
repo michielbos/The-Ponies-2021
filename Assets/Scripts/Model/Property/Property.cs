@@ -92,7 +92,7 @@ public class Property : MonoBehaviour {
     /// This is useful when placing new objects via the buy tool.
     /// </summary>
     public void PlacePropertyObject(int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
-        PlacePropertyObject(nextObjectId++, x, y, objectRotation, preset, skin, preset.price, null);
+        PlacePropertyObject(nextObjectId++, x, y, objectRotation, preset, skin, preset.price, null, null);
     }
 
     /// <summary>
@@ -100,12 +100,12 @@ public class Property : MonoBehaviour {
     /// This should be used when loading an existing propery object from a save.
     /// </summary>
     private void PlacePropertyObject(int id, int x, int y, ObjectRotation objectRotation, FurniturePreset preset,
-        int skin, int value, string animation) {
+        int skin, int value, string animation, string sound) {
         if (id >= nextObjectId) {
             nextObjectId = id + 1;
         }
         PropertyObject propertyObject = Instantiate(Prefabs.Instance.propertyObjectPrefab, transform);
-        propertyObject.Init(id, x, y, objectRotation, preset, skin, value, animation);
+        propertyObject.Init(id, x, y, objectRotation, preset, skin, value, animation, sound);
         propertyObjects[id] = propertyObject;
     }
 
@@ -197,7 +197,7 @@ public class Property : MonoBehaviour {
             try {
                 FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(new Guid(pod.furnitureGuid));
                 if (preset != null) {
-                    PlacePropertyObject(pod.id, pod.x, pod.y, pod.GetObjectRotation(), preset, pod.skin, pod.value, pod.animation);
+                    PlacePropertyObject(pod.id, pod.x, pod.y, pod.GetObjectRotation(), preset, pod.skin, pod.value, pod.animation, pod.sound);
                 } else {
                     Debug.LogWarning("No furniture preset for GUID " + pod.furnitureGuid +
                                      ". Not loading property object " + pod.id + ".");
