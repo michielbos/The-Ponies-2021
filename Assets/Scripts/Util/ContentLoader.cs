@@ -40,6 +40,7 @@ public class ContentLoader {
         string filePath = "file://" + file;
         using (UnityWebRequest www = UnityWebRequestMultimedia.GetAudioClip(filePath, AudioType.OGGVORBIS)) {
             DownloadHandlerAudioClip downloadHandler = (DownloadHandlerAudioClip) www.downloadHandler;
+            // TODO: Differentiate between music and sound.
             downloadHandler.streamAudio = true;
             yield return www.SendWebRequest();
             try {

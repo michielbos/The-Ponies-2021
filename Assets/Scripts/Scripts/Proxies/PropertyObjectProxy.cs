@@ -52,6 +52,14 @@ public class PropertyObjectProxy {
 
     public void removeData(DynValue key) => propertyObject.data.Remove(key);
 
+    public bool playSound(string name) {
+        return propertyObject.PlaySound(name);
+    }
+
+    public bool playAnimation(string name) {
+        return propertyObject.PlayAnimation(name);
+    }
+
     protected bool Equals(PropertyObjectProxy other) {
         return Equals(propertyObject, other.propertyObject);
     }

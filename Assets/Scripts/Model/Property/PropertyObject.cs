@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Controllers;
 using Model.Actions;
 using Model.Data;
 using Model.Ponies;
@@ -97,6 +98,29 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
 
     public List<PonyAction> GetActions(Pony pony) {
         return ScriptManager.Instance.hooks.RequestObjectActions(pony, this);
+    }
+
+    public bool PlaySound(string name) {
+        AudioClip audioClip = ContentController.Instance.GetAudioClip(name);
+        if (audioClip == null)
+            return false;
+        PlaySound(audioClip);
+        return true;
+    }
+
+    private void PlaySound(AudioClip clip) {
+        AudioSource audioSource = GetComponent<AudioSource>();
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.clip = clip;
+        audioSource.Play();
+    }
+
+    public bool PlayAnimation(string name) {
+        Animation animation = GetComponentInChildren<Animation>();
+        if (animation == null)
+            return false;
+        return animation.Play(name);
     }
 }
 
