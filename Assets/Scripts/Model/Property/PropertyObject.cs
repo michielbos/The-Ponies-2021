@@ -56,7 +56,7 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         this.value = value;
         preset.ApplyToModel(GetComponent<ModelContainer>(), skin);
         Rotation = rotation;
-        if (animation != null)
+        if (!string.IsNullOrEmpty(animation))
             PlayAnimation(animation);
     }
 
