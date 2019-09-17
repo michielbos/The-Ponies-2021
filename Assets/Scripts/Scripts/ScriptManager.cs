@@ -91,6 +91,9 @@ public class ScriptManager {
         // Constructor functions
         script.Globals["Vector2"] = (Func<float, float, Vector2Wrapper>) Vector2Wrapper.Create;
         script.Globals["Action"] = (Func<string, Closure, Closure, ScriptAction>) ScriptAction.Create;
+        
+        // Global classes
+        script.Globals["Audio"] = AudioProxy.Instance;
     }
 }
 

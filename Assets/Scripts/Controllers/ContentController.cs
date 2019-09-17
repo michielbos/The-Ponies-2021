@@ -35,7 +35,7 @@ public class ContentController : SingletonMonoBehaviour<ContentController> {
 
     /// <summary>
     /// Execute the given action when the audio content has been loaded.
-    /// If the content was already loaded, it will be executed immediately.
+    /// if the content was already loaded, it will be executed immediately.
     /// </summary>
     public void OnAudioLoaded(Action action) {
         if (audioLoaded)
@@ -43,6 +43,15 @@ public class ContentController : SingletonMonoBehaviour<ContentController> {
         else
             audioLoadedListeners.Add(action);
     }
+
+    public IEnumerable<string> GetAudioNames(string prefix) => loadedAudioClips.Keys
+        .Where(key => key.StartsWith(prefix));
+
+    public IEnumerable<string> GetTopLevelAudioFolders(string prefix) => loadedAudioClips.Keys
+        .Where(path => path.StartsWith(prefix))
+        .Select(path => path.Substring(prefix.Length))
+        .Select(path => path.Substring(0, path.IndexOf('/')))
+        .Distinct();
 }
 
 }
