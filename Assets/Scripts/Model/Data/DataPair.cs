@@ -3,101 +3,93 @@ using System.Globalization;
 using System.Linq;
 using Model.Ponies;
 using Model.Property;
-using MoonSharp.Interpreter;
 
 namespace Model.Data {
 
 [Serializable]
 public class DataPair {
-    private static readonly DataType[] SupportedTypes =
-        {DataType.String, DataType.Number, DataType.Boolean, DataType.Nil};
-    public string keyType;
     public string key;
     public string valueType;
     public string value;
 
-    private DataPair(string keyType, string key, string valueType, string value) {
-        this.keyType = keyType;
+    private DataPair(string key, string valueType, string value) {
         this.key = key;
         this.valueType = valueType;
         this.value = value;
     }
 
-    public static bool IsTypeSupported(DynValue dynValue) {
-        if (SupportedTypes.Contains(dynValue.Type))
-            return true;
-        if (dynValue.Type == DataType.UserData) {
-            object obj = dynValue.UserData.Object;
-            return obj is PropertyObject || obj is Pony;
-        }
-        return false;
+    public static bool IsTypeSupported(object value) {
+        return value is string || value is int || value is float || value is bool;
     }
 
-    public static DataPair FromDynValues(DynValue keyValue, DynValue valueValue) {
+    public static DataPair FromValues(string key, object valueValue) {
         return new DataPair(
-            GetDynValueType(keyValue),
-            GetDynValueValue(keyValue),
-            GetDynValueType(valueValue),
-            GetDynValueValue(valueValue)
+            key,
+            GetValueType(valueValue),
+            GetValueValue(valueValue)
         );
     }
 
-    private static string GetDynValueType(DynValue dynValue) {
-        switch (dynValue.Type) {
-            case DataType.String:
+    private static string GetValueType(object value) {
+        switch (value) {
+            case string v:
                 return "string";
-            case DataType.Number:
-                return "number";
-            case DataType.Boolean:
-                return "boolean";
-            case DataType.Nil:
+            case int v:
+                return "int";
+            case float v:
+                return "float";
+            case bool v:
+                return "bool";
+            case null:
                 return "null";
-            case DataType.UserData when dynValue.UserData.Object is PropertyObject:
+            case PropertyObject v:
                 return "propertyObject";
-            case DataType.UserData when dynValue.UserData.Object is Pony:
+            case Pony v:
                 return "pony";
             default:
-                throw new ArgumentOutOfRangeException(dynValue.Type.ToString());
+                throw new ArgumentOutOfRangeException(value.GetType().ToString());
         }
     }
     
-    private static string GetDynValueValue(DynValue dynValue) {
-        switch (dynValue.Type) {
-            case DataType.String:
-                return dynValue.String;
-            case DataType.Number:
-                return dynValue.Number.ToString(CultureInfo.InvariantCulture);
-            case DataType.Boolean:
-                return dynValue.Boolean.ToString();
-            case DataType.Nil:
+    private static string GetValueValue(object value) {
+        switch (value) {
+            case String v:
+                return v;
+            case int v:
+                return v.ToString(CultureInfo.InvariantCulture);
+            case float v:
+                return v.ToString(CultureInfo.InvariantCulture);
+            case bool v:
+                return v.ToString();
+            case null:
                 return "null";
-            case DataType.UserData when dynValue.UserData.Object is PropertyObject propertyObject:
+            case PropertyObject propertyObject:
                 return propertyObject.id.ToString(CultureInfo.InvariantCulture);
-            case DataType.UserData when dynValue.UserData.Object is Pony pony:
+            case Pony pony:
                 return pony.uuid.ToString();
             default:
-                throw new ArgumentOutOfRangeException(dynValue.Type.ToString());
+                throw new ArgumentOutOfRangeException(value.GetType().ToString());
         }
     }
-
-    public DynValue GetDynKey(Property.Property property) => GetDynValue(keyType, key, property);
     
-    public DynValue GetDynValue(Property.Property property) => GetDynValue(valueType, value, property);
+    public object GetValue(Property.Property property) => GetValue(valueType, value, property);
 
-    private DynValue GetDynValue(string type, string value, Property.Property property) {
+    private object GetValue(string type, string value, Property.Property property) {
         switch (type) {
             case "string":
-                return DynValue.NewString(value);
-            case "number":
-                return DynValue.NewNumber(double.Parse(value));
-            case "boolean":
-                return DynValue.NewBoolean(bool.Parse(value));
+                return value;
+            case "int":
+                return int.Parse(value);
+            case "float":
+                return float.Parse(value);
+            case "bool":
+                return bool.Parse(value);
             case "null":
-                return DynValue.NewNil();
+                return null;
             case "propertyObject":
-                return UserData.Create(property.GetPropertyObject(int.Parse(value)));
+                return property.GetPropertyObject(int.Parse(value));
             case "pony":
-                return UserData.Create(property.GetPony(new Guid(value)));
+                return property.GetPony(new Guid(value));
             default:
                 throw new ArgumentOutOfRangeException(type);
         }

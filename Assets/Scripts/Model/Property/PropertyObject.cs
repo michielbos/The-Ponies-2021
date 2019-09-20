@@ -4,7 +4,6 @@ using Controllers;
 using Model.Actions;
 using Model.Data;
 using Model.Ponies;
-using MoonSharp.Interpreter;
 using UnityEngine;
 using Util;
 
@@ -21,7 +20,7 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     public FurniturePreset preset;
     public int skin;
     public int value;
-    public readonly IDictionary<DynValue, DynValue> data = new Dictionary<DynValue, DynValue>();
+    public readonly IDictionary<string, object> data = new Dictionary<string, object>();
 
     private AudioSource audioSource;
     private string lastAnimation;
@@ -61,14 +60,14 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
 
     public void InitScriptData(DataPair[] data, Property property) {
         foreach (DataPair pair in data) {
-            this.data[pair.GetDynKey(property)] = pair.GetDynValue(property);
+            this.data[pair.key] = pair.GetValue(property);
         }
     }
 
     public PropertyObjectData GetPropertyObjectData() {
         Vector2Int tilePosition = TilePosition;
         return new PropertyObjectData(id, tilePosition.x, tilePosition.y, (int) Rotation, preset.guid.ToString(), skin,
-            value, data.Select(pair => DataPair.FromDynValues(pair.Key, pair.Value)).ToArray(), GetAnimation());
+            value, data.Select(pair => DataPair.FromValues(pair.Key, pair.Value)).ToArray(), GetAnimation());
     }
 
     /// <summary>
