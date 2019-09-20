@@ -7,8 +7,6 @@ using Controllers.Singletons;
 using JetBrains.Annotations;
 using Model.Actions;
 using Model.Data;
-using Scripts;
-using Scripts.Proxies;
 using UnityEngine;
 
 namespace Model.Ponies {
@@ -56,7 +54,8 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     public void InitGamePony(float x, float y, Needs needs, PonyActionData[] actionQueue) {
         this.needs = needs;
         transform.position = new Vector3(x, 0, y);
-        queuedActions.AddRange(actionQueue.Select(data => ScriptPonyAction.FromData(this, data)));
+        // TODO: Init actions
+        // queuedActions.AddRange(actionQueue.Select(data => ScriptPonyAction.FromData(this, data)));
     }
 
     private void OnEnable() {
@@ -134,7 +133,9 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
     }
     
     public List<PonyAction> GetActions(Pony pony) {
-        return ScriptManager.Instance.hooks.RequestPonyActions(pony, this);
+        // TODO: Return actions.
+        return new List<PonyAction>();
+        // return ScriptManager.Instance.hooks.RequestPonyActions(pony, this);
     }
 
     public void CancelAction(PonyAction action) {

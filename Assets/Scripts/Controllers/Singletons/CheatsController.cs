@@ -3,7 +3,6 @@ using System.Collections;
 using Assets.Scripts.Util;
 using Controllers.Playmode;
 using Model.Ponies;
-using Scripts;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -192,11 +191,7 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
             SetCheatFieldVisible(false);
         else if (command == "forcequit")
             Application.Quit();
-        else if (command == "lua" && wholeCommand.Length > 4) {
-            ScriptManager.Instance.RunConsoleScript(wholeCommand.Substring(4));
-        } else if (command == "reloadscripts") {
-            ScriptManager.Instance.ReloadAllScripts();
-        } else
+        else
             return false;
         return true;
     }

@@ -5,7 +5,6 @@ using Model.Actions;
 using Model.Data;
 using Model.Ponies;
 using MoonSharp.Interpreter;
-using Scripts;
 using UnityEngine;
 using Util;
 
@@ -104,7 +103,9 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     }
 
     public List<PonyAction> GetActions(Pony pony) {
-        return ScriptManager.Instance.hooks.RequestObjectActions(pony, this);
+        // TODO: Return actions.
+        return new List<PonyAction>();
+        // return ScriptManager.Instance.hooks.RequestObjectActions(pony, this);
     }
 
     public bool PlaySound(string name) {
