@@ -12,9 +12,10 @@ public class PropertyObjectData {
     public int skin;
     public int value;
     public DataPair[] data;
+    public string animation;
 
     public PropertyObjectData(int id, int x, int y, int rotation, string furnitureGuid, int skin, int value,
-        DataPair[] data) {
+        DataPair[] data, string animation) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -23,6 +24,7 @@ public class PropertyObjectData {
         this.skin = skin;
         this.value = value;
         this.data = data;
+        this.animation = animation;
     }
 
     public ObjectRotation GetObjectRotation() {

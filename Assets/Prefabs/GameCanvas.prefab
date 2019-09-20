@@ -5407,7 +5407,6 @@ GameObject:
   - component: {fileID: 1126990668056583067}
   - component: {fileID: 114544127686149074}
   - component: {fileID: 114099412846582776}
-  - component: {fileID: 114086576077371470}
   - component: {fileID: 8243250806356457648}
   - component: {fileID: 7785438659274785964}
   - component: {fileID: 913442756527784499}
@@ -5607,33 +5606,6 @@ MonoBehaviour:
     clip: {fileID: 8300000, guid: d4bbcb31cad57f545ad066e4729f4676, type: 3}
   - type: 14
     clip: {fileID: 8300000, guid: 838639eb790e21e48b43dc35151e9f1a, type: 3}
---- !u!114 &114086576077371470
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1383177691709652}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 65d7b2ea989f9d945a5eb0ce8feca703, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  neighbourhoodSongs:
-  - {fileID: 8300000, guid: dd7d4eed8dbc34230ba84530143a8a7b, type: 3}
-  capSongs:
-  - {fileID: 8300000, guid: f5ddd12ff37714e2a9146d6c92792b9e, type: 3}
-  buyModeSongs:
-  - {fileID: 8300000, guid: a5a029a864f20402e98ddf82ca0478d7, type: 3}
-  - {fileID: 8300000, guid: 189675ecd41e9446987ae4db7feb3556, type: 3}
-  - {fileID: 8300000, guid: fd704d23a78134983ac3f7f65f7029ed, type: 3}
-  - {fileID: 8300000, guid: 5cf7a6fd0e4684f4a9c8f791d90d3095, type: 3}
-  buildModeSongs:
-  - {fileID: 8300000, guid: aa0a137b546e94c299bd0ec6013d225d, type: 3}
-  - {fileID: 8300000, guid: 9fb5a66cb7f314217ae48c74289c5c3d, type: 3}
-  - {fileID: 8300000, guid: 7c0ab740a6d0b4c71996775cf6f91d9f, type: 3}
-  - {fileID: 8300000, guid: ec30f828d65c0409e8c03654ee94030d, type: 3}
-  communityBuildSongs: []
 --- !u!114 &8243250806356457648
 MonoBehaviour:
   m_ObjectHideFlags: 0

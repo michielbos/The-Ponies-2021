@@ -6,6 +6,7 @@ using Model.Property;
 using MoonSharp.Interpreter;
 using Scripts.Proxies;
 using UnityEngine;
+using Util;
 
 namespace Scripts {
 
@@ -39,8 +40,8 @@ public class ScriptManager {
 
     public void ReloadAllScripts() {
         hooks = new Hooks();
-        LoadScripts(Application.dataPath + "/Content/Scripts/");
-        LoadScripts(Application.dataPath + "/../Mods/Scripts/");
+        LoadScripts(ContentLoader.ContentFolder + "Scripts/");
+        LoadScripts(ContentLoader.ModsFolder + "Scripts/");
     }
     
     private void LoadScripts(string folderPath) {
@@ -90,6 +91,9 @@ public class ScriptManager {
         // Constructor functions
         script.Globals["Vector2"] = (Func<float, float, Vector2Wrapper>) Vector2Wrapper.Create;
         script.Globals["Action"] = (Func<string, Closure, Closure, ScriptAction>) ScriptAction.Create;
+        
+        // Global classes
+        script.Globals["Audio"] = AudioProxy.Instance;
     }
 }
 

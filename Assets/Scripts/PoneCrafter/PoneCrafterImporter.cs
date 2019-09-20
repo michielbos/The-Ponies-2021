@@ -8,6 +8,7 @@ using PoneCrafter.Json;
 using PoneCrafter.Model;
 using UnityEngine;
 using UnityGLTF;
+using Util;
 using Util.Importer;
 using Object = UnityEngine.Object;
 using Terrain = PoneCrafter.Model.Terrain;
@@ -48,8 +49,8 @@ public class PoneCrafterImporter {
         gltfLoader = new GameObject("GltfLoader").AddComponent<GltfLoader>();
         Object.DontDestroyOnLoad(gltfLoader.gameObject);
         gltfLoader.Prepare();
-        await ImportFolder(Application.dataPath + "/Content/");
-        await ImportFolder(Application.dataPath + "/../Mods/");
+        await ImportFolder(ContentLoader.ContentFolder);
+        await ImportFolder(ContentLoader.ModsFolder);
     }
 
     private async Task ImportFolder(string path) {

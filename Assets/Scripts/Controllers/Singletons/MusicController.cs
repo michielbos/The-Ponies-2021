@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using Assets.Scripts.Util;
+using Controllers;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using Random = UnityEngine.Random;
@@ -18,11 +19,11 @@ public enum MusicType {
 }
 
 public class MusicController : SingletonMonoBehaviour<MusicController> {
-    public AudioClip[] neighbourhoodSongs;
-    public AudioClip[] capSongs;
-    public AudioClip[] buyModeSongs;
-    public AudioClip[] buildModeSongs;
-    public AudioClip[] communityBuildSongs;
+    private AudioClip[] neighbourhoodSongs = new AudioClip[0];
+    private AudioClip[] capSongs = new AudioClip[0];
+    private AudioClip[] buyModeSongs = new AudioClip[0];
+    private AudioClip[] buildModeSongs = new AudioClip[0];
+    private AudioClip[] communityBuildSongs = new AudioClip[0];
     private MusicType currentMusicType = MusicType.NoMusic;
 
     private AudioClip[][] playingClips;
@@ -41,9 +42,21 @@ public class MusicController : SingletonMonoBehaviour<MusicController> {
         int numberOfTypes = Enum.GetNames(typeof(MusicType)).Length;
         playingClips = new AudioClip[numberOfTypes][];
         playingIndex = new int[numberOfTypes];
-        for (int i = 0; i < numberOfTypes; i++) {
-            ShufflePlayingList((MusicType) i);
-        }
+        LoadAllMusic();
+    }
+
+    private void LoadAllMusic() {
+        ContentController contentController = ContentController.Instance;
+        contentController.OnAudioLoaded(() => {
+            buyModeSongs = contentController.GetAudioClips("Music/Buy/").ToArray();
+            buildModeSongs = contentController.GetAudioClips("Music/Build/").ToArray();
+            capSongs = contentController.GetAudioClips("Music/CAP/").ToArray();
+            communityBuildSongs = contentController.GetAudioClips("Music/Community/").ToArray();
+            neighbourhoodSongs = contentController.GetAudioClips("Music/Neighbourhood/").ToArray();
+            foreach (MusicType musicType in Enum.GetValues(typeof(MusicType))) {
+                ShufflePlayingList(musicType);
+            }
+        });
     }
 
     private void Update() {

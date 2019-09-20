@@ -76,7 +76,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         }
         Transform hitParent = hit.transform.parent;
         if (hitParent != null) {
-            PropertyObject propertyObject = hit.transform.parent.parent?.GetComponent<PropertyObject>();
+            PropertyObject propertyObject = hit.transform.GetComponentInParent<PropertyObject>();
             if (propertyObject != null) {
                 List<PonyAction> actions = propertyObject.GetActions(selectedPony);
                 cursorController.SetCursor(actions.Count > 0 ? CursorType.Interact : CursorType.Unavailable);

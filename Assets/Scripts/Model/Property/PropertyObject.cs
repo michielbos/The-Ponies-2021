@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
+using Controllers;
 using Model.Actions;
 using Model.Data;
 using Model.Ponies;
@@ -22,6 +23,10 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     public int skin;
     public int value;
     public readonly IDictionary<DynValue, DynValue> data = new Dictionary<DynValue, DynValue>();
+
+    private AudioSource audioSource;
+    private string lastAnimation;
+    private string lastSound;
     
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
 
@@ -42,7 +47,8 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         }
     }
     
-    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value) {
+    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value,
+        string animation) {
         this.id = id;
         TilePosition = new Vector2Int(x, y);
         this.preset = preset;
@@ -50,6 +56,8 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         this.value = value;
         preset.ApplyToModel(GetComponent<ModelContainer>(), skin);
         Rotation = rotation;
+        if (!string.IsNullOrEmpty(animation))
+            PlayAnimation(animation);
     }
 
     public void InitScriptData(DataPair[] data, Property property) {
@@ -61,7 +69,7 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     public PropertyObjectData GetPropertyObjectData() {
         Vector2Int tilePosition = TilePosition;
         return new PropertyObjectData(id, tilePosition.x, tilePosition.y, (int) Rotation, preset.guid.ToString(), skin,
-            value, data.Select(pair => DataPair.FromDynValues(pair.Key, pair.Value)).ToArray());
+            value, data.Select(pair => DataPair.FromDynValues(pair.Key, pair.Value)).ToArray(), GetAnimation());
     }
 
     /// <summary>
@@ -97,6 +105,48 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
 
     public List<PonyAction> GetActions(Pony pony) {
         return ScriptManager.Instance.hooks.RequestObjectActions(pony, this);
+    }
+
+    public bool PlaySound(string name) {
+        AudioClip audioClip = ContentController.Instance.GetAudioClip(name);
+        if (audioClip == null)
+            return false;
+        PlaySound(audioClip);
+        lastSound = name;
+        return true;
+    }
+
+    private void PlaySound(AudioClip clip) {
+        if (audioSource == null)
+            audioSource = gameObject.AddComponent<AudioSource>();
+        audioSource.clip = clip;
+        audioSource.Play();
+    }
+
+    public void StopSound() {
+        if (audioSource != null && audioSource.isPlaying)
+            audioSource.Stop();
+    }
+    
+    public string GetPlayingSound() {
+        if (audioSource == null || !audioSource.isPlaying)
+            return null;
+        return lastSound;
+    }
+
+    public bool PlayAnimation(string name) {
+        Animation animation = GetComponentInChildren<Animation>();
+        if (animation == null || !animation.Play(name))
+            return false;
+        lastAnimation = name;
+        return true;
+    }
+
+    public string GetAnimation() {
+        Animation animation = GetComponentInChildren<Animation>();
+        if (animation != null && animation.IsPlaying(lastAnimation))
+            return lastAnimation;
+        return null;
     }
 }
 
