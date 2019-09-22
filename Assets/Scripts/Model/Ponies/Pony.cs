@@ -11,7 +11,7 @@ using UnityEngine;
 
 namespace Model.Ponies {
 
-public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
+public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     private const float WalkSpeed = 3f;
     
     public GameObject indicator;
@@ -132,7 +132,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         }
     }
     
-    public List<PonyAction> GetActions(Pony pony) {
+    public ICollection<PonyAction> GetActions(Pony pony) {
         // TODO: Return actions.
         return new List<PonyAction>();
         // return ScriptManager.Instance.hooks.RequestPonyActions(pony, this);

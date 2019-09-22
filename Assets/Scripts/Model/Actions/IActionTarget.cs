@@ -3,8 +3,8 @@ using Model.Ponies;
 
 namespace Model.Actions {
 
-public interface IActionProvider {
-    List<PonyAction> GetActions(Pony pony);
+public interface IActionTarget {
+    ICollection<PonyAction> GetActions(Pony pony);
 }
 
 }

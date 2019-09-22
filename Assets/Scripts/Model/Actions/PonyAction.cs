@@ -4,6 +4,7 @@ using Model.Ponies;
 namespace Model.Actions {
 
 public abstract class PonyAction {
+    public readonly string identifier;
     public readonly Pony pony;
     public readonly string name;
     public bool active;
@@ -11,12 +12,14 @@ public abstract class PonyAction {
     public bool finished;
     public int tickCount;
 
-    protected PonyAction(Pony pony, string name) {
+    protected PonyAction(string identifier, Pony pony, string name) {
+        this.identifier = identifier;
         this.pony = pony;
         this.name = name;
     }
     
-    protected PonyAction(Pony pony, string name, int tickCount, bool canceled) {
+    protected PonyAction(string identifier, Pony pony, string name, int tickCount, bool canceled) {
+        this.identifier = identifier;
         this.pony = pony;
         this.name = name;
         this.tickCount = tickCount;
@@ -25,7 +28,7 @@ public abstract class PonyAction {
             active = true;
     }
 
-    public void TickAction() {
+    internal void TickAction() {
         tickCount++;
         Tick();
     }
@@ -37,7 +40,7 @@ public abstract class PonyAction {
     /// </summary>
     public abstract void Tick();
 
-    public void SetActive() {
+    internal void SetActive() {
         if (!active) {
             active = true;
             OnActivated();
@@ -59,7 +62,7 @@ public abstract class PonyAction {
         // Override for additional cancel behaviour.
     }
 
-    protected internal void Finish() {
+    protected void Finish() {
         if (!finished) {
             finished = true;
             OnFinish();

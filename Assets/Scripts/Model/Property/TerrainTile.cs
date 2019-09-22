@@ -10,7 +10,7 @@ namespace Model.Property {
 /// A tile that is part of the terrain.
 /// </summary>
 [Serializable]
-public class TerrainTile : MonoBehaviour, IActionProvider {
+public class TerrainTile : MonoBehaviour, IActionTarget {
     public int height;
     public int type;
     public Transform model;
@@ -38,7 +38,7 @@ public class TerrainTile : MonoBehaviour, IActionProvider {
         model.GetComponent<MeshRenderer>().enabled = visible;
     }
 
-    public List<PonyAction> GetActions(Pony pony) {
+    public ICollection<PonyAction> GetActions(Pony pony) {
         // TODO: Return actions.
         return new List<PonyAction>();
         // return ScriptManager.Instance.hooks.RequestTileActions(pony, this);

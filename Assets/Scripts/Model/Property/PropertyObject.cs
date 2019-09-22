@@ -14,7 +14,7 @@ namespace Model.Property {
 /// </summary>
 [System.Serializable]
 [RequireComponent(typeof(ModelContainer))]
-public class PropertyObject : MonoBehaviour, IActionProvider {
+public class PropertyObject : MonoBehaviour, IActionTarget {
     public int id;
     private ObjectRotation rotation;
     public FurniturePreset preset;
@@ -27,6 +27,8 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
     private string lastSound;
     
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
+
+    public string Type => preset.tags.Get("type") ?? "";
 
     public Vector2Int TilePosition {
         get {
@@ -101,10 +103,8 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         Model.gameObject.SetActive(visible);
     }
 
-    public List<PonyAction> GetActions(Pony pony) {
-        // TODO: Return actions.
-        return new List<PonyAction>();
-        // return ScriptManager.Instance.hooks.RequestObjectActions(pony, this);
+    public ICollection<PonyAction> GetActions(Pony pony) {
+        return ActionManager.GetActionsForObject(pony, this);
     }
 
     public bool PlaySound(string name) {
