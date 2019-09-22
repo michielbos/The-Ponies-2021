@@ -1,0 +1,15 @@
+{
+    "name": "ThePoniesGame",
+    "references": [
+        "GUID:18d18f811ba286c49814567a3cfba688"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}

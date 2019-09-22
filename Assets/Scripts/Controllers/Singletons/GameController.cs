@@ -1,4 +1,6 @@
-﻿using Assets.Scripts.Util;
+﻿using System;
+using System.Reflection;
+using Assets.Scripts.Util;
 using Controllers;
 using PoneCrafter;
 using UnityEngine;
@@ -29,7 +31,19 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 	/// This will later probably be moved to a loading screen.
 	/// </summary>
 	private void InitializeGame() {
+		LoadBehaviourAssembly();
 		PoneCrafterImporter.Instance.Import();
+	}
+
+	private void LoadBehaviourAssembly() {
+		#if UNITY_EDITOR
+		string assemblyPath = Application.dataPath + "/../Library/ScriptAssemblies/ThePoniesBehaviour.dll";
+		#else
+		string assemblyPath = Application.dataPath + "/Managed/ThePoniesBehaviour.dll";
+		#endif
+		Assembly assembly = Assembly.LoadFile(assemblyPath);
+		Type ponyActions = assembly.GetType("ThePoniesBehaviour.BehaviourManager");
+		ponyActions.InvokeMember("LoadBehaviour", BindingFlags.InvokeMethod, null, null, new object[0]);
 	}
 
 	public void EnterLot (int id) {
