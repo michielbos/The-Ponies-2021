@@ -1,0 +1,17 @@
+{
+    "name": "ThePoniesEditor",
+    "references": [
+        "GUID:4126c13e069dfb75ea20299526066aa6"
+    ],
+    "optionalUnityReferences": [],
+    "includePlatforms": [
+        "Editor"
+    ],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": []
+}
