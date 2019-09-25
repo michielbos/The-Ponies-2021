@@ -12,10 +12,10 @@ Shader "Cel Shading/RegularV2"
 
 	SubShader
 	{
-		Tags{ "RenderType" = "TransparentCutout"  "Queue" = "Geometry+0" "IgnoreProjector" = "True" "IsEmissive" = "true"  }
+		Tags{ "RenderType" = "Transparent"  "Queue" = "Geometry+0" "IgnoreProjector" = "True" "IsEmissive" = "true"  }
 		LOD 200
 		Cull Off
-		Blend SrcAlpha OneMinusSrcAlpha , SrcAlpha OneMinusSrcAlpha
+		Blend One Zero , SrcAlpha OneMinusSrcAlpha
 		BlendOp Add , Add
 		AlphaToMask On
 		CGINCLUDE
@@ -57,8 +57,8 @@ Shader "Cel Shading/RegularV2"
 		uniform half _ShadowValue;
 		uniform sampler2D _MainTex;
 		uniform half4 _MainTex_ST;
-		uniform sampler2D _EmissionTexture;
-		uniform half4 _EmissionTexture_ST;
+		uniform sampler2D _EmissionMap;
+		uniform half4 _EmissionMap_ST;
 
 		inline half4 LightingStandardCustomLighting( inout SurfaceOutputCustomLightingCustom s, half3 viewDir, UnityGI gi )
 		{
@@ -81,8 +81,7 @@ Shader "Cel Shading/RegularV2"
 			#endif
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
 			half4 tex2DNode29 = tex2D( _MainTex, uv_MainTex );
-			half4 _Color = half4(0.7,0.7,0.7,1);
-			half AlphaValue43 = ( tex2DNode29.a * _Color.a );
+			half AlphaValue43 = tex2DNode29.a;
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
 			float4 ase_lightColor = 0;
 			#else //aselc
@@ -105,7 +104,7 @@ Shader "Cel Shading/RegularV2"
 			float dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
 			half NdotL10 = dotResult8;
 			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( NdotL10 / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
-			half3 InputColor48 = (( tex2DNode29 * _Color )).rgb;
+			half3 InputColor48 = (( tex2DNode29 * half4(0.7,0.7,0.7,1) )).rgb;
 			half3 BaseColorOutput55 = ( ( ( IndirDiffLight34 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * InputColor48 );
 			float3 temp_output_57_0 = BaseColorOutput55;
 			c.rgb = temp_output_57_0;
@@ -141,14 +140,13 @@ Shader "Cel Shading/RegularV2"
 			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( NdotL10 / 0.001 ) ) * 1 ) , _ShadowValue);
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
 			half4 tex2DNode29 = tex2D( _MainTex, uv_MainTex );
-			half4 _Color = half4(0.7,0.7,0.7,1);
-			half3 InputColor48 = (( tex2DNode29 * _Color )).rgb;
+			half3 InputColor48 = (( tex2DNode29 * half4(0.7,0.7,0.7,1) )).rgb;
 			half3 BaseColorOutput55 = ( ( ( IndirDiffLight34 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * InputColor48 );
 			float3 temp_output_57_0 = BaseColorOutput55;
 			o.Albedo = temp_output_57_0;
-			float2 uv_EmissionTexture = i.uv_texcoord * _EmissionTexture_ST.xy + _EmissionTexture_ST.zw;
+			float2 uv_EmissionMap = i.uv_texcoord * _EmissionMap_ST.xy + _EmissionMap_ST.zw;
 			#ifdef _EMISSIONTOGGLE_ON
-				float3 staticSwitch83 = (tex2D( _EmissionTexture, uv_EmissionTexture )).rgb;
+				float3 staticSwitch83 = (tex2D( _EmissionMap, uv_EmissionMap )).rgb;
 			#else
 				float3 staticSwitch83 = half3(0,0,0);
 			#endif
