@@ -45,9 +45,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4c85046baa5514c458364ce6d5711cbe, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  fullWallMesh: {fileID: -5495902117074765545, guid: 1e6cc391674f555769bc8eea8890e6dd,
+  fullWallMesh: {fileID: 8733429697405204941, guid: c64396fbfc4a7944e8c7a661e2e9ace6,
     type: 3}
-  shortWallMesh: {fileID: -5495902117074765545, guid: 173a5f3d73abcc7a38ebb41272c2ec09,
+  shortWallMesh: {fileID: -3526660341256759886, guid: 25c39372997d6c140bbbbc13b1a44547,
     type: 3}
   unpaintedMaterial: {fileID: 2100000, guid: 36165e9207aeae78396b17ef1c0eccf7, type: 2}
   meshFilter: {fileID: 5492775371682571708}
@@ -90,13 +90,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 520761137231211929}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: -0.70710677, y: -0, z: -0, w: 0.7071068}
   m_LocalPosition: {x: 0.5, y: 0, z: 0}
-  m_LocalScale: {x: 100, y: 100, z: 100}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4323488344731888}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -90.00001, y: 0, z: 0}
 --- !u!33 &5492775371682571708
 MeshFilter:
   m_ObjectHideFlags: 0
@@ -104,7 +104,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 520761137231211929}
-  m_Mesh: {fileID: -5495902117074765545, guid: 1e6cc391674f555769bc8eea8890e6dd, type: 3}
+  m_Mesh: {fileID: 8733429697405204941, guid: c64396fbfc4a7944e8c7a661e2e9ace6, type: 3}
 --- !u!23 &2235697957417294149
 MeshRenderer:
   m_ObjectHideFlags: 0
@@ -122,6 +122,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
+  - {fileID: 2100000, guid: 36165e9207aeae78396b17ef1c0eccf7, type: 2}
   - {fileID: 2100000, guid: 36165e9207aeae78396b17ef1c0eccf7, type: 2}
   - {fileID: 2100000, guid: 36165e9207aeae78396b17ef1c0eccf7, type: 2}
   m_StaticBatchInfo:

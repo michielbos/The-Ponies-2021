@@ -2,10 +2,11 @@ Shader "Cel Shading/RegularV2Walls"
 {
 	Properties
 	{
+		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("MainTex", 2D) = "white" {}
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
-		_WallMask("WallMask", 2D) = "black" {}
-		_AlphaCutout("AlphaCutout", Range( 0 , 0.75)) = 0.75
+		_WallMask("WallMask", 2D) = "white" {}
+		[HideInInspector]_Float0("ClipValue", Range( 0 , 1)) = 1
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
@@ -17,12 +18,13 @@ Shader "Cel Shading/RegularV2Walls"
 		Cull Back
 		Blend SrcAlpha OneMinusSrcAlpha
 		
+		AlphaToMask On
 		CGINCLUDE
 		#include "UnityPBSLighting.cginc"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 		#include "Lighting.cginc"
-		#pragma target 3.0
+		#pragma target 2.0
 		#ifdef UNITY_PASS_SHADOWCASTER
 			#undef INTERNAL_DATA
 			#undef WorldReflectionVector
@@ -55,9 +57,10 @@ Shader "Cel Shading/RegularV2Walls"
 		uniform half _ShadowValue;
 		uniform sampler2D _MainTex;
 		uniform half4 _MainTex_ST;
-		uniform half _AlphaCutout;
+		uniform half4 _Color;
 		uniform sampler2D _WallMask;
 		uniform half4 _WallMask_ST;
+		uniform half _Float0;
 
 		inline half4 LightingStandardCustomLighting( inout SurfaceOutputCustomLightingCustom s, half3 viewDir, UnityGI gi )
 		{
@@ -97,12 +100,12 @@ Shader "Cel Shading/RegularV2Walls"
 			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
 			float dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
-			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( ( dotResult8 + 0.0 ) / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
+			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( dotResult8 / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			float3 temp_output_53_0 = ( ( ( indirectDiffuse30 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * (( tex2D( _MainTex, uv_MainTex ) * ( half4(1,1,1,1) * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
+			float3 temp_output_53_0 = ( ( ( indirectDiffuse30 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * (( tex2D( _MainTex, uv_MainTex ) * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
 			c.rgb = temp_output_53_0;
 			c.a = 1;
-			clip( saturate( ( (0.0 + (_AlphaCutout - 1.0) * (1.0 - 0.0) / (0.0 - 1.0)) + ( 1.0 - tex2D( _WallMask, uv_WallMask ) ) ) ).r - _AlphaCutout );
+			clip( tex2D( _WallMask, uv_WallMask ).r - _Float0 );
 			return c;
 		}
 
@@ -129,9 +132,9 @@ Shader "Cel Shading/RegularV2Walls"
 			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
 			float dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
-			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( ( dotResult8 + 0.0 ) / 0.001 ) ) * 1 ) , _ShadowValue);
+			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( dotResult8 / 0.001 ) ) * 1 ) , _ShadowValue);
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			float3 temp_output_53_0 = ( ( ( float3(0,0,0) * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * (( tex2D( _MainTex, uv_MainTex ) * ( half4(1,1,1,1) * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
+			float3 temp_output_53_0 = ( ( ( float3(0,0,0) * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * (( tex2D( _MainTex, uv_MainTex ) * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
 			o.Albedo = temp_output_53_0;
 		}
 
@@ -145,10 +148,11 @@ Shader "Cel Shading/RegularV2Walls"
 			Name "ShadowCaster"
 			Tags{ "LightMode" = "ShadowCaster" }
 			ZWrite On
+			AlphaToMask Off
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma target 3.0
+			#pragma target 2.0
 			#pragma multi_compile_shadowcaster
 			#pragma multi_compile UNITY_PASS_SHADOWCASTER
 			#pragma skip_variants FOG_LINEAR FOG_EXP FOG_EXP2
