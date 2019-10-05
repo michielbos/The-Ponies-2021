@@ -30,7 +30,9 @@ public abstract class PonyAction {
 
     internal void TickAction() {
         tickCount++;
-        Tick();
+        if (Tick()) {
+            Finish();
+        }
     }
     
     /// <summary>
@@ -38,7 +40,7 @@ public abstract class PonyAction {
     /// Execution will start after the action becomes active.
     /// The frequency is dependent on the game speed and execution will pause when the game is paused.
     /// </summary>
-    public abstract void Tick();
+    public abstract bool Tick();
 
     internal void SetActive() {
         if (!active) {

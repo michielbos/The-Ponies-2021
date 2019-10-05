@@ -192,6 +192,14 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     public void CancelWalking() {
         walkPath = null;
     }
+    
+    public bool WalkTo(Vector2Int target) {
+        if (Equals(TilePosition, target))
+            return true;
+        if (!Equals(WalkTarget, target))
+            SetWalkTarget(target);
+        return false;
+    }
 }
 
 }

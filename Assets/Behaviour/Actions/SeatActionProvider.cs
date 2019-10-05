@@ -3,6 +3,7 @@ using Model.Actions;
 using Model.Ponies;
 using Model.Property;
 using UnityEngine;
+using Util;
 
 namespace ThePoniesBehaviour.Actions {
 
@@ -23,13 +24,15 @@ public class SeatActionProvider : IObjectActionProvider {
     private class SitAction : ObjectAction {
         public SitAction(Pony pony, PropertyObject target) : base(SitIdentifier, pony, target, "Sit") { }
 
-        public override void Tick() {
+        public override bool Tick() {
             // Walk to couch
             // Sit down
             // Sit until canceled.
+            if (!pony.WalkTo(target.TilePosition.GetNeighbourTile(target.Rotation))) {
+                return pony.WalkingFailed;
+            }
             Debug.Log("Sit action...");
-            if (tickCount >= 3)
-                Finish();
+            return tickCount >= 3;
         }
     }
 }
