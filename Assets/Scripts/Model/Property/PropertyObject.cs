@@ -20,7 +20,9 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     public FurniturePreset preset;
     public int skin;
     public int value;
+    
     public readonly IDictionary<string, object> data = new Dictionary<string, object>();
+    public readonly HashSet<Pony> users = new HashSet<Pony>();
 
     private AudioSource audioSource;
     private string lastAnimation;
@@ -60,16 +62,27 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             PlayAnimation(animation);
     }
 
-    public void InitScriptData(DataPair[] data, Property property) {
+    public void InitScriptData(DataPair[] data, IEnumerable<Pony> users, Property property) {
         foreach (DataPair pair in data) {
             this.data[pair.key] = pair.GetValue(property);
+        }
+        foreach (Pony user in users) {
+            this.users.Add(user);
         }
     }
 
     public PropertyObjectData GetPropertyObjectData() {
         Vector2Int tilePosition = TilePosition;
-        return new PropertyObjectData(id, tilePosition.x, tilePosition.y, (int) Rotation, preset.guid.ToString(), skin,
-            value, data.Select(pair => DataPair.FromValues(pair.Key, pair.Value)).ToArray(), GetAnimation());
+        return new PropertyObjectData(id,
+            tilePosition.x,
+            tilePosition.y,
+            (int) Rotation,
+            preset.guid.ToString(),
+            skin,
+            value,
+            data.Select(pair => DataPair.FromValues(pair.Key, pair.Value)).ToArray(),
+            GetAnimation(),
+            users.Select(pony => pony.uuid.ToString()).ToArray());
     }
 
     /// <summary>

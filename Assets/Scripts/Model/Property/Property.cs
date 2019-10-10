@@ -234,7 +234,9 @@ public class Property : MonoBehaviour {
 
     private void LoadScriptData(PropertyObjectData[] objectDatas) {
         foreach (PropertyObjectData objectData in objectDatas) {
-            propertyObjects[objectData.id].InitScriptData(objectData.data, this);
+            string[] userUuids = objectData.users ?? new string[0];
+            IEnumerable<Pony> users = userUuids.Select(uuid => GetPony(new Guid(uuid)));
+            propertyObjects[objectData.id].InitScriptData(objectData.data, users, this);
         }
     }
 

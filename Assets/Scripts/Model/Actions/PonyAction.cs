@@ -30,6 +30,9 @@ public abstract class PonyAction {
 
     internal void TickAction() {
         tickCount++;
+        if (tickCount == 1) {
+            OnStart();
+        }
         if (Tick()) {
             Finish();
         }
@@ -51,6 +54,10 @@ public abstract class PonyAction {
     
     protected virtual void OnActivated() {
         // Override for additional activation behaviour.
+    }
+    
+    protected virtual void OnStart() {
+        // Override for additional first tick behaviour.
     }
 
     public void Cancel() {
