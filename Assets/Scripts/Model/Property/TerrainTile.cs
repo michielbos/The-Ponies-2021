@@ -39,9 +39,7 @@ public class TerrainTile : MonoBehaviour, IActionTarget {
     }
 
     public ICollection<PonyAction> GetActions(Pony pony) {
-        // TODO: Return actions.
-        return new List<PonyAction>();
-        // return ScriptManager.Instance.hooks.RequestTileActions(pony, this);
+        return ActionManager.GetActionsForTile(pony, this);
     }
 }
 
