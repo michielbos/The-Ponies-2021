@@ -7,6 +7,9 @@ public static class PonyActions {
         ActionManager.AddObjectActionProviders(new [] {
             new SeatActionProvider()
         });
+        ActionManager.AddTileActionProviders(new [] {
+            new MoveActionProvider()
+        });
     }
 }
 
