@@ -13,11 +13,6 @@ public abstract class TileAction : PonyAction {
         this.target = target;
     }
 
-    protected TileAction(string identifier, Pony pony, TerrainTile target, string name, int tickCount, bool canceled)
-        : base(identifier, pony, name, tickCount, canceled) {
-        this.target = target;
-    }
-
     public override PonyActionData GetData() {
         Vector2Int tilePosition = target.TilePosition;
         return new PonyActionData(identifier, tickCount, canceled, tilePosition.x, tilePosition.y);

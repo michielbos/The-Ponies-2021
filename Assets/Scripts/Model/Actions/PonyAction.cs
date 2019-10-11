@@ -17,15 +17,10 @@ public abstract class PonyAction {
         this.pony = pony;
         this.name = name;
     }
-    
-    protected PonyAction(string identifier, Pony pony, string name, int tickCount, bool canceled) {
-        this.identifier = identifier;
-        this.pony = pony;
-        this.name = name;
+
+    internal void Load(int tickCount) {
         this.tickCount = tickCount;
-        this.canceled = canceled;
-        if (tickCount > 0)
-            active = true;
+        active = tickCount > 0;
     }
 
     internal void TickAction() {

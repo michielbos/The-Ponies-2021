@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
+using JetBrains.Annotations;
+using Model.Data;
 using Model.Ponies;
 using Model.Property;
 
@@ -12,7 +15,7 @@ public static class ActionManager {
     public static void AddObjectActionProviders(IEnumerable<IObjectActionProvider> actionProviders) {
         objectActionProviders.AddRange(actionProviders);
     }
-    
+
     public static void AddTileActionProviders(IEnumerable<ITileActionProvider> actionProviders) {
         tileActionProviders.AddRange(actionProviders);
     }
@@ -24,13 +27,47 @@ public static class ActionManager {
         }
         return objectActions;
     }
-    
+
     public static ICollection<PonyAction> GetActionsForTile(Pony pony, TerrainTile tile) {
         List<PonyAction> tileActions = new List<PonyAction>();
         foreach (ITileActionProvider actionProvider in tileActionProviders) {
             tileActions.AddRange(actionProvider.GetActions(pony, tile));
         }
         return tileActions;
+    }
+
+    [CanBeNull]
+    public static PonyAction LoadFromData(Pony pony, PonyActionData data, Property.Property property) {
+        PonyAction ponyAction;
+        switch (data.GetTargetType()) {
+            case PonyActionData.TargetType.Object:
+                ponyAction = LoadObjectAction(pony, data, property);
+                break;
+            case PonyActionData.TargetType.Pony:
+                // TODO: Implement pony actions.
+                throw new NotImplementedException();
+            case PonyActionData.TargetType.Tile:
+                ponyAction = LoadTileAction(pony, data, property);
+                break;
+            default:
+                throw new ArgumentOutOfRangeException();
+        }
+        ponyAction?.Load(data.tickCount);
+        return ponyAction;
+    }
+
+    private static PonyAction LoadObjectAction(Pony pony, PonyActionData data, Property.Property property) {
+        PropertyObject target = property.GetPropertyObject(data.targetObjectid);
+        return objectActionProviders
+            .Select(provider => provider.LoadAction(data.identifier, pony, target))
+            .FirstOrDefault(action => action != null);
+    }
+    
+    private static PonyAction LoadTileAction(Pony pony, PonyActionData data, Property.Property property) {
+        TerrainTile target = property.GetTerrainTile(data.targetTileX, data.targetTileY);
+        return tileActionProviders
+            .Select(provider => provider.LoadAction(data.identifier, pony, target))
+            .FirstOrDefault(action => action != null);
     }
 }
 

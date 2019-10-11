@@ -228,7 +228,7 @@ public class Property : MonoBehaviour {
         household = new Household(householdData.householdName, householdData.money, ponies);
         foreach (GamePonyData ponyData in ponyDatas) {
             ponies[new Guid(ponyData.uuid)]
-                .InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue);
+                .InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue, this);
         }
     }
 

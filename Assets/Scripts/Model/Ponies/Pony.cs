@@ -51,11 +51,10 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
         indicator.GetComponent<Renderer>().material = new Material(indicatorMaterial);
     }
 
-    public void InitGamePony(float x, float y, Needs needs, PonyActionData[] actionQueue) {
+    public void InitGamePony(float x, float y, Needs needs, PonyActionData[] actionQueue, Property.Property property) {
         this.needs = needs;
         transform.position = new Vector3(x, 0, y);
-        // TODO: Init actions
-        // queuedActions.AddRange(actionQueue.Select(data => ScriptPonyAction.FromData(this, data)));
+        queuedActions.AddRange(actionQueue.Select(data => ActionManager.LoadFromData(this, data, property)));
     }
 
     private void OnEnable() {
