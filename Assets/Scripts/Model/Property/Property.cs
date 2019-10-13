@@ -228,13 +228,15 @@ public class Property : MonoBehaviour {
         household = new Household(householdData.householdName, householdData.money, ponies);
         foreach (GamePonyData ponyData in ponyDatas) {
             ponies[new Guid(ponyData.uuid)]
-                .InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue);
+                .InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue, this);
         }
     }
 
     private void LoadScriptData(PropertyObjectData[] objectDatas) {
         foreach (PropertyObjectData objectData in objectDatas) {
-            propertyObjects[objectData.id].InitScriptData(objectData.data, this);
+            string[] userUuids = objectData.users ?? new string[0];
+            IEnumerable<Pony> users = userUuids.Select(uuid => GetPony(new Guid(uuid)));
+            propertyObjects[objectData.id].InitScriptData(objectData.data, users, this);
         }
     }
 

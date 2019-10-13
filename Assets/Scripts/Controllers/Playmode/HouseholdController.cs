@@ -69,7 +69,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         }
         TerrainTile terrainTile = hit.transform.GetComponent<TerrainTile>();
         if (terrainTile != null) {
-            List<PonyAction> actions = terrainTile.GetActions(selectedPony);
+            ICollection<PonyAction> actions = terrainTile.GetActions(selectedPony);
             cursorController.SetCursor(actions.Count > 0 ? CursorType.GoHere : CursorType.Unavailable);
             HandleHover(actions);
             return;
@@ -78,14 +78,14 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         if (hitParent != null) {
             PropertyObject propertyObject = hit.transform.GetComponentInParent<PropertyObject>();
             if (propertyObject != null) {
-                List<PonyAction> actions = propertyObject.GetActions(selectedPony);
+                ICollection<PonyAction> actions = propertyObject.GetActions(selectedPony);
                 cursorController.SetCursor(actions.Count > 0 ? CursorType.Interact : CursorType.Unavailable);
                 HandleHover(actions);
                 return;
             }
             Pony pony = hit.transform.parent.GetComponent<Pony>();
             if (pony != null) {
-                List<PonyAction> actions = pony.GetActions(selectedPony);
+                ICollection<PonyAction> actions = pony.GetActions(selectedPony);
                 cursorController.SetCursor(actions.Count > 0 ? CursorType.InteractPony : CursorType.Unavailable);
                 HandleHover(actions);
                 return;
@@ -94,7 +94,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         cursorController.SetCursor(CursorType.Normal);
     }
 
-    private void HandleHover(List<PonyAction> actions) {
+    private void HandleHover(ICollection<PonyAction> actions) {
         if (Input.GetMouseButtonUp(0)) {
             if (pieMenu != null) {
                 Destroy(pieMenu.gameObject);

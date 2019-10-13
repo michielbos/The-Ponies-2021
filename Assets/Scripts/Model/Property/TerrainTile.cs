@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Model.Actions;
 using Model.Ponies;
-using Scripts;
 using UnityEngine;
 
 namespace Model.Property {
@@ -11,7 +10,7 @@ namespace Model.Property {
 /// A tile that is part of the terrain.
 /// </summary>
 [Serializable]
-public class TerrainTile : MonoBehaviour, IActionProvider {
+public class TerrainTile : MonoBehaviour, IActionTarget {
     public int height;
     public int type;
     public Transform model;
@@ -39,8 +38,8 @@ public class TerrainTile : MonoBehaviour, IActionProvider {
         model.GetComponent<MeshRenderer>().enabled = visible;
     }
 
-    public List<PonyAction> GetActions(Pony pony) {
-        return ScriptManager.Instance.hooks.RequestTileActions(pony, this);
+    public ICollection<PonyAction> GetActions(Pony pony) {
+        return ActionManager.GetActionsForTile(pony, this);
     }
 }
 

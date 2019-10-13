@@ -4,8 +4,6 @@ using Controllers;
 using Model.Actions;
 using Model.Data;
 using Model.Ponies;
-using MoonSharp.Interpreter;
-using Scripts;
 using UnityEngine;
 using Util;
 
@@ -16,19 +14,23 @@ namespace Model.Property {
 /// </summary>
 [System.Serializable]
 [RequireComponent(typeof(ModelContainer))]
-public class PropertyObject : MonoBehaviour, IActionProvider {
+public class PropertyObject : MonoBehaviour, IActionTarget {
     public int id;
     private ObjectRotation rotation;
     public FurniturePreset preset;
     public int skin;
     public int value;
-    public readonly IDictionary<DynValue, DynValue> data = new Dictionary<DynValue, DynValue>();
+    
+    public readonly IDictionary<string, object> data = new Dictionary<string, object>();
+    public readonly HashSet<Pony> users = new HashSet<Pony>();
 
     private AudioSource audioSource;
     private string lastAnimation;
     private string lastSound;
     
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
+
+    public string Type => preset.tags.Get("type") ?? "";
 
     public Vector2Int TilePosition {
         get {
@@ -60,16 +62,27 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
             PlayAnimation(animation);
     }
 
-    public void InitScriptData(DataPair[] data, Property property) {
+    public void InitScriptData(DataPair[] data, IEnumerable<Pony> users, Property property) {
         foreach (DataPair pair in data) {
-            this.data[pair.GetDynKey(property)] = pair.GetDynValue(property);
+            this.data[pair.key] = pair.GetValue(property);
+        }
+        foreach (Pony user in users) {
+            this.users.Add(user);
         }
     }
 
     public PropertyObjectData GetPropertyObjectData() {
         Vector2Int tilePosition = TilePosition;
-        return new PropertyObjectData(id, tilePosition.x, tilePosition.y, (int) Rotation, preset.guid.ToString(), skin,
-            value, data.Select(pair => DataPair.FromDynValues(pair.Key, pair.Value)).ToArray(), GetAnimation());
+        return new PropertyObjectData(id,
+            tilePosition.x,
+            tilePosition.y,
+            (int) Rotation,
+            preset.guid.ToString(),
+            skin,
+            value,
+            data.Select(pair => DataPair.FromValues(pair.Key, pair.Value)).ToArray(),
+            GetAnimation(),
+            users.Select(pony => pony.uuid.ToString()).ToArray());
     }
 
     /// <summary>
@@ -103,8 +116,8 @@ public class PropertyObject : MonoBehaviour, IActionProvider {
         Model.gameObject.SetActive(visible);
     }
 
-    public List<PonyAction> GetActions(Pony pony) {
-        return ScriptManager.Instance.hooks.RequestObjectActions(pony, this);
+    public ICollection<PonyAction> GetActions(Pony pony) {
+        return ActionManager.GetActionsForObject(pony, this);
     }
 
     public bool PlaySound(string name) {

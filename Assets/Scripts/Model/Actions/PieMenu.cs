@@ -11,9 +11,9 @@ public class PieMenu : MonoBehaviour {
     
     public Button buttonPrefab;
     private Pony pony;
-    private List<PonyAction> actions;
+    private ICollection<PonyAction> actions;
 
-    public void Init(Pony pony, List<PonyAction> actions) {
+    public void Init(Pony pony, ICollection<PonyAction> actions) {
         this.pony = pony;
         this.actions = actions;
         int index = 0;

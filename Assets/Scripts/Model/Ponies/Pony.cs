@@ -7,13 +7,11 @@ using Controllers.Singletons;
 using JetBrains.Annotations;
 using Model.Actions;
 using Model.Data;
-using Scripts;
-using Scripts.Proxies;
 using UnityEngine;
 
 namespace Model.Ponies {
 
-public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
+public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     private const float WalkSpeed = 3f;
     
     public GameObject indicator;
@@ -53,10 +51,10 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         indicator.GetComponent<Renderer>().material = new Material(indicatorMaterial);
     }
 
-    public void InitGamePony(float x, float y, Needs needs, PonyActionData[] actionQueue) {
+    public void InitGamePony(float x, float y, Needs needs, PonyActionData[] actionQueue, Property.Property property) {
         this.needs = needs;
         transform.position = new Vector3(x, 0, y);
-        queuedActions.AddRange(actionQueue.Select(data => ScriptPonyAction.FromData(this, data)));
+        queuedActions.AddRange(actionQueue.Select(data => ActionManager.LoadFromData(this, data, property)));
     }
 
     private void OnEnable() {
@@ -133,8 +131,10 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
         }
     }
     
-    public List<PonyAction> GetActions(Pony pony) {
-        return ScriptManager.Instance.hooks.RequestPonyActions(pony, this);
+    public ICollection<PonyAction> GetActions(Pony pony) {
+        // TODO: Return actions.
+        return new List<PonyAction>();
+        // return ScriptManager.Instance.hooks.RequestPonyActions(pony, this);
     }
 
     public void CancelAction(PonyAction action) {
@@ -190,6 +190,14 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionProvider {
 
     public void CancelWalking() {
         walkPath = null;
+    }
+    
+    public bool WalkTo(Vector2Int target) {
+        if (Equals(TilePosition, target))
+            return true;
+        if (!Equals(WalkTarget, target))
+            SetWalkTarget(target);
+        return false;
     }
 }
 
