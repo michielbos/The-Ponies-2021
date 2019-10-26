@@ -13,7 +13,6 @@ namespace Controllers.Tools {
 /// <summary>
 /// Tool for buy/build mode that deals with buying, moving and selling furniture.
 /// </summary>
-/// 
 public class BuyTool : MonoBehaviour, ITool {
     private int defaultLayer;
     private int terrainLayer;
@@ -27,7 +26,7 @@ public class BuyTool : MonoBehaviour, ITool {
     private PropertyObject movingObject;
 
     private BuyToolMarker buildMarker;
-    private TerrainTile targetTile;
+    private IObjectSlot targetSlot;
     private bool pressingTile;
     private bool canPlace;
 
@@ -102,16 +101,16 @@ public class BuyTool : MonoBehaviour, ITool {
     private void UpdateBuildMarker(bool ignoreClick) {
         TerrainTile newTargetTile = GetTileUnderCursor();
         if (newTargetTile != null) {
-            if (newTargetTile != targetTile) {
+            if (!ReferenceEquals(newTargetTile, targetSlot)) {
                 BuildMarkerMoved(newTargetTile);
             }
 
             if (!ignoreClick && Input.GetMouseButtonDown(0)) {
                 pressingTile = true;
             }
-        } else if (targetTile != null) {
+        } else if (targetSlot != null) {
             buildMarker.transform.position = new Vector3(0, -100, 0);
-            targetTile = null;
+            targetSlot = null;
         }
     }
 
@@ -133,9 +132,9 @@ public class BuyTool : MonoBehaviour, ITool {
         return null;
     }
 
-    private void BuildMarkerMoved(TerrainTile newTile) {
-        targetTile = newTile;
-        buildMarker.TilePosition = newTile.TilePosition;
+    private void BuildMarkerMoved(IObjectSlot newSlot) {
+        targetSlot = newSlot;
+        buildMarker.transform.position = newSlot.SlotPosition;
         UpdateCanPlace();
     }
 
@@ -145,7 +144,7 @@ public class BuyTool : MonoBehaviour, ITool {
     }
 
     private bool CanPlaceObject() {
-        if (targetTile == null)
+        if (targetSlot == null)
             return false;
         FurniturePreset movingPreset = GetMovingPreset();
         ICollection<Vector2Int> requiredTiles = buildMarker.OccupiedTiles;
@@ -222,17 +221,17 @@ public class BuyTool : MonoBehaviour, ITool {
             SoundController.Instance.PlaySound(SoundType.Deny);
         } else if (movingObject != null) {
             SoundController.Instance.PlaySound(SoundType.Place);
-            movingObject.TilePosition = targetTile.TilePosition;
+            movingObject.TilePosition = targetSlot.SlotPosition.ToTilePosition();
             movingObject.Rotation = buildMarker.MarkerRotation;
             ClearSelection();
         } else {
             SoundController.Instance.PlaySound(SoundType.Buy);
             MoneyController.Instance.ChangeFunds(-placingPreset.price);
-            Vector2Int tilePosition = targetTile.TilePosition;
+            Vector2Int tilePosition = targetSlot.SlotPosition.ToTilePosition();
             PropertyController.Instance.property.PlacePropertyObject(tilePosition.x, tilePosition.y,
                 buildMarker.MarkerRotation, placingPreset, placingSkin);
             if (Input.GetKey(KeyCode.LeftShift)) {
-                BuildMarkerMoved(targetTile);
+                BuildMarkerMoved(targetSlot);
             } else {
                 ClearSelection();
             }
