@@ -10,8 +10,9 @@ GameObject:
   m_Component:
   - component: {fileID: 4128004981058438}
   - component: {fileID: -5526610146533737356}
+  - component: {fileID: -6640598213468876164}
   m_Layer: 0
-  m_Name: BuildMarker
+  m_Name: BuyToolMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -43,3 +44,21 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7bb428d5bf484af8b5f91f00f1b0c287, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &-6640598213468876164
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1824389368066718}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1abfdba3c5b346538344f5f3676a7f65, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  buyMarkingPrefab: {fileID: 1526158950045368, guid: 6a23cafba1dd24e5092c1de645542670,
+    type: 3}
+  buyMarkingNormalMaterial: {fileID: 2100000, guid: 70ca19e7a23ef4b6396c738d3b4b889d,
+    type: 2}
+  buyMarkingDisallowedMaterial: {fileID: 2100000, guid: e1865fdd2071b4a548cd3aef30074851,
+    type: 2}

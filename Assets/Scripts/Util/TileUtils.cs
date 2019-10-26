@@ -54,14 +54,14 @@ public static class TileUtils {
         int distanceFromEnd = 0) {
         return GetBorderTiles(tiles, direction, distanceFromEnd).Select(tile => GetNorthWestBorder(tile, direction));
     }
-    
+
     /// <summary>
     /// Get the tile that would be next to this one, when moving 1 tile into the given direction.
     /// </summary>
     public static Vector2Int GetNeighbourTile(this Vector2Int tile, ObjectRotation direction) {
         return tile + GetTileForDirection(direction);
     }
-    
+
     private static Vector2Int GetTileForDirection(ObjectRotation direction) {
         switch (direction) {
             case ObjectRotation.SouthEast:
@@ -76,6 +76,19 @@ public static class TileUtils {
                 throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
         }
     }
+
+    /// <summary>
+    /// Convert a tile position to a Vector3 world position.
+    /// </summary>
+    public static Vector3 ToWorldPosition(this Vector2Int tilePosition) =>
+        new Vector3(tilePosition.x, 0, tilePosition.y);
+    
+    /// <summary>
+    /// Convert a world position to a tile position.
+    /// This rounds the position and removes the height data.
+    /// </summary>
+    public static Vector2Int ToTilePosition(this Vector3 worldPosition) =>
+        new Vector2Int(Mathf.RoundToInt(worldPosition.x), Mathf.RoundToInt(worldPosition.z));
 }
 
 }

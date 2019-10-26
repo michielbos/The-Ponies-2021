@@ -15,44 +15,26 @@ namespace Controllers.Tools {
 /// </summary>
 /// 
 public class BuyTool : MonoBehaviour, ITool {
-    private const int LAYER_TERRAIN = 8;
     private int defaultLayer;
+    private int terrainLayer;
+    private int placeRaycastLayer;
 
-    public GameObject buildMarkerPrefab;
-    public GameObject buyMarkingPrefab;
-    public Material buyMarkingNormalMaterial;
-    public Material buyMarkingDisallowedMaterial;
+    public BuyToolMarker buildMarkerPrefab;
 
     private FurniturePreset placingPreset;
     private int placingSkin;
 
     private PropertyObject movingObject;
 
-    private GameObject buildMarker;
-    private ModelContainer buildMarkerModel;
-    private ObjectRotation markerRotation = ObjectRotation.SouthEast;
-    private readonly List<GameObject> buyMarkings;
+    private BuyToolMarker buildMarker;
     private TerrainTile targetTile;
     private bool pressingTile;
     private bool canPlace;
 
-    public ObjectRotation MarkerRotation {
-        get { return markerRotation; }
-        set {
-            markerRotation = value;
-            if (buildMarkerModel != null) {
-                GetMovingPreset().FixModelTransform(buildMarkerModel.Model.transform, markerRotation);
-                UpdateCanPlace();
-            }
-        }
-    }
-
-    public BuyTool() {
-        buyMarkings = new List<GameObject>();
-    }
-
     private void Start() {
+        terrainLayer = LayerMask.GetMask("Terrain");
         defaultLayer = LayerMask.GetMask("Default");
+        placeRaycastLayer = LayerMask.GetMask("Terrain", "Default");
     }
 
     public void OnDisable() {
@@ -60,14 +42,13 @@ public class BuyTool : MonoBehaviour, ITool {
     }
 
     public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex) {
-        if (GetMovingPreset() != null) {
+        if (buildMarker != null) {
+            buildMarker.UpdateMarker();
             if (pressingTile) {
                 HandlePlacementHolding();
             } else {
                 UpdateBuildMarker(false);
             }
-
-            HandleRotationButtons();
         } else {
             HandleHovering();
         }
@@ -87,14 +68,13 @@ public class BuyTool : MonoBehaviour, ITool {
         ClearSelection();
         placingPreset = furniturePreset;
         placingSkin = skin;
-        CreateBuildMarker(placingPreset);
+        CreateBuildMarker(placingPreset, skin, ObjectRotation.SouthEast);
     }
 
     public void Enable() {
         pressingTile = false;
         movingObject = null;
         buildMarker = null;
-        buildMarkerModel = null;
         placingPreset = null;
     }
 
@@ -104,41 +84,19 @@ public class BuyTool : MonoBehaviour, ITool {
                 movingObject.SetVisibility(true);
             }
 
-            Destroy(buildMarker);
+            Destroy(buildMarker.gameObject);
         }
     }
 
-    private void CreateBuildMarker(FurniturePreset preset) {
+    private void CreateBuildMarker(FurniturePreset preset, int skin, ObjectRotation rotation) {
         buildMarker = Instantiate(buildMarkerPrefab);
-        buildMarkerModel = buildMarker.GetComponent<ModelContainer>();
-        preset.ApplyToModel(buildMarkerModel, placingSkin);
-        SetBuildMarkerPosition(0, 0);
-        ObjectRotation rotation = MarkerRotation;
-        MarkerRotation = ObjectRotation.SouthEast;
-        PlaceBuyMarkings();
-        MarkerRotation = rotation;
-        buildMarker.transform.position = new Vector3(0, -100, 0);
+        buildMarker.Init(preset, skin, rotation);
     }
-
-    private void PlaceBuyMarkings() {
-        foreach (Vector2Int tile in GetMovingPreset().occupiedTiles) {
-            buyMarkings.Add(Instantiate(buyMarkingPrefab, new Vector3(tile.x + 0.5f, 0.01f, tile.y + 0.5f),
-                buyMarkingPrefab.transform.rotation, buildMarkerModel.Model.transform));
-        }
-    }
-
+    
     private FurniturePreset GetMovingPreset() {
         if (placingPreset != null)
             return placingPreset;
         return movingObject != null ? movingObject.preset : null;
-    }
-
-    private void RemoveBuyMarkings() {
-        foreach (GameObject buyMarking in buyMarkings) {
-            Destroy(buyMarking);
-        }
-
-        buyMarkings.Clear();
     }
 
     private void UpdateBuildMarker(bool ignoreClick) {
@@ -160,57 +118,57 @@ public class BuyTool : MonoBehaviour, ITool {
     [CanBeNull]
     private TerrainTile GetTileUnderCursor() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (!HUDController.GetInstance().IsMouseOverGui() && Physics.Raycast(ray, out hit, 1000, 1 << LAYER_TERRAIN)) {
+        if (!HUDController.GetInstance().IsMouseOverGui() &&
+            Physics.Raycast(ray, out RaycastHit hit, 1000, terrainLayer))
             return hit.collider.GetComponent<TerrainTile>();
-        }
+        return null;
+    }
 
+    [CanBeNull]
+    private PropertyObject GetObjectUnderCursor() {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (!HUDController.GetInstance().IsMouseOverGui() &&
+            Physics.Raycast(ray, out RaycastHit hit, 1000, defaultLayer))
+            return hit.collider.GetComponentInParent<PropertyObject>();
         return null;
     }
 
     private void BuildMarkerMoved(TerrainTile newTile) {
         targetTile = newTile;
+        buildMarker.TilePosition = newTile.TilePosition;
         UpdateCanPlace();
-        Vector2Int tilePosition = targetTile.TilePosition;
-        SetBuildMarkerPosition(tilePosition.x, tilePosition.y);
     }
 
     private void UpdateCanPlace() {
-        if (targetTile == null) {
-            canPlace = false;
-            return;
-        }
-
         canPlace = CanPlaceObject();
-        foreach (GameObject buyMarking in buyMarkings) {
-            buyMarking.GetComponent<Renderer>().material =
-                canPlace ? buyMarkingNormalMaterial : buyMarkingDisallowedMaterial;
-        }
+        buildMarker.SetCanPlace(canPlace);
     }
 
     private bool CanPlaceObject() {
+        if (targetTile == null)
+            return false;
         FurniturePreset movingPreset = GetMovingPreset();
-        Vector2Int[] requiredTiles = movingPreset.GetOccupiedTiles(targetTile.TilePosition, MarkerRotation);
+        ICollection<Vector2Int> requiredTiles = buildMarker.OccupiedTiles;
         List<Wall> walls = PropertyController.Instance.property.GetOccupiedWalls(requiredTiles);
 
         bool canPlace = placingPreset == null || MoneyController.Instance.CanAfford(placingPreset.price);
 
         if (!canPlace)
             return false;
-        
+
         Property property = PropertyController.Instance.property;
-        
+
         // Check if the required walls for Wall and ThroughWall types are in place.
-        IEnumerable<TileBorder> tileBorders = movingPreset.GetRequiredWallBorders(requiredTiles, MarkerRotation);
+        IEnumerable<TileBorder> tileBorders =
+            movingPreset.GetRequiredWallBorders(requiredTiles, buildMarker.MarkerRotation);
         if (!property.AllBordersContainWalls(tileBorders)) {
             return false;
         }
 
         if (!CheatsController.Instance.moveObjectsMode) {
             List<PropertyObject> tileObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
-            foreach (PropertyObject tileObject in tileObjects) {
-                if (tileObject != movingObject)
-                    return false;
+            if (tileObjects.Any(tileObject => tileObject != movingObject)) {
+                return false;
             }
 
             if (walls.Count > 0) {
@@ -223,10 +181,9 @@ public class BuyTool : MonoBehaviour, ITool {
             }
         }
 
-        foreach (Vector2Int tile in requiredTiles) {
-            if (tile.x < 0 || tile.y < 0 || tile.x >= property.TerrainWidth || tile.y >= property.TerrainHeight) {
-                return false;
-            }
+        if (requiredTiles.Any(tile =>
+            tile.x < 0 || tile.y < 0 || tile.x >= property.TerrainWidth || tile.y >= property.TerrainHeight)) {
+            return false;
         }
 
         switch (movingPreset.placementType) {
@@ -242,29 +199,15 @@ public class BuyTool : MonoBehaviour, ITool {
             case PlacementType.Ceiling:
                 return requiredTiles.All(tile => property.IsInsideRoom(tile));
             default:
-                //TODO: Check for surfaces, ceilings.
                 return false;
         }
     }
 
-    private void SetBuildMarkerPosition(int x, int y) {
-        buildMarker.transform.position = new Vector3(x, 0, y);
-    }
-
     private void HandlePlacementHolding() {
-        TerrainTile newTargetTile = GetTileUnderCursor();
-        if (newTargetTile != null) {
-            Vector2Int diff = targetTile.TilePosition - newTargetTile.TilePosition;
-            ObjectRotation newRotation = MarkerRotation;
-            if (diff.x != 0 && Math.Abs(diff.x) > Math.Abs(diff.y)) {
-                newRotation = diff.x > 0 ? ObjectRotation.SouthWest : ObjectRotation.NorthEast;
-            } else if (diff.y != 0 && Math.Abs(diff.y) > Math.Abs(diff.x)) {
-                newRotation = diff.y > 0 ? ObjectRotation.SouthEast : ObjectRotation.NorthWest;
-            }
-
-            if (newRotation != MarkerRotation) {
-                SoundController.Instance.PlaySound(SoundType.Rotate);
-                MarkerRotation = newRotation;
+        TerrainTile tileUnderCursor = GetTileUnderCursor();
+        if (tileUnderCursor != null) {
+            if (buildMarker.HandleDragRotation(tileUnderCursor.TilePosition)) {
+                UpdateCanPlace();
             }
         }
 
@@ -280,14 +223,14 @@ public class BuyTool : MonoBehaviour, ITool {
         } else if (movingObject != null) {
             SoundController.Instance.PlaySound(SoundType.Place);
             movingObject.TilePosition = targetTile.TilePosition;
-            movingObject.Rotation = MarkerRotation;
+            movingObject.Rotation = buildMarker.MarkerRotation;
             ClearSelection();
         } else {
             SoundController.Instance.PlaySound(SoundType.Buy);
             MoneyController.Instance.ChangeFunds(-placingPreset.price);
             Vector2Int tilePosition = targetTile.TilePosition;
-            PropertyController.Instance.property.PlacePropertyObject(tilePosition.x, tilePosition.y, MarkerRotation,
-                placingPreset, placingSkin);
+            PropertyController.Instance.property.PlacePropertyObject(tilePosition.x, tilePosition.y,
+                buildMarker.MarkerRotation, placingPreset, placingSkin);
             if (Input.GetKey(KeyCode.LeftShift)) {
                 BuildMarkerMoved(targetTile);
             } else {
@@ -297,11 +240,7 @@ public class BuyTool : MonoBehaviour, ITool {
     }
 
     private void HandleHovering() {
-        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-        RaycastHit hit;
-        if (HUDController.GetInstance().IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000, defaultLayer))
-            return;
-        PropertyObject propertyObject = hit.collider.transform.GetComponentInParent<PropertyObject>();
+        PropertyObject propertyObject = GetObjectUnderCursor();
         if (propertyObject == null)
             return;
         //TODO: Highlight object if it can be picked up.
@@ -318,10 +257,7 @@ public class BuyTool : MonoBehaviour, ITool {
         ClearSelection();
         movingObject = propertyObject;
         movingObject.SetVisibility(false);
-        CreateBuildMarker(movingObject.preset);
-        targetTile = null;
-        MarkerRotation = movingObject.Rotation;
-        UpdateBuildMarker(true);
+        CreateBuildMarker(movingObject.preset, movingObject.skin, movingObject.Rotation);
     }
 
     private void SellSelection() {
@@ -345,22 +281,8 @@ public class BuyTool : MonoBehaviour, ITool {
         }
 
         if (buildMarker != null) {
-            Destroy(buildMarker);
+            Destroy(buildMarker.gameObject);
             buildMarker = null;
-        }
-
-        RemoveBuyMarkings();
-    }
-
-    private void HandleRotationButtons() {
-        if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.Comma)) {
-            SoundController.Instance.PlaySound(SoundType.Rotate);
-            MarkerRotation = ObjectRotationUtil.RotateCounterClockwise(MarkerRotation);
-        }
-
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Period)) {
-            SoundController.Instance.PlaySound(SoundType.Rotate);
-            MarkerRotation = ObjectRotationUtil.RotateClockwise(MarkerRotation);
         }
     }
 }

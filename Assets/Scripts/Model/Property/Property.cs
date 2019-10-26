@@ -321,7 +321,7 @@ public class Property : MonoBehaviour {
     /// </summary>
     /// <param name="tiles">The coordinates of the tiles.</param>
     /// <returns>A list of all PropertyObjects with a tile overlapping at least one of the given positions.</returns>
-    public List<PropertyObject> GetObjectsOnTiles(Vector2Int[] tiles) {
+    public List<PropertyObject> GetObjectsOnTiles(ICollection<Vector2Int> tiles) {
         //This might come with a performance overhead when there are a lot of objects.
         //If performance becomes an issue, we could remember all overlapping objects inside each terrain tile.
         List<PropertyObject> objectsOnTiles = new List<PropertyObject>();
