@@ -27,7 +27,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     private AudioSource audioSource;
     private string lastAnimation;
     private string lastSound;
-    private SurfaceSlot[] surfaceSlots;
+    private SurfaceSlot[] surfaceSlots = new SurfaceSlot[0];
 
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
 
@@ -44,8 +44,11 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     public ObjectRotation Rotation {
         get => Model.transform.GetObjectRotation();
         set {
+            ObjectRotation oldRotation = Rotation;
             preset.FixModelTransform(Model, value);
-            Debug.Log(value + " - " + Rotation);
+            foreach (SurfaceSlot slot in surfaceSlots) {
+                slot.Rotate(oldRotation, Rotation);
+            }
         }
     }
 
@@ -57,10 +60,11 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         this.skin = skin;
         this.value = value;
         preset.ApplyToModel(GetComponent<ModelContainer>(), skin);
+        Rotation = ObjectRotation.SouthEast;
+        surfaceSlots = preset.GetSurfaceSlots().Select(pos => SurfaceSlot.CreateSlot(this, pos)).ToArray();
         Rotation = rotation;
         if (!string.IsNullOrEmpty(animation))
             PlayAnimation(animation);
-        surfaceSlots = preset.GetSurfaceSlots().Select(pos => new SurfaceSlot(this, pos)).ToArray();
     }
 
     public void InitScriptData(DataPair[] data, IEnumerable<Pony> users, Property property) {

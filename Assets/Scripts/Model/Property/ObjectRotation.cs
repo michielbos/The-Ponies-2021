@@ -52,6 +52,15 @@ public static class ObjectRotationUtil {
         return (ObjectRotation) (((int) current - 1 + turns) % 4 + 1);
     }
 
+    /// <summary>
+    /// Returns the number of clockwise turns to another object rotation.
+    /// </summary>
+    public static int GetTurnsTo(this ObjectRotation rotation, ObjectRotation destination) {
+        if (rotation > destination)
+            return destination - rotation + 4;
+        return destination - rotation;
+    }
+
     public static ObjectRotation GetObjectRotation(this Transform transform) {
         return FromRotationAngle(transform.eulerAngles.y);
     }

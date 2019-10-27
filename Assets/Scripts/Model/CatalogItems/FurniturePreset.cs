@@ -103,7 +103,7 @@ public class FurniturePreset : Preset {
     public Vector2Int[] GetOccupiedTiles(Vector2Int position, ObjectRotation objectRotation) {
         Vector2Int[] occupied = new Vector2Int[occupiedTiles.Length];
         for (int i = 0; i < occupied.Length; i++) {
-            occupied[i] = position + RotateTile(occupiedTiles[i], objectRotation);
+            occupied[i] = position + occupiedTiles[i].RotateTileInGroup(objectRotation);
         }
         return occupied;
     }
@@ -121,21 +121,6 @@ public class FurniturePreset : Preset {
         return new TileBorder[0];
     }
 
-    private Vector2Int RotateTile(Vector2Int tile, ObjectRotation rotation) {
-        // Sorry for the yuckiness, but at least it works now. And it's actually performance efficiënt-ish.
-        if (rotation == ObjectRotation.SouthWest) {
-            return new Vector2Int(tile.y, -tile.x);
-        }
-        if (rotation == ObjectRotation.NorthWest) {
-            return new Vector2Int(-tile.x, -tile.y);
-        }
-        if (rotation == ObjectRotation.NorthEast) {
-            return new Vector2Int(-tile.y, tile.x);
-        }
-        // SouthEast
-        return tile;
-    }
-    
     public ICollection<Vector3> GetSurfaceSlots() {
         if (!IsSurface)
             return new Vector3[0];

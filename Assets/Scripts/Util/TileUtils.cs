@@ -89,6 +89,41 @@ public static class TileUtils {
     /// </summary>
     public static Vector2Int ToTilePosition(this Vector3 worldPosition) =>
         new Vector2Int(Mathf.RoundToInt(worldPosition.x), Mathf.RoundToInt(worldPosition.z));
+    
+    /// <summary>
+    /// Calculate the new position of a tile, assuming it was rotated as part of a tile group.
+    /// </summary>
+    public static Vector2Int RotateTileInGroup(this Vector2Int tile, ObjectRotation rotation) {
+        if (rotation == ObjectRotation.SouthWest) {
+            return new Vector2Int(tile.y, -tile.x);
+        }
+        if (rotation == ObjectRotation.NorthWest) {
+            return new Vector2Int(-tile.x, -tile.y);
+        }
+        if (rotation == ObjectRotation.NorthEast) {
+            return new Vector2Int(-tile.y, tile.x);
+        }
+        // SouthEast
+        return tile;
+    }
+    
+    /// <summary>
+    /// Vector3 version of RotateTileInGroup.
+    /// Calculate the new position, assuming it was rotated as part of a tile group.
+    /// </summary>
+    public static Vector3 RotateInGroup(this Vector3 tile, ObjectRotation rotation) {
+        if (rotation == ObjectRotation.SouthWest) {
+            return new Vector3(tile.z, tile.y, -tile.x);
+        }
+        if (rotation == ObjectRotation.NorthWest) {
+            return new Vector3(-tile.x, tile.y, -tile.z);
+        }
+        if (rotation == ObjectRotation.NorthEast) {
+            return new Vector3(-tile.z, tile.y, tile.x);
+        }
+        // SouthEast
+        return tile;
+    }
 }
 
 }
