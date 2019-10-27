@@ -17,15 +17,17 @@ public enum ObjectRotation {
 /// Util class for ObjectRotation because C# doesn't seem to support any enum methods.
 /// </summary>
 public static class ObjectRotationUtil {
-    public static int GetRotationAngle(ObjectRotation objectRotation) {
+    public static int GetRotationAngle(this ObjectRotation objectRotation) {
         return ((int) objectRotation - 1) * 90;
     }
     
-    public static ObjectRotation FromRotationAngle(int angle) {
-        return (ObjectRotation)(angle / 90 % 4 + 1);
+    public static ObjectRotation FromRotationAngle(float angle) {
+        int wholeAngle = Mathf.RoundToInt(angle);
+        // Objects are always rotated 180 degrees, because that's how Blender/Max export them.
+        return (ObjectRotation)((wholeAngle + 180) / 90 % 4 + 1);
     }
 
-    public static Vector3 GetRotationVector(ObjectRotation objectRotation) {
+    public static Vector3 GetRotationVector(this ObjectRotation objectRotation) {
         return new Vector3(0, GetRotationAngle(objectRotation), 0);
     }
 
@@ -48,6 +50,10 @@ public static class ObjectRotationUtil {
     /// </summary>
     public static ObjectRotation Add(ObjectRotation current, int turns) {
         return (ObjectRotation) (((int) current - 1 + turns) % 4 + 1);
+    }
+
+    public static ObjectRotation GetObjectRotation(this Transform transform) {
+        return FromRotationAngle(transform.eulerAngles.y);
     }
 }
 

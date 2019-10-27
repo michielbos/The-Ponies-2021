@@ -17,7 +17,6 @@ namespace Model.Property {
 [RequireComponent(typeof(ModelContainer))]
 public class PropertyObject : MonoBehaviour, IActionTarget {
     public int id;
-    private ObjectRotation rotation;
     public FurniturePreset preset;
     public int skin;
     public int value;
@@ -43,14 +42,13 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     }
 
     public ObjectRotation Rotation {
-        get { return rotation; }
+        get => Model.transform.GetObjectRotation();
         set {
-            rotation = value;
-            Model.rotation = Quaternion.identity;
-            preset.FixModelTransform(Model, Rotation);
+            preset.FixModelTransform(Model, value);
+            Debug.Log(value + " - " + Rotation);
         }
     }
-    
+
     public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value,
         string animation) {
         this.id = id;

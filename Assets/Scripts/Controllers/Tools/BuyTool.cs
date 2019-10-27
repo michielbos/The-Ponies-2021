@@ -100,7 +100,6 @@ public class BuyTool : MonoBehaviour, ITool {
 
     private void UpdateBuildMarker(bool ignoreClick) {
         IObjectSlot newSlot = GetSlotUnderCursor();
-        Debug.Log(newSlot);
         if (newSlot != null) {
             if (newSlot != targetSlot) {
                 BuildMarkerMoved(newSlot);

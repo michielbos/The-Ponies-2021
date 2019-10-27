@@ -79,7 +79,7 @@ public class FurniturePreset : Preset {
         // It's a bit dirty to do it here, but models from Blender and Max are rotated by 180 degrees.
         model.Rotate(new Vector3(0, 180, 0));
         Vector3 pivot = parent.position + new Vector3(0.5f, 0, 0.5f);
-        model.RotateAround(pivot, Vector3.up, ObjectRotationUtil.GetRotationAngle(rotation));
+        model.RotateAround(pivot, Vector3.up, rotation.GetRotationAngle());
     }
 
     public Vector2Int GetTileSize() {
