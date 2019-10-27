@@ -18,6 +18,13 @@ public class ModelContainer : MonoBehaviour {
         Model = prefab.Duplicate().gameObject;
         Model.transform.SetParent(gameObject.transform, false);
         Model.SetActive(true);
+        SetChildLayers(gameObject.layer);
+    }
+
+    private void SetChildLayers(int layer) {
+        foreach (Transform child in gameObject.GetComponentsInChildren<Transform>()) {
+            child.gameObject.layer = layer;
+        }
     }
 }
 
