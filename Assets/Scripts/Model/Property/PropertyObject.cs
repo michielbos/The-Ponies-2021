@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
 using Controllers;
+using JetBrains.Annotations;
 using Model.Actions;
 using Model.Data;
 using Model.Ponies;
@@ -20,18 +21,19 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     public FurniturePreset preset;
     public int skin;
     public int value;
-    
+
     public readonly IDictionary<string, object> data = new Dictionary<string, object>();
     public readonly HashSet<Pony> users = new HashSet<Pony>();
 
     private AudioSource audioSource;
     private string lastAnimation;
     private string lastSound;
-    
+    private SurfaceSlot[] surfaceSlots;
+
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
 
-    public string Type => preset.tags.Get("type") ?? "";
-
+    public string Type => preset.Type;
+    
     public Vector2Int TilePosition {
         get {
             Vector3 position = transform.position;
@@ -60,6 +62,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         Rotation = rotation;
         if (!string.IsNullOrEmpty(animation))
             PlayAnimation(animation);
+        surfaceSlots = preset.GetSurfaceSlots().Select(pos => new SurfaceSlot(this, pos)).ToArray();
     }
 
     public void InitScriptData(DataPair[] data, IEnumerable<Pony> users, Property property) {
@@ -103,7 +106,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             return new Vector2Int[0];
         return preset.GetOccupiedTiles(TilePosition, Rotation);
     }
-    
+
     /// <summary>
     /// Get the coordinates of the tiles occupied by this PropertyObject.
     /// </summary>
@@ -140,7 +143,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         if (audioSource != null && audioSource.isPlaying)
             audioSource.Stop();
     }
-    
+
     public string GetPlayingSound() {
         if (audioSource == null || !audioSource.isPlaying)
             return null;
@@ -160,6 +163,20 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         if (animation != null && animation.IsPlaying(lastAnimation))
             return lastAnimation;
         return null;
+    }
+
+    [CanBeNull]
+    public IObjectSlot GetClosestSurfaceSlot(Vector3 worldPosition) {
+        SurfaceSlot closest = null;
+        float bestDistance = 9999f;
+        foreach (SurfaceSlot slot in surfaceSlots) {
+            float distance = Vector3.Distance(worldPosition, slot.SlotPosition);
+            if (closest == null || distance < bestDistance) {
+                closest = slot;
+                bestDistance = distance;
+            }
+        }
+        return closest;
     }
 }
 

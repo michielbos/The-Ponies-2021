@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Model.Property;
 using PoneCrafter.Model;
 using UnityEngine;
@@ -23,6 +24,10 @@ public class FurniturePreset : Preset {
     //private Texture2D texture;
     //private Material[][] materials;
     private RenderTexture[] previewTextures;
+    
+    public string Type => tags.Get("type") ?? "";
+    
+    public bool IsSurface => Type.Let(it => it == "table" || it == "endTable" || it == "counter" || it == "desk");
 
     // TODO: Import missing fields
     public FurniturePreset(Furniture furniture) :
@@ -129,5 +134,12 @@ public class FurniturePreset : Preset {
         }
         // SouthEast
         return tile;
+    }
+    
+    public ICollection<Vector3> GetSurfaceSlots() {
+        if (!IsSurface)
+            return new Vector3[0];
+        // TODO: Calculate heights
+        return occupiedTiles.Select(tile => new Vector3(tile.x, 0.8f, tile.y)).ToArray();
     }
 }

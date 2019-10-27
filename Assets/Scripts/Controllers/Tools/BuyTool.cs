@@ -16,7 +16,7 @@ namespace Controllers.Tools {
 public class BuyTool : MonoBehaviour, ITool {
     private int defaultLayer;
     private int terrainLayer;
-    private int placeRaycastLayer;
+    private int slotRaycastLayer;
 
     public BuyToolMarker buildMarkerPrefab;
 
@@ -33,7 +33,7 @@ public class BuyTool : MonoBehaviour, ITool {
     private void Start() {
         terrainLayer = LayerMask.GetMask("Terrain");
         defaultLayer = LayerMask.GetMask("Default");
-        placeRaycastLayer = LayerMask.GetMask("Terrain", "Default");
+        slotRaycastLayer = LayerMask.GetMask("Terrain", "Default");
     }
 
     public void OnDisable() {
@@ -99,10 +99,11 @@ public class BuyTool : MonoBehaviour, ITool {
     }
 
     private void UpdateBuildMarker(bool ignoreClick) {
-        TerrainTile newTargetTile = GetTileUnderCursor();
-        if (newTargetTile != null) {
-            if (!ReferenceEquals(newTargetTile, targetSlot)) {
-                BuildMarkerMoved(newTargetTile);
+        IObjectSlot newSlot = GetSlotUnderCursor();
+        Debug.Log(newSlot);
+        if (newSlot != null) {
+            if (newSlot != targetSlot) {
+                BuildMarkerMoved(newSlot);
             }
 
             if (!ignoreClick && Input.GetMouseButtonDown(0)) {
@@ -112,6 +113,19 @@ public class BuyTool : MonoBehaviour, ITool {
             buildMarker.transform.position = new Vector3(0, -100, 0);
             targetSlot = null;
         }
+    }
+    
+    [CanBeNull]
+    private IObjectSlot GetSlotUnderCursor() {
+        Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+        if (HUDController.GetInstance().IsMouseOverGui() ||
+            !Physics.Raycast(ray, out RaycastHit hit, 1000, slotRaycastLayer))
+            return null;
+        PropertyObject propertyObject = hit.collider.GetComponentInParent<PropertyObject>();
+        if (propertyObject != null) {
+            return propertyObject.GetClosestSurfaceSlot(hit.point);
+        }
+        return hit.collider.GetComponent<TerrainTile>();
     }
 
     [CanBeNull]
@@ -188,6 +202,8 @@ public class BuyTool : MonoBehaviour, ITool {
         switch (movingPreset.placementType) {
             case PlacementType.Ground:
             case PlacementType.GroundOrSurface:
+            case PlacementType.Surface:
+            case PlacementType.Counter:
             case PlacementType.Wall:
             case PlacementType.ThroughWall:
                 return true;
