@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4128004981058438}
   - component: {fileID: -5526610146533737356}
   - component: {fileID: -6640598213468876164}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: BuyToolMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
