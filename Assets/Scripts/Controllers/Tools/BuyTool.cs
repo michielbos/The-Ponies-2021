@@ -99,7 +99,7 @@ public class BuyTool : MonoBehaviour, ITool {
     }
 
     private void UpdateBuildMarker(bool ignoreClick) {
-        IObjectSlot newSlot = GetSlotUnderCursor();
+        IObjectSlot newSlot = GetSlotUnderCursorFor(GetMovingPreset().placementType);
         if (newSlot != null) {
             if (newSlot != targetSlot) {
                 BuildMarkerMoved(newSlot);
@@ -113,7 +113,16 @@ public class BuyTool : MonoBehaviour, ITool {
             targetSlot = null;
         }
     }
-    
+
+    [CanBeNull]
+    private IObjectSlot GetSlotUnderCursorFor(PlacementType placementType) {
+        if (placementType == PlacementType.Surface ||
+            placementType == PlacementType.GroundOrSurface ||
+            placementType == PlacementType.Counter)
+            return GetSlotUnderCursor();
+        return GetTileUnderCursor();
+    }
+
     [CanBeNull]
     private IObjectSlot GetSlotUnderCursor() {
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -177,7 +186,7 @@ public class BuyTool : MonoBehaviour, ITool {
             return false;
         }
 
-        if (!CheatsController.Instance.moveObjectsMode) {
+        if (!CheatsController.Instance.moveObjectsMode && !(targetSlot is SurfaceSlot)) {
             List<PropertyObject> tileObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
             if (tileObjects.Any(tileObject => tileObject != movingObject)) {
                 return false;
