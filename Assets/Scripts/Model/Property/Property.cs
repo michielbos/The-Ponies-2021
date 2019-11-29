@@ -23,7 +23,7 @@ public class Property : MonoBehaviour {
     public Dictionary<TileBorder, Wall> walls;
     public List<Roof> roofs;
     public Dictionary<int, PropertyObject> propertyObjects;
-    public Dictionary<Guid, Pony> ponies;
+    public Dictionary<Guid, Pony> ponies = new Dictionary<Guid, Pony>();
     public Room[] Rooms { get; private set; } = new Room[0];
     [CanBeNull] public Household household;
     private int nextObjectId;

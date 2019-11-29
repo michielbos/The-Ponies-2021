@@ -54,7 +54,7 @@ public class Wall : MonoBehaviour {
     public WallCoverPreset CoverFront {
         set {
             _coverFront = value;
-            SetVisibleCoverMaterial(false, CoverFront);
+            SetVisibleCoverMaterial(true, CoverFront);
         }
         get => _coverFront;
     }
