@@ -37,7 +37,11 @@ public static class ThePoniesBuilder {
     private static void Build(string name, BuildTarget buildTarget, bool development) {
         Debug.Log("Starting " + name + " build...");
         BuildPlayerOptions options = new BuildPlayerOptions();
-        options.scenes = new[] {"Assets/_Scenes/PropertyScene.unity", "Assets/_Scenes/GameSceneTest.unity"};
+        options.scenes = new[] {
+            "Assets/_Scenes/LoadScreen.unity",
+            "Assets/_Scenes/PropertyScene.unity",
+            "Assets/_Scenes/GameSceneTest.unity"
+        };
         options.target = buildTarget;
         if (buildTarget == BuildTarget.StandaloneWindows || buildTarget == BuildTarget.StandaloneWindows64) {
             // Windows is a special snowflake.
