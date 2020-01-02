@@ -44,7 +44,7 @@ public class PoneCrafterImporter {
     /// Import all PoneCrafter files.
     /// This should be done only once, at the start of the game.
     /// </summary>
-    public async void Import() {
+    public async Task Import() {
         // TODO: Apply content UUID checks on content folder.
         gltfLoader = new GameObject("GltfLoader").AddComponent<GltfLoader>();
         Object.DontDestroyOnLoad(gltfLoader.gameObject);

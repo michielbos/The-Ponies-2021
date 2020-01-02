@@ -38,25 +38,25 @@ public class MusicController : SingletonMonoBehaviour<MusicController> {
         audioSource = Camera.main.gameObject.AddComponent<AudioSource>();
     }
 
-    private void Start() {
+    /// <summary>
+    /// Load all music from the ContentController.
+    /// Must be called after the ContentController has finished loading all audio.
+    /// </summary>
+    public void LoadAllMusic() {
         int numberOfTypes = Enum.GetNames(typeof(MusicType)).Length;
         playingClips = new AudioClip[numberOfTypes][];
         playingIndex = new int[numberOfTypes];
-        LoadAllMusic();
-    }
 
-    private void LoadAllMusic() {
         ContentController contentController = ContentController.Instance;
-        contentController.OnAudioLoaded(() => {
-            buyModeSongs = contentController.GetAudioClips("Music/Buy/").ToArray();
-            buildModeSongs = contentController.GetAudioClips("Music/Build/").ToArray();
-            capSongs = contentController.GetAudioClips("Music/CAP/").ToArray();
-            communityBuildSongs = contentController.GetAudioClips("Music/Community/").ToArray();
-            neighbourhoodSongs = contentController.GetAudioClips("Music/Neighbourhood/").ToArray();
-            foreach (MusicType musicType in Enum.GetValues(typeof(MusicType))) {
-                ShufflePlayingList(musicType);
-            }
-        });
+        buyModeSongs = contentController.GetAudioClips("Music/Buy/").ToArray();
+        buildModeSongs = contentController.GetAudioClips("Music/Build/").ToArray();
+        capSongs = contentController.GetAudioClips("Music/CAP/").ToArray();
+        communityBuildSongs = contentController.GetAudioClips("Music/Community/").ToArray();
+        neighbourhoodSongs = contentController.GetAudioClips("Music/Neighbourhood/").ToArray();
+        
+        foreach (MusicType musicType in Enum.GetValues(typeof(MusicType))) {
+            ShufflePlayingList(musicType);
+        }
     }
 
     private void Update() {
