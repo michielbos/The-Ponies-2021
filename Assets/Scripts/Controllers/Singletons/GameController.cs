@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Util;
 using Controllers;
+using Controllers.Global;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -14,8 +15,10 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 		if (!HasInstance) {
 			base.Awake();
 			DontDestroyOnLoad(gameObject);
+			// Instantiate other global controllers that should be available cross-scene.
 			gameObject.AddComponent<ContentController>();
 			gameObject.AddComponent<MusicController>();
+			gameObject.AddComponent<SettingsController>();
 		} else {
 			Destroy(gameObject);
 		}

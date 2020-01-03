@@ -5620,7 +5620,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   DaysInOneMonth: 25
   DaysInOneYear: 100
-  twelveHourClock: 1
 --- !u!114 &7785438659274785964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -15110,18 +15109,7 @@ MonoBehaviour:
   m_Group: {fileID: 0}
   onValueChanged:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 114113357470691672}
-        m_MethodName: SetClocks
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
     m_TypeName: UnityEngine.UI.Toggle+ToggleEvent, UnityEngine.UI, Version=1.0.0.0,
       Culture=neutral, PublicKeyToken=null
   m_IsOn: 1
@@ -15910,6 +15898,7 @@ GameObject:
   - component: {fileID: 169311285644750497}
   - component: {fileID: 1272645923324639710}
   - component: {fileID: 3897664548787822020}
+  - component: {fileID: 1533239222849100988}
   m_Layer: 5
   m_Name: Optns_Miscs
   m_TagString: Untagged
@@ -15975,6 +15964,19 @@ MonoBehaviour:
   m_FillClockwise: 1
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
+--- !u!114 &1533239222849100988
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6249670150361599740}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7cadc21921b94956a9b5f08f42678b0e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  twelveHourClockToggle: {fileID: 6290726122697414945}
 --- !u!1 &6310248077151466057
 GameObject:
   m_ObjectHideFlags: 0
