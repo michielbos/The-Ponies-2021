@@ -36,9 +36,7 @@ public class DiscordController : SingletonMonoBehaviour<DiscordController> {
         if (SettingsController.Instance.discordIntegration.Value) {
             UpdateActivity(DiscordState.None);
         } else {
-            // Clearing the activity explicitly will display the regular game title and icon on Discord, as if the game
-            // has no integration.
-            ClearActivity();
+            InitWithoutActivity();
         }
     }
 
@@ -84,6 +82,19 @@ public class DiscordController : SingletonMonoBehaviour<DiscordController> {
             if (result != Result.Ok) {
                 Debug.LogWarning("Failed to clear Discord activity: " + result);
             }
+        });
+    }
+
+    /// <summary>
+    /// Add an empty activity and then clear it.
+    /// This will make Discord display that the user is playing the game, without enabling Rich Presence.
+    /// </summary>
+    private void InitWithoutActivity() {
+        discord.GetActivityManager().UpdateActivity(new Activity(), result => {
+            if (result != Result.Ok) {
+                Debug.LogWarning("Failed to create empty Discord activity: " + result);
+            }
+            ClearActivity();
         });
     }
 
