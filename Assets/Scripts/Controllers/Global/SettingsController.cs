@@ -9,9 +9,12 @@ namespace Controllers.Global {
 /// </summary>
 public class SettingsController : SingletonMonoBehaviour<SettingsController> {
     public readonly BoolSetting twelveHourClock = new BoolSetting("TwelveHourClock", false);
+    public readonly BoolSetting discordIntegration = new BoolSetting("DiscordIntegration", false);
 
-    private void Start() {
+    private new void Awake() {
+        base.Awake();
         twelveHourClock.Load();
+        discordIntegration.Load();
     }
 }
 

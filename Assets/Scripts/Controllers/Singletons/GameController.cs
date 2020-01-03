@@ -19,6 +19,7 @@ public class GameController : SingletonMonoBehaviour<GameController> {
 			gameObject.AddComponent<ContentController>();
 			gameObject.AddComponent<MusicController>();
 			gameObject.AddComponent<SettingsController>();
+			gameObject.AddComponent<DiscordController>();
 		} else {
 			Destroy(gameObject);
 		}

@@ -10,6 +10,7 @@ namespace UI.Playmode {
 /// </summary>
 public class SettingsPanel : MonoBehaviour {
     public Toggle twelveHourClockToggle;
+    public Toggle discordIntegrationToggle;
 
     /// <summary>
     /// Shortcut to the instance of the SettingsController.
@@ -21,6 +22,13 @@ public class SettingsPanel : MonoBehaviour {
             Settings.twelveHourClock.Value = value;
             HUDController.Instance.UpdateTime();
         });
+        
+        discordIntegrationToggle.onValueChanged.AddListener(value => {
+            Settings.discordIntegration.Value = value;
+            if (!value) {
+                DiscordController.Instance.ClearActivity();
+            }
+        });
     }
 
     /// <summary>
@@ -28,6 +36,7 @@ public class SettingsPanel : MonoBehaviour {
     /// </summary>
     private void OnEnable() {
         twelveHourClockToggle.isOn = Settings.twelveHourClock.Value;
+        discordIntegrationToggle.isOn = Settings.discordIntegration.Value;
     }
 }
 
