@@ -3,7 +3,7 @@
 namespace UI.Utils.ColorPicker
 {
     /// <summary>
-    /// Represents a color in the HUE model.
+    /// Represents a color in the HEX model.
     /// </summary>
     [System.Serializable]
     public struct HexColor
