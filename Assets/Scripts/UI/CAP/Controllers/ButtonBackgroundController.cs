@@ -11,6 +11,8 @@ namespace UI.CAP
     [System.Serializable]
     internal struct CAPCategoryButtonBackground
     {
+        // Using this pragma to ignore the "is never assigned to, and will always have its default value" because of the struct nature of the element.
+        #pragma warning disable 0649
         /// <summary>
         /// The category concerned by the <see cref="associatedBackground"/>.
         /// </summary>
@@ -22,6 +24,7 @@ namespace UI.CAP
         /// </summary>
         [SerializeField]
         internal Sprite associatedBackground;
+        #pragma warning restore 0649
     }
 
     /// <summary>

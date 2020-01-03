@@ -12,7 +12,7 @@ namespace UI.CAP
         /// The image showed by the button.
         /// </summary>
         [SerializeField]
-        private Image _buttonImage;
+        private Image _buttonImage = null;
 
         /// <summary>
         /// Calls for an update the color preview displayed by the Color Selector Controller.

@@ -28,12 +28,12 @@ namespace UI.CAP
         /// <summary>
         /// The color selection mode for the color selector.
         /// </summary>
-        internal ColorSelectionMode ColorSelectionMode;
+        internal ColorSelectionMode ColorSelectionMode = ColorSelectionMode.Swatches;
 
         /// <summary>
         /// The processed color.
         /// </summary>
-        internal Color processedColor;
+        internal Color processedColor = Color.white;
 
         /// <summary>
         /// The text used as a header.
@@ -53,7 +53,7 @@ namespace UI.CAP
         /// The text used to display the Hex value of the color.
         /// </summary>
         [SerializeField]
-        private Text _colorHexValueText;
+        private Text _colorHexValueText = null;
 
         /// <summary>
         /// The prefab to use to make a swatch color button
