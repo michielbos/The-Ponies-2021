@@ -17,7 +17,7 @@ public enum ObjectRotation {
 /// Util class for ObjectRotation because C# doesn't seem to support any enum methods.
 /// </summary>
 public static class ObjectRotationUtil {
-    public static int GetRotationAngle(ObjectRotation objectRotation) {
+    public static int GetRotationAngle(this ObjectRotation objectRotation) {
         return ((int) objectRotation - 1) * 90;
     }
     
@@ -25,18 +25,18 @@ public static class ObjectRotationUtil {
         return (ObjectRotation)(angle / 90 % 4 + 1);
     }
 
-    public static Vector3 GetRotationVector(ObjectRotation objectRotation) {
+    public static Vector3 GetRotationVector(this ObjectRotation objectRotation) {
         return new Vector3(0, GetRotationAngle(objectRotation), 0);
     }
 
-    public static ObjectRotation RotateClockwise(ObjectRotation current) {
+    public static ObjectRotation RotateClockwise(this ObjectRotation current) {
         if (current < ObjectRotation.NorthEast) {
             return current + 1;
         }
         return ObjectRotation.SouthEast;
     }
 
-    public static ObjectRotation RotateCounterClockwise(ObjectRotation current) {
+    public static ObjectRotation RotateCounterClockwise(this ObjectRotation current) {
         if (current > ObjectRotation.SouthEast) {
             return current - 1;
         }
@@ -46,8 +46,12 @@ public static class ObjectRotationUtil {
     /// <summary>
     /// Apply the given number of clockwise turns to the given rotation.
     /// </summary>
-    public static ObjectRotation Add(ObjectRotation current, int turns) {
+    public static ObjectRotation Add(this ObjectRotation current, int turns) {
         return (ObjectRotation) (((int) current - 1 + turns) % 4 + 1);
+    }
+
+    public static ObjectRotation Inverse(this ObjectRotation current) {
+        return current.Add(2);
     }
 }
 
