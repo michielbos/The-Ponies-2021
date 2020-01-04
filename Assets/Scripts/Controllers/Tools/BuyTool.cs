@@ -245,7 +245,8 @@ public class BuyTool : MonoBehaviour, ITool {
             SoundController.Instance.PlaySound(SoundType.Deny);
         } else if (movingObject != null) {
             SoundController.Instance.PlaySound(SoundType.Place);
-            movingObject.TilePosition = targetSlot.SlotPosition.ToTilePosition();
+            movingObject.ClearParent();
+            targetSlot.PlaceObject(movingObject);
             movingObject.Rotation = buildMarker.MarkerRotation;
             ClearSelection();
         } else {

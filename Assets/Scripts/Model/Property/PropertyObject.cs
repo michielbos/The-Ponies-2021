@@ -199,6 +199,17 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         }
         return closest;
     }
+
+    /// <summary>
+    /// Remove this object from its parent slot, if it has one.
+    /// </summary>
+    public void ClearParent() {
+        SurfaceSlot parentSlot = ParentSlot;
+        if (parentSlot == null)
+            return;
+        parentSlot.SlotObject = null;
+        transform.parent = PropertyController.Property.transform;
+    }
 }
 
 }

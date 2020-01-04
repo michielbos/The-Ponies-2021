@@ -13,15 +13,11 @@ public class SurfaceSlot : MonoBehaviour, IObjectSlot {
     /// The object that is occupying this slot.
     /// Null if the slot is empty.
     /// </summary>
-    public PropertyObject SlotObject { get; private set; }
+    public PropertyObject SlotObject { get; set; }
 
     public PropertyObject SlotOwner { get; private set; }
     
     public void PlaceObject(PropertyObject propertyObject) {
-        // Orphan the object from its previous slot, if it has one.
-        if (propertyObject.ParentSlot != null) {
-            propertyObject.ParentSlot.SlotObject = null;
-        }
         SlotObject = propertyObject;
         Transform objectTransform = propertyObject.transform;
         objectTransform.parent = transform;
