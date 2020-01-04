@@ -19,7 +19,11 @@ public static class Pathfinding {
         int height = property.TerrainHeight;
         int[,] stepMap = property.GetTileOccupancyMap();
         targets = RemoveTilesOutsideMap(targets, width, height);
-        HashSet<TileBorder> occupiedBorders = property.GetImpassableBorders(); 
+        HashSet<TileBorder> occupiedBorders = property.GetImpassableBorders();
+
+        // If we're starting on a target, return that target.
+        if (targets.Contains(start))
+            return new Path(new[] {start});
         
         stepMap[start.y, start.x] = 1;
         int step;
