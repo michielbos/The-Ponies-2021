@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using System.Linq;
 using Model.Data;
 using Model.Ponies;
 
@@ -11,11 +13,22 @@ public abstract class PonyAction {
     public bool canceled;
     public bool finished;
     public int tickCount;
+    public readonly IDictionary<string, object> data = new Dictionary<string, object>();
 
     protected PonyAction(string identifier, Pony pony, string name) {
         this.identifier = identifier;
         this.pony = pony;
         this.name = name;
+    }
+
+    /// <summary>
+    /// Add data pairs to this action's additional data.
+    /// This is used for loading action data from a saved game.
+    /// </summary>
+    internal void AddDataPairs(DataPair[] dataPairs, Property.Property property) {
+        foreach (DataPair pair in dataPairs) {
+            data[pair.key] = pair.GetValue(property);
+        }
     }
 
     internal void Load(int tickCount) {
@@ -78,6 +91,15 @@ public abstract class PonyAction {
     }
 
     public abstract PonyActionData GetData();
+
+    /// <summary>
+    /// Get the additional action data, converted to a DataPair array.
+    /// This is used by the different action type implementations to save the additional action data.
+    /// </summary>
+    /// <returns></returns>
+    protected DataPair[] GetDataPairs() {
+        return data.Select(pair => DataPair.FromValues(pair.Key, pair.Value)).ToArray();
+    }
 }
 
 }

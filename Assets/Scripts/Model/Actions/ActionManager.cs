@@ -53,6 +53,7 @@ public static class ActionManager {
                 throw new ArgumentOutOfRangeException();
         }
         ponyAction?.Load(data.tickCount);
+        ponyAction?.AddDataPairs(data.data, property);
         return ponyAction;
     }
 
