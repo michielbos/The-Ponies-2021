@@ -98,10 +98,10 @@ public class BuyTool : MonoBehaviour, ITool {
         return movingObject != null ? movingObject.preset : null;
     }
 
-    private void UpdateBuildMarker(bool ignoreClick) {
+    private void UpdateBuildMarker(bool ignoreClick, bool force = false) {
         IObjectSlot newSlot = GetSlotUnderCursorFor(GetMovingPreset().placementType);
         if (newSlot != null) {
-            if (newSlot != targetSlot) {
+            if (newSlot != targetSlot ||  force) {
                 BuildMarkerMoved(newSlot);
             }
 
@@ -251,9 +251,8 @@ public class BuyTool : MonoBehaviour, ITool {
         } else {
             SoundController.Instance.PlaySound(SoundType.Buy);
             MoneyController.Instance.ChangeFunds(-placingPreset.price);
-            Vector2Int tilePosition = targetSlot.SlotPosition.ToTilePosition();
-            PropertyController.Instance.property.PlacePropertyObject(tilePosition.x, tilePosition.y,
-                buildMarker.MarkerRotation, placingPreset, placingSkin);
+            PropertyController.Instance.property.PlacePropertyObject(targetSlot, buildMarker.MarkerRotation, 
+                placingPreset, placingSkin);
             if (Input.GetKey(KeyCode.LeftShift)) {
                 BuildMarkerMoved(targetSlot);
             } else {
@@ -281,6 +280,7 @@ public class BuyTool : MonoBehaviour, ITool {
         movingObject = propertyObject;
         movingObject.SetVisibility(false);
         CreateBuildMarker(movingObject.preset, movingObject.skin, movingObject.Rotation);
+        UpdateBuildMarker(propertyObject, true);
     }
 
     private void SellSelection() {

@@ -24,8 +24,11 @@ public class TerrainTile : MonoBehaviour, IActionTarget, IObjectSlot {
     }
 
     public Vector3 SlotPosition => transform.position;
-
-    public PropertyObject SlotObject { get; set; }
+    
+    public void PlaceObject(PropertyObject propertyObject) {
+        Transform objectTransform = propertyObject.transform;
+        objectTransform.position = transform.position;
+    }
 
     public void Init(int x, int y, int height, int type) {
         TilePosition = new Vector2Int(x, y);

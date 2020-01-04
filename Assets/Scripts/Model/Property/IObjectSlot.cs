@@ -14,11 +14,10 @@ public interface IObjectSlot {
     Vector3 SlotPosition { get; }
 
     /// <summary>
-    /// The object that is occupying this slot.
-    /// Null if the slot is empty.
+    /// Place a PropertyObject on this slot.
+    /// This should update the object's position (and optionally parent) to match.
     /// </summary>
-    [CanBeNull]
-    PropertyObject SlotObject { get; set; }
+    void PlaceObject(PropertyObject propertyObject);
 }
 
 }

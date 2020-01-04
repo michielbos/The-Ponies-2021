@@ -8,14 +8,34 @@ namespace Model.Property {
 /// </summary>
 public class SurfaceSlot : MonoBehaviour, IObjectSlot {
     public Vector3 SlotPosition => transform.position;
-    public PropertyObject SlotObject { get; set; }
+    
+    /// <summary>
+    /// The object that is occupying this slot.
+    /// Null if the slot is empty.
+    /// </summary>
+    public PropertyObject SlotObject { get; private set; }
+
+    public PropertyObject SlotOwner { get; private set; }
+    
+    public void PlaceObject(PropertyObject propertyObject) {
+        // Orphan the object from its previous slot, if it has one.
+        if (propertyObject.ParentSlot != null) {
+            propertyObject.ParentSlot.SlotObject = null;
+        }
+        SlotObject = propertyObject;
+        Transform objectTransform = propertyObject.transform;
+        objectTransform.parent = transform;
+        objectTransform.localPosition = Vector3.zero;
+    }
 
     public static SurfaceSlot CreateSlot(PropertyObject propertyObject, Vector3 localPosition) {
         GameObject gameObject = new GameObject("Slot");
         Transform transform = gameObject.transform;
         transform.parent = propertyObject.transform;
         transform.localPosition = localPosition;
-        return gameObject.AddComponent<SurfaceSlot>();
+        SurfaceSlot slot = gameObject.AddComponent<SurfaceSlot>();
+        slot.SlotOwner = propertyObject;
+        return slot;
     }
 
     public void Rotate(ObjectRotation previousRotation, ObjectRotation newRotation) {

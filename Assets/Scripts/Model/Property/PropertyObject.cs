@@ -32,7 +32,13 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
 
     public string Type => preset.Type;
-    
+
+    /// <summary>
+    /// The parent object that has this object as a child, if any.
+    /// </summary>
+    [CanBeNull]
+    public SurfaceSlot ParentSlot => transform.parent.GetComponent<SurfaceSlot>();
+
     public Vector2Int TilePosition {
         get {
             Vector3 position = transform.position;
@@ -52,13 +58,13 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         }
     }
 
-    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value,
+    public void Init(int id, IObjectSlot objectSlot, ObjectRotation rotation, FurniturePreset preset, int skin, int value,
         string animation) {
         this.id = id;
-        TilePosition = new Vector2Int(x, y);
         this.preset = preset;
         this.skin = skin;
         this.value = value;
+        objectSlot.PlaceObject(this);
         preset.ApplyToModel(GetComponent<ModelContainer>(), skin);
         Rotation = ObjectRotation.SouthEast;
         surfaceSlots = preset.GetSurfaceSlots().Select(pos => SurfaceSlot.CreateSlot(this, pos)).ToArray();
@@ -87,7 +93,13 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             value,
             data.Select(pair => DataPair.FromValues(pair.Key, pair.Value)).ToArray(),
             GetAnimation(),
-            users.Select(pony => pony.uuid.ToString()).ToArray());
+            users.Select(pony => pony.uuid.ToString()).ToArray(),
+            surfaceSlots.Select(child => child.SlotObject != null ? child.SlotObject.GetChildObjectData() : null)
+                .ToArray());
+    }
+
+    private ChildObjectData GetChildObjectData() {
+        return new ChildObjectData(GetPropertyObjectData());
     }
 
     /// <summary>
@@ -165,6 +177,13 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         if (animation != null && animation.IsPlaying(lastAnimation))
             return lastAnimation;
         return null;
+    }
+
+    /// <summary>
+    /// Get the surface slot with the given slot index.
+    /// </summary>
+    public SurfaceSlot GetSurfaceSlot(int slotIndex) {
+        return surfaceSlots[slotIndex];
     }
 
     [CanBeNull]
