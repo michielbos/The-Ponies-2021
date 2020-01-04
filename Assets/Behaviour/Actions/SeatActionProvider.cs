@@ -102,7 +102,9 @@ public class SeatActionProvider : IObjectActionProvider {
         /// </summary>
         /// <returns>True when the action was finished.</returns>
         private bool HandleSitting() {
-            if (canceled) {
+            Vector2Int seatPosition = pony.TilePosition;
+            Vector2Int cancelPosition = seatPosition.GetNeighbourTile(target.Rotation);
+            if (canceled && PropertyController.Property.CanPassBorder(pony.TilePosition, cancelPosition)) {
                 target.users.Remove(pony);
                 pony.TilePosition = pony.TilePosition.GetNeighbourTile(target.Rotation);
                 return true;

@@ -85,9 +85,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
             return;
         if (nextWalkTile == null && walkPath != null) {
             nextWalkTile = walkPath.NextTile();
-            if (!PropertyController.Instance.property.IsTilePassable(nextWalkTile.Value) ||
-                !PropertyController.Instance.property
-                    .IsBorderPassable(TilePosition.GetBorderBetweenTiles(nextWalkTile.Value))) {
+            if (!PropertyController.Property.CanPassBorder(TilePosition, nextWalkTile.Value)) {
                 nextWalkTile = null;
                 pathBlocked = true;
             }

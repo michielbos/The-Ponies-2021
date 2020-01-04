@@ -476,6 +476,15 @@ public class Property : MonoBehaviour {
         return false;
     }
 
+    /// <summary>
+    /// Returns true if a pony could move from start to target.
+    /// Start and target must be exactly 1 tile away from each other, or an ArgumentException is thrown.
+    /// A pony can move from start to target if both the target tile and the border between the tiles are passable.
+    /// </summary>
+    public bool CanPassBorder(Vector2Int start, Vector2Int target) {
+        return IsTilePassable(target) && IsBorderPassable(start.GetBorderBetweenTiles(target));
+    }
+
     [CanBeNull]
     public FloorTile GetFloorTile(int x, int y) {
         //TODO: Add floor level

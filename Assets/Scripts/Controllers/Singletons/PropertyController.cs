@@ -10,6 +10,11 @@ public class PropertyController : SingletonMonoBehaviour<PropertyController> {
     public Property property;
 
     /// <summary>
+    /// Shortcut for getting the current property.
+    /// </summary>
+    public static Property Property => Instance.property;
+
+    /// <summary>
     /// Called when the scene is just started and a property should be loaded.
     /// </summary>
     /// <param name="propertyId">The id of the property to load.</param>
