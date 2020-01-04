@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Linq;
 using Model.Ponies;
 using Model.Property;
+using UnityEngine;
 
 namespace Model.Data {
 
@@ -18,8 +19,13 @@ public class DataPair {
         this.value = value;
     }
 
+    /// <summary>
+    /// Check whether the type of an object is supported.
+    /// Note that null values are always considered supported, even if their actual type is not.
+    /// </summary>
     public static bool IsTypeSupported(object value) {
-        return value is string || value is int || value is float || value is bool;
+        return value is string || value is int || value is float || value is bool || value == null ||
+               value is PropertyObject || value is Pony || value is Vector2Int;
     }
 
     public static DataPair FromValues(string key, object valueValue) {
@@ -46,6 +52,8 @@ public class DataPair {
                 return "propertyObject";
             case Pony v:
                 return "pony";
+            case Vector2Int v:
+                return "tilePosition";
             default:
                 throw new ArgumentOutOfRangeException(value.GetType().ToString());
         }
@@ -67,6 +75,8 @@ public class DataPair {
                 return propertyObject.id.ToString(CultureInfo.InvariantCulture);
             case Pony pony:
                 return pony.uuid.ToString();
+            case Vector2Int v:
+                return v.x + "," + v.y;
             default:
                 throw new ArgumentOutOfRangeException(value.GetType().ToString());
         }
@@ -90,6 +100,9 @@ public class DataPair {
                 return property.GetPropertyObject(int.Parse(value));
             case "pony":
                 return property.GetPony(new Guid(value));
+            case "tilePosition":
+                string[] split = value.Split(',');
+                return new Vector2Int(int.Parse(split[0]), int.Parse(split[1]));
             default:
                 throw new ArgumentOutOfRangeException(type);
         }
