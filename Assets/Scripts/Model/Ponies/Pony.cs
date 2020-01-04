@@ -8,6 +8,7 @@ using JetBrains.Annotations;
 using Model.Actions;
 using Model.Data;
 using UnityEngine;
+using Util;
 
 namespace Model.Ponies {
 
@@ -28,10 +29,18 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
 
     [CanBeNull] private Path walkPath;
     private Vector2Int? nextWalkTile;
+    /// <summary>
+    /// Set to true when the pony's current path is blocked by a new obstacle and cannot be completed.
+    /// </summary>
+    private bool pathBlocked;
 
     public bool IsSelected => HouseholdController.Instance.selectedPony == this;
     public bool IsWalking => nextWalkTile != null || walkPath != null;
     public Vector2Int? WalkTarget => walkPath?.Destination;
+    
+    /// <summary>
+    /// Whether the last attempt to set a walk target failed (no path found).
+    /// </summary>
     public bool WalkingFailed { get; private set;  }
     
     public Vector2Int TilePosition {
@@ -72,8 +81,14 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     }
 
     private void HandleWalking() {
+        if (pathBlocked)
+            return;
         if (nextWalkTile == null && walkPath != null) {
             nextWalkTile = walkPath.NextTile();
+            if (!PropertyController.Property.CanPassBorder(TilePosition, nextWalkTile.Value)) {
+                nextWalkTile = null;
+                pathBlocked = true;
+            }
         }
         if (nextWalkTile == null)
             return;
@@ -158,13 +173,20 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     }
 
     public bool SetWalkTarget(Vector2Int target) {
-        walkPath = Pathfinding.PathToTile(TilePosition, target);
+        SetWalkPath(Pathfinding.PathToTile(TilePosition, target));
         WalkingFailed = walkPath == null;
+        // Paths always start at the current position, so skip the first tile.
+        walkPath?.NextTile();
         return !WalkingFailed;
     }
     
     public void ClearWalkTarget() {
-        walkPath = null;
+        SetWalkPath(null);
+    }
+
+    private void SetWalkPath(Path path) {
+        walkPath = path;
+        pathBlocked = false;
     }
     
     /// <summary>
@@ -188,15 +210,23 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
         return SetWalkTargetToNearest(targets);
     }
 
-    public void CancelWalking() {
-        walkPath = null;
-    }
-    
+    /// <summary>
+    /// Can be called each tick to walk towards the given target.
+    /// This method sets the current walk target to the given target and returns false until it has been reached.
+    /// If no path can be found, the variable WalkingFailed is set to true.
+    /// If the path is blocked while walking, the pony will try to find a new path.
+    ///
+    /// This function is completed when it either returns true (reached target) or when WalkingFailed is switched to
+    /// true (failed to walk to target).
+    /// </summary>
     public bool WalkTo(Vector2Int target) {
-        if (Equals(TilePosition, target))
+        if (Equals(TilePosition, target) && nextWalkTile == null)
             return true;
-        if (!Equals(WalkTarget, target))
+        // Set the target, if it's not already set or if the current path has been blocked.
+        // Blocked paths are no longer retried after failing to calculate a path.
+        if (!Equals(WalkTarget, target) || pathBlocked && !WalkingFailed) {
             SetWalkTarget(target);
+        }
         return false;
     }
 }

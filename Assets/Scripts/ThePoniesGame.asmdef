@@ -1,7 +1,8 @@
 {
     "name": "ThePoniesGame",
     "references": [
-        "GUID:18d18f811ba286c49814567a3cfba688"
+        "GUID:18d18f811ba286c49814567a3cfba688",
+        "GUID:f7e0d286bf55d56bab4815782c818b78"
     ],
     "optionalUnityReferences": [],
     "includePlatforms": [],

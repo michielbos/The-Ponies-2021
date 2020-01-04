@@ -1,4 +1,5 @@
-﻿using Model.Property;
+﻿using Controllers.Global;
+using Model.Property;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -15,6 +16,7 @@ public class PropertyMenuController : MonoBehaviour {
 				lotButtons[i].GetComponentInChildren<Text>().text = "Empty lot (" + i + ")";
 			}
 		}
+		DiscordController.Instance.UpdateActivity(DiscordController.DiscordState.Neighbourhood);
 	}
 
 	public void enterLot (int id) {

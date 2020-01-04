@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Model.Property;
 using UnityEngine;
 
@@ -9,17 +10,31 @@ namespace Model.Ponies {
 public static class Pathfinding {
     private const int MaxPathLength = 200;
 
+    /// <summary>
+    /// Calculate a path from the start tile to the target tile.
+    /// Returns null if no path was found.
+    /// </summary>
+    [CanBeNull]
     public static Path PathToTile(Vector2Int start, Vector2Int target) {
         return PathToNearest(start, new[] {target});
     }
 
+    /// <summary>
+    /// Calculate a path from the start tile to the closest tile in the targets.
+    /// Returns null if no path was found.
+    /// </summary>
+    [CanBeNull]
     public static Path PathToNearest(Vector2Int start, IEnumerable<Vector2Int> targets) {
         Property.Property property = PropertyController.Instance.property;
         int width = property.TerrainWidth;
         int height = property.TerrainHeight;
         int[,] stepMap = property.GetTileOccupancyMap();
         targets = RemoveTilesOutsideMap(targets, width, height);
-        HashSet<TileBorder> occupiedBorders = property.GetImpassableBorders(); 
+        HashSet<TileBorder> occupiedBorders = property.GetImpassableBorders();
+
+        // If we're starting on a target, return that target.
+        if (targets.Contains(start))
+            return new Path(new[] {start});
         
         stepMap[start.y, start.x] = 1;
         int step;

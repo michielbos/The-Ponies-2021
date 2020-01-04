@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Controllers;
 using Assets.Scripts.Util;
+using Controllers.Global;
 using Controllers.Singletons;
 using UI;
 
@@ -62,6 +63,26 @@ public class ModeController : SingletonMonoBehaviour<ModeController> {
         TimeController.Instance.ForcePause(mode > 0);
         HUDController.Instance.UpdateSpeed();
         HUDController.Instance.OnModeUpdate(mode);
+        DiscordController.Instance.UpdateActivity(GetDiscordStateForMode(mode),
+            PropertyController.Instance.property.GetDiscordDetail());
+    }
+
+    /// <summary>
+    /// Get the Discord state for the selected panel.
+    /// </summary>
+    private DiscordController.DiscordState GetDiscordStateForMode(HudPanel mode) {
+        switch (mode) {
+            case HudPanel.Live:
+                return DiscordController.DiscordState.LiveMode;
+            case HudPanel.Buy:
+                return DiscordController.DiscordState.BuyMode;
+            case HudPanel.Build:
+                return DiscordController.DiscordState.BuildMode;
+            case HudPanel.Options:
+                return DiscordController.DiscordState.Settings;
+            default:
+                return DiscordController.DiscordState.None;
+        }
     }
 
     public void LockLiveMode(bool locked) {

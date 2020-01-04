@@ -10,9 +10,11 @@ namespace ThePoniesBehaviour.Actions {
 
 public class SeatActionProvider : IObjectActionProvider {
     private const string SitIdentifier = "seatSit";
+    private const string ChairType = "chair";
+    private const string CouchType = "couch";
 
     public IEnumerable<ObjectAction> GetActions(Pony pony, PropertyObject target) {
-        if (target.Type == "chair" || target.Type == "couch") {
+        if (target.Type == ChairType || target.Type == CouchType) {
             return new[] {new SitAction(pony, target)};
         }
         return new ObjectAction[0];
@@ -25,28 +27,86 @@ public class SeatActionProvider : IObjectActionProvider {
     private class SitAction : ObjectAction {
         public SitAction(Pony pony, PropertyObject target) : base(SitIdentifier, pony, target, "Sit") { }
 
+        protected override void OnStart() {
+            data["targetSeat"] = GetClosestFreeSeatTile();
+        }
+
         public override bool Tick() {
-            if (target.users.FirstOrDefault() == pony) {
+            if (target.users.Contains(pony))
                 return HandleSitting();
+            return HandleMoveToSeat();
+        }
+
+        /// <summary>
+        /// Find a seat tile and move to the seat.
+        /// </summary>
+        /// <returns>True if the action failed.</returns>
+        private bool HandleMoveToSeat() {
+            if (canceled)
+                return true;
+
+            // Search for a new target seat if there is none set
+            // This happens both when starting the action and when loading a saved game.
+            Vector2Int? targetSeat = data["targetSeat"] as Vector2Int?;
+            if (targetSeat == null)
+                return true;
+
+            // If the current target seat is taken, search for a new seat.
+            // If there is none, cancel the action.
+            foreach (Pony user in target.users) {
+                if (user.TilePosition == targetSeat) {
+                    targetSeat = GetClosestFreeSeatTile();
+                    if (targetSeat == null)
+                        return true;
+                    data["targetSeat"] = targetSeat;
+                }
             }
 
-            // Quit if canceled or if another pony is using this.
-            if (canceled || target.users.Count > 0)
-                return true;
             // Walk to the seat.
-            if (!pony.WalkTo(target.TilePosition.GetNeighbourTile(target.Rotation))) {
+            if (!pony.WalkTo(targetSeat.Value.GetNeighbourTile(target.Rotation))) {
                 return pony.WalkingFailed;
             }
+            
             target.users.Add(pony);
-            pony.TilePosition = target.TilePosition;
+            pony.TilePosition = targetSeat.Value;
 
             return false;
         }
 
+        /// <summary>
+        /// Return the closest free seat tile of this chair/couch.
+        /// Returns null if there is none available.
+        /// </summary>
+        private Vector2Int? GetClosestFreeSeatTile() {
+            // Chairs have only one seat tile.
+            if (target.Type == ChairType)
+                return target.users.Count == 0 ? target.TilePosition : (Vector2Int?) null;
+
+            // Get all free seats.
+            IEnumerable<Vector2Int> freeSeats = target.GetOccupiedTiles()
+                .Except(target.users.Select(user => user.TilePosition));
+
+            // Get the nearest (reachable) tile in front of a seat.
+            Path pathToNearest = Pathfinding.PathToNearest(pony.TilePosition, 
+                freeSeats.Select(tile => tile.GetNeighbourTile(target.Rotation)));
+            if (pathToNearest == null)
+                return null;
+            Vector2Int nearestFrontTile = pathToNearest.Destination;
+
+            // Return the tile behind the front tile, which is the seat tile.
+            return nearestFrontTile.GetNeighbourTile(target.Rotation.Inverse());
+        }
+
+        /// <summary>
+        /// Handle the actual sitting on the seat.
+        /// </summary>
+        /// <returns>True when the action was finished.</returns>
         private bool HandleSitting() {
-            if (canceled) {
+            Vector2Int seatPosition = pony.TilePosition;
+            Vector2Int cancelPosition = seatPosition.GetNeighbourTile(target.Rotation);
+            if (canceled && PropertyController.Property.CanPassBorder(pony.TilePosition, cancelPosition)) {
                 target.users.Remove(pony);
-                pony.TilePosition = target.TilePosition.GetNeighbourTile(target.Rotation);
+                pony.TilePosition = pony.TilePosition.GetNeighbourTile(target.Rotation);
                 return true;
             }
             // Hourly comfort gain is 10% * comfort score.

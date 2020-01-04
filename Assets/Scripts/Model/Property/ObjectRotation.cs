@@ -31,14 +31,14 @@ public static class ObjectRotationUtil {
         return new Vector3(0, GetRotationAngle(objectRotation), 0);
     }
 
-    public static ObjectRotation RotateClockwise(ObjectRotation current) {
+    public static ObjectRotation RotateClockwise(this ObjectRotation current) {
         if (current < ObjectRotation.NorthEast) {
             return current + 1;
         }
         return ObjectRotation.SouthEast;
     }
 
-    public static ObjectRotation RotateCounterClockwise(ObjectRotation current) {
+    public static ObjectRotation RotateCounterClockwise(this ObjectRotation current) {
         if (current > ObjectRotation.SouthEast) {
             return current - 1;
         }
@@ -48,8 +48,12 @@ public static class ObjectRotationUtil {
     /// <summary>
     /// Apply the given number of clockwise turns to the given rotation.
     /// </summary>
-    public static ObjectRotation Add(ObjectRotation current, int turns) {
+    public static ObjectRotation Add(this ObjectRotation current, int turns) {
         return (ObjectRotation) (((int) current - 1 + turns) % 4 + 1);
+    }
+
+    public static ObjectRotation Inverse(this ObjectRotation current) {
+        return current.Add(2);
     }
 
     /// <summary>

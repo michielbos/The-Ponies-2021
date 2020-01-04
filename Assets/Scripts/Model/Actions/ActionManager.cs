@@ -52,7 +52,9 @@ public static class ActionManager {
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        ponyAction.canceled = data.canceled;
         ponyAction?.Load(data.tickCount);
+        ponyAction?.AddDataPairs(data.data, property);
         return ponyAction;
     }
 

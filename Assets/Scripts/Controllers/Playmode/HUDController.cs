@@ -56,12 +56,6 @@ public class HUDController : SingletonMonoBehaviour<HUDController>, IPointerEnte
         CameraController.Instance.Rotate(counterClockwise);
     }
     
-    // Called from Unity GUI Button
-    public void SetClocks() {
-        TimeController.Instance.twelveHourClock = !TimeController.Instance.twelveHourClock;
-        UpdateTime();
-    }
-
     public void UpdateSpeed() {
         speedButtons[0].GetComponent<Image>().overrideSprite = speedButtons[0].GetComponent<Image>().sprite;
         foreach (GameObject g in speedButtons) {

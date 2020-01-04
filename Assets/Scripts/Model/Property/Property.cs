@@ -430,8 +430,8 @@ public class Property : MonoBehaviour {
     }
 
     /// <summary>
-    /// Returns a HashSet of all impassible borders.
-    /// Borders with a wall are impassible, unless they have a door.
+    /// Returns a HashSet of all impassable borders.
+    /// Borders with a wall are impassable, unless they have a door.
     /// </summary>
     public HashSet<TileBorder> GetImpassableBorders() {
         HashSet<TileBorder> borders = new HashSet<TileBorder>(walls.Keys);
@@ -443,6 +443,46 @@ public class Property : MonoBehaviour {
             }
         }
         return borders;
+    }
+
+    /// <summary>
+    /// Returns true if a tile is passable (not occupied by an impassible object).
+    /// </summary>
+    public bool IsTilePassable(Vector2Int tile) {
+        foreach (PropertyObject propertyObject in propertyObjects.Values) {
+            foreach (Vector2Int occupiedTile in propertyObject.GetImpassableTiles()) {
+                if (occupiedTile == tile) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Returns true if a border is passable.
+    /// Borders with a wall are impassable, unless they have a door.
+    /// </summary>
+    public bool IsBorderPassable(TileBorder border) {
+        if (!WallExists(border))
+            return true;
+
+        foreach (PropertyObject propertyObject in propertyObjects.Values) {
+            if (propertyObject.preset.tags.Get("type") == "door" &&
+                propertyObject.GetRequiredWallBorders().Contains(border)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Returns true if a pony could move from start to target.
+    /// Start and target must be exactly 1 tile away from each other, or an ArgumentException is thrown.
+    /// A pony can move from start to target if both the target tile and the border between the tiles are passable.
+    /// </summary>
+    public bool CanPassBorder(Vector2Int start, Vector2Int target) {
+        return IsTilePassable(target) && IsBorderPassable(start.GetBorderBetweenTiles(target));
     }
 
     [CanBeNull]
@@ -595,6 +635,14 @@ public class Property : MonoBehaviour {
         if (tile.y < TerrainHeight - 1 && !WallExists(new TileBorder(tile.x, tile.y + 1, WallDirection.NorthEast)))
             tiles.Add(new Vector2Int(tile.x, tile.y + 1));
         return tiles;
+    }
+
+    /// <summary>
+    /// Returns the name of this property that can be displayed as Discord detail.
+    /// This is the household name for occupied lots, or the property name for unoccupied lots.
+    /// </summary>
+    public string GetDiscordDetail() {
+        return household?.householdName ?? propertyName;
     }
 }
 
