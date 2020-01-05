@@ -22,22 +22,17 @@ public class SurfaceSlot : MonoBehaviour, IObjectSlot {
         Transform objectTransform = propertyObject.transform;
         objectTransform.parent = transform;
         objectTransform.localPosition = Vector3.zero;
+        objectTransform.localRotation = Quaternion.identity;
     }
 
     public static SurfaceSlot CreateSlot(PropertyObject propertyObject, Vector3 localPosition) {
         GameObject gameObject = new GameObject("Slot");
         Transform transform = gameObject.transform;
-        transform.parent = propertyObject.transform;
+        transform.parent = propertyObject.Model;
         transform.localPosition = localPosition;
         SurfaceSlot slot = gameObject.AddComponent<SurfaceSlot>();
         slot.SlotOwner = propertyObject;
         return slot;
-    }
-
-    public void Rotate(ObjectRotation previousRotation, ObjectRotation newRotation) {
-        int turns = previousRotation.GetTurnsTo(newRotation);
-        Transform transform = this.transform;
-        transform.localPosition = transform.localPosition.RotateInGroup((ObjectRotation) (turns + 1));
     }
 }
 

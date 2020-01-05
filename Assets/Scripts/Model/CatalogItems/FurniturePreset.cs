@@ -78,8 +78,16 @@ public class FurniturePreset : Preset {
         model.rotation = Quaternion.identity;
         // It's a bit dirty to do it here, but models from Blender and Max are rotated by 180 degrees.
         model.Rotate(new Vector3(0, 180, 0));
-        Vector3 pivot = parent.position + new Vector3(0.5f, 0, 0.5f);
-        model.RotateAround(pivot, Vector3.up, rotation.GetRotationAngle());
+        
+        // Since this horrible system is completely broken for surface objects, we hack around it.
+        // If the local position is zero, we are dealing with a surface object.
+        // Since surface objects are always 1 tile, it's safe to rotate them without a pivot.
+        if (parent.localPosition != Vector3.zero) {
+            Vector3 pivot = parent.position + new Vector3(0.5f, 0, 0.5f);
+            model.RotateAround(pivot, Vector3.up, rotation.GetRotationAngle());
+        } else {
+            model.Rotate(Vector3.up, rotation.GetRotationAngle());
+        }
     }
 
     public Vector2Int GetTileSize() {
@@ -124,7 +132,15 @@ public class FurniturePreset : Preset {
     public ICollection<Vector3> GetSurfaceSlots() {
         if (!IsSurface)
             return new Vector3[0];
+
+        // Compensate for the pivot being in the center of the model, rather than the center of the lower-left tile.
+        Vector2Int tileSize = GetTileSize();
+        float compensateX = tileSize.x / 2f - 1f;
+        float compensateY = tileSize.y / 2f - 1f;
+        
         // TODO: Calculate heights
-        return occupiedTiles.Select(tile => new Vector3(tile.x, 0.8f, tile.y)).ToArray();
+        return occupiedTiles.Select(tile => new Vector3(tile.x - compensateX, 0.8f, tile.y - compensateY))
+            .Reverse()
+            .ToArray();
     }
 }

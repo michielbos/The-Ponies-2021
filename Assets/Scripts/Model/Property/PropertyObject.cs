@@ -49,13 +49,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
 
     public ObjectRotation Rotation {
         get => Model.transform.GetObjectRotation();
-        set {
-            ObjectRotation oldRotation = Rotation;
-            preset.FixModelTransform(Model, value);
-            foreach (SurfaceSlot slot in surfaceSlots) {
-                slot.Rotate(oldRotation, Rotation);
-            }
-        }
+        set => preset.FixModelTransform(Model, value);
     }
 
     public void Init(int id, IObjectSlot objectSlot, ObjectRotation rotation, FurniturePreset preset, int skin, int value,
@@ -64,8 +58,8 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         this.preset = preset;
         this.skin = skin;
         this.value = value;
-        objectSlot.PlaceObject(this);
         preset.ApplyToModel(GetComponent<ModelContainer>(), skin);
+        objectSlot.PlaceObject(this);
         Rotation = ObjectRotation.SouthEast;
         surfaceSlots = preset.GetSurfaceSlots().Select(pos => SurfaceSlot.CreateSlot(this, pos)).ToArray();
         Rotation = rotation;
