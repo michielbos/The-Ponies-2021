@@ -140,8 +140,7 @@ public class FurniturePreset : Preset {
         float compensateX = tileSize.x / 2f - 0.5f;
         float compensateY = tileSize.y / 2f - 0.5f;
         
-        // TODO: Calculate heights
-        return occupiedTiles.Select(tile => new Vector3(tile.x - compensateX, 0.8f, tile.y - compensateY))
+        return occupiedTiles.Select(tile => new Vector3(tile.x - compensateX, 1f, tile.y - compensateY))
             .Reverse()
             .ToArray();
     }

@@ -71,6 +71,9 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         objectSlot.PlaceObject(this);
         Rotation = ObjectRotation.SouthEast;
         surfaceSlots = preset.GetSurfaceSlots().Select(pos => SurfaceSlot.CreateSlot(this, pos)).ToArray();
+        foreach (SurfaceSlot slot in surfaceSlots) {
+            slot.MatchHeightWithOwner();
+        }
         Rotation = rotation;
         if (!string.IsNullOrEmpty(animation))
             PlayAnimation(animation);
