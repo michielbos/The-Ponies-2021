@@ -67,7 +67,8 @@ public class BuyTool : MonoBehaviour, ITool {
         ClearSelection();
         placingPreset = furniturePreset;
         placingSkin = skin;
-        CreateBuildMarker(placingPreset, skin, ObjectRotation.SouthEast);
+        buildMarker = Instantiate(buildMarkerPrefab);
+        buildMarker.InitBuy(placingPreset, skin, ObjectRotation.SouthEast);
     }
 
     public void Enable() {
@@ -78,20 +79,9 @@ public class BuyTool : MonoBehaviour, ITool {
     }
 
     public void Disable() {
-        if (buildMarker != null) {
-            if (movingObject != null) {
-                movingObject.SetVisibility(true);
-            }
-
-            Destroy(buildMarker.gameObject);
-        }
+        ClearSelection();
     }
 
-    private void CreateBuildMarker(FurniturePreset preset, int skin, ObjectRotation rotation) {
-        buildMarker = Instantiate(buildMarkerPrefab);
-        buildMarker.Init(preset, skin, rotation);
-    }
-    
     private FurniturePreset GetMovingPreset() {
         if (placingPreset != null)
             return placingPreset;
@@ -188,10 +178,16 @@ public class BuyTool : MonoBehaviour, ITool {
 
         if (!CheatsController.Instance.moveObjectsMode && !(targetSlot is SurfaceSlot)) {
             List<PropertyObject> tileObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
-            if (tileObjects.Any(tileObject => tileObject != movingObject)) {
+            
+            // Check if there is a collision.
+            // The moving object and its children are ignored in this check.
+            if (movingObject != null) {
+                if (tileObjects.Except(movingObject.Children).Any(tileObject => tileObject != movingObject))
+                    return false;
+            } else if (tileObjects.Any()) {
                 return false;
             }
-
+            
             if (walls.Count > 0) {
                 if (movingPreset.placementType != PlacementType.ThroughWall) {
                     return false;
@@ -279,8 +275,8 @@ public class BuyTool : MonoBehaviour, ITool {
     private void PickUpObject(PropertyObject propertyObject) {
         ClearSelection();
         movingObject = propertyObject;
-        movingObject.SetVisibility(false);
-        CreateBuildMarker(movingObject.preset, movingObject.skin, movingObject.Rotation);
+        buildMarker = Instantiate(buildMarkerPrefab);
+        buildMarker.InitMove(propertyObject);
         UpdateBuildMarker(propertyObject, true);
     }
 
@@ -299,10 +295,7 @@ public class BuyTool : MonoBehaviour, ITool {
 
     private void ClearSelection() {
         placingPreset = null;
-        if (movingObject != null) {
-            movingObject.SetVisibility(true);
-            movingObject = null;
-        }
+        movingObject = null;
 
         if (buildMarker != null) {
             Destroy(buildMarker.gameObject);

@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Controllers.Singletons;
+using JetBrains.Annotations;
 using Model.Property;
 using UnityEngine;
 using Util;
@@ -12,7 +13,21 @@ public class BuyToolMarker : MonoBehaviour {
     public Material buyMarkingNormalMaterial;
     public Material buyMarkingDisallowedMaterial;
 
+    /// <summary>
+    /// The visual model that is used for the marker.
+    /// The container can contain either a new model (when buying) or a borrowed existing model (when moving)
+    /// </summary>
     private ModelContainer buildMarkerModel;
+
+    /// <summary>
+    /// The owner of the buildMarkerModel.
+    /// If this is null, the model is owned by this BuyToolMarker.
+    /// If this is not null, the model is owned by an existing furniture object and must be returned when destroying
+    /// this marker.
+    /// </summary>
+    [CanBeNull]
+    private PropertyObject modelOwner;
+    
     private readonly List<GameObject> buyMarkings = new List<GameObject>();
     private FurniturePreset preset;
 
@@ -27,13 +42,23 @@ public class BuyToolMarker : MonoBehaviour {
         get => _markerRotation;
         set {
             _markerRotation = value;
-            preset.FixModelTransform(buildMarkerModel.Model.transform, value);
+            Preset.FixModelTransform(buildMarkerModel.Model.transform, value);
         }
     }
 
-    public ICollection<Vector2Int> OccupiedTiles => preset.GetOccupiedTiles(TilePosition, MarkerRotation);
-    
-    public void Init(FurniturePreset preset, int skin, ObjectRotation rotation) {
+    public ICollection<Vector2Int> OccupiedTiles => Preset.GetOccupiedTiles(TilePosition, MarkerRotation);
+
+    /// <summary>
+    /// The preset that is used.
+    /// If moving an existing model, the preset of the model owner is returned.
+    /// </summary>
+    private FurniturePreset Preset => modelOwner == null ? preset : modelOwner.preset;
+
+    /// <summary>
+    /// Initialize this marker for buying new furniture.
+    /// This creates a new model with the given parameters.
+    /// </summary>
+    public void InitBuy(FurniturePreset preset, int skin, ObjectRotation rotation) {
         this.preset = preset;
         buildMarkerModel = GetComponent<ModelContainer>();
         preset.ApplyToModel(buildMarkerModel, skin);
@@ -42,8 +67,22 @@ public class BuyToolMarker : MonoBehaviour {
         MarkerRotation = rotation;
     }
     
+    /// <summary>
+    /// Initialize this marker for moving existing furniture.
+    /// This temporarily parents the existing model to this marker.
+    /// </summary>
+    public void InitMove(PropertyObject propertyObject) {
+        modelOwner = propertyObject;
+        buildMarkerModel = GetComponent<ModelContainer>();
+        buildMarkerModel.Model = propertyObject.Model.gameObject;
+        propertyObject.Model.parent = transform;
+        MarkerRotation = ObjectRotation.SouthEast;
+        PlaceBuyMarkings();
+        MarkerRotation = propertyObject.Rotation;
+    }
+    
     private void PlaceBuyMarkings() {
-        foreach (Vector2Int tile in preset.occupiedTiles) {
+        foreach (Vector2Int tile in Preset.occupiedTiles) {
             buyMarkings.Add(Instantiate(buyMarkingPrefab, new Vector3(tile.x + 0.5f, 0.01f, tile.y + 0.5f),
                 buyMarkingPrefab.transform.rotation, buildMarkerModel.Model.transform));
         }
@@ -87,6 +126,16 @@ public class BuyToolMarker : MonoBehaviour {
             return true;
         }
         return false;
+    }
+
+    public void OnDestroy() {
+        // Return the model to its owner, if we were moving an existing object.
+        if (modelOwner != null) {
+            foreach (GameObject marking in buyMarkings) {
+                Destroy(marking);
+            }
+            buildMarkerModel.Model.transform.parent = modelOwner.transform;
+        }
     }
 }
 

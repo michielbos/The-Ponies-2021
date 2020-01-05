@@ -7,7 +7,7 @@ namespace Util {
 /// A simple component that manages a child model for a GameObject.
 /// </summary>
 public class ModelContainer : MonoBehaviour {
-    public GameObject Model { get; private set; }
+    public GameObject Model { get; set; }
 
     public void InstantiateModel(InstantiatedGLTFObject prefab) {
         if (Model != null) {

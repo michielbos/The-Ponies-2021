@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Controllers;
 using JetBrains.Annotations;
@@ -32,6 +33,12 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
 
     public string Type => preset.Type;
+
+    /// <summary>
+    /// Shortcut to get all child objects that are filling this object's surface slots.
+    /// </summary>
+    public IEnumerable<PropertyObject> Children => surfaceSlots.Where(it => it.SlotObject != null)
+        .Select(it => it.SlotObject);
 
     /// <summary>
     /// The parent object that has this object as a child, if any.
@@ -121,10 +128,6 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     /// <returns>A Vector2Int array of all occupied coordinates.</returns>
     public IEnumerable<TileBorder> GetRequiredWallBorders() {
         return preset.GetRequiredWallBorders(GetOccupiedTiles(), Rotation);
-    }
-
-    public void SetVisibility(bool visible) {
-        Model.gameObject.SetActive(visible);
     }
 
     public ICollection<PonyAction> GetActions(Pony pony) {
