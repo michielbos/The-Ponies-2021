@@ -91,7 +91,7 @@ public class BuyTool : MonoBehaviour, ITool {
     private void UpdateBuildMarker(bool ignoreClick, bool force = false) {
         IObjectSlot newSlot = GetSlotUnderCursorFor(GetMovingPreset().placementType);
         if (newSlot != null) {
-            if (newSlot != targetSlot ||  force) {
+            if (newSlot != targetSlot || force) {
                 BuildMarkerMoved(newSlot);
             }
 
@@ -146,6 +146,7 @@ public class BuyTool : MonoBehaviour, ITool {
 
     private void BuildMarkerMoved(IObjectSlot newSlot) {
         targetSlot = newSlot;
+        buildMarker.OnNewSlot(newSlot);
         buildMarker.transform.position = newSlot.SlotPosition;
         UpdateCanPlace();
     }

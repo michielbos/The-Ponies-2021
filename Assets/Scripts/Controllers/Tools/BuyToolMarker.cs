@@ -14,6 +14,11 @@ public class BuyToolMarker : MonoBehaviour {
     public Material buyMarkingDisallowedMaterial;
 
     /// <summary>
+    /// Specifies whether the current target slot of this marker is a surface slot.
+    /// </summary>
+    private bool placedAsChild;
+
+    /// <summary>
     /// The visual model that is used for the marker.
     /// The container can contain either a new model (when buying) or a borrowed existing model (when moving)
     /// </summary>
@@ -42,7 +47,7 @@ public class BuyToolMarker : MonoBehaviour {
         get => _markerRotation;
         set {
             _markerRotation = value;
-            Preset.FixModelTransform(buildMarkerModel.Model.transform, value);
+            Preset.FixModelTransform(buildMarkerModel.Model.transform, value, placedAsChild);
         }
     }
 
@@ -76,9 +81,10 @@ public class BuyToolMarker : MonoBehaviour {
         buildMarkerModel = GetComponent<ModelContainer>();
         buildMarkerModel.Model = propertyObject.Model.gameObject;
         propertyObject.Model.parent = transform;
+        ObjectRotation currentRotation = propertyObject.Rotation;
         MarkerRotation = ObjectRotation.SouthEast;
         PlaceBuyMarkings();
-        MarkerRotation = propertyObject.Rotation;
+        MarkerRotation = currentRotation;
     }
     
     private void PlaceBuyMarkings() {
@@ -102,6 +108,14 @@ public class BuyToolMarker : MonoBehaviour {
             SoundController.Instance.PlaySound(SoundType.Rotate);
             MarkerRotation = ObjectRotationUtil.RotateClockwise(MarkerRotation);
         }
+    }
+
+    /// <summary>
+    /// Called by the buy tool when the marker is moved to a new object slot.
+    /// </summary>
+    public void OnNewSlot(IObjectSlot newSlot) {
+        placedAsChild = newSlot is SurfaceSlot;
+        Preset.FixModelTransform(buildMarkerModel.Model.transform, MarkerRotation, placedAsChild);
     }
     
     public void SetCanPlace(bool canPlace) {

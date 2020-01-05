@@ -71,7 +71,7 @@ public class FurniturePreset : Preset {
     /// Fix the position and rotation of a model object.
     /// This assumes the position of the parent is the exact tile position.
     /// </summary>
-    public void FixModelTransform(Transform model, ObjectRotation rotation) {
+    public void FixModelTransform(Transform model, ObjectRotation rotation, bool isChild) {
         Transform parent = model.parent;
         Vector2Int tileSize = GetTileSize();
         model.localPosition = new Vector3(tileSize.x * 0.5f, 0, tileSize.y * 0.5f);
@@ -79,14 +79,16 @@ public class FurniturePreset : Preset {
         // It's a bit dirty to do it here, but models from Blender and Max are rotated by 180 degrees.
         model.Rotate(new Vector3(0, 180, 0));
         
-        // Since this horrible system is completely broken for surface objects, we hack around it.
-        // If the local position is zero, we are dealing with a surface object.
+        // For some reason, child objects don't behave properly when rotated.
+        // If the local position is zero, we are dealing with a child object.
         // Since surface objects are always 1 tile, it's safe to rotate them without a pivot.
-        if (parent.localPosition != Vector3.zero) {
+        if (isChild) {
+            // Surface slots are placed on the center, rather than the lower left corner.
+            model.localPosition -= new Vector3(0.5f, 0, 0.5f);
+            model.Rotate(Vector3.up, rotation.GetRotationAngle());
+        } else {
             Vector3 pivot = parent.position + new Vector3(0.5f, 0, 0.5f);
             model.RotateAround(pivot, Vector3.up, rotation.GetRotationAngle());
-        } else {
-            model.Rotate(Vector3.up, rotation.GetRotationAngle());
         }
     }
 
@@ -135,8 +137,8 @@ public class FurniturePreset : Preset {
 
         // Compensate for the pivot being in the center of the model, rather than the center of the lower-left tile.
         Vector2Int tileSize = GetTileSize();
-        float compensateX = tileSize.x / 2f - 1f;
-        float compensateY = tileSize.y / 2f - 1f;
+        float compensateX = tileSize.x / 2f - 0.5f;
+        float compensateY = tileSize.y / 2f - 0.5f;
         
         // TODO: Calculate heights
         return occupiedTiles.Select(tile => new Vector3(tile.x - compensateX, 0.8f, tile.y - compensateY))
