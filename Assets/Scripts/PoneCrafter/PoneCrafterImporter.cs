@@ -1,4 +1,5 @@
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
@@ -44,16 +45,17 @@ public class PoneCrafterImporter {
     /// Import all PoneCrafter files.
     /// This should be done only once, at the start of the game.
     /// </summary>
-    public async void Import() {
+    public IEnumerator Import() {
         // TODO: Apply content UUID checks on content folder.
         gltfLoader = new GameObject("GltfLoader").AddComponent<GltfLoader>();
         Object.DontDestroyOnLoad(gltfLoader.gameObject);
         gltfLoader.Prepare();
-        await ImportFolder(ContentLoader.ContentFolder);
-        await ImportFolder(ContentLoader.ModsFolder);
+        yield return null;
+        yield return ImportFolder(ContentLoader.ContentFolder);
+        yield return ImportFolder(ContentLoader.ModsFolder);
     }
 
-    private async Task ImportFolder(string path) {
+    private IEnumerator ImportFolder(string path) {
         if (!Directory.Exists(path)) {
             Directory.CreateDirectory(path);
         }
@@ -65,7 +67,7 @@ public class PoneCrafterImporter {
             tasks.Add(StartImportZipTask(file));
             if (tasks.Count >= TaskPoolSize) {
                 Task task = tasks.First();
-                await task;
+                yield return task;
                 tasks.Remove(task);
             }
         }
