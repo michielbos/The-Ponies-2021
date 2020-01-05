@@ -9,6 +9,9 @@ using Util;
 namespace Controllers.Tools {
 
 public class BuyToolMarker : MonoBehaviour {
+    private const int DefaultLayer = 0;
+    private const int MarkerLayer = 11;
+    
     public GameObject buyMarkingPrefab;
     public Material buyMarkingNormalMaterial;
     public Material buyMarkingDisallowedMaterial;
@@ -81,6 +84,7 @@ public class BuyToolMarker : MonoBehaviour {
         buildMarkerModel = GetComponent<ModelContainer>();
         buildMarkerModel.Model = propertyObject.Model.gameObject;
         propertyObject.Model.parent = transform;
+        buildMarkerModel.SetLayerRecursively(MarkerLayer);
         ObjectRotation currentRotation = propertyObject.Rotation;
         MarkerRotation = ObjectRotation.SouthEast;
         PlaceBuyMarkings();
@@ -148,6 +152,7 @@ public class BuyToolMarker : MonoBehaviour {
             foreach (GameObject marking in buyMarkings) {
                 Destroy(marking);
             }
+            buildMarkerModel.SetLayerRecursively(DefaultLayer);
             buildMarkerModel.Model.transform.parent = modelOwner.transform;
         }
     }
