@@ -56,8 +56,10 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
 
     public ObjectRotation Rotation {
         get => Model.transform.GetObjectRotation();
-        set => preset.FixModelTransform(Model, value, ParentSlot != null);
+        set => preset.FixModelTransform(Model, value, IsChild);
     }
+
+    public bool IsChild => ParentSlot != null;
 
     public void Init(int id, IObjectSlot objectSlot, ObjectRotation rotation, FurniturePreset preset, int skin, int value,
         string animation) {

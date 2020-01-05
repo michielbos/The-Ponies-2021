@@ -44,7 +44,7 @@ public class BuyTool : MonoBehaviour, ITool {
     }
 
     public void OnDisable() {
-        ClearSelection();
+        ClearSelection(true);
     }
 
     public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex) {
@@ -71,7 +71,7 @@ public class BuyTool : MonoBehaviour, ITool {
             return;
         }
 
-        ClearSelection();
+        ClearSelection(true);
         placingPreset = furniturePreset;
         placingSkin = skin;
         buildMarker = Instantiate(buildMarkerPrefab);
@@ -86,7 +86,7 @@ public class BuyTool : MonoBehaviour, ITool {
     }
 
     public void Disable() {
-        ClearSelection();
+        ClearSelection(true);
     }
 
     private FurniturePreset GetMovingPreset() {
@@ -266,7 +266,7 @@ public class BuyTool : MonoBehaviour, ITool {
             movingObject.ClearParent();
             targetSlot.PlaceObject(movingObject);
             movingObject.Rotation = buildMarker.MarkerRotation;
-            ClearSelection();
+            ClearSelection(false);
         } else {
             SoundController.Instance.PlaySound(SoundType.Buy);
             MoneyController.Instance.ChangeFunds(-placingPreset.price);
@@ -275,7 +275,7 @@ public class BuyTool : MonoBehaviour, ITool {
             if (Input.GetKey(KeyCode.LeftShift)) {
                 BuildMarkerMoved(targetSlot);
             } else {
-                ClearSelection();
+                ClearSelection(false);
             }
         }
     }
@@ -295,7 +295,7 @@ public class BuyTool : MonoBehaviour, ITool {
     }
 
     private void PickUpObject(PropertyObject propertyObject) {
-        ClearSelection();
+        ClearSelection(true);
         movingObject = propertyObject;
         buildMarker = Instantiate(buildMarkerPrefab);
         buildMarker.InitMove(propertyObject);
@@ -304,24 +304,28 @@ public class BuyTool : MonoBehaviour, ITool {
 
     private void SellSelection() {
         if (movingObject == null) {
-            ClearSelection();
+            ClearSelection(false);
         } else if (!movingObject.Children.Any() &&
                    (movingObject.preset.sellable || CheatsController.Instance.moveObjectsMode)) {
             SoundController.Instance.PlaySound(SoundType.Sell);
             PropertyController.Instance.property.RemovePropertyObject(movingObject);
             MoneyController.Instance.ChangeFunds(movingObject.value);
-            ClearSelection();
+            ClearSelection(false);
         } else {
             SoundController.Instance.PlaySound(SoundType.Deny);
         }
     }
 
-    private void ClearSelection() {
+    /// <summary>
+    /// Clear the current selection.
+    /// </summary>
+    /// <param name="canceled">Whether it was not directly cleared by the user (for example when switching a tab)</param>
+    private void ClearSelection(bool canceled) {
         placingPreset = null;
         movingObject = null;
 
         if (buildMarker != null) {
-            Destroy(buildMarker.gameObject);
+            buildMarker.Finish(canceled);
             buildMarker = null;
         }
     }

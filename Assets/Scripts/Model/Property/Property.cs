@@ -268,7 +268,7 @@ public class Property : MonoBehaviour {
             CreateRoofDataArray(roofs),
             propertyObjects.Values
                 // Don't save objects that have parents, because their parents will save them.
-                .Where(propertyObject => propertyObject.ParentSlot == null)
+                .Where(propertyObject => !propertyObject.IsChild)
                 .Select(propertyObject => propertyObject.GetPropertyObjectData())
                 .ToArray(),
             ponies.Values.Select(pony => pony.GetGamePonyData()).ToArray(),

@@ -35,6 +35,12 @@ public class BuyToolMarker : MonoBehaviour {
     /// </summary>
     [CanBeNull]
     private PropertyObject modelOwner;
+
+    /// <summary>
+    /// The rotation of the model (and its owner) before it was picked up for moving.
+    /// Needed to reset the rotation if the moving is canceled.
+    /// </summary>
+    private ObjectRotation ownerRotation;
     
     private readonly List<GameObject> buyMarkings = new List<GameObject>();
     private FurniturePreset preset;
@@ -85,10 +91,10 @@ public class BuyToolMarker : MonoBehaviour {
         buildMarkerModel.Model = propertyObject.Model.gameObject;
         propertyObject.Model.parent = transform;
         buildMarkerModel.SetLayerRecursively(MarkerLayer);
-        ObjectRotation currentRotation = propertyObject.Rotation;
+        ownerRotation = propertyObject.Rotation;
         MarkerRotation = ObjectRotation.SouthEast;
         PlaceBuyMarkings();
-        MarkerRotation = currentRotation;
+        MarkerRotation = ownerRotation;
     }
     
     private void PlaceBuyMarkings() {
@@ -127,16 +133,30 @@ public class BuyToolMarker : MonoBehaviour {
         }
         return false;
     }
-
+    
     public void OnDestroy() {
+        Finish(true);
+    }
+
+    /// <summary>
+    /// Finish this marker, giving back the model to its owner if it was borrowed from an existing item.
+    /// </summary>
+    /// <param name="canceled">If true, the rotation of the moved object is also reverted.</param>
+    public void Finish(bool canceled) {
         // Return the model to its owner, if we were moving an existing object.
         if (modelOwner != null) {
             foreach (GameObject marking in buyMarkings) {
                 Destroy(marking);
             }
+            Transform modelTransform = buildMarkerModel.Model.transform;
             buildMarkerModel.SetLayerRecursively(DefaultLayer);
-            buildMarkerModel.Model.transform.parent = modelOwner.transform;
+            modelTransform.parent = modelOwner.transform;
+            if (canceled) {
+                modelOwner.Rotation = ownerRotation;
+            }
+            modelOwner = null;
         }
+        Destroy(gameObject);
     }
 }
 
