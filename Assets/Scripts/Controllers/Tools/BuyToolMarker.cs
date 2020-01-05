@@ -98,22 +98,6 @@ public class BuyToolMarker : MonoBehaviour {
         }
     }
 
-    public void UpdateMarker() {
-        HandleRotationButtons();
-    }
-
-    private void HandleRotationButtons() {
-        if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.Comma)) {
-            SoundController.Instance.PlaySound(SoundType.Rotate);
-            MarkerRotation = ObjectRotationUtil.RotateCounterClockwise(MarkerRotation);
-        }
-
-        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Period)) {
-            SoundController.Instance.PlaySound(SoundType.Rotate);
-            MarkerRotation = ObjectRotationUtil.RotateClockwise(MarkerRotation);
-        }
-    }
-
     /// <summary>
     /// Called by the buy tool when the marker is moved to a new object slot.
     /// </summary>
@@ -129,14 +113,12 @@ public class BuyToolMarker : MonoBehaviour {
         }
     }
 
-    public bool HandleDragRotation(Vector2Int tileUnderCursor) {
-        Vector2Int diff = TilePosition - tileUnderCursor;
-        ObjectRotation newRotation = MarkerRotation;
-        if (diff.x != 0 && Math.Abs(diff.x) > Math.Abs(diff.y)) {
-            newRotation = diff.x > 0 ? ObjectRotation.SouthWest : ObjectRotation.NorthEast;
-        } else if (diff.y != 0 && Math.Abs(diff.y) > Math.Abs(diff.x)) {
-            newRotation = diff.y > 0 ? ObjectRotation.SouthEast : ObjectRotation.NorthWest;
-        }
+    public bool HandleDragRotation(Vector2 relativeMouse) {
+        ObjectRotation newRotation;
+        if (relativeMouse.x > 0)
+            newRotation = relativeMouse.y > 0 ? ObjectRotation.NorthEast : ObjectRotation.SouthEast;
+        else
+            newRotation = relativeMouse.y > 0 ? ObjectRotation.NorthWest : ObjectRotation.SouthWest;
 
         if (newRotation != MarkerRotation) {
             SoundController.Instance.PlaySound(SoundType.Rotate);

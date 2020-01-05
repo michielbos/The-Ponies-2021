@@ -14,6 +14,10 @@ namespace Controllers.Tools {
 /// Tool for buy/build mode that deals with buying, moving and selling furniture.
 /// </summary>
 public class BuyTool : MonoBehaviour, ITool {
+    /// <summary>
+    /// The number of pixels to drag the mouse away from the press position before listening to rotations.
+    /// </summary>
+    private const int DragRotationMargin = 8;
     private int defaultLayer;
     private int terrainLayer;
     private int slotRaycastLayer;
@@ -27,7 +31,10 @@ public class BuyTool : MonoBehaviour, ITool {
 
     private BuyToolMarker buildMarker;
     private IObjectSlot targetSlot;
+    // If the mouse is being pressed above a tile.
     private bool pressingTile;
+    // The screen position where the mouse started being held.
+    private Vector2 startPressPosition;
     private bool canPlace;
 
     private void Start() {
@@ -42,7 +49,7 @@ public class BuyTool : MonoBehaviour, ITool {
 
     public void UpdateTool(Vector3 tilePosition, Vector2Int tileIndex) {
         if (buildMarker != null) {
-            buildMarker.UpdateMarker();
+            HandleRotationButtons();
             if (pressingTile) {
                 HandlePlacementHolding();
             } else {
@@ -97,6 +104,7 @@ public class BuyTool : MonoBehaviour, ITool {
 
             if (!ignoreClick && Input.GetMouseButtonDown(0)) {
                 pressingTile = true;
+                startPressPosition = Input.mousePosition;
             }
         } else if (targetSlot != null) {
             buildMarker.transform.position = new Vector3(0, -100, 0);
@@ -148,6 +156,10 @@ public class BuyTool : MonoBehaviour, ITool {
         targetSlot = newSlot;
         buildMarker.OnNewSlot(newSlot);
         buildMarker.transform.position = newSlot.SlotPosition;
+        SurfaceSlot surfaceSlot = newSlot as SurfaceSlot;
+        if (surfaceSlot != null) {
+            buildMarker.MarkerRotation = surfaceSlot.SlotOwner.Rotation;
+        }
         UpdateCanPlace();
     }
 
@@ -232,8 +244,11 @@ public class BuyTool : MonoBehaviour, ITool {
     private void HandlePlacementHolding() {
         TerrainTile tileUnderCursor = GetTileUnderCursor();
         if (tileUnderCursor != null) {
-            if (buildMarker.HandleDragRotation(tileUnderCursor.TilePosition)) {
-                UpdateCanPlace();
+            Vector2 relativeMouse = (Vector2) Input.mousePosition - startPressPosition;
+            if (Mathf.Abs(relativeMouse.x) >= DragRotationMargin || Mathf.Abs(relativeMouse.y) >= DragRotationMargin) {
+                if (buildMarker.HandleDragRotation(relativeMouse)) {
+                    UpdateCanPlace();
+                }
             }
         }
 
@@ -308,6 +323,21 @@ public class BuyTool : MonoBehaviour, ITool {
         if (buildMarker != null) {
             Destroy(buildMarker.gameObject);
             buildMarker = null;
+        }
+    }
+    
+    private void HandleRotationButtons() {
+        if (buildMarker == null)
+            return;
+        if (Input.GetKeyDown(KeyCode.Q) || Input.GetKeyDown(KeyCode.Comma)) {
+            SoundController.Instance.PlaySound(SoundType.Rotate);
+            buildMarker.MarkerRotation = buildMarker.MarkerRotation.RotateCounterClockwise();
+            UpdateCanPlace();
+        }
+        if (Input.GetKeyDown(KeyCode.E) || Input.GetKeyDown(KeyCode.Period)) {
+            SoundController.Instance.PlaySound(SoundType.Rotate);
+            buildMarker.MarkerRotation = buildMarker.MarkerRotation.RotateClockwise();
+            UpdateCanPlace();
         }
     }
 }
