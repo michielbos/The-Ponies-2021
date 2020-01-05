@@ -596,6 +596,14 @@ public class Property : MonoBehaviour {
             tiles.Add(new Vector2Int(tile.x, tile.y + 1));
         return tiles;
     }
+
+    /// <summary>
+    /// Returns the name of this property that can be displayed as Discord detail.
+    /// This is the household name for occupied lots, or the property name for unoccupied lots.
+    /// </summary>
+    public string GetDiscordDetail() {
+        return household?.householdName ?? propertyName;
+    }
 }
 
 }

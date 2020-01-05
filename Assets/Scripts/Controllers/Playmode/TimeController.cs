@@ -1,5 +1,6 @@
 ﻿using Assets.Scripts.Util;
 using System.Collections.Generic;
+using Controllers.Global;
 using Controllers.Playmode;
 using Controllers.Singletons;
 using UnityEngine;
@@ -17,8 +18,9 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
     public int DaysInOneYear = 100;
     private double timeToNextMinute;
     private bool forcePaused;
-    public bool twelveHourClock = true;
     private readonly List<ITimeTickListener> tickListeners = new List<ITimeTickListener>();
+    
+    private bool TwelveHourClock => SettingsController.Instance.twelveHourClock.Value;
 
     /// <summary>
     /// The current game time, in ingame minutes.
@@ -108,7 +110,7 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
         } else {
             currMinutes = "" + GetMinuteOfHour();
         }
-        if (twelveHourClock) {
+        if (TwelveHourClock) {
             if (GetHourOfDay() == 0) {
                 currHours = "12";
                 disambiguation = " AM";
