@@ -177,7 +177,13 @@ public class BuyTool : MonoBehaviour, ITool {
             return false;
         }
 
-        if (!CheatsController.Instance.moveObjectsMode && !(targetSlot is SurfaceSlot)) {
+        SurfaceSlot surfaceSlot = targetSlot as SurfaceSlot;
+        if (surfaceSlot != null) {
+            // Skip all other checks, because a surface object can be placed as long as the slot is free.
+            return surfaceSlot.SlotObject == null || surfaceSlot.SlotObject == movingObject;
+        }
+        
+        if (!CheatsController.Instance.moveObjectsMode) {
             List<PropertyObject> tileObjects = PropertyController.Instance.property.GetObjectsOnTiles(requiredTiles);
             
             // Check if there is a collision.
@@ -284,7 +290,8 @@ public class BuyTool : MonoBehaviour, ITool {
     private void SellSelection() {
         if (movingObject == null) {
             ClearSelection();
-        } else if (movingObject.preset.sellable || CheatsController.Instance.moveObjectsMode) {
+        } else if (!movingObject.Children.Any() &&
+                   (movingObject.preset.sellable || CheatsController.Instance.moveObjectsMode)) {
             SoundController.Instance.PlaySound(SoundType.Sell);
             PropertyController.Instance.property.RemovePropertyObject(movingObject);
             MoneyController.Instance.ChangeFunds(movingObject.value);
