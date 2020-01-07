@@ -129,7 +129,9 @@ public class SeatActionProvider : IObjectActionProvider {
         }
 
         protected override void OnFinish() {
-            target.users.Remove(pony);
+            if (target != null) {
+                target.users.Remove(pony);
+            }
         }
     }
 }

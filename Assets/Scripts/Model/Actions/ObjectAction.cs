@@ -15,6 +15,10 @@ public abstract class ObjectAction : PonyAction {
     public override PonyActionData GetData() {
         return new PonyActionData(identifier, tickCount, canceled, target.id, GetDataPairs());
     }
+    
+    protected internal override bool TargetExists() {
+        return target != null;
+    }
 }
 
 }
