@@ -341,6 +341,7 @@ public class Property : MonoBehaviour {
     /// <param name="tiles">The coordinates of the tiles.</param>
     /// <returns>A list of all PropertyObjects with a tile overlapping at least one of the given positions.</returns>
     public List<PropertyObject> GetObjectsOnTiles(ICollection<Vector2Int> tiles) {
+        // TODO: Consider optimization and/or caching.
         //This might come with a performance overhead when there are a lot of objects.
         //If performance becomes an issue, we could remember all overlapping objects inside each terrain tile.
         List<PropertyObject> objectsOnTiles = new List<PropertyObject>();
@@ -453,6 +454,7 @@ public class Property : MonoBehaviour {
     /// Borders with a wall are impassable, unless they have a door.
     /// </summary>
     public HashSet<TileBorder> GetImpassableBorders() {
+        // TODO: Consider optimization and/or caching.
         HashSet<TileBorder> borders = new HashSet<TileBorder>(walls.Keys);
         foreach (PropertyObject propertyObject in propertyObjects.Values) {
             if (propertyObject.preset.tags.Get("type") == "door") {
@@ -468,6 +470,7 @@ public class Property : MonoBehaviour {
     /// Returns true if a tile is passable (not occupied by an impassible object).
     /// </summary>
     public bool IsTilePassable(Vector2Int tile) {
+        // TODO: Consider optimization and/or caching.
         foreach (PropertyObject propertyObject in propertyObjects.Values) {
             foreach (Vector2Int occupiedTile in propertyObject.GetImpassableTiles()) {
                 if (occupiedTile == tile) {
