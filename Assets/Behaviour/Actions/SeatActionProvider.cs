@@ -120,7 +120,7 @@ public class SeatActionProvider : IObjectActionProvider {
             Vector2Int cancelPosition = seatPosition.GetNeighbourTile(target.Rotation);
             if (canceled && PropertyController.Property.CanPassBorder(pony.TilePosition, cancelPosition)) {
                 target.users.Remove(pony);
-                pony.TilePosition = pony.TilePosition.GetNeighbourTile(target.Rotation);
+                pony.TilePosition = cancelPosition;
                 return true;
             }
             // Hourly comfort gain is 10% * comfort score.
