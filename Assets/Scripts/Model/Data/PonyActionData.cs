@@ -11,12 +11,15 @@ public class PonyActionData {
     public string targetPonyUuid;
     public int targetTileX;
     public int targetTileY;
-    
+    public DataPair[] data;
+
     public enum TargetType {
-        Object, Pony, Tile
+        Object,
+        Pony,
+        Tile
     }
 
-    public PonyActionData(string identifier, int tickCount, bool canceled, int targetObjectid) {
+    public PonyActionData(string identifier, int tickCount, bool canceled, int targetObjectid, DataPair[] data) {
         this.identifier = identifier;
         this.tickCount = tickCount;
         this.canceled = canceled;
@@ -24,9 +27,10 @@ public class PonyActionData {
         this.targetPonyUuid = "";
         this.targetTileX = -1;
         this.targetTileY = -1;
+        this.data = data;
     }
-    
-    public PonyActionData(string identifier, int tickCount, bool canceled, string targetPonyUuid) {
+
+    public PonyActionData(string identifier, int tickCount, bool canceled, string targetPonyUuid, DataPair[] data) {
         this.identifier = identifier;
         this.tickCount = tickCount;
         this.canceled = canceled;
@@ -34,9 +38,11 @@ public class PonyActionData {
         this.targetPonyUuid = targetPonyUuid;
         this.targetTileX = -1;
         this.targetTileY = -1;
+        this.data = data;
     }
-    
-    public PonyActionData(string identifier, int tickCount, bool canceled, int targetTileX, int targetTileY) {
+
+    public PonyActionData(string identifier, int tickCount, bool canceled, int targetTileX, int targetTileY,
+        DataPair[] data) {
         this.identifier = identifier;
         this.tickCount = tickCount;
         this.canceled = canceled;
@@ -44,6 +50,7 @@ public class PonyActionData {
         this.targetPonyUuid = "";
         this.targetTileX = targetTileX;
         this.targetTileY = targetTileY;
+        this.data = data;
     }
 
     public TargetType GetTargetType() {

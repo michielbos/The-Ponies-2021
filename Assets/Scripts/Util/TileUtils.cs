@@ -76,6 +76,26 @@ public static class TileUtils {
                 throw new ArgumentOutOfRangeException(nameof(direction), direction, null);
         }
     }
+
+    /// <summary>
+    /// Get the border between two tiles.
+    /// Both tiles must be next to each other, otherwise an ArgumentException is thrown.
+    /// </summary>
+    /// <exception cref="ArgumentException">If the tiles are not next to each other.</exception>
+    public static TileBorder GetBorderBetweenTiles(this Vector2Int tile1, Vector2Int tile2) {
+        int tileDistance = Mathf.Abs(tile1.x - tile2.x) + Mathf.Abs(tile1.y - tile2.y);
+        if (tileDistance != 1) {
+            throw new ArgumentException("Tile distance must be 1, but was " + tileDistance);
+        }
+        
+        if (tile1.x < tile2.x)
+            return new TileBorder(tile2.x, tile2.y, WallDirection.NorthWest);
+        if (tile1.x > tile2.x)
+            return new TileBorder(tile1.x, tile1.y, WallDirection.NorthWest);
+        if (tile1.y < tile2.y)
+            return new TileBorder(tile1.x, tile2.y, WallDirection.NorthEast);
+        return new TileBorder(tile2.x, tile1.y, WallDirection.NorthEast);
+    }
 }
 
 }

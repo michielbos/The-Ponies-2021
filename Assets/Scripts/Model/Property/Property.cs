@@ -322,6 +322,7 @@ public class Property : MonoBehaviour {
     /// <param name="tiles">The coordinates of the tiles.</param>
     /// <returns>A list of all PropertyObjects with a tile overlapping at least one of the given positions.</returns>
     public List<PropertyObject> GetObjectsOnTiles(Vector2Int[] tiles) {
+        // TODO: Consider optimization and/or caching.
         //This might come with a performance overhead when there are a lot of objects.
         //If performance becomes an issue, we could remember all overlapping objects inside each terrain tile.
         List<PropertyObject> objectsOnTiles = new List<PropertyObject>();
@@ -430,10 +431,11 @@ public class Property : MonoBehaviour {
     }
 
     /// <summary>
-    /// Returns a HashSet of all impassible borders.
-    /// Borders with a wall are impassible, unless they have a door.
+    /// Returns a HashSet of all impassable borders.
+    /// Borders with a wall are impassable, unless they have a door.
     /// </summary>
     public HashSet<TileBorder> GetImpassableBorders() {
+        // TODO: Consider optimization and/or caching.
         HashSet<TileBorder> borders = new HashSet<TileBorder>(walls.Keys);
         foreach (PropertyObject propertyObject in propertyObjects.Values) {
             if (propertyObject.preset.tags.Get("type") == "door") {
@@ -443,6 +445,47 @@ public class Property : MonoBehaviour {
             }
         }
         return borders;
+    }
+
+    /// <summary>
+    /// Returns true if a tile is passable (not occupied by an impassible object).
+    /// </summary>
+    public bool IsTilePassable(Vector2Int tile) {
+        // TODO: Consider optimization and/or caching.
+        foreach (PropertyObject propertyObject in propertyObjects.Values) {
+            foreach (Vector2Int occupiedTile in propertyObject.GetImpassableTiles()) {
+                if (occupiedTile == tile) {
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    /// <summary>
+    /// Returns true if a border is passable.
+    /// Borders with a wall are impassable, unless they have a door.
+    /// </summary>
+    public bool IsBorderPassable(TileBorder border) {
+        if (!WallExists(border))
+            return true;
+
+        foreach (PropertyObject propertyObject in propertyObjects.Values) {
+            if (propertyObject.preset.tags.Get("type") == "door" &&
+                propertyObject.GetRequiredWallBorders().Contains(border)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /// <summary>
+    /// Returns true if a pony could move from start to target.
+    /// Start and target must be exactly 1 tile away from each other, or an ArgumentException is thrown.
+    /// A pony can move from start to target if both the target tile and the border between the tiles are passable.
+    /// </summary>
+    public bool CanPassBorder(Vector2Int start, Vector2Int target) {
+        return IsTilePassable(target) && IsBorderPassable(start.GetBorderBetweenTiles(target));
     }
 
     [CanBeNull]
