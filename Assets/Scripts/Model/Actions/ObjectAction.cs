@@ -5,7 +5,7 @@ using Model.Property;
 namespace Model.Actions {
 
 public abstract class ObjectAction : PonyAction {
-    protected readonly PropertyObject target;
+    public readonly PropertyObject target;
 
     protected ObjectAction(string identifier, Pony pony, PropertyObject target, string name) :
         base(identifier, pony, name) {
