@@ -14,26 +14,57 @@ namespace ThePoniesBehaviour.Actions {
 public class ShowerBathActionProvider : IObjectActionProvider {
     private const string BathtubIdentifier = "bathtub";
     private const string ShowerTubIdentifier = "showertub";
+    private const string ShowerIdentifier = "shower";
 
     private const string BathUseAction = "bathUse";
+    private const string ShowerAction = "shower";
 
     public IEnumerable<ObjectAction> GetActions(Pony pony, PropertyObject target) {
+        List<ObjectAction> actions = new List<ObjectAction>(2);
         if (target.Type == BathtubIdentifier || target.Type == ShowerTubIdentifier) {
-            return new[] {new UseBathAction(BathUseAction, pony, target, "Take bath")};
+            actions.Add(new TakeBathAction(BathUseAction, pony, target, "Take bath"));
         }
-        return new ObjectAction[0];
+        if (target.Type == ShowerIdentifier || target.Type == ShowerTubIdentifier) {
+            actions.Add(new TakeShowerAction(ShowerAction, pony, target, "Shower"));
+        }
+        return actions;
     }
 
     public ObjectAction LoadAction(string identifier, Pony pony, PropertyObject target) {
-        if (identifier == BathUseAction) {
-            return new UseBathAction(identifier, pony, target, "Take bath");
-        }
+        if (identifier == BathUseAction) 
+            return new TakeBathAction(identifier, pony, target, "Take bath");
+        if (identifier == ShowerAction)
+            return new TakeShowerAction(identifier, pony, target, "Shower");
         return null;
     }
 
-    private class UseBathAction : ObjectAction {
-        public UseBathAction(string identifier, Pony pony, PropertyObject target, string name) : base(identifier, pony,
-            target, name) { }
+    /// <summary>
+    /// Take bath action.
+    /// </summary>
+    private class TakeBathAction : BaseShowerBathAction {
+        public TakeBathAction(string identifier, Pony pony, PropertyObject target, string name) : base(
+            identifier, pony, target, name, true) { }
+    }
+
+    /// <summary>
+    /// Shower action.
+    /// </summary>
+    private class TakeShowerAction : BaseShowerBathAction {
+        public TakeShowerAction(string identifier, Pony pony, PropertyObject target, string name) : base(
+            identifier, pony, target, name, false) { }
+    }
+
+    /// <summary>
+    /// Shared behaviour for showers and bathtubs.
+    /// </summary>
+    private abstract class BaseShowerBathAction : ObjectAction {
+        private readonly bool isBath;
+        
+        protected BaseShowerBathAction(string identifier, Pony pony, PropertyObject target, string name, bool isBath) :
+            base(identifier, pony,
+                target, name) {
+            this.isBath = isBath;
+        }
 
         public override bool Tick() {
             if (!WalkToBath())
@@ -74,10 +105,15 @@ public class ShowerBathActionProvider : IObjectActionProvider {
                 return GetOutOfBath();
             }
 
+            // Showers are more effective for hygiene than bathtubs.
+            float hygieneMultiplier = isBath ? 0.8f : 1f;
+
             // Pony should be clean in 1 hour on a level 10 bathtub.
-            pony.needs.Hygiene += target.preset.needStats.hygiene / 10f / 60f;
-            // Hourly comfort gain is 10% * comfort score (same as chairs).
-            pony.needs.Comfort += target.preset.needStats.comfort / 10f / 60f;
+            pony.needs.Hygiene += hygieneMultiplier * target.preset.needStats.hygiene / 10f / 60f;
+            if (isBath) {
+                // Hourly comfort gain is 10% * comfort score (same as chairs).
+                pony.needs.Comfort += target.preset.needStats.comfort / 10f / 60f;
+            }
 
             // Get out of the bath when clean.
             if (pony.needs.Hygiene >= 1f) {
