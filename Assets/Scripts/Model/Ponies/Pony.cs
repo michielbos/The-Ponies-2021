@@ -63,7 +63,8 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     public void InitGamePony(float x, float y, Needs needs, PonyActionData[] actionQueue, Property.Property property) {
         this.needs = needs;
         transform.position = new Vector3(x, 0, y);
-        queuedActions.AddRange(actionQueue.Select(data => ActionManager.LoadFromData(this, data, property)));
+        queuedActions.AddRange(actionQueue.Select(data => ActionManager.LoadFromData(this, data, property))
+            .Where(loaded => loaded != null));
     }
 
     private void OnEnable() {

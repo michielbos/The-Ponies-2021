@@ -5,6 +5,7 @@ using JetBrains.Annotations;
 using Model.Data;
 using Model.Ponies;
 using Model.Property;
+using UnityEngine;
 
 namespace Model.Actions {
 
@@ -52,9 +53,13 @@ public static class ActionManager {
             default:
                 throw new ArgumentOutOfRangeException();
         }
+        if (ponyAction == null) {
+            Debug.LogWarning($"Action {data.identifier} could not be found in behaviours.");
+            return null;
+        }
         ponyAction.canceled = data.canceled;
-        ponyAction?.Load(data.tickCount);
-        ponyAction?.AddDataPairs(data.data, property);
+        ponyAction.Load(data.tickCount);
+        ponyAction.AddDataPairs(data.data, property);
         return ponyAction;
     }
 
