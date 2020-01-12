@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Model.Actions;
 using Model.Ponies;
 using UnityEngine;
@@ -9,6 +10,7 @@ namespace ThePoniesBehaviour.Extensions {
 /// Contains behaviour that is often repeated in actions.
 /// </summary>
 public static class PonyActionExtensions {
+
     /// <summary>
     /// Walk to a target.
     /// </summary>
@@ -17,6 +19,17 @@ public static class PonyActionExtensions {
     /// <param name="stopOnCancel">If true, moving will fail if the action is canceled.</param>
     /// <returns></returns>
     public static ActionResult WalkTo(this PonyAction action, Vector2Int target, bool stopOnCancel = true) {
+        return WalkToClosest(action, new[] {target}, stopOnCancel);
+    }
+
+    /// <summary>
+    /// Walk to the closest target.
+    /// </summary>
+    /// <param name="action">The action that is running this method.</param>
+    /// <param name="targets">The list of targets to choose from.</param>
+    /// <param name="stopOnCancel">If true, moving will fail if the action is canceled.</param>
+    /// <returns></returns>
+    public static ActionResult WalkToClosest(this PonyAction action, ICollection<Vector2Int> targets, bool stopOnCancel = true) {
         Pony pony = action.pony;
 
         if (stopOnCancel && action.canceled) {
@@ -24,7 +37,7 @@ public static class PonyActionExtensions {
             return ActionResult.Failed;
         }
 
-        if (pony.WalkTo(target)) {
+        if (pony.WalkToClosest(targets)) {
             return ActionResult.Success;
         }
         

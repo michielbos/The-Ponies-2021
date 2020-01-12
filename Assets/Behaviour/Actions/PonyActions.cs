@@ -8,6 +8,7 @@ public static class PonyActions {
             new SeatActionProvider(),
             new ToiletActionProvider(),
             new ShowerBathActionProvider(),
+            new BedActionProvider(), 
         });
         ActionManager.AddTileActionProviders(new [] {
             new MoveActionProvider()
