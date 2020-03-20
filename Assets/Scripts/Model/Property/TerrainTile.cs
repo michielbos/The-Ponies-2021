@@ -10,7 +10,7 @@ namespace Model.Property {
 /// A tile that is part of the terrain.
 /// </summary>
 [Serializable]
-public class TerrainTile : MonoBehaviour, IActionTarget {
+public class TerrainTile : MonoBehaviour, IActionTarget, IObjectSlot {
     public int height;
     public int type;
     public Transform model;
@@ -21,6 +21,13 @@ public class TerrainTile : MonoBehaviour, IActionTarget {
             return new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
         }
         set { transform.position = new Vector3(value.x, 0, value.y); }
+    }
+
+    public Vector3 SlotPosition => transform.position;
+    
+    public void PlaceObject(PropertyObject propertyObject) {
+        Transform objectTransform = propertyObject.transform;
+        objectTransform.position = transform.position;
     }
 
     public void Init(int x, int y, int height, int type) {

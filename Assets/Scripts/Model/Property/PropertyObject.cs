@@ -1,6 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Collections;
+using System.Collections.Generic;
 using System.Linq;
 using Controllers;
+using JetBrains.Annotations;
 using Model.Actions;
 using Model.Data;
 using Model.Ponies;
@@ -16,21 +18,33 @@ namespace Model.Property {
 [RequireComponent(typeof(ModelContainer))]
 public class PropertyObject : MonoBehaviour, IActionTarget {
     public int id;
-    private ObjectRotation rotation;
     public FurniturePreset preset;
     public int skin;
     public int value;
-    
+
     public readonly IDictionary<string, object> data = new Dictionary<string, object>();
     public readonly HashSet<Pony> users = new HashSet<Pony>();
 
     private AudioSource audioSource;
     private string lastAnimation;
     private string lastSound;
-    
+    private SurfaceSlot[] surfaceSlots = new SurfaceSlot[0];
+
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
 
-    public string Type => preset.tags.Get("type") ?? "";
+    public string Type => preset.Type;
+
+    /// <summary>
+    /// Shortcut to get all child objects that are filling this object's surface slots.
+    /// </summary>
+    public IEnumerable<PropertyObject> Children => surfaceSlots.Where(it => it.SlotObject != null)
+        .Select(it => it.SlotObject);
+
+    /// <summary>
+    /// The parent object that has this object as a child, if any.
+    /// </summary>
+    [CanBeNull]
+    public SurfaceSlot ParentSlot => transform.parent.GetComponent<SurfaceSlot>();
 
     public Vector2Int TilePosition {
         get {
@@ -41,22 +55,25 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     }
 
     public ObjectRotation Rotation {
-        get { return rotation; }
-        set {
-            rotation = value;
-            Model.rotation = Quaternion.identity;
-            preset.FixModelTransform(Model, Rotation);
-        }
+        get => Model.transform.GetObjectRotation();
+        set => preset.FixModelTransform(Model, value, IsChild);
     }
-    
-    public void Init(int id, int x, int y, ObjectRotation rotation, FurniturePreset preset, int skin, int value,
+
+    public bool IsChild => ParentSlot != null;
+
+    public void Init(int id, IObjectSlot objectSlot, ObjectRotation rotation, FurniturePreset preset, int skin, int value,
         string animation) {
         this.id = id;
-        TilePosition = new Vector2Int(x, y);
         this.preset = preset;
         this.skin = skin;
         this.value = value;
         preset.ApplyToModel(GetComponent<ModelContainer>(), skin);
+        objectSlot.PlaceObject(this);
+        Rotation = ObjectRotation.SouthEast;
+        surfaceSlots = preset.GetSurfaceSlots().Select(pos => SurfaceSlot.CreateSlot(this, pos)).ToArray();
+        foreach (SurfaceSlot slot in surfaceSlots) {
+            slot.MatchHeightWithOwner();
+        }
         Rotation = rotation;
         if (!string.IsNullOrEmpty(animation))
             PlayAnimation(animation);
@@ -82,7 +99,13 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             value,
             data.Select(pair => DataPair.FromValues(pair.Key, pair.Value)).ToArray(),
             GetAnimation(),
-            users.Select(pony => pony.uuid.ToString()).ToArray());
+            users.Select(pony => pony.uuid.ToString()).ToArray(),
+            surfaceSlots.Select(child => child.SlotObject != null ? child.SlotObject.GetChildObjectData() : null)
+                .ToArray());
+    }
+
+    private ChildObjectData GetChildObjectData() {
+        return new ChildObjectData(GetPropertyObjectData());
     }
 
     /// <summary>
@@ -103,17 +126,13 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             return new Vector2Int[0];
         return preset.GetOccupiedTiles(TilePosition, Rotation);
     }
-    
+
     /// <summary>
     /// Get the coordinates of the tiles occupied by this PropertyObject.
     /// </summary>
     /// <returns>A Vector2Int array of all occupied coordinates.</returns>
     public IEnumerable<TileBorder> GetRequiredWallBorders() {
         return preset.GetRequiredWallBorders(GetOccupiedTiles(), Rotation);
-    }
-
-    public void SetVisibility(bool visible) {
-        Model.gameObject.SetActive(visible);
     }
 
     public ICollection<PonyAction> GetActions(Pony pony) {
@@ -140,7 +159,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         if (audioSource != null && audioSource.isPlaying)
             audioSource.Stop();
     }
-    
+
     public string GetPlayingSound() {
         if (audioSource == null || !audioSource.isPlaying)
             return null;
@@ -160,6 +179,38 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         if (animation != null && animation.IsPlaying(lastAnimation))
             return lastAnimation;
         return null;
+    }
+
+    /// <summary>
+    /// Get the surface slot with the given slot index.
+    /// </summary>
+    public SurfaceSlot GetSurfaceSlot(int slotIndex) {
+        return surfaceSlots[slotIndex];
+    }
+
+    [CanBeNull]
+    public IObjectSlot GetClosestSurfaceSlot(Vector3 worldPosition) {
+        SurfaceSlot closest = null;
+        float bestDistance = 9999f;
+        foreach (SurfaceSlot slot in surfaceSlots) {
+            float distance = Vector3.Distance(worldPosition, slot.SlotPosition);
+            if (closest == null || distance < bestDistance) {
+                closest = slot;
+                bestDistance = distance;
+            }
+        }
+        return closest;
+    }
+
+    /// <summary>
+    /// Remove this object from its parent slot, if it has one.
+    /// </summary>
+    public void ClearParent() {
+        SurfaceSlot parentSlot = ParentSlot;
+        if (parentSlot == null)
+            return;
+        parentSlot.SlotObject = null;
+        transform.parent = PropertyController.Property.transform;
     }
 }
 

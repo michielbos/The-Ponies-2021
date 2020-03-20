@@ -54,14 +54,14 @@ public static class TileUtils {
         int distanceFromEnd = 0) {
         return GetBorderTiles(tiles, direction, distanceFromEnd).Select(tile => GetNorthWestBorder(tile, direction));
     }
-    
+
     /// <summary>
     /// Get the tile that would be next to this one, when moving 1 tile into the given direction.
     /// </summary>
     public static Vector2Int GetNeighbourTile(this Vector2Int tile, ObjectRotation direction) {
         return tile + GetTileForDirection(direction);
     }
-    
+
     private static Vector2Int GetTileForDirection(ObjectRotation direction) {
         switch (direction) {
             case ObjectRotation.SouthEast:
@@ -95,6 +95,54 @@ public static class TileUtils {
         if (tile1.y < tile2.y)
             return new TileBorder(tile1.x, tile2.y, WallDirection.NorthEast);
         return new TileBorder(tile2.x, tile1.y, WallDirection.NorthEast);
+    }
+
+    /// <summary>
+    /// Convert a tile position to a Vector3 world position.
+    /// </summary>
+    public static Vector3 ToWorldPosition(this Vector2Int tilePosition) =>
+        new Vector3(tilePosition.x, 0, tilePosition.y);
+    
+    /// <summary>
+    /// Convert a world position to a tile position.
+    /// This rounds the position and removes the height data.
+    /// </summary>
+    public static Vector2Int ToTilePosition(this Vector3 worldPosition) =>
+        new Vector2Int(Mathf.RoundToInt(worldPosition.x), Mathf.RoundToInt(worldPosition.z));
+    
+    /// <summary>
+    /// Calculate the new position of a tile, assuming it was rotated as part of a tile group.
+    /// </summary>
+    public static Vector2Int RotateTileInGroup(this Vector2Int tile, ObjectRotation rotation) {
+        if (rotation == ObjectRotation.SouthWest) {
+            return new Vector2Int(tile.y, -tile.x);
+        }
+        if (rotation == ObjectRotation.NorthWest) {
+            return new Vector2Int(-tile.x, -tile.y);
+        }
+        if (rotation == ObjectRotation.NorthEast) {
+            return new Vector2Int(-tile.y, tile.x);
+        }
+        // SouthEast
+        return tile;
+    }
+    
+    /// <summary>
+    /// Vector3 version of RotateTileInGroup.
+    /// Calculate the new position, assuming it was rotated as part of a tile group.
+    /// </summary>
+    public static Vector3 RotateInGroup(this Vector3 tile, ObjectRotation rotation) {
+        if (rotation == ObjectRotation.SouthWest) {
+            return new Vector3(tile.z, tile.y, -tile.x);
+        }
+        if (rotation == ObjectRotation.NorthWest) {
+            return new Vector3(-tile.x, tile.y, -tile.z);
+        }
+        if (rotation == ObjectRotation.NorthEast) {
+            return new Vector3(-tile.z, tile.y, tile.x);
+        }
+        // SouthEast
+        return tile;
     }
 }
 
