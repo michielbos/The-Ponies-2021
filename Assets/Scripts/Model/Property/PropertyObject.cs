@@ -77,6 +77,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         Rotation = rotation;
         if (!string.IsNullOrEmpty(animation))
             PlayAnimation(animation);
+        AddCutoutsToWalls();
     }
 
     public void InitScriptData(DataPair[] data, IEnumerable<Pony> users, Property property) {
@@ -128,9 +129,9 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     }
 
     /// <summary>
-    /// Get the coordinates of the tiles occupied by this PropertyObject.
+    /// Get the tile borders on which this PropertyObject requires walls to be placed.
     /// </summary>
-    /// <returns>A Vector2Int array of all occupied coordinates.</returns>
+    /// <returns>A collection of all required wall borders.</returns>
     public IEnumerable<TileBorder> GetRequiredWallBorders() {
         return preset.GetRequiredWallBorders(GetOccupiedTiles(), Rotation);
     }
@@ -211,6 +212,18 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             return;
         parentSlot.SlotObject = null;
         transform.parent = PropertyController.Property.transform;
+    }
+
+    private void AddCutoutsToWalls() {
+        if (preset.placementType != PlacementType.ThroughWall)
+            return;
+        if (preset.cutoutTextures.Length == 0)
+            return;
+        IEnumerable<Wall> coveredWalls = PropertyController.Property.GetWalls(GetRequiredWallBorders());
+        foreach (Wall wall in coveredWalls) {
+            wall.cutoutTexture = preset.cutoutTextures[0];
+            wall.RefreshMaterials();
+        }
     }
 }
 

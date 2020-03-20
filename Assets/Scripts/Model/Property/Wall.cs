@@ -11,15 +11,22 @@ namespace Model.Property {
 /// </summary>
 [Serializable]
 public class Wall : MonoBehaviour {
+    private static readonly int WallMask = Shader.PropertyToID("_WallMask");
+    
     public Mesh fullWallMesh;
     public Mesh shortWallMesh;
     public Material unpaintedMaterial;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
+    public Texture cutoutTexture;
 
     private WallDirection _direction;
     private WallCoverPreset _coverFront;
     private WallCoverPreset _coverBack;
+    /// <summary>
+    /// This is set to true, one or both materials have been instanced.
+    /// </summary>
+    private bool instancedMaterials;
 
     public Vector2Int TilePosition {
         get {
@@ -150,9 +157,42 @@ public class Wall : MonoBehaviour {
     /// This does only changes the displayed material. Not the real cover preset of this wall.
     /// </summary>
     public void SetVisibleCoverMaterial(bool front, WallCoverPreset preset) {
+        UpdateMaterial(front ? 0 : 1, preset);
+    }
+
+    public void RefreshMaterials() {
+        UpdateMaterial(0, CoverFront);
+        UpdateMaterial(1, CoverBack);
+    }
+
+    private void UpdateMaterial(int sideIndex, WallCoverPreset preset) {
+        //Debug.Log(sideIndex);
         Material material = preset?.GetMaterial() ?? unpaintedMaterial;
-        // Unity returns a copied array, so we solve things the fancy way.
-        meshRenderer.sharedMaterials = meshRenderer.sharedMaterials.Also(it => it[front ? 0 : 1] = material);
+        if (instancedMaterials) {
+            Destroy(meshRenderer.materials[sideIndex]);
+        }
+        meshRenderer.sharedMaterials = meshRenderer.sharedMaterials.Also(it => it[sideIndex] = material);
+        UpdateCutout(sideIndex);
+    }
+
+    public void UpdateCutout(int sideIndex) {
+        if (cutoutTexture == null)
+            return;
+        // Accessing the materials property automatically converts all materials to instances.
+        // Thanks to Unity's clear API.
+        instancedMaterials = true;
+        Material[] materials = meshRenderer.materials;
+        materials[sideIndex].SetTexture(WallMask, cutoutTexture);
+        meshRenderer.materials = materials;
+    }
+
+    private void OnDestroy() {
+        // Clean up instanced materials, if we have them.
+        if (instancedMaterials) {
+            foreach (Material material in meshRenderer.materials) {
+                Destroy(material);
+            }
+        }
     }
 
     public WallCoverPreset GetCoverPreset(bool front) {
@@ -172,7 +212,7 @@ public class Wall : MonoBehaviour {
 /// <summary>
 /// Simple class to define the front or back side of a wall.
 /// </summary>
-public class WallSide {
+public class WallSide : IEquatable<WallSide> {
     public readonly Wall wall;
     public readonly bool front;
 
@@ -190,6 +230,38 @@ public class WallSide {
     
     public bool HasThisPreset(WallCoverPreset preset) {
         return front ? wall.CoverFront == preset : wall.CoverBack == preset;
+    }
+
+    public bool Equals(WallSide other) {
+        if (ReferenceEquals(null, other))
+            return false;
+        if (ReferenceEquals(this, other))
+            return true;
+        return Equals(wall, other.wall) && front == other.front;
+    }
+
+    public override bool Equals(object obj) {
+        if (ReferenceEquals(null, obj))
+            return false;
+        if (ReferenceEquals(this, obj))
+            return true;
+        if (obj.GetType() != this.GetType())
+            return false;
+        return Equals((WallSide) obj);
+    }
+
+    public override int GetHashCode() {
+        unchecked {
+            return ((wall != null ? wall.GetHashCode() : 0) * 397) ^ front.GetHashCode();
+        }
+    }
+
+    public static bool operator ==(WallSide left, WallSide right) {
+        return Equals(left, right);
+    }
+
+    public static bool operator !=(WallSide left, WallSide right) {
+        return !Equals(left, right);
     }
 }
 

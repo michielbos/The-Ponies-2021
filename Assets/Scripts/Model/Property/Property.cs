@@ -98,7 +98,7 @@ public class Property : MonoBehaviour {
 
     /// <summary>
     /// Place a property object, with all data filled in.
-    /// This should be used when loading an existing propery object from a save.
+    /// This should be used when loading an existing property object from a save.
     /// This also instantiates all children of this object.
     /// </summary>
     private void PlacePropertyObject(int id, IObjectSlot targetSlot, ObjectRotation objectRotation, FurniturePreset preset,

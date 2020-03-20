@@ -5,6 +5,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading.Tasks;
+using JetBrains.Annotations;
 using PoneCrafter.Json;
 using PoneCrafter.Model;
 using UnityEngine;
@@ -167,16 +168,54 @@ public class PoneCrafterImporter {
             Task<GameObject> task = gltfLoader.LoadItem(zipArchive, modelName);
             await task;
             GameObject loadedObject = task.Result;
-            return new Furniture(jsonFurniture, loadedObject.GetComponent<InstantiatedGLTFObject>());
+            return new Furniture(jsonFurniture, loadedObject.GetComponent<InstantiatedGLTFObject>(),
+                LoadCutoutTextures(zipArchive));
         } catch (Exception e) {
             throw new ImportException("Unexpected import error: " + e.Message);
         }
     }
 
+    private Texture2D[] LoadCutoutTextures(ZipArchive zipArchive) {
+        Texture2D cutout = LoadTextureOrNull(zipArchive, "cutout.png");
+        if (cutout != null) {
+            return new[] {cutout};
+        }
+        
+        // If there is no cutout.png, check for the numbered cutouts.
+        List<Texture2D> textures = new List<Texture2D>(9);
+        for (int i = 1; i <= textures.Capacity; i++) {
+            cutout = LoadTextureOrNull(zipArchive, $"cutout{i}.png");
+            if (cutout == null)
+                break;
+            textures.Add(cutout);
+        }
+
+        return textures.ToArray();
+    }
+    
+    /// <summary>
+    /// Load an image file for a ZipArchive into a Texture2D.
+    /// </summary>
+    /// <returns>The loaded texture.</returns>
+    /// <exception cref="ImportException">If the entry does not exist or an error occurs while loading the texture.</exception>
     private Texture2D LoadTexture(ZipArchive zipArchive, string filename = "texture.png") {
+        Texture2D loadedTexture = LoadTextureOrNull(zipArchive, filename);
+        if (loadedTexture == null) {
+            throw new ImportException("File did not contain a " + filename + " entry.");
+        }
+        return loadedTexture;
+    }
+    
+    /// <summary>
+    /// Load an image file for a ZipArchive into a Texture2D.
+    /// </summary>
+    /// <returns>The loaded texture. Null if the entry did not exist.</returns>
+    /// <exception cref="ImportException">If an error occurs while loading the texture.</exception>
+    [CanBeNull]
+    private Texture2D LoadTextureOrNull(ZipArchive zipArchive, string filename) {
         ZipArchiveEntry textureEntry = zipArchive.GetEntry(filename);
         if (textureEntry == null) {
-            throw new ImportException("File did not contain a " + filename + " entry.");
+            return null;
         }
         using (Stream stream = textureEntry.Open()) {
             MemoryStream memoryStream = new MemoryStream();
