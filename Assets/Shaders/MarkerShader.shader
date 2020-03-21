@@ -1,23 +1,28 @@
-Shader "Cel Shading/ObjectGlass"
+Shader "Cel Shading/MarkerShader"
 {
 	Properties
 	{
+		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("MainTex", 2D) = "white" {}
+		_EmissionStrenght("EmissionStrenght", Range( 0 , 10)) = 1
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
 
 	SubShader
 	{
-		Tags{ "RenderType" = "Transparent"  "Queue" = "Transparent+0" "IgnoreProjector" = "True" }
+		Tags{ "RenderType" = "Transparent"  "Queue" = "Geometry+0" "IsEmissive" = "true"  }
+		LOD 200
 		Cull Off
+		Blend One Zero , SrcAlpha OneMinusSrcAlpha
+		AlphaToMask On
 		CGINCLUDE
 		#include "UnityPBSLighting.cginc"
 		#include "Lighting.cginc"
 		#pragma target 2.0
 		struct Input
 		{
-			half2 uv_texcoord;
+			float2 uv_texcoord;
 		};
 
 		struct SurfaceOutputCustomLightingCustom
@@ -34,7 +39,9 @@ Shader "Cel Shading/ObjectGlass"
 		};
 
 		uniform sampler2D _MainTex;
-		uniform half4 _MainTex_ST;
+		uniform float4 _MainTex_ST;
+		uniform float4 _Color;
+		uniform float _EmissionStrenght;
 
 		inline half4 LightingStandardCustomLighting( inout SurfaceOutputCustomLightingCustom s, half3 viewDir, UnityGI gi )
 		{
@@ -42,10 +49,10 @@ Shader "Cel Shading/ObjectGlass"
 			Input i = s.SurfInput;
 			half4 c = 0;
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			half4 tex2DNode50 = tex2D( _MainTex, uv_MainTex );
-			float4 temp_output_56_0 = ( tex2DNode50 * float4( 0.7,0.7,0.7,0 ) );
-			c.rgb = temp_output_56_0.rgb;
-			c.a = tex2DNode50.a;
+			float4 tex2DNode5 = tex2D( _MainTex, uv_MainTex );
+			float3 temp_output_7_0 = (( tex2DNode5 * ( _Color * float4( 0.7,0.7,0.7,1 ) ) )).rgb;
+			c.rgb = temp_output_7_0;
+			c.a = tex2DNode5.a;
 			return c;
 		}
 
@@ -58,14 +65,15 @@ Shader "Cel Shading/ObjectGlass"
 		{
 			o.SurfInput = i;
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			half4 tex2DNode50 = tex2D( _MainTex, uv_MainTex );
-			float4 temp_output_56_0 = ( tex2DNode50 * float4( 0.7,0.7,0.7,0 ) );
-			o.Albedo = temp_output_56_0.rgb;
+			float4 tex2DNode5 = tex2D( _MainTex, uv_MainTex );
+			float3 temp_output_7_0 = (( tex2DNode5 * ( _Color * float4( 0.7,0.7,0.7,1 ) ) )).rgb;
+			o.Albedo = temp_output_7_0;
+			o.Emission = ( temp_output_7_0 * _EmissionStrenght );
 		}
 
 		ENDCG
 		CGPROGRAM
-		#pragma surface surf StandardCustomLighting alpha:fade keepalpha fullforwardshadows novertexlights nolightmap  nodynlightmap nofog 
+		#pragma surface surf StandardCustomLighting keepalpha fullforwardshadows 
 
 		ENDCG
 		Pass
@@ -73,6 +81,7 @@ Shader "Cel Shading/ObjectGlass"
 			Name "ShadowCaster"
 			Tags{ "LightMode" = "ShadowCaster" }
 			ZWrite On
+			AlphaToMask Off
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -94,12 +103,14 @@ Shader "Cel Shading/ObjectGlass"
 				float2 customPack1 : TEXCOORD1;
 				float3 worldPos : TEXCOORD2;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 			v2f vert( appdata_full v )
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID( v );
 				UNITY_INITIALIZE_OUTPUT( v2f, o );
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( o );
 				UNITY_TRANSFER_INSTANCE_ID( v, o );
 				Input customInputData;
 				float3 worldPos = mul( unity_ObjectToWorld, v.vertex ).xyz;
@@ -138,5 +149,5 @@ Shader "Cel Shading/ObjectGlass"
 			ENDCG
 		}
 	}
-	Fallback "Cel Shading/RegularV2Opacity"
+	Fallback "Diffuse"
 }

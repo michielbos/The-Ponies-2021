@@ -2,18 +2,24 @@ Shader "Cel Shading/PonyShaderV3Head"
 {
 	Properties
 	{
-		_AlphaTex("AlphaTex", 2D) = "gray" {}
+		_AlphaTex("AlphaTex", 2D) = "black" {}
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
 		_OutlineColor("OutlineColor", Color) = (1,1,1,1)
 		_OutlineBrightness("OutlineBrightness", Range( 0 , 2)) = 0.7
 		_OutlineWidth("OutlineWidth", Range( 0 , 0.4)) = 0
 		[Toggle]_OutlineSwitch("Texture Based Outline Switch", Float) = 1
 		_ColorMaskTex("ColorMaskTex", 2D) = "white" {}
-		_Color1("Color 1", Color) = (0.7,0.7,0.7,1)
-		_Color2("Color 2", Color) = (0.7,0.7,0.7,1)
-		_Color3("Color 3", Color) = (0.7,0.7,0.7,1)
+		_Color1("Color 1", Color) = (1,1,1,1)
+		_Color2("Color 2", Color) = (1,1,1,1)
+		_Color3("Color 3", Color) = (1,1,1,1)
 		_OutlineMask("OutlineMask", 2D) = "white" {}
-		_MaskClipOutlineValue("MaskClipOutlineValue", Range( 0 , 1)) = 1
+		[IntRange]_MaskClipOutlineValue("MaskClipOutlineValue", Range( 0 , 1)) = 0
+		[Toggle]_EnableEmissiveColor1("EnableEmissiveColor1", Float) = 0
+		[Toggle]_EnableEmissiveColor2("EnableEmissiveColor2", Float) = 0
+		[Toggle]_EnableEmissiveColor3("EnableEmissiveColor3", Float) = 0
+		[IntRange]_EmissionC1("EmissionC1", Range( 1 , 10)) = 1
+		[IntRange]_EmissionC2("EmissionC2", Range( 1 , 10)) = 1
+		[IntRange]_EmissionC3("EmissionC3", Range( 1 , 10)) = 1
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
@@ -38,39 +44,44 @@ Shader "Cel Shading/PonyShaderV3Head"
 		{
 			float3 IndirDiffLight63 = float3(0,0,0);
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
-			float4 ase_lightColor = 0;
+			half4 ase_lightColor = 0;
 			#else //aselc
-			float4 ase_lightColor = _LightColor0;
+			half4 ase_lightColor = _LightColor0;
 			#endif //aselc
-			float temp_output_67_0 = ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) );
+			half temp_output_67_0 = ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) );
 			half3 ase_worldNormal = WorldNormalVector( i, half3( 0, 0, 1 ) );
 			float3 ase_worldPos = i.worldPos;
 			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
-			float3 ase_worldlightDir = 0;
+			half3 ase_worldlightDir = 0;
 			#else //aseld
-			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
+			half3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
-			float dotResult26 = dot( ase_worldNormal , ase_worldlightDir );
+			half dotResult26 = dot( ase_worldNormal , ase_worldlightDir );
 			float NdotL32 = dotResult26;
-			float lerpResult71 = lerp( temp_output_67_0 , ( saturate( ( ( NdotL32 + 0.0 ) / 0.001 ) ) * 1 ) , _ShadowValue);
+			half lerpResult71 = lerp( temp_output_67_0 , ( saturate( ( ( NdotL32 + 0.0 ) / 0.001 ) ) * 1 ) , _ShadowValue);
+			half3 temp_output_75_0 = ( ( IndirDiffLight63 * ase_lightColor.a * temp_output_67_0 ) + ( ase_lightColor.rgb * lerpResult71 ) );
+			half3 Shadows110 = ( temp_output_75_0 * float3( 0.8,0.8,0.8 ) );
 			float2 uv_ColorMaskTex = i.uv_texcoord * _ColorMaskTex_ST.xy + _ColorMaskTex_ST.zw;
-			float3 break17 = (tex2D( _ColorMaskTex, uv_ColorMaskTex )).rgb;
+			half4 break17 = tex2D( _ColorMaskTex, uv_ColorMaskTex );
+			half4 temp_output_36_0 = ( _Color1 * break17.r );
+			half4 temp_output_42_0 = ( _Color2 * break17.g );
+			half4 temp_output_51_0 = ( _Color3 * break17.b );
 			float2 uv_AlphaTex = i.uv_texcoord * _AlphaTex_ST.xy + _AlphaTex_ST.zw;
 			half4 tex2DNode37 = tex2D( _AlphaTex, uv_AlphaTex );
 			float4 AlphaTexVar47 = tex2DNode37;
-			half4 ColorMaskTextureOutput64 = ( ( ( _Color1 * break17.x ) + ( _Color2 * break17.y ) + ( _Color3 * break17.z ) ) + AlphaTexVar47 );
-			float3 BaseColor80 = ( ( ( IndirDiffLight63 * ase_lightColor.a * temp_output_67_0 ) + ( ase_lightColor.rgb * lerpResult71 ) ) * (( ColorMaskTextureOutput64 * float4( 0.7,0.7,0.7,1 ) )).rgb );
+			half4 ColorMaskTextureOutput64 = ( ( temp_output_36_0 + temp_output_42_0 + temp_output_51_0 ) + AlphaTexVar47 );
+			float3 BaseColor80 = ( temp_output_75_0 * (( ColorMaskTextureOutput64 * float4( 0.7,0.7,0.7,1 ) )).rgb );
 			float2 uv_OutlineMask = i.uv_texcoord * _OutlineMask_ST.xy + _OutlineMask_ST.zw;
-			o.Emission = lerp(_OutlineColor,( CalculateContrast(_OutlineBrightness,_OutlineColor) * half4( BaseColor80 , 0.0 ) ),_OutlineSwitch).rgb;
+			o.Emission = (( _OutlineSwitch )?( ( CalculateContrast(_OutlineBrightness,_OutlineColor) * half4( BaseColor80 , 0.0 ) ) ):( ( half4( Shadows110 , 0.0 ) * _OutlineColor ) )).rgb;
 			clip( ( 1.0 - tex2D( _OutlineMask, uv_OutlineMask ).r ) - _MaskClipOutlineValue );
 			o.Normal = float3(0,0,-1);
 		}
 		ENDCG
 		
 
-		Tags{ "RenderType" = "Opaque"  "Queue" = "Geometry+0" }
+		Tags{ "RenderType" = "Opaque"  "Queue" = "Geometry+0" "IsEmissive" = "true"  }
 		LOD 200
-		Cull Back
+		Cull Off
 		ZWrite On
 		ZTest LEqual
 		CGINCLUDE
@@ -78,7 +89,7 @@ Shader "Cel Shading/PonyShaderV3Head"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 		#include "Lighting.cginc"
-		#pragma target 4.6
+		#pragma target 3.0
 		#ifdef UNITY_PASS_SHADOWCASTER
 			#undef INTERNAL_DATA
 			#undef WorldReflectionVector
@@ -89,10 +100,10 @@ Shader "Cel Shading/PonyShaderV3Head"
 		#endif
 		struct Input
 		{
-			float3 worldNormal;
+			half3 worldNormal;
 			INTERNAL_DATA
 			float3 worldPos;
-			half2 uv_texcoord;
+			float2 uv_texcoord;
 		};
 
 		struct SurfaceOutputCustomLightingCustom
@@ -108,21 +119,27 @@ Shader "Cel Shading/PonyShaderV3Head"
 			UnityGIInput GIData;
 		};
 
-		uniform half _ShadowValue;
-		uniform half4 _Color1;
+		uniform float _ShadowValue;
+		uniform float4 _Color1;
 		uniform sampler2D _ColorMaskTex;
 		uniform half4 _ColorMaskTex_ST;
-		uniform half4 _Color2;
-		uniform half4 _Color3;
+		uniform float4 _Color2;
+		uniform float4 _Color3;
 		uniform sampler2D _AlphaTex;
 		uniform half4 _AlphaTex_ST;
-		uniform half _OutlineWidth;
-		uniform half _OutlineSwitch;
-		uniform half4 _OutlineColor;
-		uniform half _OutlineBrightness;
+		uniform half _EnableEmissiveColor1;
+		uniform half _EmissionC1;
+		uniform half _EnableEmissiveColor2;
+		uniform half _EmissionC2;
+		uniform half _EnableEmissiveColor3;
+		uniform half _EmissionC3;
+		uniform float _OutlineWidth;
+		uniform float _OutlineSwitch;
+		uniform float4 _OutlineColor;
+		uniform float _OutlineBrightness;
 		uniform sampler2D _OutlineMask;
 		uniform half4 _OutlineMask_ST;
-		uniform half _MaskClipOutlineValue;
+		uniform float _MaskClipOutlineValue;
 
 
 		float4 CalculateContrast( float contrastValue, float4 colorTarget )
@@ -158,35 +175,39 @@ Shader "Cel Shading/PonyShaderV3Head"
 			ase_lightAtten = UnityMixRealtimeAndBakedShadows(data.atten, bakedAtten, UnityComputeShadowFade(fadeDist));
 			#endif
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
-			float4 ase_lightColor = 0;
+			half4 ase_lightColor = 0;
 			#else //aselc
-			float4 ase_lightColor = _LightColor0;
+			half4 ase_lightColor = _LightColor0;
 			#endif //aselc
 			float3 LightColorData48 = ( ase_lightColor.rgb * ase_lightAtten );
 			UnityGI gi62 = gi;
 			float3 diffNorm62 = LightColorData48;
 			gi62 = UnityGI_Base( data, 1, diffNorm62 );
-			float3 indirectDiffuse62 = gi62.indirect.diffuse + diffNorm62 * 0.0001;
+			half3 indirectDiffuse62 = gi62.indirect.diffuse + diffNorm62 * 0.0001;
 			float3 IndirDiffLight63 = indirectDiffuse62;
-			float temp_output_67_0 = ( 1.0 - ( ( 1.0 - ase_lightAtten ) * _WorldSpaceLightPos0.w ) );
+			half temp_output_67_0 = ( 1.0 - ( ( 1.0 - ase_lightAtten ) * _WorldSpaceLightPos0.w ) );
 			half3 ase_worldNormal = WorldNormalVector( i, half3( 0, 0, 1 ) );
 			float3 ase_worldPos = i.worldPos;
 			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
-			float3 ase_worldlightDir = 0;
+			half3 ase_worldlightDir = 0;
 			#else //aseld
-			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
+			half3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
-			float dotResult26 = dot( ase_worldNormal , ase_worldlightDir );
+			half dotResult26 = dot( ase_worldNormal , ase_worldlightDir );
 			float NdotL32 = dotResult26;
-			float lerpResult71 = lerp( temp_output_67_0 , ( saturate( ( ( NdotL32 + 0.0 ) / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
+			half lerpResult71 = lerp( temp_output_67_0 , ( saturate( ( ( NdotL32 + 0.0 ) / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
+			half3 temp_output_75_0 = ( ( IndirDiffLight63 * ase_lightColor.a * temp_output_67_0 ) + ( ase_lightColor.rgb * lerpResult71 ) );
 			float2 uv_ColorMaskTex = i.uv_texcoord * _ColorMaskTex_ST.xy + _ColorMaskTex_ST.zw;
-			float3 break17 = (tex2D( _ColorMaskTex, uv_ColorMaskTex )).rgb;
+			half4 break17 = tex2D( _ColorMaskTex, uv_ColorMaskTex );
+			half4 temp_output_36_0 = ( _Color1 * break17.r );
+			half4 temp_output_42_0 = ( _Color2 * break17.g );
+			half4 temp_output_51_0 = ( _Color3 * break17.b );
 			float2 uv_AlphaTex = i.uv_texcoord * _AlphaTex_ST.xy + _AlphaTex_ST.zw;
 			half4 tex2DNode37 = tex2D( _AlphaTex, uv_AlphaTex );
 			float4 AlphaTexVar47 = tex2DNode37;
-			half4 ColorMaskTextureOutput64 = ( ( ( _Color1 * break17.x ) + ( _Color2 * break17.y ) + ( _Color3 * break17.z ) ) + AlphaTexVar47 );
-			float3 BaseColor80 = ( ( ( IndirDiffLight63 * ase_lightColor.a * temp_output_67_0 ) + ( ase_lightColor.rgb * lerpResult71 ) ) * (( ColorMaskTextureOutput64 * float4( 0.7,0.7,0.7,1 ) )).rgb );
-			float3 temp_output_90_0 = BaseColor80;
+			half4 ColorMaskTextureOutput64 = ( ( temp_output_36_0 + temp_output_42_0 + temp_output_51_0 ) + AlphaTexVar47 );
+			float3 BaseColor80 = ( temp_output_75_0 * (( ColorMaskTextureOutput64 * float4( 0.7,0.7,0.7,1 ) )).rgb );
+			half3 temp_output_90_0 = BaseColor80;
 			c.rgb = temp_output_90_0;
 			c.a = 1;
 			return c;
@@ -203,30 +224,36 @@ Shader "Cel Shading/PonyShaderV3Head"
 			o.Normal = float3(0,0,1);
 			float3 IndirDiffLight63 = float3(0,0,0);
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
-			float4 ase_lightColor = 0;
+			half4 ase_lightColor = 0;
 			#else //aselc
-			float4 ase_lightColor = _LightColor0;
+			half4 ase_lightColor = _LightColor0;
 			#endif //aselc
-			float temp_output_67_0 = ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) );
+			half temp_output_67_0 = ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) );
 			half3 ase_worldNormal = WorldNormalVector( i, half3( 0, 0, 1 ) );
 			float3 ase_worldPos = i.worldPos;
 			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
-			float3 ase_worldlightDir = 0;
+			half3 ase_worldlightDir = 0;
 			#else //aseld
-			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
+			half3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
-			float dotResult26 = dot( ase_worldNormal , ase_worldlightDir );
+			half dotResult26 = dot( ase_worldNormal , ase_worldlightDir );
 			float NdotL32 = dotResult26;
-			float lerpResult71 = lerp( temp_output_67_0 , ( saturate( ( ( NdotL32 + 0.0 ) / 0.001 ) ) * 1 ) , _ShadowValue);
+			half lerpResult71 = lerp( temp_output_67_0 , ( saturate( ( ( NdotL32 + 0.0 ) / 0.001 ) ) * 1 ) , _ShadowValue);
+			half3 temp_output_75_0 = ( ( IndirDiffLight63 * ase_lightColor.a * temp_output_67_0 ) + ( ase_lightColor.rgb * lerpResult71 ) );
 			float2 uv_ColorMaskTex = i.uv_texcoord * _ColorMaskTex_ST.xy + _ColorMaskTex_ST.zw;
-			float3 break17 = (tex2D( _ColorMaskTex, uv_ColorMaskTex )).rgb;
+			half4 break17 = tex2D( _ColorMaskTex, uv_ColorMaskTex );
+			half4 temp_output_36_0 = ( _Color1 * break17.r );
+			half4 temp_output_42_0 = ( _Color2 * break17.g );
+			half4 temp_output_51_0 = ( _Color3 * break17.b );
 			float2 uv_AlphaTex = i.uv_texcoord * _AlphaTex_ST.xy + _AlphaTex_ST.zw;
 			half4 tex2DNode37 = tex2D( _AlphaTex, uv_AlphaTex );
 			float4 AlphaTexVar47 = tex2DNode37;
-			half4 ColorMaskTextureOutput64 = ( ( ( _Color1 * break17.x ) + ( _Color2 * break17.y ) + ( _Color3 * break17.z ) ) + AlphaTexVar47 );
-			float3 BaseColor80 = ( ( ( IndirDiffLight63 * ase_lightColor.a * temp_output_67_0 ) + ( ase_lightColor.rgb * lerpResult71 ) ) * (( ColorMaskTextureOutput64 * float4( 0.7,0.7,0.7,1 ) )).rgb );
-			float3 temp_output_90_0 = BaseColor80;
+			half4 ColorMaskTextureOutput64 = ( ( temp_output_36_0 + temp_output_42_0 + temp_output_51_0 ) + AlphaTexVar47 );
+			float3 BaseColor80 = ( temp_output_75_0 * (( ColorMaskTextureOutput64 * float4( 0.7,0.7,0.7,1 ) )).rgb );
+			half3 temp_output_90_0 = BaseColor80;
 			o.Albedo = temp_output_90_0;
+			half4 ColorMaskEmissiveTextureOutput100 = ( (( _EnableEmissiveColor1 )?( ( temp_output_36_0 * _EmissionC1 ) ):( float4( 0,0,0,0 ) )) + (( _EnableEmissiveColor2 )?( ( temp_output_42_0 * _EmissionC2 ) ):( float4( 0,0,0,0 ) )) + (( _EnableEmissiveColor3 )?( ( temp_output_51_0 * _EmissionC3 ) ):( float4( 0,0,0,0 ) )) );
+			o.Emission = ColorMaskEmissiveTextureOutput100.rgb;
 		}
 
 		ENDCG
@@ -242,7 +269,7 @@ Shader "Cel Shading/PonyShaderV3Head"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma target 4.6
+			#pragma target 3.0
 			#pragma multi_compile_shadowcaster
 			#pragma multi_compile UNITY_PASS_SHADOWCASTER
 			#pragma skip_variants FOG_LINEAR FOG_EXP FOG_EXP2
@@ -261,12 +288,14 @@ Shader "Cel Shading/PonyShaderV3Head"
 				float4 tSpace1 : TEXCOORD3;
 				float4 tSpace2 : TEXCOORD4;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 			v2f vert( appdata_full v )
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID( v );
 				UNITY_INITIALIZE_OUTPUT( v2f, o );
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( o );
 				UNITY_TRANSFER_INSTANCE_ID( v, o );
 				Input customInputData;
 				vertexDataFunc( v, customInputData );

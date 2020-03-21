@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Grass_02
-  m_Shader: {fileID: 4800000, guid: 16cc9e8fe5b86d6448a4f2afcc688b81, type: 3}
+  m_Shader: {fileID: 4800000, guid: 94cd9eb99bf90c5478d02ac79f8d99c6, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -32,6 +32,10 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DetailNormalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DirtynessMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
@@ -66,20 +70,24 @@ Material:
     - _ColorBrightness: 0.75
     - _Cutoff: 0
     - _DetailNormalMapScale: 1
+    - _DirtynessVal: 0
     - _DstBlend: 0
+    - _EmissionToggle: 0
     - _FlatnessSpecular: 0
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 1
     - _LightBrightness: 0.3
+    - _LineWidth: 0.5
     - _Metallic: 1
     - _Mode: 0
     - _OcclusionStrength: 1
+    - _Offset: 0.2
     - _Parallax: 0.02
     - _RampSmooth: 0.01
     - _RampThreshold: 0.05
     - _ShadowBrightness: 0.3
-    - _ShadowValue: 0.3
+    - _ShadowValue: 0.15
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
@@ -89,5 +97,6 @@ Material:
     m_Colors:
     - _Color: {r: 0.7, g: 0.7, b: 0.7, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
+    - _EmissionFactor: {r: 0, g: 0, b: 0, a: 0}
     - _HColor: {r: 0.785, g: 0.785, b: 0.785, a: 1}
     - _SColor: {r: 0, g: 0, b: 0, a: 1}

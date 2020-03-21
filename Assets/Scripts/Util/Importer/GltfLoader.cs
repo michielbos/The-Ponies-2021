@@ -42,7 +42,7 @@ public class GltfLoader : MonoBehaviour {
             sceneImporter.MaximumLod = maximumLod;
             sceneImporter.Timeout = timeout;
             sceneImporter.IsMultithreaded = MultiThreaded;
-            sceneImporter.CustomShaderName = "Cel Shading/RegularV2";
+            sceneImporter.CustomShaderName = "Cel Shading/RegularV3";
 
             await sceneImporter.LoadSceneAsync(showSceneObj: false);
 

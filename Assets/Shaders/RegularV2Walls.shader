@@ -6,6 +6,7 @@ Shader "Cel Shading/RegularV2Walls"
 		_MainTex("MainTex", 2D) = "white" {}
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
 		_WallMask("WallMask", 2D) = "white" {}
+		[Toggle]_MaskMirror("Mask Mirror", Float) = 0
 		[HideInInspector]_Float0("ClipValue", Range( 0 , 1)) = 1
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
@@ -35,10 +36,10 @@ Shader "Cel Shading/RegularV2Walls"
 		#endif
 		struct Input
 		{
-			float3 worldNormal;
+			half3 worldNormal;
 			INTERNAL_DATA
 			float3 worldPos;
-			half2 uv_texcoord;
+			float2 uv_texcoord;
 		};
 
 		struct SurfaceOutputCustomLightingCustom
@@ -59,8 +60,21 @@ Shader "Cel Shading/RegularV2Walls"
 		uniform half4 _MainTex_ST;
 		uniform half4 _Color;
 		uniform sampler2D _WallMask;
-		uniform half4 _WallMask_ST;
-		uniform half _Float0;
+		uniform half _MaskMirror;
+		uniform float _Float0;
+
+
+		inline half2 RotateUV141( half2 UV , half Angle )
+		{
+			return mul( UV - half2( 0.5,0.5 ) , half2x2( cos(Angle) , sin(Angle), -sin(Angle) , cos(Angle) )) + half2( 0.5,0.5 );;
+		}
+
+
+		inline half2 RotateUV146( half2 UV , half Angle )
+		{
+			return mul( UV - half2( 0.5,0.5 ) , half2x2( cos(Angle) , sin(Angle), -sin(Angle) , cos(Angle) )) + half2( 0.5,0.5 );;
+		}
+
 
 		inline half4 LightingStandardCustomLighting( inout SurfaceOutputCustomLightingCustom s, half3 viewDir, UnityGI gi )
 		{
@@ -81,31 +95,36 @@ Shader "Cel Shading/RegularV2Walls"
 			float fadeDist = UnityComputeShadowFadeDistance(data.worldPos, zDist);
 			ase_lightAtten = UnityMixRealtimeAndBakedShadows(data.atten, bakedAtten, UnityComputeShadowFade(fadeDist));
 			#endif
-			float2 uv_WallMask = i.uv_texcoord * _WallMask_ST.xy + _WallMask_ST.zw;
+			half2 UV141 = i.uv_texcoord;
+			half Angle141 = radians( 0.0 );
+			half2 localRotateUV141 = RotateUV141( UV141 , Angle141 );
+			half2 UV146 = i.uv_texcoord;
+			half Angle146 = radians( ( 0.0 + 270.0 ) );
+			half2 localRotateUV146 = RotateUV146( UV146 , Angle146 );
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
-			float4 ase_lightColor = 0;
+			half4 ase_lightColor = 0;
 			#else //aselc
-			float4 ase_lightColor = _LightColor0;
+			half4 ase_lightColor = _LightColor0;
 			#endif //aselc
 			UnityGI gi30 = gi;
 			float3 diffNorm30 = ( ase_lightColor.rgb * ase_lightAtten );
 			gi30 = UnityGI_Base( data, 1, diffNorm30 );
-			float3 indirectDiffuse30 = gi30.indirect.diffuse + diffNorm30 * 0.0001;
-			float temp_output_35_0 = ( 1.0 - ( ( 1.0 - ase_lightAtten ) * _WorldSpaceLightPos0.w ) );
+			half3 indirectDiffuse30 = gi30.indirect.diffuse + diffNorm30 * 0.0001;
+			half temp_output_35_0 = ( 1.0 - ( ( 1.0 - ase_lightAtten ) * _WorldSpaceLightPos0.w ) );
 			half3 ase_worldNormal = WorldNormalVector( i, half3( 0, 0, 1 ) );
 			float3 ase_worldPos = i.worldPos;
 			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
-			float3 ase_worldlightDir = 0;
+			half3 ase_worldlightDir = 0;
 			#else //aseld
-			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
+			half3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
-			float dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
-			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( dotResult8 / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
+			half dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
+			half lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( dotResult8 / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			float3 temp_output_53_0 = ( ( ( indirectDiffuse30 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * (( tex2D( _MainTex, uv_MainTex ) * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
+			half3 temp_output_53_0 = ( ( ( indirectDiffuse30 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * (( tex2D( _MainTex, uv_MainTex ) * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
 			c.rgb = temp_output_53_0;
 			c.a = 1;
-			clip( tex2D( _WallMask, uv_WallMask ).r - _Float0 );
+			clip( tex2D( _WallMask, (( _MaskMirror )?( (localRotateUV146).yx ):( localRotateUV141 )) ).r - _Float0 );
 			return c;
 		}
 
@@ -119,22 +138,22 @@ Shader "Cel Shading/RegularV2Walls"
 			o.SurfInput = i;
 			o.Normal = float3(0,0,1);
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
-			float4 ase_lightColor = 0;
+			half4 ase_lightColor = 0;
 			#else //aselc
-			float4 ase_lightColor = _LightColor0;
+			half4 ase_lightColor = _LightColor0;
 			#endif //aselc
-			float temp_output_35_0 = ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) );
+			half temp_output_35_0 = ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) );
 			half3 ase_worldNormal = WorldNormalVector( i, half3( 0, 0, 1 ) );
 			float3 ase_worldPos = i.worldPos;
 			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
-			float3 ase_worldlightDir = 0;
+			half3 ase_worldlightDir = 0;
 			#else //aseld
-			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
+			half3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
-			float dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
-			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( dotResult8 / 0.001 ) ) * 1 ) , _ShadowValue);
+			half dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
+			half lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( dotResult8 / 0.001 ) ) * 1 ) , _ShadowValue);
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			float3 temp_output_53_0 = ( ( ( float3(0,0,0) * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * (( tex2D( _MainTex, uv_MainTex ) * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
+			half3 temp_output_53_0 = ( ( ( float3(0,0,0) * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * (( tex2D( _MainTex, uv_MainTex ) * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
 			o.Albedo = temp_output_53_0;
 		}
 
@@ -171,12 +190,14 @@ Shader "Cel Shading/RegularV2Walls"
 				float4 tSpace1 : TEXCOORD3;
 				float4 tSpace2 : TEXCOORD4;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 			v2f vert( appdata_full v )
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID( v );
 				UNITY_INITIALIZE_OUTPUT( v2f, o );
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( o );
 				UNITY_TRANSFER_INSTANCE_ID( v, o );
 				Input customInputData;
 				float3 worldPos = mul( unity_ObjectToWorld, v.vertex ).xyz;
@@ -223,5 +244,5 @@ Shader "Cel Shading/RegularV2Walls"
 			ENDCG
 		}
 	}
-	Fallback "Cel Shading/RegularV2"
+	Fallback "Cel Shading/RegularV3"
 }

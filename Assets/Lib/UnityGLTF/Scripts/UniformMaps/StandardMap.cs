@@ -207,7 +207,7 @@ namespace UnityGLTF
 				if (_material.HasProperty("_EmissionMap"))
 				{
 					_material.SetTexture("_EmissionMap", value);
-					_material.EnableKeyword("_EMISSION");
+					_material.EnableKeyword("_EMISSIONTOGGLE_ON");
 				}
 				else
 				{
@@ -257,12 +257,12 @@ namespace UnityGLTF
 
 		public virtual Color EmissiveFactor
 		{
-			get { return _material.HasProperty("_EmissionColor") ? _material.GetColor("_EmissionColor") : Color.white; }
+			get { return _material.HasProperty("_EmissionFactor") ? _material.GetColor("_EmissionFactor") : Color.white; }
 			set
 			{
-				if (_material.HasProperty("_EmissionColor"))
+				if (_material.HasProperty("_EmissionFactor"))
 				{
-					_material.SetColor("_EmissionColor", value);
+					_material.SetColor("_EmissionFactor", value);
 				}
 				else
 				{

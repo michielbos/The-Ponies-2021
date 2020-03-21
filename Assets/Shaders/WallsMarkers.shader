@@ -4,12 +4,13 @@ Shader "Cel Shading/WallsMarkers"
 	{
 		_Color("Color", Color) = (1,1,1,1)
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
+		_EmissionStrenght1("EmissionStrenght", Range( 0 , 10)) = 1
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
 
 	SubShader
 	{
-		Tags{ "RenderType" = "Transparent"  "Queue" = "Transparent+0" "IgnoreProjector" = "True" }
+		Tags{ "RenderType" = "Transparent"  "Queue" = "Transparent+0" "IgnoreProjector" = "True" "IsEmissive" = "true"  }
 		LOD 200
 		Cull Back
 		CGPROGRAM
@@ -17,10 +18,10 @@ Shader "Cel Shading/WallsMarkers"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 		#pragma target 2.0
-		#pragma surface surf StandardCustomLighting alpha:fade keepalpha noshadow 
+		#pragma surface surf StandardCustomLighting alpha:fade keepalpha noshadow nofog 
 		struct Input
 		{
-			float3 worldNormal;
+			half3 worldNormal;
 			INTERNAL_DATA
 			float3 worldPos;
 		};
@@ -38,8 +39,9 @@ Shader "Cel Shading/WallsMarkers"
 			UnityGIInput GIData;
 		};
 
-		uniform half _ShadowValue;
-		uniform half4 _Color;
+		uniform float _ShadowValue;
+		uniform float4 _Color;
+		uniform half _EmissionStrenght1;
 
 		inline half4 LightingStandardCustomLighting( inout SurfaceOutputCustomLightingCustom s, half3 viewDir, UnityGI gi )
 		{
@@ -62,30 +64,30 @@ Shader "Cel Shading/WallsMarkers"
 			#endif
 			half AlphaValue59 = _Color.a;
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
-			float4 ase_lightColor = 0;
+			half4 ase_lightColor = 0;
 			#else //aselc
-			float4 ase_lightColor = _LightColor0;
+			half4 ase_lightColor = _LightColor0;
 			#endif //aselc
 			half3 LightColorData17 = ( ase_lightColor.rgb * ase_lightAtten );
 			UnityGI gi30 = gi;
 			float3 diffNorm30 = LightColorData17;
 			gi30 = UnityGI_Base( data, 1, diffNorm30 );
-			float3 indirectDiffuse30 = gi30.indirect.diffuse + diffNorm30 * 0.0001;
+			half3 indirectDiffuse30 = gi30.indirect.diffuse + diffNorm30 * 0.0001;
 			half3 IndirDiffLight34 = indirectDiffuse30;
-			float temp_output_35_0 = ( 1.0 - ( ( 1.0 - ase_lightAtten ) * _WorldSpaceLightPos0.w ) );
+			half temp_output_35_0 = ( 1.0 - ( ( 1.0 - ase_lightAtten ) * _WorldSpaceLightPos0.w ) );
 			half3 ase_worldNormal = WorldNormalVector( i, half3( 0, 0, 1 ) );
 			float3 ase_worldPos = i.worldPos;
 			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
-			float3 ase_worldlightDir = 0;
+			half3 ase_worldlightDir = 0;
 			#else //aseld
-			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
+			half3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
-			float dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
+			half dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
 			half NdotL10 = dotResult8;
-			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( ( NdotL10 + 0.0 ) / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
+			half lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( ( NdotL10 + 0.0 ) / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
 			half3 InputColor48 = (( _Color * float4( 0.7,0.7,0.7,1 ) )).rgb;
 			half3 BaseColorOutput55 = ( ( ( IndirDiffLight34 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * InputColor48 );
-			float3 temp_output_57_0 = BaseColorOutput55;
+			half3 temp_output_57_0 = BaseColorOutput55;
 			c.rgb = temp_output_57_0;
 			c.a = AlphaValue59;
 			return c;
@@ -102,25 +104,26 @@ Shader "Cel Shading/WallsMarkers"
 			o.Normal = float3(0,0,1);
 			half3 IndirDiffLight34 = float3(0,0,0);
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
-			float4 ase_lightColor = 0;
+			half4 ase_lightColor = 0;
 			#else //aselc
-			float4 ase_lightColor = _LightColor0;
+			half4 ase_lightColor = _LightColor0;
 			#endif //aselc
-			float temp_output_35_0 = ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) );
+			half temp_output_35_0 = ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) );
 			half3 ase_worldNormal = WorldNormalVector( i, half3( 0, 0, 1 ) );
 			float3 ase_worldPos = i.worldPos;
 			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
-			float3 ase_worldlightDir = 0;
+			half3 ase_worldlightDir = 0;
 			#else //aseld
-			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
+			half3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
-			float dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
+			half dotResult8 = dot( ase_worldNormal , ase_worldlightDir );
 			half NdotL10 = dotResult8;
-			float lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( ( NdotL10 + 0.0 ) / 0.001 ) ) * 1 ) , _ShadowValue);
+			half lerpResult38 = lerp( temp_output_35_0 , ( saturate( ( ( NdotL10 + 0.0 ) / 0.001 ) ) * 1 ) , _ShadowValue);
 			half3 InputColor48 = (( _Color * float4( 0.7,0.7,0.7,1 ) )).rgb;
 			half3 BaseColorOutput55 = ( ( ( IndirDiffLight34 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * InputColor48 );
-			float3 temp_output_57_0 = BaseColorOutput55;
+			half3 temp_output_57_0 = BaseColorOutput55;
 			o.Albedo = temp_output_57_0;
+			o.Emission = ( InputColor48 * _EmissionStrenght1 );
 		}
 
 		ENDCG
