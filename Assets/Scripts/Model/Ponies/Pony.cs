@@ -194,8 +194,11 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     /// Set the walk target to the nearest of the provided tiles.
     /// </summary>
     public bool SetWalkTargetToNearest(IEnumerable<Vector2Int> targets) {
-        walkPath = Pathfinding.PathToNearest(TilePosition, targets);
-        return walkPath != null;
+        SetWalkPath(Pathfinding.PathToNearest(TilePosition, targets));
+        WalkingFailed = walkPath == null;
+        // Paths always start at the current position, so skip the first tile.
+        walkPath?.NextTile();
+        return !WalkingFailed;
     }
 
     /// <summary>
@@ -221,14 +224,35 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     /// true (failed to walk to target).
     /// </summary>
     public bool WalkTo(Vector2Int target) {
-        if (Equals(TilePosition, target) && nextWalkTile == null)
+        return WalkToClosest(new[] {target});
+    }
+    
+    /// <summary>
+    /// Can be called each tick to walk towards the closest of a given collection of targets.
+    /// This method sets the current walk target to the given target and returns false until it has been reached.
+    /// If no path can be found, the variable WalkingFailed is set to true.
+    /// If the path is blocked while walking, the pony will try to find a new path.
+    ///
+    /// This function is completed when it either returns true (reached target) or when WalkingFailed is switched to
+    /// true (failed to walk to target).
+    /// </summary>
+    public bool WalkToClosest(ICollection<Vector2Int> targets) {
+        bool reachedTarget = IsOnOneOfTiles(targets);
+        if (reachedTarget && nextWalkTile == null)
             return true;
         // Set the target, if it's not already set or if the current path has been blocked.
         // Blocked paths are no longer retried after failing to calculate a path.
-        if (!Equals(WalkTarget, target) || pathBlocked && !WalkingFailed) {
-            SetWalkTarget(target);
+        if (!reachedTarget || pathBlocked && !WalkingFailed) {
+            SetWalkTargetToNearest(targets);
         }
         return false;
+    }
+
+    /// <summary>
+    /// Check if this pony is currently on one of the given tiles.
+    /// </summary>
+    private bool IsOnOneOfTiles(ICollection<Vector2Int> tiles) {
+        return tiles.Any(tile => TilePosition == tile);
     }
 }
 
