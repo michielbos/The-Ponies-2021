@@ -30,7 +30,11 @@ public class ToiletActionProvider : IObjectActionProvider {
     }
 
     public ObjectAction LoadAction(string identifier, Pony pony, PropertyObject target) {
-        return identifier == UseIdentifier ? new UseAction(pony, target) : null;
+        if (identifier == UseIdentifier)
+            return new UseAction(pony, target);
+        if (identifier == FlushIdentifier)
+            return new FlushAction(pony, target);
+        return null;
     }
 
     private class UseAction : ObjectAction {
