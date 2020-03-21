@@ -77,7 +77,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         Rotation = rotation;
         if (!string.IsNullOrEmpty(animation))
             PlayAnimation(animation);
-        AddCutoutsToWalls();
+        OnPlaced();
     }
 
     public void InitScriptData(DataPair[] data, IEnumerable<Pony> users, Property property) {
@@ -213,7 +213,33 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         parentSlot.SlotObject = null;
         transform.parent = PropertyController.Property.transform;
     }
+    
+    /// <summary>
+    /// Called when an object is placed. Can be either from buying, moving or loading.
+    /// </summary>
+    public void OnPlaced() {
+        AddCutoutsToWalls();
+    }
+    
+    /// <summary>
+    /// Called when an object is picked up in buy mode.
+    /// This can be followed by either OnPlaced() if the object is moved, or by OnDestroy() if the object is sold.
+    /// </summary>
+    public void OnPickedUp() {
+        RemoveCutoutsFromWalls();
+    }
+    
+    /// <summary>
+    /// Called by Unity when the object is destroyed.
+    /// This usually means the item is sold or destroyed by script (for example by fire).
+    /// </summary>
+    private void OnDestroy() {
+        RemoveCutoutsFromWalls();
+    }
 
+    /// <summary>
+    /// Add cutouts to all covered walls if this object provides cutout textures.
+    /// </summary>
     private void AddCutoutsToWalls() {
         if (preset.placementType != PlacementType.ThroughWall)
             return;
@@ -225,6 +251,23 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             wall.RefreshMaterials();
         }
     }
+
+    /// <summary>
+    /// Removes the cutouts that were placed by AddCutoutsToWalls().
+    /// </summary>
+    private void RemoveCutoutsFromWalls() {
+        if (preset.placementType != PlacementType.ThroughWall)
+            return;
+        if (preset.cutoutTextures.Length == 0)
+            return;
+        IEnumerable<Wall> coveredWalls = PropertyController.Property.GetWalls(GetRequiredWallBorders());
+        foreach (Wall wall in coveredWalls) {
+            wall.cutoutTexture = null;
+            wall.RefreshMaterials();
+        }
+    }
+
+    
 }
 
 }

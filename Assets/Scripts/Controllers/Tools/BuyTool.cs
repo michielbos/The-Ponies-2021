@@ -266,6 +266,7 @@ public class BuyTool : MonoBehaviour, ITool {
             movingObject.ClearParent();
             targetSlot.PlaceObject(movingObject);
             movingObject.Rotation = buildMarker.MarkerRotation;
+            movingObject.OnPlaced();
             ClearSelection(false);
         } else {
             SoundController.Instance.PlaySound(SoundType.Buy);
@@ -300,6 +301,7 @@ public class BuyTool : MonoBehaviour, ITool {
         buildMarker = Instantiate(buildMarkerPrefab);
         buildMarker.InitMove(propertyObject);
         UpdateBuildMarker(propertyObject, true);
+        propertyObject.OnPickedUp();
     }
 
     private void SellSelection() {
