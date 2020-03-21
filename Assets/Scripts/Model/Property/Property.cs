@@ -81,6 +81,7 @@ public class Property : MonoBehaviour {
         Wall wall = Instantiate(Prefabs.Instance.wallPrefab, transform);
         wall.Init(x, y, wallDirection);
         walls.Add(wall.TileBorder, wall);
+        wall.UpdateWallCorners();
         if (updateRooms) {
             UpdateRooms();
         }
@@ -532,6 +533,26 @@ public class Property : MonoBehaviour {
 
     public IEnumerable<Wall> GetWalls(IEnumerable<TileBorder> tileBorders) {
         return tileBorders.Select(GetWall).Where(wall => wall != null);
+    }
+
+    /// <summary>
+    /// Get all walls which touch a given corner point.
+    /// </summary>
+    public IList<Wall> GetWallsOnCorner(Vector2Int corner) {
+        IList<Wall> cornerWalls = new List<Wall>(4);
+        TileBorder[] borders = {
+            new TileBorder(corner.x, corner.y, WallDirection.NorthEast),
+            new TileBorder(corner.x, corner.y, WallDirection.NorthWest),
+            new TileBorder(corner.x - 1, corner.y, WallDirection.NorthEast),
+            new TileBorder(corner.x, corner.y - 1, WallDirection.NorthWest),
+        };
+
+        foreach (TileBorder border in borders) {
+            if (WallExists(border))
+                cornerWalls.Add(walls[border]);
+        }
+
+        return cornerWalls;
     }
 
     /// <summary>
