@@ -245,9 +245,15 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             return;
         if (preset.cutoutTextures.Length == 0)
             return;
-        IEnumerable<Wall> coveredWalls = PropertyController.Property.GetWalls(GetRequiredWallBorders());
+        IOrderedEnumerable<Wall> coveredWalls = PropertyController.Property
+            .GetWalls(GetRequiredWallBorders())
+            .OrderBy(wall => wall.TileBorder.x + wall.TileBorder.y);
+
+        int counter = 0;
         foreach (Wall wall in coveredWalls) {
-            wall.cutoutTexture = preset.cutoutTextures[0];
+            if (counter >= preset.cutoutTextures.Length)
+                return;
+            wall.cutoutTexture = preset.cutoutTextures[counter++];
             wall.RefreshMaterials();
         }
     }
@@ -259,6 +265,9 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         if (preset.placementType != PlacementType.ThroughWall)
             return;
         if (preset.cutoutTextures.Length == 0)
+            return;
+        // This prevents warnings when exiting play mode.
+        if (!PropertyController.HasInstance)
             return;
         IEnumerable<Wall> coveredWalls = PropertyController.Property.GetWalls(GetRequiredWallBorders());
         foreach (Wall wall in coveredWalls) {

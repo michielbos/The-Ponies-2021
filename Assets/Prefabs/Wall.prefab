@@ -47,7 +47,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   fullWallMesh: {fileID: 8733429697405204941, guid: c64396fbfc4a7944e8c7a661e2e9ace6,
     type: 3}
-  shortWallMesh: {fileID: -3526660341256759886, guid: 25c39372997d6c140bbbbc13b1a44547,
+  shortWallMesh: {fileID: 7055515486298731682, guid: 25c39372997d6c140bbbbc13b1a44547,
     type: 3}
   unpaintedMaterial: {fileID: 2100000, guid: 36165e9207aeae78396b17ef1c0eccf7, type: 2}
   wallCornerPrefab: {fileID: 5422811574499707119, guid: 0d2471149234d14ccb4f43cf4fe866e8,
