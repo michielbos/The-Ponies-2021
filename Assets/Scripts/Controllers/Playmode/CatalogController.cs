@@ -95,6 +95,9 @@ public class CatalogController : SingletonMonoBehaviour<CatalogController> {
     private void UpdateCatalogButtons() {
         EmptyCatalog();
         List<CatalogItem> catalogItems = CatalogItemProvider.GetCatalogItems(category);
+        if (CheatsController.Instance.showHiddenCatalog && category == ObjectCategory.Misc) {
+            catalogItems.AddRange(CatalogItemProvider.GetHiddenItems());
+        }
         int barMargin = 35;
         int buttonMargin = 5;
         Vector2 buttonSize = buttonPrefab.GetComponent<RectTransform>().sizeDelta;
