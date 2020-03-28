@@ -44,11 +44,8 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     public bool WalkingFailed { get; private set;  }
     
     public Vector2Int TilePosition {
-        get {
-            Vector3 position = transform.position;
-            return new Vector2Int(Mathf.RoundToInt(position.x), Mathf.RoundToInt(position.z));
-        }
-        set { transform.position = new Vector3(value.x, 0, value.y); }
+        get => transform.position.ToTilePosition();
+        set => transform.position = value.ToWorldPosition();
     }
 
     public void InitInfo(Guid uuid, string ponyName, PonyRace race, Gender gender, PonyAge age) {
@@ -86,6 +83,11 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
             return;
         if (nextWalkTile == null && walkPath != null) {
             nextWalkTile = walkPath.NextTile();
+            if (TilePosition == nextWalkTile.Value) {
+                // TODO: Figure out why ponies sometimes try to move to the same tile twice.
+                Debug.LogWarning("Same tile");
+                return;
+            }
             if (!PropertyController.Property.CanPassBorder(TilePosition, nextWalkTile.Value)) {
                 nextWalkTile = null;
                 pathBlocked = true;
