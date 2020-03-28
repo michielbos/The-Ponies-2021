@@ -17,7 +17,6 @@ public class Wall : MonoBehaviour {
     public Mesh fullWallMesh;
     public Mesh shortWallMesh;
     public Material unpaintedMaterial;
-    public WallCorner wallCornerPrefab;
     public MeshFilter meshFilter;
     public MeshRenderer meshRenderer;
     public Texture cutoutTexture;
@@ -30,8 +29,6 @@ public class Wall : MonoBehaviour {
     /// </summary>
     private bool instancedMaterials;
 
-    private static Dictionary<Vector2Int, WallCorner> wallCorners = new Dictionary<Vector2Int, WallCorner>();
-    
     public bool Lowered { get; private set; }
 
     public Vector2Int TilePosition {
@@ -91,33 +88,10 @@ public class Wall : MonoBehaviour {
 
     public void UpdateWallCorners() {
         TileBorder border = TileBorder;
-        UpdateCornerVisibility(border.StartPosition, wallCornerPrefab);
-        UpdateCornerVisibility(border.EndPosition, wallCornerPrefab);
+        WallCornerController.Instance.UpdateCorners(border.StartPosition);
+        WallCornerController.Instance.UpdateCorners(border.EndPosition);
     }
     
-    /// <summary>
-    /// Create or remove the visible corner at the given point.
-    /// </summary>
-    private static void UpdateCornerVisibility(Vector2Int point, WallCorner wallCornerPrefab) {
-        bool visible = PointNeedsWallCorner(point);
-        WallCorner wallCorner = wallCorners.Get(point);
-        if (visible && wallCorner == null) {
-            wallCorners[point] = Instantiate(wallCornerPrefab, new Vector3(point.x, 0, point.y), Quaternion.identity);
-        } else if (!visible && wallCorner != null) {
-            Destroy(wallCorner.gameObject);
-            wallCorners.Remove(point);
-        }
-    }
-
-    private static bool PointNeedsWallCorner(Vector2Int point) {
-        IList<Wall> walls = PropertyController.Property.GetWallsOnCorner(point);
-        if (walls.Count == 1)
-            return true;
-        if (walls.Count != 2)
-            return false;
-        return walls[0].Direction != walls[1].Direction;
-    }
-
     public void UpdateVisibility() {
         UpdateVisibility(WallVisibilityController.Instance.wallVisibility);
     }
@@ -135,18 +109,6 @@ public class Wall : MonoBehaviour {
     public void SetLowered(bool lowered) {
         Lowered = lowered;
         meshFilter.sharedMesh = lowered ? shortWallMesh : fullWallMesh;
-        
-        // Update corner height.
-        TileBorder border = TileBorder;
-        UpdateCornerLowered(border.StartPosition);
-        UpdateCornerLowered(border.EndPosition);
-    }
-
-    private void UpdateCornerLowered(Vector2Int point) {
-        if (!wallCorners.ContainsKey(point))
-            return;
-        bool lowered = PropertyController.Property.GetWallsOnCorner(point).All(wall => wall.Lowered);
-        wallCorners[point].SetLowered(lowered);
     }
 
     private bool HasRoomBehindWall() {
@@ -235,7 +197,7 @@ public class Wall : MonoBehaviour {
     }
 
     private void OnDestroy() {
-        if (PropertyController.HasInstance) {
+        if (WallCornerController.HasInstance) {
             UpdateWallCorners();
         }
         // Clean up instanced materials, if we have them.
@@ -244,14 +206,6 @@ public class Wall : MonoBehaviour {
                 Destroy(material);
             }
         }
-    }
-
-    private void OnApplicationQuit() {
-        // Clear the static references to the wall corners, so the editor is able to clean them up.
-        foreach (WallCorner corner in wallCorners.Values) {
-            Destroy(corner.gameObject);
-        }
-        wallCorners.Clear();
     }
 
     public WallCoverPreset GetCoverPreset(bool front) {

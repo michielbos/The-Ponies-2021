@@ -5410,6 +5410,7 @@ GameObject:
   - component: {fileID: 8243250806356457648}
   - component: {fileID: 7785438659274785964}
   - component: {fileID: 913442756527784499}
+  - component: {fileID: 5761829851031687565}
   m_Layer: 5
   m_Name: HouseGameController
   m_TagString: GameController
@@ -5673,6 +5674,20 @@ MonoBehaviour:
   - {fileID: 21300000, guid: db71037d08c20048097eb8084a354ab8, type: 3}
   - {fileID: 21300000, guid: 0a4452c2aa4f63a2d906eef459dbc683, type: 3}
   wallVisibilityButton: {fileID: 114588780003510648}
+--- !u!114 &5761829851031687565
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1383177691709652}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5873053df71c435c988a072f1a080bdf, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  wallCornerPrefab: {fileID: 5422811574499707119, guid: 0d2471149234d14ccb4f43cf4fe866e8,
+    type: 3}
 --- !u!1 &1400994035058900
 GameObject:
   m_ObjectHideFlags: 0
@@ -9159,6 +9174,7 @@ MonoBehaviour:
   consoleText: {fileID: 114975309147753538}
   fpsText: {fileID: 114682606751967440}
   moveObjectsMode: 0
+  showHiddenCatalog: 0
 --- !u!1 &1676738970016026
 GameObject:
   m_ObjectHideFlags: 0
@@ -14259,7 +14275,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 032dec11307d460aa01500b7934648cf, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  buildMarkerPrefab: {fileID: 0}
 --- !u!1 &1688231456424592789
 GameObject:
   m_ObjectHideFlags: 0

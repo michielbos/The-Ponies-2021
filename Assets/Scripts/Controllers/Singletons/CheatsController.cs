@@ -121,7 +121,7 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         
         // Make sure the scroll view scrolls automatically if it's at the bottom.
         ScrollRect consoleScrollRect = consolePanel.GetComponent<ScrollRect>();
-        if (Math.Abs(consoleScrollRect.verticalNormalizedPosition) < 0.0001) {
+        if (Math.Abs(consoleScrollRect.verticalNormalizedPosition) < 0.0001 && gameObject.activeInHierarchy) {
             StartCoroutine(ScrollConsoleToBottom());
         }
     }

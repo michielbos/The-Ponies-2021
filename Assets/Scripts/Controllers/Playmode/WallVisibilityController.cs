@@ -43,6 +43,7 @@ public class WallVisibilityController : SingletonMonoBehaviour<WallVisibilityCon
         foreach (Wall removedWall in removedWalls) {
             removedWall.UpdateVisibility();
         }
+        WallCornerController.Instance.UpdateAllCornerVisibility();
     }
 
     // Called from Unity GUI Button
@@ -62,6 +63,7 @@ public class WallVisibilityController : SingletonMonoBehaviour<WallVisibilityCon
         foreach (Wall wall in PropertyController.Instance.property.walls.Values) {
             wall.UpdateVisibility(wallVisibility);
         }
+        WallCornerController.Instance.UpdateAllCornerVisibility();
     }
 
     /// <summary>

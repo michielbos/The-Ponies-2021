@@ -50,8 +50,6 @@ MonoBehaviour:
   shortWallMesh: {fileID: 7055515486298731682, guid: 25c39372997d6c140bbbbc13b1a44547,
     type: 3}
   unpaintedMaterial: {fileID: 2100000, guid: 36165e9207aeae78396b17ef1c0eccf7, type: 2}
-  wallCornerPrefab: {fileID: 5422811574499707119, guid: 0d2471149234d14ccb4f43cf4fe866e8,
-    type: 3}
   meshFilter: {fileID: 5492775371682571708}
   meshRenderer: {fileID: 2235697957417294149}
   cutoutTexture: {fileID: 0}
