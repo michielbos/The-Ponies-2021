@@ -7,6 +7,7 @@ using Controllers.Singletons;
 using JetBrains.Annotations;
 using Model.Actions;
 using Model.Data;
+using Model.Property;
 using UnityEngine;
 using Util;
 
@@ -17,6 +18,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     
     public GameObject indicator;
     public Material indicatorMaterial;
+    public HoofSlot HoofSlot;
     public List<PonyAction> queuedActions = new List<PonyAction>();
     [CanBeNull] public PonyAction currentAction;
 
@@ -47,6 +49,8 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
         get => transform.position.ToTilePosition();
         set => transform.position = value.ToWorldPosition();
     }
+
+    private TerrainTile CurrentTile => PropertyController.Property.GetTerrainTile(TilePosition);
 
     public void InitInfo(Guid uuid, string ponyName, PonyRace race, Gender gender, PonyAge age) {
         this.uuid = uuid;
@@ -255,6 +259,29 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     /// </summary>
     private bool IsOnOneOfTiles(ICollection<Vector2Int> tiles) {
         return tiles.Any(tile => TilePosition == tile);
+    }
+
+    /// <summary>
+    /// Move the given object to the pony's hoof slot.
+    /// </summary>
+    public void PickUp(PropertyObject propertyObject) {
+        if (HoofSlot.SlotObject != null) {
+            Debug.LogWarning("Hoof slot was not empty. Dropping item on ground.");
+            DropHoofItem();
+        }
+        HoofSlot.PlaceObject(propertyObject);
+    }
+
+    /// <summary>
+    /// Drop the currently carried item on the ground below the pony.
+    /// Does not do any intersection checks.
+    /// </summary>
+    public void DropHoofItem() {
+        if (HoofSlot.SlotObject != null) {
+            CurrentTile.PlaceObject(HoofSlot.SlotObject);
+        } else {
+            Debug.LogWarning("Pony isn't carrying anything. Not dropping.");
+        }
     }
 }
 

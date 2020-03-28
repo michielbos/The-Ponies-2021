@@ -513,6 +513,10 @@ public class Property : MonoBehaviour {
         //TODO: Add floor level
         return floorTiles[0, y, x];
     }
+    
+    public TerrainTile GetTerrainTile(Vector2Int tile) {
+        return terrainTiles[tile.y, tile.x];
+    }
 
     public TerrainTile GetTerrainTile(int x, int y) {
         return terrainTiles[y, x];

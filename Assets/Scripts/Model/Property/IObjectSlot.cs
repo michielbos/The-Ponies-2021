@@ -12,6 +12,8 @@ public interface IObjectSlot {
     /// The position of this slot in world space.
     /// </summary>
     Vector3 SlotPosition { get; }
+    
+    PropertyObject SlotObject { get; set; }
 
     /// <summary>
     /// Place a PropertyObject on this slot.

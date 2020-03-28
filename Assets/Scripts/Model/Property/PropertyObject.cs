@@ -44,7 +44,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     /// The parent object that has this object as a child, if any.
     /// </summary>
     [CanBeNull]
-    public SurfaceSlot ParentSlot => transform.parent.GetComponent<SurfaceSlot>();
+    public IObjectSlot ParentSlot => transform.parent.GetComponent<IObjectSlot>();
 
     public Vector2Int TilePosition {
         get {
@@ -77,7 +77,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         Rotation = rotation;
         if (!string.IsNullOrEmpty(animation))
             PlayAnimation(animation);
-        OnPlaced();
+        AddCutoutsToWalls();
     }
 
     public void InitScriptData(DataPair[] data, IEnumerable<Pony> users, Property property) {
@@ -207,7 +207,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     /// Remove this object from its parent slot, if it has one.
     /// </summary>
     public void ClearParent() {
-        SurfaceSlot parentSlot = ParentSlot;
+        IObjectSlot parentSlot = ParentSlot;
         if (parentSlot == null)
             return;
         parentSlot.SlotObject = null;
@@ -218,6 +218,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     /// Called when an object is placed. Can be either from buying, moving or loading.
     /// </summary>
     public void OnPlaced() {
+        preset.FixModelTransform(Model, Rotation, IsChild);
         AddCutoutsToWalls();
     }
     
