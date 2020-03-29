@@ -22,7 +22,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
     public int skin;
     public int value;
 
-    public readonly IDictionary<string, object> data = new Dictionary<string, object>();
+    public readonly DataMap data = new DataMap();
     public readonly HashSet<Pony> users = new HashSet<Pony>();
 
     private AudioSource audioSource;
@@ -82,7 +82,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
 
     public void InitScriptData(DataPair[] data, IEnumerable<Pony> users, Property property) {
         foreach (DataPair pair in data) {
-            this.data[pair.key] = pair.GetValue(property);
+            this.data.Put(pair.key, pair.GetValue(property));
         }
         foreach (Pony user in users) {
             this.users.Add(user);
@@ -98,7 +98,7 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             preset.guid.ToString(),
             skin,
             value,
-            data.Select(pair => DataPair.FromValues(pair.Key, pair.Value)).ToArray(),
+            data.GetDataPairs(),
             GetAnimation(),
             users.Select(pony => pony.uuid.ToString()).ToArray(),
             surfaceSlots.Select(child => child.SlotObject != null ? child.SlotObject.GetChildObjectData() : null)

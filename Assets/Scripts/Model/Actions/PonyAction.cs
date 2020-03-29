@@ -18,7 +18,7 @@ public abstract class PonyAction {
     public bool canceled;
     public bool finished;
     public int tickCount;
-    public readonly IDictionary<string, object> data = new Dictionary<string, object>();
+    public readonly DataMap data = new DataMap();
 
     protected PonyAction(string identifier, Pony pony, string name) {
         this.identifier = identifier;
@@ -32,7 +32,7 @@ public abstract class PonyAction {
     /// </summary>
     internal void AddDataPairs(DataPair[] dataPairs, Property.Property property) {
         foreach (DataPair pair in dataPairs) {
-            data[pair.key] = pair.GetValue(property);
+            data.Put(pair.key, pair.GetValue(property));
         }
     }
 
@@ -132,15 +132,6 @@ public abstract class PonyAction {
     }
 
     public abstract PonyActionData GetData();
-
-    /// <summary>
-    /// Get the additional action data, converted to a DataPair array.
-    /// This is used by the different action type implementations to save the additional action data.
-    /// </summary>
-    /// <returns></returns>
-    protected DataPair[] GetDataPairs() {
-        return data.Select(pair => DataPair.FromValues(pair.Key, pair.Value)).ToArray();
-    }
 }
 
 }

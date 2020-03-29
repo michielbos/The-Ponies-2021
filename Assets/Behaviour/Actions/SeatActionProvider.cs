@@ -28,7 +28,7 @@ public class SeatActionProvider : IObjectActionProvider {
         public SitAction(Pony pony, PropertyObject target) : base(SitIdentifier, pony, target, "Sit") { }
 
         protected override void OnStart() {
-            data["targetSeat"] = GetClosestFreeSeatTile();
+            data.Put("targetSeat", GetClosestFreeSeatTile());
         }
 
         public override bool Tick() {
@@ -46,7 +46,7 @@ public class SeatActionProvider : IObjectActionProvider {
                 return true;
 
             // Quit if we have no target seat.
-            Vector2Int? targetSeat = data["targetSeat"] as Vector2Int?;
+            Vector2Int? targetSeat = data.GetVector2IntOrNull("targetSeat");
             if (targetSeat == null)
                 return true;
 
@@ -83,7 +83,7 @@ public class SeatActionProvider : IObjectActionProvider {
         /// <returns>Returns true if a new seat was found.</returns>
         private bool FindNewSeat() {
             Vector2Int? targetSeat = GetClosestFreeSeatTile();
-            data["targetSeat"] = targetSeat;
+            data.Put("targetSeat", targetSeat);
             return targetSeat != null;
         }
 

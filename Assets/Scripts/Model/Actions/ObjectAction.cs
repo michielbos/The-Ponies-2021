@@ -13,7 +13,7 @@ public abstract class ObjectAction : PonyAction {
     }
 
     public override PonyActionData GetData() {
-        return new PonyActionData(identifier, tickCount, canceled, target.id, GetDataPairs());
+        return new PonyActionData(identifier, tickCount, canceled, target.id, data.GetDataPairs());
     }
     
     protected internal override bool TargetExists() {

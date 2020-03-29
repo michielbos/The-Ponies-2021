@@ -21,7 +21,7 @@ public class ToiletActionProvider : IObjectActionProvider {
             List<ObjectAction> actions = new List<ObjectAction>(2);
             actions.Add(new UseAction(pony, target));
             
-            if (target.data.Get("needsFlushing") as bool? == true)
+            if (target.data.GetBool("needsFlushing", false))
                 actions.Add(new FlushAction(pony, target));
             
             return actions;
@@ -72,7 +72,7 @@ public class ToiletActionProvider : IObjectActionProvider {
             if (canceled)
                 return TryLeaveToilet(false);
 
-            target.data["needsFlushing"] = true;
+            target.data.Put("needsFlushing", true);
 
             // Fully recharging bladder takes 30 minutes.
             pony.needs.Bladder += 1f / 30f;
@@ -121,7 +121,7 @@ public class ToiletActionProvider : IObjectActionProvider {
 
             // TODO: Insert animation and sound.
 
-            target.data["needsFlushing"] = false;
+            target.data.Put("needsFlushing", false);
 
             return true;
         }
