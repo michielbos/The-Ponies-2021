@@ -18,11 +18,13 @@ public class SurfaceSlot : MonoBehaviour, IObjectSlot {
     public PropertyObject SlotOwner { get; private set; }
 
     public void PlaceObject(PropertyObject propertyObject) {
+        propertyObject.ClearParent();
         SlotObject = propertyObject;
         Transform objectTransform = propertyObject.transform;
         objectTransform.parent = transform;
         objectTransform.localPosition = Vector3.zero;
         objectTransform.localRotation = Quaternion.identity;
+        propertyObject.OnPlaced();
     }
 
     public static SurfaceSlot CreateSlot(PropertyObject propertyObject, Vector3 localPosition) {

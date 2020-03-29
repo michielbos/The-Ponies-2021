@@ -61,6 +61,18 @@ public static class TileUtils {
     public static Vector2Int GetNeighbourTile(this Vector2Int tile, ObjectRotation direction) {
         return tile + GetTileForDirection(direction);
     }
+    
+    /// <summary>
+    /// Get the 4 tiles that are directly next to this one.
+    /// </summary>
+    public static ICollection<Vector2Int> GetNeighbourTiles(this Vector2Int tile) {
+        return new[] {
+            new Vector2Int(tile.x - 1, tile.y), 
+            new Vector2Int(tile.x + 1, tile.y), 
+            new Vector2Int(tile.x, tile.y - 1), 
+            new Vector2Int(tile.x, tile.y + 1)
+        };
+    }
 
     private static Vector2Int GetTileForDirection(ObjectRotation direction) {
         switch (direction) {
