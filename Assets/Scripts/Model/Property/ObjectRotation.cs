@@ -21,8 +21,10 @@ public static class ObjectRotationUtil {
         return ((int) objectRotation - 1) * 90;
     }
     
-    public static ObjectRotation FromRotationAngle(int angle) {
-        return (ObjectRotation)(angle / 90 % 4 + 1);
+    public static ObjectRotation FromRotationAngle(float angle) {
+        int wholeAngle = Mathf.RoundToInt(angle);
+        // Objects are always rotated 180 degrees, because that's how Blender/Max export them.
+        return (ObjectRotation)((wholeAngle + 180) / 90 % 4 + 1);
     }
 
     public static Vector3 GetRotationVector(this ObjectRotation objectRotation) {
@@ -52,6 +54,19 @@ public static class ObjectRotationUtil {
 
     public static ObjectRotation Inverse(this ObjectRotation current) {
         return current.Add(2);
+    }
+
+    /// <summary>
+    /// Returns the number of clockwise turns to another object rotation.
+    /// </summary>
+    public static int GetTurnsTo(this ObjectRotation rotation, ObjectRotation destination) {
+        if (rotation > destination)
+            return destination - rotation + 4;
+        return destination - rotation;
+    }
+
+    public static ObjectRotation GetObjectRotation(this Transform transform) {
+        return FromRotationAngle(transform.eulerAngles.y);
     }
 }
 

@@ -21,10 +21,6 @@ public class PreviewGenerator : MonoBehaviour {
     public RenderTexture CreatePreview (FurniturePreset furniturePreset, int skin) {
         Camera camera = GetComponent<Camera>();
         furniturePreset.ApplyToModel(previewObject, skin);
-        previewObject.Model.layer = previewLayer;
-        foreach (Transform child in previewObject.Model.GetComponentsInChildren<Transform>()) {
-            child.gameObject.layer = previewLayer;
-        }
         RenderTexture renderTexture = new RenderTexture(180, 180, 24, RenderTextureFormat.ARGB32);
         camera.enabled = true;
         camera.targetTexture = renderTexture;

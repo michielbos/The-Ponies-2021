@@ -2,8 +2,12 @@
 using Model.Data;
 using Model.Property;
 
+/// <summary>
+/// An almost exact copy of PropertyObjectData because Unity's serializer is rubbish.
+/// Does not contain a children array.
+/// </summary>
 [Serializable]
-public class PropertyObjectData {
+public class ChildObjectData {
     public int id;
     public int x;
     public int y;
@@ -14,10 +18,9 @@ public class PropertyObjectData {
     public DataPair[] data;
     public string animation;
     public string[] users;
-    public ChildObjectData[] children;
 
-    public PropertyObjectData(int id, int x, int y, int rotation, string furnitureGuid, int skin, int value,
-        DataPair[] data, string animation, string[] users, ChildObjectData[] children) {
+    public ChildObjectData(int id, int x, int y, int rotation, string furnitureGuid, int skin, int value,
+        DataPair[] data, string animation, string[] users) {
         this.id = id;
         this.x = x;
         this.y = y;
@@ -28,8 +31,14 @@ public class PropertyObjectData {
         this.data = data;
         this.animation = animation;
         this.users = users;
-        this.children = children;
     }
+
+    /// <summary>
+    /// Construct a ChildObjectData from a PropertyObjectData, without the children.
+    /// </summary>
+    /// <param name="pod"></param>
+    public ChildObjectData(PropertyObjectData pod) : this(pod.id, pod.x, pod.y, pod.rotation, pod.furnitureGuid,
+        pod.skin, pod.value, pod.data, pod.animation, pod.users) { }
 
     public ObjectRotation GetObjectRotation() {
         return (ObjectRotation) rotation;

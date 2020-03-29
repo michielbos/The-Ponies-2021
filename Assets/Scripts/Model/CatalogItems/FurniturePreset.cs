@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Model.Property;
 using PoneCrafter.Model;
 using UnityEngine;
@@ -23,6 +24,10 @@ public class FurniturePreset : Preset {
     //private Texture2D texture;
     //private Material[][] materials;
     private RenderTexture[] previewTextures;
+    
+    public string Type => tags.Get("type") ?? "";
+    
+    public bool IsSurface => Type.Let(it => it == "table" || it == "endTable" || it == "counter" || it == "desk");
 
     // TODO: Import missing fields
     public FurniturePreset(Furniture furniture) :
@@ -66,15 +71,25 @@ public class FurniturePreset : Preset {
     /// Fix the position and rotation of a model object.
     /// This assumes the position of the parent is the exact tile position.
     /// </summary>
-    public void FixModelTransform(Transform model, ObjectRotation rotation) {
+    public void FixModelTransform(Transform model, ObjectRotation rotation, bool isChild) {
         Transform parent = model.parent;
         Vector2Int tileSize = GetTileSize();
         model.localPosition = new Vector3(tileSize.x * 0.5f, 0, tileSize.y * 0.5f);
         model.rotation = Quaternion.identity;
         // It's a bit dirty to do it here, but models from Blender and Max are rotated by 180 degrees.
         model.Rotate(new Vector3(0, 180, 0));
-        Vector3 pivot = parent.position + new Vector3(0.5f, 0, 0.5f);
-        model.RotateAround(pivot, Vector3.up, ObjectRotationUtil.GetRotationAngle(rotation));
+        
+        // For some reason, child objects don't behave properly when rotated.
+        // If the local position is zero, we are dealing with a child object.
+        // Since surface objects are always 1 tile, it's safe to rotate them without a pivot.
+        if (isChild) {
+            // Surface slots are placed on the center, rather than the lower left corner.
+            model.localPosition -= new Vector3(0.5f, 0, 0.5f);
+            model.Rotate(Vector3.up, rotation.GetRotationAngle());
+        } else {
+            Vector3 pivot = parent.position + new Vector3(0.5f, 0, 0.5f);
+            model.RotateAround(pivot, Vector3.up, rotation.GetRotationAngle());
+        }
     }
 
     public Vector2Int GetTileSize() {
@@ -98,7 +113,7 @@ public class FurniturePreset : Preset {
     public Vector2Int[] GetOccupiedTiles(Vector2Int position, ObjectRotation objectRotation) {
         Vector2Int[] occupied = new Vector2Int[occupiedTiles.Length];
         for (int i = 0; i < occupied.Length; i++) {
-            occupied[i] = position + RotateTile(occupiedTiles[i], objectRotation);
+            occupied[i] = position + occupiedTiles[i].RotateTileInGroup(objectRotation);
         }
         return occupied;
     }
@@ -116,18 +131,17 @@ public class FurniturePreset : Preset {
         return new TileBorder[0];
     }
 
-    private Vector2Int RotateTile(Vector2Int tile, ObjectRotation rotation) {
-        // Sorry for the yuckiness, but at least it works now. And it's actually performance efficiënt-ish.
-        if (rotation == ObjectRotation.SouthWest) {
-            return new Vector2Int(tile.y, -tile.x);
-        }
-        if (rotation == ObjectRotation.NorthWest) {
-            return new Vector2Int(-tile.x, -tile.y);
-        }
-        if (rotation == ObjectRotation.NorthEast) {
-            return new Vector2Int(-tile.y, tile.x);
-        }
-        // SouthEast
-        return tile;
+    public ICollection<Vector3> GetSurfaceSlots() {
+        if (!IsSurface)
+            return new Vector3[0];
+
+        // Compensate for the pivot being in the center of the model, rather than the center of the lower-left tile.
+        Vector2Int tileSize = GetTileSize();
+        float compensateX = tileSize.x / 2f - 0.5f;
+        float compensateY = tileSize.y / 2f - 0.5f;
+        
+        return occupiedTiles.Select(tile => new Vector3(tile.x - compensateX, 1f, tile.y - compensateY))
+            .Reverse()
+            .ToArray();
     }
 }

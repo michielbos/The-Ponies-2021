@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 4128004981058438}
   - component: {fileID: 33342432605803880}
   - component: {fileID: 23227233695673504}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: FloorMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -9,7 +9,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4128004981058438}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: WallMarker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -42,7 +42,7 @@ GameObject:
   - component: {fileID: 4900261532102108482}
   - component: {fileID: 5198729177216984915}
   - component: {fileID: 5654815598049792875}
-  m_Layer: 0
+  m_Layer: 11
   m_Name: Model
   m_TagString: Untagged
   m_Icon: {fileID: 0}

@@ -26,7 +26,7 @@ public class Property : MonoBehaviour {
     public Dictionary<Guid, Pony> ponies = new Dictionary<Guid, Pony>();
     public Room[] Rooms { get; private set; } = new Room[0];
     [CanBeNull] public Household household;
-    private int nextObjectId;
+    private int nextObjectId = 1;
 
     public int TerrainWidth => terrainTiles.GetLength(1);
     public int TerrainHeight => terrainTiles.GetLength(0);
@@ -91,22 +91,36 @@ public class Property : MonoBehaviour {
     /// Place a property object with only the necessary fields. Other fields will receive a calculated/default value.
     /// This is useful when placing new objects via the buy tool.
     /// </summary>
-    public void PlacePropertyObject(int x, int y, ObjectRotation objectRotation, FurniturePreset preset, int skin) {
-        PlacePropertyObject(nextObjectId++, x, y, objectRotation, preset, skin, preset.price, null);
+    public void PlacePropertyObject(IObjectSlot targetSlot, ObjectRotation objectRotation, FurniturePreset preset,
+        int skin) {
+        PlacePropertyObject(nextObjectId++, targetSlot, objectRotation, preset, skin, preset.price, null, new ChildObjectData[0]);
     }
 
     /// <summary>
     /// Place a property object, with all data filled in.
     /// This should be used when loading an existing propery object from a save.
+    /// This also instantiates all children of this object.
     /// </summary>
-    private void PlacePropertyObject(int id, int x, int y, ObjectRotation objectRotation, FurniturePreset preset,
-        int skin, int value, string animation) {
+    private void PlacePropertyObject(int id, IObjectSlot targetSlot, ObjectRotation objectRotation, FurniturePreset preset,
+        int skin, int value, string animation, ChildObjectData[] children) {
         if (id >= nextObjectId) {
             nextObjectId = id + 1;
         }
         PropertyObject propertyObject = Instantiate(Prefabs.Instance.propertyObjectPrefab, transform);
-        propertyObject.Init(id, x, y, objectRotation, preset, skin, value, animation);
+        propertyObject.Init(id, targetSlot, objectRotation, preset, skin, value, animation);
         propertyObjects[id] = propertyObject;
+
+        for (int i = 0; i < children.Length; i++) {
+            ChildObjectData cd = children[i];
+            // Unity doesn't allow null values in serialized JSON arrays and replaces them by empty objects.
+            // Such fake objects can be detected by checking if their ID is 0...
+            if (cd.id <= 0)
+                continue;
+            FurniturePreset childPreset = FurniturePresets.Instance.GetFurniturePreset(new Guid(cd.furnitureGuid));
+            SurfaceSlot childSlot = propertyObject.GetSurfaceSlot(i);
+            PlacePropertyObject(cd.id, childSlot, cd.GetObjectRotation(), childPreset, cd.skin, cd.value, cd.animation,
+                new ChildObjectData[0]);
+        }
     }
 
     public void RemoveFloor(FloorTile floorTile) {
@@ -197,7 +211,8 @@ public class Property : MonoBehaviour {
             try {
                 FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(new Guid(pod.furnitureGuid));
                 if (preset != null) {
-                    PlacePropertyObject(pod.id, pod.x, pod.y, pod.GetObjectRotation(), preset, pod.skin, pod.value, pod.animation);
+                    IObjectSlot targetSlot = GetTerrainTile(pod.x, pod.y);
+                    PlacePropertyObject(pod.id, targetSlot, pod.GetObjectRotation(), preset, pod.skin, pod.value, pod.animation, pod.children);
                 } else {
                     Debug.LogWarning("No furniture preset for GUID " + pod.furnitureGuid +
                                      ". Not loading property object " + pod.id + ".");
@@ -251,7 +266,11 @@ public class Property : MonoBehaviour {
             CreateFloorTileDataArray(floorTiles),
             walls.Values.Select(wall => wall.GetWallData()).ToArray(),
             CreateRoofDataArray(roofs),
-            propertyObjects.Values.Select(propertyObject => propertyObject.GetPropertyObjectData()).ToArray(),
+            propertyObjects.Values
+                // Don't save objects that have parents, because their parents will save them.
+                .Where(propertyObject => !propertyObject.IsChild)
+                .Select(propertyObject => propertyObject.GetPropertyObjectData())
+                .ToArray(),
             ponies.Values.Select(pony => pony.GetGamePonyData()).ToArray(),
             household?.GetHouseholdData());
     }
@@ -321,7 +340,7 @@ public class Property : MonoBehaviour {
     /// </summary>
     /// <param name="tiles">The coordinates of the tiles.</param>
     /// <returns>A list of all PropertyObjects with a tile overlapping at least one of the given positions.</returns>
-    public List<PropertyObject> GetObjectsOnTiles(Vector2Int[] tiles) {
+    public List<PropertyObject> GetObjectsOnTiles(ICollection<Vector2Int> tiles) {
         // TODO: Consider optimization and/or caching.
         //This might come with a performance overhead when there are a lot of objects.
         //If performance becomes an issue, we could remember all overlapping objects inside each terrain tile.

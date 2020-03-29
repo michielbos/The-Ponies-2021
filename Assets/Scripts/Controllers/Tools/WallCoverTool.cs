@@ -11,7 +11,6 @@ namespace Controllers.Tools {
 /// Tool for build mode that deals with placing and removing wall covers.
 /// </summary>
 public class WallCoverTool : MonoBehaviour, ITool {
-    public GameObject buildMarkerPrefab;
     private int wallLayer;
 
     private WallCoverPreset selectedPreset;
