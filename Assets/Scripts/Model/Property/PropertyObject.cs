@@ -61,6 +61,16 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
 
     public bool IsChild => ParentSlot != null;
 
+    /// <summary>
+    /// Whether the object has been picked up by a pony.
+    /// </summary>
+    private bool IsPickedUp => ParentSlot is HoofSlot;
+
+    /// <summary>
+    /// Whether the object can be picked up in buy mode.
+    /// </summary>
+    public bool Pickupable => preset.pickupable && !IsPickedUp && users.Count == 0;
+
     public void Init(int id, IObjectSlot objectSlot, ObjectRotation rotation, FurniturePreset preset, int skin, int value,
         string animation) {
         this.id = id;

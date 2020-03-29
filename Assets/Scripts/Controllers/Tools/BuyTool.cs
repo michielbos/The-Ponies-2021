@@ -287,7 +287,7 @@ public class BuyTool : MonoBehaviour, ITool {
         //TODO: Highlight object if it can be picked up.
         if (!Input.GetMouseButtonDown(0))
             return;
-        if (propertyObject.preset.pickupable || CheatsController.Instance.moveObjectsMode) {
+        if (propertyObject.Pickupable || CheatsController.Instance.moveObjectsMode) {
             PickUpObject(propertyObject);
         } else {
             SoundController.Instance.PlaySound(SoundType.Deny);
