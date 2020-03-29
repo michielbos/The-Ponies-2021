@@ -2,9 +2,7 @@ Shader "Cel Shading/RegularV3"
 {
 	Properties
 	{
-		_Offset("Offset", Float) = 0.2
 		_MainTex("MainTex", 2D) = "white" {}
-		_LineWidth("LineWidth", Range( 0 , 1)) = 0.5
 		_OcclusionMap("OcclusionMap", 2D) = "black" {}
 		[Toggle(_EMISSIONTOGGLE_ON)] _EmissionToggle("EmissionToggle", Float) = 0
 		_EmissionMap("EmissionMap", 2D) = "black" {}
@@ -69,8 +67,6 @@ Shader "Cel Shading/RegularV3"
 		uniform float _DirtynessVal;
 		uniform sampler2D _OcclusionMap;
 		uniform half4 _OcclusionMap_ST;
-		uniform half _LineWidth;
-		uniform half _Offset;
 		uniform sampler2D _EmissionMap;
 		uniform half4 _EmissionMap_ST;
 		uniform half4 _EmissionFactor;
@@ -131,14 +127,8 @@ Shader "Cel Shading/RegularV3"
 			half3 CombinedTexture110 = switchResult68;
 			float2 uv_OcclusionMap = i.uv_texcoord * _OcclusionMap_ST.xy + _OcclusionMap_ST.zw;
 			half3 temp_output_83_0 = (tex2D( _OcclusionMap, uv_OcclusionMap )).rgb;
-			float4 ase_vertex4Pos = mul( unity_WorldToObject, float4( i.worldPos , 1 ) );
-			half3 ase_objectlightDir = normalize( ObjSpaceLightDir( ase_vertex4Pos ) );
-			half3 ase_worldTangent = WorldNormalVector( i, half3( 1, 0, 0 ) );
-			half3 ase_worldBitangent = WorldNormalVector( i, half3( 0, 1, 0 ) );
-			half3x3 ase_worldToTangent = float3x3( ase_worldTangent, ase_worldBitangent, ase_worldNormal );
-			half3 viewToTangentDir170 = mul( ase_worldToTangent, mul( UNITY_MATRIX_I_V, float4( ( ase_worldPos * ( ( 1.0 - _WorldSpaceLightPos0.w ) * ase_objectlightDir ) ), 0 ) ).xyz);
-			half3 break19 = (float3( -1,-1,-1 ) + (viewToTangentDir170 - float3( 0,0,0 )) * (float3( 1,1,1 ) - float3( -1,-1,-1 )) / (float3( 1,1,1 ) - float3( 0,0,0 )));
-			half ShineVar84 = ( ( ( ase_lightColor.a - 0.0 ) * 0.3 ) * step( _LineWidth , frac( ( pow( ( 3.0 + 1.01 ) , saturate( ( 1.0 - ( abs( ( break19.x + break19.y ) ) - _Offset ) ) ) ) * 1.0 ) ) ) );
+			half temp_output_7_0_g7 = ( ( i.uv_texcoord.y + i.uv_texcoord.x ) - ( _Time.y * 0.2 ) );
+			half ShineVar84 = ( ( ase_lightColor.a * 0.3 ) * ( step( frac( pow( ( 1.0 + 0.5 ) , sin( temp_output_7_0_g7 ) ) ) , 0.08 ) + step( frac( pow( ( 1.0 + 0.5 ) , sin( ( temp_output_7_0_g7 + 2.76 ) ) ) ) , 0.04 ) ) );
 			half3 BaseColorOutput99 = ( ( temp_output_86_0 * ( CombinedTexture110 * ( 1.0 - temp_output_83_0 ) ) ) + ( ( temp_output_86_0 * ( CombinedTexture110 * temp_output_83_0 ) ) + ( temp_output_83_0 * ShineVar84 ) ) );
 			half3 temp_output_102_0 = BaseColorOutput99;
 			c.rgb = temp_output_102_0;
@@ -186,14 +176,8 @@ Shader "Cel Shading/RegularV3"
 			half3 CombinedTexture110 = switchResult68;
 			float2 uv_OcclusionMap = i.uv_texcoord * _OcclusionMap_ST.xy + _OcclusionMap_ST.zw;
 			half3 temp_output_83_0 = (tex2D( _OcclusionMap, uv_OcclusionMap )).rgb;
-			float4 ase_vertex4Pos = mul( unity_WorldToObject, float4( i.worldPos , 1 ) );
-			half3 ase_objectlightDir = normalize( ObjSpaceLightDir( ase_vertex4Pos ) );
-			half3 ase_worldTangent = WorldNormalVector( i, half3( 1, 0, 0 ) );
-			half3 ase_worldBitangent = WorldNormalVector( i, half3( 0, 1, 0 ) );
-			half3x3 ase_worldToTangent = float3x3( ase_worldTangent, ase_worldBitangent, ase_worldNormal );
-			half3 viewToTangentDir170 = mul( ase_worldToTangent, mul( UNITY_MATRIX_I_V, float4( ( ase_worldPos * ( ( 1.0 - _WorldSpaceLightPos0.w ) * ase_objectlightDir ) ), 0 ) ).xyz);
-			half3 break19 = (float3( -1,-1,-1 ) + (viewToTangentDir170 - float3( 0,0,0 )) * (float3( 1,1,1 ) - float3( -1,-1,-1 )) / (float3( 1,1,1 ) - float3( 0,0,0 )));
-			half ShineVar84 = ( ( ( ase_lightColor.a - 0.0 ) * 0.3 ) * step( _LineWidth , frac( ( pow( ( 3.0 + 1.01 ) , saturate( ( 1.0 - ( abs( ( break19.x + break19.y ) ) - _Offset ) ) ) ) * 1.0 ) ) ) );
+			half temp_output_7_0_g7 = ( ( i.uv_texcoord.y + i.uv_texcoord.x ) - ( _Time.y * 0.2 ) );
+			half ShineVar84 = ( ( ase_lightColor.a * 0.3 ) * ( step( frac( pow( ( 1.0 + 0.5 ) , sin( temp_output_7_0_g7 ) ) ) , 0.08 ) + step( frac( pow( ( 1.0 + 0.5 ) , sin( ( temp_output_7_0_g7 + 2.76 ) ) ) ) , 0.04 ) ) );
 			half3 BaseColorOutput99 = ( ( temp_output_86_0 * ( CombinedTexture110 * ( 1.0 - temp_output_83_0 ) ) ) + ( ( temp_output_86_0 * ( CombinedTexture110 * temp_output_83_0 ) ) + ( temp_output_83_0 * ShineVar84 ) ) );
 			half3 temp_output_102_0 = BaseColorOutput99;
 			o.Albedo = temp_output_102_0;

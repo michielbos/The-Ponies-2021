@@ -23,6 +23,8 @@ Shader "Cel Shading/TVShaderV1"
 		_BrokenTvCrack("BrokenTvCrack", 2D) = "black" {}
 		_DimPower("Dim Power", Float) = 2
 		_DimStrength("Dim Strength", Float) = 0.8
+		_rgbOffset("rgbOffset", Float) = 0.2
+		_Noise("Noise", Range( 0 , 0.01)) = 0.001
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
@@ -69,14 +71,16 @@ Shader "Cel Shading/TVShaderV1"
 			UnityGIInput GIData;
 		};
 
+		uniform sampler2D _MainTexture;
 		uniform float _CloseBrightness;
 		uniform float _FarBrightness;
 		uniform float _MinDistance;
 		uniform float _MaxDistance;
 		uniform sampler2D _LCDPixels;
 		uniform float _Pixels;
-		uniform sampler2D _MainTexture;
 		uniform float4 _MainTexture_ST;
+		uniform float _Noise;
+		uniform float _rgbOffset;
 		uniform float _DimFreq;
 		uniform float _DimSpeed;
 		uniform float _DimWidth;
@@ -211,13 +215,24 @@ Shader "Cel Shading/TVShaderV1"
 			float simplePerlin2D94 = snoise( panner97*40.0 );
 			simplePerlin2D94 = simplePerlin2D94*0.5 + 0.5;
 			float3 temp_cast_3 = (simplePerlin2D94).xxx;
-			float2 uv_MainTexture = i.uv_texcoord * _MainTexture_ST.xy + _MainTexture_ST.zw;
+			float2 uv0_MainTexture = i.uv_texcoord * _MainTexture_ST.xy + _MainTexture_ST.zw;
+			float2 appendResult344 = (float2(( _Time.y * 15.0 ) , ( i.uv_texcoord.y * 80.0 )));
+			float simplePerlin2D345 = snoise( appendResult344 );
+			float2 appendResult350 = (float2(( i.uv_texcoord.y * 25.0 ) , ( _Time.z * 1.0 )));
+			float simplePerlin2D347 = snoise( appendResult350 );
+			float temp_output_395_0 = ( uv0_MainTexture.x + ( ( simplePerlin2D345 + simplePerlin2D347 ) * _Noise ) );
+			float temp_output_396_0 = ( _rgbOffset * 0.01 );
+			float2 appendResult398 = (float2(( temp_output_395_0 - temp_output_396_0 ) , uv0_MainTexture.y));
+			float2 appendResult400 = (float2(temp_output_395_0 , uv0_MainTexture.y));
+			float2 appendResult401 = (float2(( temp_output_395_0 + temp_output_396_0 ) , uv0_MainTexture.y));
+			float3 appendResult399 = (float3(tex2D( _MainTexture, appendResult398 ).r , tex2D( _MainTexture, appendResult400 ).g , tex2D( _MainTexture, appendResult401 ).b));
 			#ifdef _CHANNELON_ON
-				float3 staticSwitch100 = (tex2D( _MainTexture, uv_MainTexture )).rgb;
+				float3 staticSwitch100 = appendResult399;
 			#else
 				float3 staticSwitch100 = temp_cast_3;
 			#endif
-			float3 TVOutputColor204 = staticSwitch100;
+			float3 temp_cast_4 = (( sin( ( i.uv_texcoord.y * 560.0 ) ) * 0.04 )).xxx;
+			float3 TVOutputColor204 = ( staticSwitch100 - temp_cast_4 );
 			float mulTime269 = _Time.y * _DimSpeed;
 			float temp_output_273_0 = ( 1.0 - _DimWidth );
 			float clampResult274 = clamp( sin( ( ( _DimFreq * ( ( floor( temp_output_150_0 ) / appendResult154 ) + ( float2( 0.5,0.5 ) / appendResult154 ) ).y ) + mulTime269 ) ) , temp_output_273_0 , 1.0 );
@@ -236,7 +251,7 @@ Shader "Cel Shading/TVShaderV1"
 			float3 hsvTorgb264 = RGBToHSV( staticSwitch91 );
 			float2 uv_BrokenTvCrack = i.uv_texcoord * _BrokenTvCrack_ST.xy + _BrokenTvCrack_ST.zw;
 			#ifdef _TVBROKEN_ON
-				float4 staticSwitch242 = ( float4( hsvTorgb264 , 0.0 ) * ( saturate( tex2D( _BrokenTVSideEffect, ( ( abs( (i.uv_texcoord*2.0 + -1.0) ) * float2( 0.5,0 ) ) + _Time.x ) ) ) * tex2D( _BrokenTvCrack, uv_BrokenTvCrack ) ) );
+				float4 staticSwitch242 = ( float4( hsvTorgb264 , 0.0 ) * ( saturate( tex2D( _BrokenTVSideEffect, ( ( abs( (i.uv_texcoord*2.0 + -1.0) ) * float2( 0.5,0.01 ) ) + _Time.x ) ) ) * tex2D( _BrokenTvCrack, uv_BrokenTvCrack ) ) );
 			#else
 				float4 staticSwitch242 = float4( staticSwitch91 , 0.0 );
 			#endif
