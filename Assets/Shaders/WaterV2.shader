@@ -2,37 +2,39 @@ Shader "Cel Shading/WaterV2"
 {
 	Properties
 	{
-		_Colorwater("Color water", Color) = (0,0.7803922,1,1)
+		_ColorFoam("Color Foam", Color) = (0,0.7803922,1,1)
 		_ColorDepth("Color Depth", Color) = (0,0.1921569,1,1)
-		_ColorFoam("Color Foam", Color) = (0,0.6323466,1,1)
-		_Depth("Depth", Float) = 15
-		_OpasityIntensity("OpasityIntensity", Range( 0 , 1)) = 0.3
-		_SizeFoam("SizeFoam", Float) = 0.4
+		_Depth("Depth", Range( 0.001 , 2)) = 0
+		_OpacityIntensity("OpacityIntensity", Range( 0 , 1)) = 0.9
 		[Toggle]_Worldspacetiling("Worldspace tiling", Float) = 1
-		_Wavesspeed("Waves speed", Range( 0 , 10)) = 0.3
+		_WavesSpeed("Waves Speed", Range( 0 , 10)) = 0.3
 		_WaveDirectionX("WaveDirectionX", Range( -10 , 10)) = 2
 		_WaveDirectionY("WaveDirectionY", Range( -10 , 10)) = 2
 		_WaveHeight("Wave Height", Range( 0 , 1)) = 0.05
 		_WaveSize("Wave Size", Range( 0 , 10)) = 10
+		_ReflectionStrength("Reflection Strength", Range( 0 , 1)) = 0
 		_Shadermap("Shadermap", 2D) = "black" {}
+		[Toggle(_TOGGLEORTHO_ON)] _ToggleOrtho("ToggleOrtho", Float) = 1
+		_FoamSmoothstep("FoamSmoothstep", Range( 0 , 2)) = 0
+		[PerRendererData]_ReflectionTex("_ReflectionTex", 2D) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
 
 	SubShader
 	{
 		Tags{ "RenderType" = "Transparent"  "Queue" = "Transparent+0" "IgnoreProjector" = "True" }
-		Cull Back
+		Cull Off
 		CGINCLUDE
 		#include "UnityPBSLighting.cginc"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 		#include "Lighting.cginc"
-		#pragma target 2.0
+		#pragma target 3.0
+		#pragma shader_feature_local _TOGGLEORTHO_ON
 		struct Input
 		{
 			float3 worldPos;
-			half4 screenPosition13;
-			float3 worldNormal;
+			float4 screenPosition186;
 			float4 screenPos;
 		};
 
@@ -52,34 +54,62 @@ Shader "Cel Shading/WaterV2"
 		uniform half _WaveHeight;
 		uniform sampler2D _Shadermap;
 		uniform half _Worldspacetiling;
-		uniform half _WaveSize;
-		uniform half _Wavesspeed;
+		uniform float _WaveSize;
+		uniform half _WavesSpeed;
 		uniform half _WaveDirectionX;
 		uniform half _WaveDirectionY;
+		uniform float4 _ColorFoam;
+		uniform float4 _ColorDepth;
+		uniform half _FoamSmoothstep;
 		UNITY_DECLARE_DEPTH_TEXTURE( _CameraDepthTexture );
 		uniform float4 _CameraDepthTexture_TexelSize;
-		uniform half _SizeFoam;
-		uniform half4 _Colorwater;
-		uniform half4 _ColorDepth;
-		uniform half _Depth;
-		uniform half4 _ColorFoam;
-		uniform half _OpasityIntensity;
+		uniform float _Depth;
+		uniform sampler2D _ReflectionTex;
+		uniform half _OpacityIntensity;
+		uniform float _ReflectionStrength;
+
+
+		inline int ComparisonGreater169( half A , half B )
+		{
+			return A > B ? 1 : 0;;
+		}
+
+
+		inline float4 ASE_ComputeGrabScreenPos( float4 pos )
+		{
+			#if UNITY_UV_STARTS_AT_TOP
+			float scale = -1.0;
+			#else
+			float scale = 1.0;
+			#endif
+			float4 o = pos;
+			o.y = pos.w * 0.5f;
+			o.y = ( pos.y - o.y ) * _ProjectionParams.x * scale + o.y;
+			return o;
+		}
+
+
+		float2 SPSRUVAdjust268( float4 input )
+		{
+			return UnityStereoScreenSpaceUVAdjust(input, float4(1, 1, 0, 0));
+		}
+
 
 		void vertexDataFunc( inout appdata_full v, out Input o )
 		{
 			UNITY_INITIALIZE_OUTPUT( Input, o );
-			float3 ase_vertexNormal = v.normal.xyz;
+			half3 ase_vertexNormal = v.normal.xyz;
 			float3 ase_worldPos = mul( unity_ObjectToWorld, v.vertex );
-			half2 Tiling88 = lerp(( -20.0 * v.texcoord.xy ),( (ase_worldPos).xz * float2( 0.1,0.1 ) ),_Worldspacetiling);
-			float2 appendResult65 = (half2(_WaveDirectionX , _WaveDirectionY));
-			half2 WaveSpeed69 = ( ( _Wavesspeed * _Time.x ) * appendResult65 );
+			half2 Tiling88 = (( _Worldspacetiling )?( ( (ase_worldPos).xz * float2( 0.1,0.1 ) ) ):( ( -20.0 * v.texcoord.xy ) ));
+			half2 appendResult65 = (half2(_WaveDirectionX , _WaveDirectionY));
+			half2 WaveSpeed69 = ( ( _WavesSpeed * _Time.x ) * appendResult65 );
 			float2 HeightmapUV98 = ( ( ( Tiling88 * _WaveSize ) * float2( 0.1,0.1 ) ) + ( WaveSpeed69 * float2( 0.5,0.5 ) ) );
-			float3 Displacement105 = ( ase_vertexNormal * ( _WaveHeight * tex2Dlod( _Shadermap, half4( HeightmapUV98, 0, 1.0) ).g ) );
-			v.vertex.xyz += Displacement105;
+			half4 tex2DNode115 = tex2Dlod( _Shadermap, float4( HeightmapUV98, 0, 1.0) );
+			v.vertex.xyz += ( ase_vertexNormal * ( _WaveHeight * tex2DNode115.g ) );
 			float3 ase_vertex3Pos = v.vertex.xyz;
-			float3 vertexPos13 = ase_vertex3Pos;
-			float4 ase_screenPos13 = ComputeScreenPos( UnityObjectToClipPos( vertexPos13 ) );
-			o.screenPosition13 = ase_screenPos13;
+			half3 vertexPos186 = ase_vertex3Pos;
+			float4 ase_screenPos186 = ComputeScreenPos( UnityObjectToClipPos( vertexPos186 ) );
+			o.screenPosition186 = ase_screenPos186;
 		}
 
 		inline half4 LightingStandardCustomLighting( inout SurfaceOutputCustomLightingCustom s, half3 viewDir, UnityGI gi )
@@ -87,33 +117,55 @@ Shader "Cel Shading/WaterV2"
 			UnityGIInput data = s.GIData;
 			Input i = s.SurfInput;
 			half4 c = 0;
-			float4 ase_screenPos13 = i.screenPosition13;
-			float4 ase_screenPosNorm13 = ase_screenPos13 / ase_screenPos13.w;
-			ase_screenPosNorm13.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm13.z : ase_screenPosNorm13.z * 0.5 + 0.5;
-			float temp_output_59_0 = ( _SizeFoam * 0.001 );
-			float screenDepth13 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture,UNITY_PROJ_COORD( ase_screenPos13 )));
-			float distanceDepth13 = abs( ( screenDepth13 - LinearEyeDepth( ase_screenPosNorm13.z ) ) / ( temp_output_59_0 ) );
-			half3 ase_worldNormal = i.worldNormal;
-			float lerpResult17 = lerp( distanceDepth13 , ( distanceDepth13 * ( 1.0 - ase_worldNormal.y ) ) , 0.998);
-			half4 ifLocalVar35 = 0;
-			if( lerpResult17 <= temp_output_59_0 )
-				ifLocalVar35 = _ColorFoam;
+			#ifdef UNITY_PASS_FORWARDBASE
+			float ase_lightAtten = data.atten;
+			if( _LightColor0.a == 0)
+			ase_lightAtten = 0;
+			#else
+			float3 ase_lightAttenRGB = gi.light.color / ( ( _LightColor0.rgb ) + 0.000001 );
+			float ase_lightAtten = max( max( ase_lightAttenRGB.r, ase_lightAttenRGB.g ), ase_lightAttenRGB.b );
+			#endif
+			#if defined(HANDLE_SHADOWS_BLENDING_IN_GI)
+			half bakedAtten = UnitySampleBakedOcclusion(data.lightmapUV.xy, data.worldPos);
+			float zDist = dot(_WorldSpaceCameraPos - data.worldPos, UNITY_MATRIX_V[2].xyz);
+			float fadeDist = UnityComputeShadowFadeDistance(data.worldPos, zDist);
+			ase_lightAtten = UnityMixRealtimeAndBakedShadows(data.atten, bakedAtten, UnityComputeShadowFade(fadeDist));
+			#endif
+			float4 ase_screenPos186 = i.screenPosition186;
+			half4 ase_screenPosNorm186 = ase_screenPos186 / ase_screenPos186.w;
+			ase_screenPosNorm186.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm186.z : ase_screenPosNorm186.z * 0.5 + 0.5;
+			float screenDepth186 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE( _CameraDepthTexture, ase_screenPosNorm186.xy ));
+			half distanceDepth186 = abs( ( screenDepth186 - LinearEyeDepth( ase_screenPosNorm186.z ) ) / ( _Depth ) );
+			half A169 = _ProjectionParams.x;
+			half B169 = 0.0;
+			int localComparisonGreater169 = ComparisonGreater169( A169 , B169 );
+			half lerpResult167 = lerp( distanceDepth186 , ( 1.0 - distanceDepth186 ) , (float)localComparisonGreater169);
+			half lerpResult197 = lerp( _ProjectionParams.y , _ProjectionParams.z , lerpResult167);
+			#ifdef _TOGGLEORTHO_ON
+				half staticSwitch206 = lerpResult197;
+			#else
+				half staticSwitch206 = distanceDepth186;
+			#endif
+			half smoothstepResult252 = smoothstep( _FoamSmoothstep , 2.0 , staticSwitch206);
+			half lerpResult255 = lerp( 1.0 , _OpacityIntensity , smoothstepResult252);
+			half clampResult39 = clamp( lerpResult255 , 0.0 , 1.0 );
+			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
+			half4 ase_lightColor = 0;
+			#else //aselc
+			half4 ase_lightColor = _LightColor0;
+			#endif //aselc
+			half4 lerpResult30 = lerp( _ColorFoam , _ColorDepth , smoothstepResult252);
 			float4 ase_screenPos = float4( i.screenPos.xyz , i.screenPos.w + 0.00000000001 );
-			float4 ase_screenPosNorm = ase_screenPos / ase_screenPos.w;
-			ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
-			float screenDepth28 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture,UNITY_PROJ_COORD( ase_screenPos )));
-			float distanceDepth28 = abs( ( screenDepth28 - LinearEyeDepth( ase_screenPosNorm.z ) ) / ( _Depth ) );
-			float clampResult32 = clamp( distanceDepth28 , 0.0 , 1.0 );
-			float lerpResult33 = lerp( 1.0 , clampResult32 , _OpasityIntensity);
-			float4 clampResult39 = clamp( ( ifLocalVar35 + lerpResult33 ) , float4( 0,0,0,0 ) , float4( 1,0,0,0 ) );
-			float4 lerpResult30 = lerp( _Colorwater , _ColorDepth , clampResult32);
-			half4 ifLocalVar7 = 0;
-			if( lerpResult17 <= temp_output_59_0 )
-				ifLocalVar7 = _ColorFoam;
-			else
-				ifLocalVar7 = lerpResult30;
-			c.rgb = ifLocalVar7.rgb;
-			c.a = clampResult39.r;
+			float4 ase_grabScreenPos = ASE_ComputeGrabScreenPos( ase_screenPos );
+			half4 ase_grabScreenPosNorm = ase_grabScreenPos / ase_grabScreenPos.w;
+			float4 input268 = ase_grabScreenPosNorm;
+			float2 localSPSRUVAdjust268 = SPSRUVAdjust268( input268 );
+			float4 Reflection274 = tex2D( _ReflectionTex, localSPSRUVAdjust268 );
+			half4 lerpResult297 = lerp( lerpResult30 , Reflection274 , ( 1.0 - lerpResult255 ));
+			half4 lerpResult292 = lerp( lerpResult30 , Reflection274 , saturate( ( lerpResult255 * _ReflectionStrength ) ));
+			half3 temp_output_152_0 = ( ( ase_lightColor.rgb * ( ase_lightColor.a * ( 1.0 - ( ( 1.0 - ase_lightAtten ) * _WorldSpaceLightPos0.w ) ) ) ) * ( (( lerpResult297 * lerpResult292 )).rgb * float3( 0.7,0.7,0.7 ) ) );
+			c.rgb = temp_output_152_0;
+			c.a = clampResult39;
 			return c;
 		}
 
@@ -125,27 +177,39 @@ Shader "Cel Shading/WaterV2"
 		void surf( Input i , inout SurfaceOutputCustomLightingCustom o )
 		{
 			o.SurfInput = i;
-			float4 ase_screenPos13 = i.screenPosition13;
-			float4 ase_screenPosNorm13 = ase_screenPos13 / ase_screenPos13.w;
-			ase_screenPosNorm13.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm13.z : ase_screenPosNorm13.z * 0.5 + 0.5;
-			float temp_output_59_0 = ( _SizeFoam * 0.001 );
-			float screenDepth13 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture,UNITY_PROJ_COORD( ase_screenPos13 )));
-			float distanceDepth13 = abs( ( screenDepth13 - LinearEyeDepth( ase_screenPosNorm13.z ) ) / ( temp_output_59_0 ) );
-			half3 ase_worldNormal = i.worldNormal;
-			float lerpResult17 = lerp( distanceDepth13 , ( distanceDepth13 * ( 1.0 - ase_worldNormal.y ) ) , 0.998);
+			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
+			half4 ase_lightColor = 0;
+			#else //aselc
+			half4 ase_lightColor = _LightColor0;
+			#endif //aselc
+			float4 ase_screenPos186 = i.screenPosition186;
+			half4 ase_screenPosNorm186 = ase_screenPos186 / ase_screenPos186.w;
+			ase_screenPosNorm186.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm186.z : ase_screenPosNorm186.z * 0.5 + 0.5;
+			float screenDepth186 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE( _CameraDepthTexture, ase_screenPosNorm186.xy ));
+			half distanceDepth186 = abs( ( screenDepth186 - LinearEyeDepth( ase_screenPosNorm186.z ) ) / ( _Depth ) );
+			half A169 = _ProjectionParams.x;
+			half B169 = 0.0;
+			int localComparisonGreater169 = ComparisonGreater169( A169 , B169 );
+			half lerpResult167 = lerp( distanceDepth186 , ( 1.0 - distanceDepth186 ) , (float)localComparisonGreater169);
+			half lerpResult197 = lerp( _ProjectionParams.y , _ProjectionParams.z , lerpResult167);
+			#ifdef _TOGGLEORTHO_ON
+				half staticSwitch206 = lerpResult197;
+			#else
+				half staticSwitch206 = distanceDepth186;
+			#endif
+			half smoothstepResult252 = smoothstep( _FoamSmoothstep , 2.0 , staticSwitch206);
+			half4 lerpResult30 = lerp( _ColorFoam , _ColorDepth , smoothstepResult252);
 			float4 ase_screenPos = float4( i.screenPos.xyz , i.screenPos.w + 0.00000000001 );
-			float4 ase_screenPosNorm = ase_screenPos / ase_screenPos.w;
-			ase_screenPosNorm.z = ( UNITY_NEAR_CLIP_VALUE >= 0 ) ? ase_screenPosNorm.z : ase_screenPosNorm.z * 0.5 + 0.5;
-			float screenDepth28 = LinearEyeDepth(SAMPLE_DEPTH_TEXTURE_PROJ(_CameraDepthTexture,UNITY_PROJ_COORD( ase_screenPos )));
-			float distanceDepth28 = abs( ( screenDepth28 - LinearEyeDepth( ase_screenPosNorm.z ) ) / ( _Depth ) );
-			float clampResult32 = clamp( distanceDepth28 , 0.0 , 1.0 );
-			float4 lerpResult30 = lerp( _Colorwater , _ColorDepth , clampResult32);
-			half4 ifLocalVar7 = 0;
-			if( lerpResult17 <= temp_output_59_0 )
-				ifLocalVar7 = _ColorFoam;
-			else
-				ifLocalVar7 = lerpResult30;
-			o.Albedo = ifLocalVar7.rgb;
+			float4 ase_grabScreenPos = ASE_ComputeGrabScreenPos( ase_screenPos );
+			half4 ase_grabScreenPosNorm = ase_grabScreenPos / ase_grabScreenPos.w;
+			float4 input268 = ase_grabScreenPosNorm;
+			float2 localSPSRUVAdjust268 = SPSRUVAdjust268( input268 );
+			float4 Reflection274 = tex2D( _ReflectionTex, localSPSRUVAdjust268 );
+			half lerpResult255 = lerp( 1.0 , _OpacityIntensity , smoothstepResult252);
+			half4 lerpResult297 = lerp( lerpResult30 , Reflection274 , ( 1.0 - lerpResult255 ));
+			half4 lerpResult292 = lerp( lerpResult30 , Reflection274 , saturate( ( lerpResult255 * _ReflectionStrength ) ));
+			half3 temp_output_152_0 = ( ( ase_lightColor.rgb * ( ase_lightColor.a * ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) ) ) ) * ( (( lerpResult297 * lerpResult292 )).rgb * float3( 0.7,0.7,0.7 ) ) );
+			o.Albedo = temp_output_152_0;
 		}
 
 		ENDCG
@@ -161,7 +225,7 @@ Shader "Cel Shading/WaterV2"
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
-			#pragma target 2.0
+			#pragma target 3.0
 			#pragma multi_compile_shadowcaster
 			#pragma multi_compile UNITY_PASS_SHADOWCASTER
 			#pragma skip_variants FOG_LINEAR FOG_EXP FOG_EXP2
@@ -179,21 +243,21 @@ Shader "Cel Shading/WaterV2"
 				float4 customPack1 : TEXCOORD1;
 				float3 worldPos : TEXCOORD2;
 				float4 screenPos : TEXCOORD3;
-				float3 worldNormal : TEXCOORD4;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 			v2f vert( appdata_full v )
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID( v );
 				UNITY_INITIALIZE_OUTPUT( v2f, o );
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( o );
 				UNITY_TRANSFER_INSTANCE_ID( v, o );
 				Input customInputData;
 				vertexDataFunc( v, customInputData );
 				float3 worldPos = mul( unity_ObjectToWorld, v.vertex ).xyz;
 				half3 worldNormal = UnityObjectToWorldNormal( v.normal );
-				o.worldNormal = worldNormal;
-				o.customPack1.xyzw = customInputData.screenPosition13;
+				o.customPack1.xyzw = customInputData.screenPosition186;
 				o.worldPos = worldPos;
 				TRANSFER_SHADOW_CASTER_NORMALOFFSET( o )
 				o.screenPos = ComputeScreenPos( o.pos );
@@ -208,11 +272,10 @@ Shader "Cel Shading/WaterV2"
 				UNITY_SETUP_INSTANCE_ID( IN );
 				Input surfIN;
 				UNITY_INITIALIZE_OUTPUT( Input, surfIN );
-				surfIN.screenPosition13 = IN.customPack1.xyzw;
+				surfIN.screenPosition186 = IN.customPack1.xyzw;
 				float3 worldPos = IN.worldPos;
 				half3 worldViewDir = normalize( UnityWorldSpaceViewDir( worldPos ) );
 				surfIN.worldPos = worldPos;
-				surfIN.worldNormal = IN.worldNormal;
 				surfIN.screenPos = IN.screenPos;
 				SurfaceOutputCustomLightingCustom o;
 				UNITY_INITIALIZE_OUTPUT( SurfaceOutputCustomLightingCustom, o )

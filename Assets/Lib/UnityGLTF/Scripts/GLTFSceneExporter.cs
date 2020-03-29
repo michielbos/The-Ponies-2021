@@ -911,7 +911,7 @@ namespace UnityGLTF
 					}
 				}
 			}
-
+			
 			if (IsPBRMetallicRoughness(materialObj))
 			{
 				material.PbrMetallicRoughness = ExportPBRMetallicRoughness(materialObj);

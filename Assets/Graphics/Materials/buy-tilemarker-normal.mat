@@ -8,7 +8,7 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: buy-tilemarker-normal
-  m_Shader: {fileID: 4800000, guid: c65b7daefe653304a9449060beaf9933, type: 3}
+  m_Shader: {fileID: 4800000, guid: c2f1b981c5cb8c84ea39b6d0cc8856e7, type: 3}
   m_ShaderKeywords: _ALPHATEST_ON _GLOSSYREFLECTIONS_OFF _SPECULARHIGHLIGHTS_OFF
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -59,6 +59,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _WallMask:
+        m_Texture: {fileID: 2800000, guid: e63814a70eb9943e69fd4d9921013a6f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _texcoord:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -72,13 +76,17 @@ Material:
     - _Cutoff: 0.413
     - _DetailNormalMapScale: 1
     - _DstBlend: 0
+    - _EmissionStrenght: 1
+    - _EmissionStrenght2: 1
     - _EnableExternalAlpha: 0
     - _Expand: 0.03
     - _FlatnessSpecular: 0
+    - _Float0: 1
     - _GlossMapScale: 1
     - _Glossiness: 0
     - _GlossyReflections: 0
     - _LightBrightness: 0
+    - _MaskMirror: 0
     - _Metallic: 0
     - _Mode: 1
     - _OcclusionStrength: 1

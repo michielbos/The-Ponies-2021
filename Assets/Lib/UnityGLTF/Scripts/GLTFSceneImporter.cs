@@ -146,6 +146,16 @@ namespace UnityGLTF
 		public string CustomShaderName { get; set; }
 
 		/// <summary>
+		/// Override for the shader to use on TV materials
+		/// </summary>
+		public string TVShaderName { get; set; }
+
+		/// <summary>
+		/// Override for the shader to use on Water materials
+		/// </summary>
+		public string WaterShader { get; set; }
+
+		/// <summary>
 		/// Whether to keep a CPU-side copy of the mesh after upload to GPU (for example, in case normals/tangents need recalculation)
 		/// </summary>
 		public bool KeepCPUCopyOfMesh = true;
@@ -1998,9 +2008,10 @@ namespace UnityGLTF
 				}
 			}
 
+			// diffuse roughness map in pbr, in our case it's metallic map
 			if (def.OcclusionTexture != null)
 			{
-				mapper.OcclusionTexStrength = def.OcclusionTexture.Strength;
+				// mapper.OcclusionTexStrength = def.OcclusionTexture.Strength;
 				TextureId textureId = def.OcclusionTexture.Index;
 				await ConstructTexture(textureId.Value, textureId.Id, !KeepCPUCopyOfTexture, true);
 				mapper.OcclusionTexture = _assetCache.TextureCache[textureId.Id].Texture;
@@ -2033,7 +2044,7 @@ namespace UnityGLTF
 			}
 
 			// Removed because our shader does not use this field and will trigger a warning.
-			// mapper.EmissiveFactor = def.EmissiveFactor.ToUnityColorRaw();
+			mapper.EmissiveFactor = def.EmissiveFactor.ToUnityColorRaw();
 
 			var vertColorMapper = mapper.Clone();
 			vertColorMapper.VertexColorsEnabled = true;

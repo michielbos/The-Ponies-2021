@@ -1,75 +1,34 @@
-Shader "Cel Shading/OutlineV2"
+Shader "Cel Shading/RegularV3"
 {
 	Properties
 	{
-		_Color("Color", Color) = (1,1,1,1)
 		_MainTex("MainTex", 2D) = "white" {}
+		_OcclusionMap("OcclusionMap", 2D) = "black" {}
+		[Toggle(_EMISSIONTOGGLE_ON)] _EmissionToggle("EmissionToggle", Float) = 0
+		_EmissionMap("EmissionMap", 2D) = "black" {}
+		_EmissionFactor("EmissionFactor", Color) = (0,0,0,0)
+		_DirtynessMap("DirtynessMap", 2D) = "black" {}
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
-		_OutlineColor("OutlineColor", Color) = (1,1,1,0)
-		_OutlineWidth("Outline Width", Range( 0 , 0.4)) = 0
-		_AlphaCutout("AlphaCutout", Range( 0 , 0.75)) = 0
-		_OutlineBrightness("OutlineBrightness", Range( 0 , 2)) = 1
-		[Toggle]_OutlineSwitch("Texture Based Outline Switch", Float) = 1
+		_DirtynessVal("DirtynessVal", Range( 0 , 1)) = 0
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
 
 	SubShader
 	{
-		Tags{ }
-		ZWrite Off
-		ZTest LEqual
-		Cull Front
-		CGPROGRAM
-		#pragma target 3.0
-		#pragma surface outlineSurf Outline nofog  keepalpha noshadow noambient novertexlights nolightmap nodynlightmap nodirlightmap nometa noforwardadd vertex:outlineVertexDataFunc 
-		void outlineVertexDataFunc( inout appdata_full v, out Input o )
-		{
-			UNITY_INITIALIZE_OUTPUT( Input, o );
-			float outlineVar = _OutlineWidth;
-			v.vertex.xyz += ( v.normal * outlineVar );
-		}
-		inline half4 LightingOutline( SurfaceOutput s, half3 lightDir, half atten ) { return half4 ( 0,0,0, s.Alpha); }
-		void outlineSurf( Input i, inout SurfaceOutput o )
-		{
-			float3 temp_output_46_0 = (_OutlineColor).rgb;
-			float3 IndirDiffLight27 = float3(0,0,0);
-			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
-			float4 ase_lightColor = 0;
-			#else //aselc
-			float4 ase_lightColor = _LightColor0;
-			#endif //aselc
-			float temp_output_28_0 = ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) );
-			half3 ase_worldNormal = WorldNormalVector( i, half3( 0, 0, 1 ) );
-			float3 ase_worldPos = i.worldPos;
-			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
-			float3 ase_worldlightDir = 0;
-			#else //aseld
-			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
-			#endif //aseld
-			float dotResult6 = dot( ase_worldNormal , ase_worldlightDir );
-			float NdotL10 = dotResult6;
-			float lerpResult30 = lerp( temp_output_28_0 , ( saturate( ( ( NdotL10 + 0.0 ) / 0.001 ) ) * 1 ) , _ShadowValue);
-			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			half4 tex2DNode31 = tex2D( _MainTex, uv_MainTex );
-			float3 BaseColor45 = ( ( ( IndirDiffLight27 * ase_lightColor.a * temp_output_28_0 ) + ( ase_lightColor.rgb * lerpResult30 ) ) * (( tex2DNode31 * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
-			o.Emission = lerp(half4( temp_output_46_0 , 0.0 ),( CalculateContrast(_OutlineBrightness,half4( temp_output_46_0 , 0.0 )) * half4( BaseColor45 , 0.0 ) ),_OutlineSwitch).rgb;
-			o.Normal = float3(0,0,-1);
-		}
-		ENDCG
-		
-
-		Tags{ "RenderType" = "TransparentCutout"  "Queue" = "Geometry+0" }
+		Tags{ "RenderType" = "Transparent"  "Queue" = "Geometry+0" "IsEmissive" = "true"  }
 		LOD 200
 		Cull Off
-		ZWrite On
-		ZTest LEqual
+		Blend One Zero , SrcAlpha OneMinusSrcAlpha
+		BlendOp Add , Add
+		AlphaToMask On
 		CGINCLUDE
 		#include "UnityPBSLighting.cginc"
 		#include "UnityShaderVariables.cginc"
 		#include "UnityCG.cginc"
 		#include "Lighting.cginc"
 		#pragma target 3.0
+		#pragma shader_feature _EMISSIONTOGGLE_ON
 		#ifdef UNITY_PASS_SHADOWCASTER
 			#undef INTERNAL_DATA
 			#undef WorldReflectionVector
@@ -80,10 +39,11 @@ Shader "Cel Shading/OutlineV2"
 		#endif
 		struct Input
 		{
-			float3 worldNormal;
+			half3 worldNormal;
 			INTERNAL_DATA
 			float3 worldPos;
-			half2 uv_texcoord;
+			float2 uv_texcoord;
+			half ASEVFace : VFACE;
 		};
 
 		struct SurfaceOutputCustomLightingCustom
@@ -99,29 +59,17 @@ Shader "Cel Shading/OutlineV2"
 			UnityGIInput GIData;
 		};
 
-		uniform half _ShadowValue;
+		uniform float _ShadowValue;
 		uniform sampler2D _MainTex;
 		uniform half4 _MainTex_ST;
-		uniform half4 _Color;
-		uniform half _AlphaCutout;
-		uniform half _OutlineWidth;
-		uniform half _OutlineSwitch;
-		uniform half4 _OutlineColor;
-		uniform half _OutlineBrightness;
-
-
-		float4 CalculateContrast( float contrastValue, float4 colorTarget )
-		{
-			float t = 0.5 * ( 1.0 - contrastValue );
-			return mul( float4x4( contrastValue,0,0,t, 0,contrastValue,0,t, 0,0,contrastValue,t, 0,0,0,1 ), colorTarget );
-		}
-
-		void vertexDataFunc( inout appdata_full v, out Input o )
-		{
-			UNITY_INITIALIZE_OUTPUT( Input, o );
-			float3 OutlineVar62 = 0;
-			v.vertex.xyz += OutlineVar62;
-		}
+		uniform sampler2D _DirtynessMap;
+		uniform half4 _DirtynessMap_ST;
+		uniform float _DirtynessVal;
+		uniform sampler2D _OcclusionMap;
+		uniform half4 _OcclusionMap_ST;
+		uniform sampler2D _EmissionMap;
+		uniform half4 _EmissionMap_ST;
+		uniform half4 _EmissionFactor;
 
 		inline half4 LightingStandardCustomLighting( inout SurfaceOutputCustomLightingCustom s, half3 viewDir, UnityGI gi )
 		{
@@ -143,35 +91,48 @@ Shader "Cel Shading/OutlineV2"
 			ase_lightAtten = UnityMixRealtimeAndBakedShadows(data.atten, bakedAtten, UnityComputeShadowFade(fadeDist));
 			#endif
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			half4 tex2DNode31 = tex2D( _MainTex, uv_MainTex );
-			float AlphaValue50 = ( tex2DNode31.a * _Color.a );
+			half4 tex2DNode16 = tex2D( _MainTex, uv_MainTex );
+			half AlphaValue98 = tex2DNode16.a;
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
-			float4 ase_lightColor = 0;
+			half4 ase_lightColor = 0;
 			#else //aselc
-			float4 ase_lightColor = _LightColor0;
+			half4 ase_lightColor = _LightColor0;
 			#endif //aselc
-			float3 LightColorData14 = ( ase_lightColor.rgb * ase_lightAtten );
-			UnityGI gi24 = gi;
-			float3 diffNorm24 = LightColorData14;
-			gi24 = UnityGI_Base( data, 1, diffNorm24 );
-			float3 indirectDiffuse24 = gi24.indirect.diffuse + diffNorm24 * 0.0001;
-			float3 IndirDiffLight27 = indirectDiffuse24;
-			float temp_output_28_0 = ( 1.0 - ( ( 1.0 - ase_lightAtten ) * _WorldSpaceLightPos0.w ) );
+			half3 LightColorData52 = ( ase_lightColor.rgb * ase_lightAtten );
+			UnityGI gi153 = gi;
+			float3 diffNorm153 = LightColorData52;
+			gi153 = UnityGI_Base( data, 1, diffNorm153 );
+			half3 indirectDiffuse153 = gi153.indirect.diffuse + diffNorm153 * 0.0001;
+			half3 IndirDiffLight74 = indirectDiffuse153;
+			half temp_output_73_0 = ( 1.0 - ( ( 1.0 - ase_lightAtten ) * _WorldSpaceLightPos0.w ) );
 			half3 ase_worldNormal = WorldNormalVector( i, half3( 0, 0, 1 ) );
 			float3 ase_worldPos = i.worldPos;
 			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
-			float3 ase_worldlightDir = 0;
+			half3 ase_worldlightDir = 0;
 			#else //aseld
-			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
+			half3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
-			float dotResult6 = dot( ase_worldNormal , ase_worldlightDir );
-			float NdotL10 = dotResult6;
-			float lerpResult30 = lerp( temp_output_28_0 , ( saturate( ( ( NdotL10 + 0.0 ) / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
-			float3 BaseColor45 = ( ( ( IndirDiffLight27 * ase_lightColor.a * temp_output_28_0 ) + ( ase_lightColor.rgb * lerpResult30 ) ) * (( tex2DNode31 * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
-			float3 temp_output_60_0 = BaseColor45;
-			c.rgb = temp_output_60_0;
-			c.a = 1;
-			clip( saturate( ( (0.0 + (_AlphaCutout - 1.0) * (1.0 - 0.0) / (0.0 - 1.0)) + AlphaValue50 ) ) - _AlphaCutout );
+			half dotResult39 = dot( ase_worldNormal , ase_worldlightDir );
+			half NdotL41 = dotResult39;
+			half lerpResult79 = lerp( temp_output_73_0 , ( saturate( ( NdotL41 / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
+			half3 temp_output_86_0 = ( ( IndirDiffLight74 * ase_lightColor.a * temp_output_73_0 ) + ( ase_lightColor.rgb * lerpResult79 ) );
+			half3 InputColor24 = (( tex2DNode16 * half4(0.7,0.7,0.7,1) )).rgb;
+			float2 uv_DirtynessMap = i.uv_texcoord * _DirtynessMap_ST.xy + _DirtynessMap_ST.zw;
+			half4 tex2DNode26 = tex2D( _DirtynessMap, uv_DirtynessMap );
+			half ifLocalVar43 = 0;
+			if( tex2DNode26.a > ( 1.0 - _DirtynessVal ) )
+				ifLocalVar43 = tex2DNode26.a;
+			half3 lerpResult67 = lerp( ( InputColor24 * float3( 0.7,0.7,0.7 ) ) , ( (( tex2DNode26 * float4( 0.7,0.7,0.7,1 ) )).rgb * saturate( ( InputColor24 + float3( 1,1,1 ) ) ) ) , ifLocalVar43);
+			half3 switchResult68 = (((i.ASEVFace>0)?(lerpResult67):(InputColor24)));
+			half3 CombinedTexture110 = switchResult68;
+			float2 uv_OcclusionMap = i.uv_texcoord * _OcclusionMap_ST.xy + _OcclusionMap_ST.zw;
+			half3 temp_output_83_0 = (tex2D( _OcclusionMap, uv_OcclusionMap )).rgb;
+			half temp_output_7_0_g7 = ( ( i.uv_texcoord.y + i.uv_texcoord.x ) - ( _Time.y * 0.2 ) );
+			half ShineVar84 = ( ( ase_lightColor.a * 0.3 ) * ( step( frac( pow( ( 1.0 + 0.5 ) , sin( temp_output_7_0_g7 ) ) ) , 0.08 ) + step( frac( pow( ( 1.0 + 0.5 ) , sin( ( temp_output_7_0_g7 + 2.76 ) ) ) ) , 0.04 ) ) );
+			half3 BaseColorOutput99 = ( ( temp_output_86_0 * ( CombinedTexture110 * ( 1.0 - temp_output_83_0 ) ) ) + ( ( temp_output_86_0 * ( CombinedTexture110 * temp_output_83_0 ) ) + ( temp_output_83_0 * ShineVar84 ) ) );
+			half3 temp_output_102_0 = BaseColorOutput99;
+			c.rgb = temp_output_102_0;
+			c.a = AlphaValue98;
 			return c;
 		}
 
@@ -184,33 +145,54 @@ Shader "Cel Shading/OutlineV2"
 		{
 			o.SurfInput = i;
 			o.Normal = float3(0,0,1);
-			float3 IndirDiffLight27 = float3(0,0,0);
+			half3 IndirDiffLight74 = float3(0,0,0);
 			#if defined(LIGHTMAP_ON) && ( UNITY_VERSION < 560 || ( defined(LIGHTMAP_SHADOW_MIXING) && !defined(SHADOWS_SHADOWMASK) && defined(SHADOWS_SCREEN) ) )//aselc
-			float4 ase_lightColor = 0;
+			half4 ase_lightColor = 0;
 			#else //aselc
-			float4 ase_lightColor = _LightColor0;
+			half4 ase_lightColor = _LightColor0;
 			#endif //aselc
-			float temp_output_28_0 = ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) );
+			half temp_output_73_0 = ( 1.0 - ( ( 1.0 - 1 ) * _WorldSpaceLightPos0.w ) );
 			half3 ase_worldNormal = WorldNormalVector( i, half3( 0, 0, 1 ) );
 			float3 ase_worldPos = i.worldPos;
 			#if defined(LIGHTMAP_ON) && UNITY_VERSION < 560 //aseld
-			float3 ase_worldlightDir = 0;
+			half3 ase_worldlightDir = 0;
 			#else //aseld
-			float3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
+			half3 ase_worldlightDir = normalize( UnityWorldSpaceLightDir( ase_worldPos ) );
 			#endif //aseld
-			float dotResult6 = dot( ase_worldNormal , ase_worldlightDir );
-			float NdotL10 = dotResult6;
-			float lerpResult30 = lerp( temp_output_28_0 , ( saturate( ( ( NdotL10 + 0.0 ) / 0.001 ) ) * 1 ) , _ShadowValue);
+			half dotResult39 = dot( ase_worldNormal , ase_worldlightDir );
+			half NdotL41 = dotResult39;
+			half lerpResult79 = lerp( temp_output_73_0 , ( saturate( ( NdotL41 / 0.001 ) ) * 1 ) , _ShadowValue);
+			half3 temp_output_86_0 = ( ( IndirDiffLight74 * ase_lightColor.a * temp_output_73_0 ) + ( ase_lightColor.rgb * lerpResult79 ) );
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
-			half4 tex2DNode31 = tex2D( _MainTex, uv_MainTex );
-			float3 BaseColor45 = ( ( ( IndirDiffLight27 * ase_lightColor.a * temp_output_28_0 ) + ( ase_lightColor.rgb * lerpResult30 ) ) * (( tex2DNode31 * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
-			float3 temp_output_60_0 = BaseColor45;
-			o.Albedo = temp_output_60_0;
+			half4 tex2DNode16 = tex2D( _MainTex, uv_MainTex );
+			half3 InputColor24 = (( tex2DNode16 * half4(0.7,0.7,0.7,1) )).rgb;
+			float2 uv_DirtynessMap = i.uv_texcoord * _DirtynessMap_ST.xy + _DirtynessMap_ST.zw;
+			half4 tex2DNode26 = tex2D( _DirtynessMap, uv_DirtynessMap );
+			half ifLocalVar43 = 0;
+			if( tex2DNode26.a > ( 1.0 - _DirtynessVal ) )
+				ifLocalVar43 = tex2DNode26.a;
+			half3 lerpResult67 = lerp( ( InputColor24 * float3( 0.7,0.7,0.7 ) ) , ( (( tex2DNode26 * float4( 0.7,0.7,0.7,1 ) )).rgb * saturate( ( InputColor24 + float3( 1,1,1 ) ) ) ) , ifLocalVar43);
+			half3 switchResult68 = (((i.ASEVFace>0)?(lerpResult67):(InputColor24)));
+			half3 CombinedTexture110 = switchResult68;
+			float2 uv_OcclusionMap = i.uv_texcoord * _OcclusionMap_ST.xy + _OcclusionMap_ST.zw;
+			half3 temp_output_83_0 = (tex2D( _OcclusionMap, uv_OcclusionMap )).rgb;
+			half temp_output_7_0_g7 = ( ( i.uv_texcoord.y + i.uv_texcoord.x ) - ( _Time.y * 0.2 ) );
+			half ShineVar84 = ( ( ase_lightColor.a * 0.3 ) * ( step( frac( pow( ( 1.0 + 0.5 ) , sin( temp_output_7_0_g7 ) ) ) , 0.08 ) + step( frac( pow( ( 1.0 + 0.5 ) , sin( ( temp_output_7_0_g7 + 2.76 ) ) ) ) , 0.04 ) ) );
+			half3 BaseColorOutput99 = ( ( temp_output_86_0 * ( CombinedTexture110 * ( 1.0 - temp_output_83_0 ) ) ) + ( ( temp_output_86_0 * ( CombinedTexture110 * temp_output_83_0 ) ) + ( temp_output_83_0 * ShineVar84 ) ) );
+			half3 temp_output_102_0 = BaseColorOutput99;
+			o.Albedo = temp_output_102_0;
+			float2 uv_EmissionMap = i.uv_texcoord * _EmissionMap_ST.xy + _EmissionMap_ST.zw;
+			#ifdef _EMISSIONTOGGLE_ON
+				float3 staticSwitch105 = (tex2D( _EmissionMap, uv_EmissionMap )).rgb;
+			#else
+				float3 staticSwitch105 = half3(0,0,0);
+			#endif
+			o.Emission = ( staticSwitch105 * ( (_EmissionFactor).rgb * float3( 10,10,10 ) ) );
 		}
 
 		ENDCG
 		CGPROGRAM
-		#pragma surface surf StandardCustomLighting keepalpha fullforwardshadows vertex:vertexDataFunc 
+		#pragma surface surf StandardCustomLighting keepalpha fullforwardshadows 
 
 		ENDCG
 		Pass
@@ -218,6 +200,7 @@ Shader "Cel Shading/OutlineV2"
 			Name "ShadowCaster"
 			Tags{ "LightMode" = "ShadowCaster" }
 			ZWrite On
+			AlphaToMask Off
 			CGPROGRAM
 			#pragma vertex vert
 			#pragma fragment frag
@@ -232,6 +215,7 @@ Shader "Cel Shading/OutlineV2"
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "UnityPBSLighting.cginc"
+			sampler3D _DitherMaskLOD;
 			struct v2f
 			{
 				V2F_SHADOW_CASTER;
@@ -240,15 +224,16 @@ Shader "Cel Shading/OutlineV2"
 				float4 tSpace1 : TEXCOORD3;
 				float4 tSpace2 : TEXCOORD4;
 				UNITY_VERTEX_INPUT_INSTANCE_ID
+				UNITY_VERTEX_OUTPUT_STEREO
 			};
 			v2f vert( appdata_full v )
 			{
 				v2f o;
 				UNITY_SETUP_INSTANCE_ID( v );
 				UNITY_INITIALIZE_OUTPUT( v2f, o );
+				UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO( o );
 				UNITY_TRANSFER_INSTANCE_ID( v, o );
 				Input customInputData;
-				vertexDataFunc( v, customInputData );
 				float3 worldPos = mul( unity_ObjectToWorld, v.vertex ).xyz;
 				half3 worldNormal = UnityObjectToWorldNormal( v.normal );
 				half3 worldTangent = UnityObjectToWorldDir( v.tangent.xyz );
@@ -288,10 +273,12 @@ Shader "Cel Shading/OutlineV2"
 				#if defined( CAN_SKIP_VPOS )
 				float2 vpos = IN.pos;
 				#endif
+				half alphaRef = tex3D( _DitherMaskLOD, float3( vpos.xy * 0.25, o.Alpha * 0.9375 ) ).a;
+				clip( alphaRef - 0.01 );
 				SHADOW_CASTER_FRAGMENT( IN )
 			}
 			ENDCG
 		}
 	}
-	Fallback "Cel Shading/RegularV2"
+	Fallback "Diffuse"
 }
