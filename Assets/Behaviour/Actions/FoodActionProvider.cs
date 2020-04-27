@@ -47,7 +47,7 @@ public class FoodActionProvider : IObjectActionProvider {
         /// </summary>
         /// <returns>True if the action failed.</returns>
         private bool MoveToFood() {
-            ActionResult walkResult = this.WalkToClosestNeighbour(target.TilePosition, maxUsers: 1);
+            ActionResult walkResult = this.WalkNextTo(target.TilePosition, maxUsers: 1);
             if (walkResult == ActionResult.Busy)
                 return false;
             if (walkResult == ActionResult.Failed)

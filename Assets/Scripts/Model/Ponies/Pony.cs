@@ -208,19 +208,6 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     }
 
     /// <summary>
-    /// Similar to SetWalkTarget, but attempts to find a tile next to the target tile.
-    /// </summary>
-    public bool SetWalkTargetNextTo(Vector2Int target) {
-        Vector2Int[] targets = {
-            new Vector2Int(target.x + 1, target.y),
-            new Vector2Int(target.x - 1, target.y),
-            new Vector2Int(target.x, target.y + 1),
-            new Vector2Int(target.x, target.y - 1)
-        };
-        return SetWalkTargetToNearest(targets);
-    }
-
-    /// <summary>
     /// Can be called each tick to walk towards the given target.
     /// This method sets the current walk target to the given target and returns false until it has been reached.
     /// If no path can be found, the variable WalkingFailed is set to true.

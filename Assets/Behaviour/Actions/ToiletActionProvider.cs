@@ -51,7 +51,7 @@ public class ToiletActionProvider : IObjectActionProvider {
         /// </summary>
         /// <returns>True if the action failed.</returns>
         private bool HandleMoveToToilet() {
-            ActionResult walkResult = this.WalkTo(target.TilePosition.GetNeighbourTile(target.Rotation), maxUsers: 1);
+            ActionResult walkResult = this.WalkNextTo(target.TilePosition, target.Rotation, maxUsers: 1);
             if (walkResult == ActionResult.Busy)
                 return false;
             if (walkResult == ActionResult.Failed)
@@ -113,7 +113,7 @@ public class ToiletActionProvider : IObjectActionProvider {
         public FlushAction(Pony pony, PropertyObject target) : base(FlushIdentifier, pony, target, "Flush") { }
 
         public override bool Tick() {
-            ActionResult result = this.WalkTo(target.TilePosition.GetNeighbourTile(target.Rotation), maxUsers: 1);
+            ActionResult result = this.WalkNextTo(target.TilePosition, target.Rotation, maxUsers: 1);
             if (result == ActionResult.Busy)
                 return false;
             if (result == ActionResult.Failed)

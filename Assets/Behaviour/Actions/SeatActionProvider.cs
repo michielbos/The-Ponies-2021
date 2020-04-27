@@ -3,6 +3,7 @@ using System.Linq;
 using Model.Actions;
 using Model.Ponies;
 using Model.Property;
+using ThePoniesBehaviour.Extensions;
 using UnityEngine;
 using Util;
 
@@ -67,9 +68,11 @@ public class SeatActionProvider : IObjectActionProvider {
             }
 
             // Walk to the seat.
-            if (!pony.WalkTo(targetSeat.Value.GetNeighbourTile(target.Rotation))) {
-                return pony.WalkingFailed;
-            }
+            ActionResult walkResult = this.WalkNextTo(targetSeat.Value, target.Rotation);
+            if (walkResult == ActionResult.Busy)
+                return false;
+            if (walkResult == ActionResult.Failed)
+                return true;
             
             target.users.Add(pony);
             pony.TilePosition = targetSeat.Value;

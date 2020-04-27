@@ -55,10 +55,10 @@ public class BedActionProvider : IObjectActionProvider {
         /// </summary>
         /// <returns>The action result of the walk action.</returns>
         private ActionResult WalkToBed(Vector2Int headEndTile) {
-            Vector2Int leftTile = headEndTile.GetNeighbourTile(target.Rotation.RotateCounterClockwise());
-            Vector2Int rightTile = headEndTile.GetNeighbourTile(target.Rotation.RotateClockwise());
+            ObjectRotation left = target.Rotation.RotateCounterClockwise();
+            ObjectRotation right = target.Rotation.RotateClockwise();
             // Move to the closest of the two tiles next to the head end of the bed.
-            ActionResult result = this.WalkToClosest(new[] {leftTile, rightTile}, maxUsers: 1);
+            ActionResult result = this.WalkNextTo(headEndTile, new[] {left, right}, maxUsers: 1);
             if (result == ActionResult.Failed || result == ActionResult.Busy)
                 return result;
 

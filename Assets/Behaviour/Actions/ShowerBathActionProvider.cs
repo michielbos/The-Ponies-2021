@@ -83,7 +83,7 @@ public class ShowerBathActionProvider : IObjectActionProvider {
 
         private bool WalkToBath() {
             // Walk to the tile in front of the bathtub.
-            ActionResult result = this.WalkTo(target.TilePosition.GetNeighbourTile(target.Rotation), maxUsers: 1);
+            ActionResult result = this.WalkNextTo(target.TilePosition, target.Rotation, maxUsers: 1);
             if (result == ActionResult.Busy)
                 return false;
             if (result == ActionResult.Failed)
