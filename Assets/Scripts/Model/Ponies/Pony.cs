@@ -61,11 +61,15 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
         indicator.GetComponent<Renderer>().material = new Material(indicatorMaterial);
     }
 
-    public void InitGamePony(float x, float y, Needs needs, PonyActionData[] actionQueue, Property.Property property) {
+    public void InitGamePony(float x, float y, Needs needs, PonyActionData[] actionQueue, Property.Property property,
+        PropertyObject hoofObject) {
         this.needs = needs;
         transform.position = new Vector3(x, 0, y);
         queuedActions.AddRange(actionQueue.Select(data => ActionManager.LoadFromData(this, data, property))
             .Where(loaded => loaded != null));
+        if (hoofObject != null) {
+            HoofSlot.PlaceObject(hoofObject);
+        }
     }
 
     private void OnEnable() {
@@ -117,7 +121,6 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
             currentAction = queuedActions[0];
             currentAction.SetActive();
             UpdateQueue();
-            
         }
         if (currentAction != null) {
             currentAction.TickAction();
@@ -133,8 +136,9 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
 
     public GamePonyData GetGamePonyData() {
         PonyActionData[] queueData = queuedActions.Select(action => action.GetData()).ToArray();
+        ChildObjectData hoofObject = HoofSlot.SlotObject != null ? HoofSlot.SlotObject.GetChildObjectData() : null;
         return new GamePonyData(uuid.ToString(), transform.position.x, transform.position.z, needs.GetNeedsData(),
-            queueData);
+            queueData, hoofObject);
     }
     
     public PonyInfoData GetPonyInfoData() {
@@ -147,6 +151,23 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
 
     public void QueueAction(PonyAction action) {
         queuedActions.Add(action);
+        if (IsSelected) {
+            SoundController.Instance.PlaySound(SoundType.QueueAdded);
+            UpdateQueue();
+        }
+    }
+    
+    /// <summary>
+    /// Queue an action to the start of the queue.
+    /// If an action is currently active, the new action will be queued after the active action.
+    /// </summary>
+    public void QueueActionFirst(PonyAction action) {
+        if (queuedActions.Count == 0 || !queuedActions[0].active) {
+            queuedActions.Insert(0, action);
+        } else {
+            queuedActions.Insert(1, action);
+        }
+        
         if (IsSelected) {
             SoundController.Instance.PlaySound(SoundType.QueueAdded);
             UpdateQueue();
@@ -239,6 +260,31 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
             SetWalkTargetToNearest(targets);
         }
         return false;
+    }
+
+    /// <summary>
+    /// Find the closest object that matches the given condition.
+    /// </summary>
+    /// <param name="condition">The condition function that all objects need to match.</param>
+    /// <param name="tileSelector">Function for determining the tiles that belong to each object.</param>
+    /// <param name="maxDistance">The max distance to move.</param>
+    /// <returns>The closest tile of an object that matched the condition. Null if none found</returns>
+    [CanBeNull]
+    public PropertyObject GetClosestObjectWhere(Func<PropertyObject, bool> condition,
+        Func<PropertyObject, Vector2Int[]> tileSelector, int maxDistance = Pathfinding.DefaultMaxPathLength) {
+        IEnumerable<PropertyObject> suitableObjects = PropertyController.Property.propertyObjects.Values
+            .Where(condition);
+        
+        // Create a dictionary of all suitable tiles, mapped to their object.
+        Dictionary<Vector2Int, PropertyObject> suitableTiles = new Dictionary<Vector2Int, PropertyObject>();
+        foreach (PropertyObject propertyObject in suitableObjects) {
+            foreach (Vector2Int tile in tileSelector(propertyObject)) {
+                suitableTiles[tile] = propertyObject;
+            }
+        }
+
+        Path path = Pathfinding.PathToNearest(TilePosition, suitableTiles.Keys, maxDistance);
+        return path != null ? suitableTiles[path.Destination] : null;
     }
 
     /// <summary>

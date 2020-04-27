@@ -9,16 +9,21 @@ public class GamePonyData {
     public float y;
     public NeedsData needs;
     public PonyActionData[] actionQueue;
+    /// <summary>
+    /// This is usually serialized as an empty object (with id 0) when not present, instead of null.
+    /// </summary>
+    public ChildObjectData hoofObject;
 
     /// <summary>
     /// Constructor for creating a GamePonyData with all fields.
     /// </summary>
-    public GamePonyData(string uuid, float x, float y, NeedsData needs, PonyActionData[] actionQueue) {
+    public GamePonyData(string uuid, float x, float y, NeedsData needs, PonyActionData[] actionQueue, ChildObjectData hoofObject) {
         this.uuid = uuid;
         this.x = x;
         this.y = y;
         this.needs = needs;
         this.actionQueue = actionQueue;
+        this.hoofObject = hoofObject;
     }
     
     /// <summary>
@@ -30,6 +35,7 @@ public class GamePonyData {
         this.y = y;
         needs = new NeedsData();
         actionQueue = new PonyActionData[0];
+        hoofObject = null;
     }
 
     [Serializable]

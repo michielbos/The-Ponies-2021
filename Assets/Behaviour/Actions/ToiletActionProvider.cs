@@ -95,7 +95,7 @@ public class ToiletActionProvider : IObjectActionProvider {
                 target.users.Remove(pony);
                 pony.TilePosition = cancelPosition;
                 if (flush) {
-                    pony.QueueAction(new FlushAction(pony, target));
+                    pony.QueueActionFirst(new FlushAction(pony, target));
                 }
                 return true;
             }

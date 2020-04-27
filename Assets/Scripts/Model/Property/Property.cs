@@ -58,12 +58,24 @@ public class Property : MonoBehaviour {
     }
 
     public void SpawnObjects(PropertyData propertyData) {
+        PropertyObjectData[] childObjects = propertyData.propertyObjectDatas.SelectMany(pod => pod.children)
+            .Where(cod => cod.id > 0)
+            .Select(cod => new PropertyObjectData(cod))
+            .ToArray();
+        PropertyObjectData[] hoofObjects = propertyData.ponies.Select(pd => pd.hoofObject)
+            .Where(cod => cod.id > 0)
+            .Select(cod => new PropertyObjectData(cod))
+            .ToArray();
+        
         LoadTerrainTiles(propertyData.terrainTileDatas);
         LoadWalls(propertyData.wallDatas);
         LoadFloorTiles(propertyData.floorTileDatas);
         LoadPropertyObjects(propertyData.propertyObjectDatas);
+        LoadPropertyObjects(hoofObjects);
         LoadPonies(propertyData.ponies, propertyData.householdData);
         LoadScriptData(propertyData.propertyObjectDatas);
+        LoadScriptData(childObjects);
+        LoadScriptData(hoofObjects);
     }
 
     public void PlaceFloor(int x, int y, FloorPreset preset) {
@@ -243,8 +255,13 @@ public class Property : MonoBehaviour {
         this.ponies = ponies;
         household = new Household(householdData.householdName, householdData.money, ponies);
         foreach (GamePonyData ponyData in ponyDatas) {
-            ponies[new Guid(ponyData.uuid)]
-                .InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue, this);
+            PropertyObject hoofObject = null;
+            ChildObjectData hod = ponyData.hoofObject;
+            if (hod != null && hod.id > 0) {
+                hoofObject = propertyObjects[hod.id];
+            }
+            ponies[new Guid(ponyData.uuid)].InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), 
+                ponyData.actionQueue, this, hoofObject);
         }
     }
 

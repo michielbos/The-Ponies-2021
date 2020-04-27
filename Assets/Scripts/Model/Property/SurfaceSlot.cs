@@ -10,6 +10,12 @@ public class SurfaceSlot : MonoBehaviour, IObjectSlot {
     public Vector3 SlotPosition => transform.position;
 
     /// <summary>
+    /// The tile position of this surface slot.
+    /// Note that this may be inaccurate and not unique if a surface's slots are not located in the center of a tile.
+    /// </summary>
+    public Vector2Int TilePosition => (transform.position - new Vector3(0.5f, 0, 0.5f)).ToTilePosition();
+
+    /// <summary>
     /// The object that is occupying this slot.
     /// Null if the slot is empty.
     /// </summary>

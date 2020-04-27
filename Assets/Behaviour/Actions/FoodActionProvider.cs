@@ -4,8 +4,6 @@ using Model.Actions;
 using Model.Ponies;
 using Model.Property;
 using ThePoniesBehaviour.Extensions;
-using UnityEngine;
-using Util;
 
 namespace ThePoniesBehaviour.Actions {
 
@@ -16,6 +14,7 @@ public class FoodActionProvider : IObjectActionProvider {
     //board: 0000418e-663a-c38b-4deb-182df032981e
     //pancakes: 000001ee-ffd5-c794-1cda-cf42be44ae72
     private const string EatIdentifier = "foodEat";
+    private const string PutAwayFoodIdentifier = "foodPutAway";
     private const string FoodType = "food";
     
     private const string DataFoodLeft = "foodLeft";
@@ -29,7 +28,11 @@ public class FoodActionProvider : IObjectActionProvider {
     }
 
     public ObjectAction LoadAction(string identifier, Pony pony, PropertyObject target) {
-        return identifier == EatIdentifier ? new EatAction(pony, target) : null;
+        if (identifier == EatIdentifier)
+            return new EatAction(pony, target);
+        if (identifier == PutAwayFoodIdentifier)
+            return new PutAwayAction(PutAwayFoodIdentifier, pony, target);
+        return null;
     }
 
     private class EatAction : ObjectAction {
@@ -37,8 +40,9 @@ public class FoodActionProvider : IObjectActionProvider {
         public EatAction(Pony pony, PropertyObject target) : base(EatIdentifier, pony, target, "Eat") { }
 
         public override bool Tick() {
-            if (!target.users.Contains(pony))
+            if (!target.users.Contains(pony)) {
                 return MoveToFood();
+            }
             return EatFood();
         }
 
@@ -66,7 +70,7 @@ public class FoodActionProvider : IObjectActionProvider {
         /// <returns>True when the action was finished.</returns>
         private bool EatFood() {
             if (canceled) {
-                pony.DropHoofItem();
+                pony.QueueActionFirst(new PutAwayAction(PutAwayFoodIdentifier, pony, target));
                 return true;
             }
 
