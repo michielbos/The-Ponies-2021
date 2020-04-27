@@ -26,24 +26,33 @@ public class PutAwayAction : ObjectAction {
         if (pony.HoofSlot.SlotObject == null)
             return true;
 
+        if (canceled) {
+            pony.DropHoofItem();
+            return true;
+        }
+
         Vector2Int? targetTile = data.GetVector2IntOrNull(DataTargetTile);
+        int attempt = data.GetInt(DataAttempt, 0);
         
         // Get a target slot, if we have none.
         if (!targetTile.HasValue) {
-            // TODO: attempts
             targetTile = FindEmptySurface();
-            if (!targetTile.HasValue) {
+            if (!targetTile.HasValue || attempt >= MaxAttempts) {
                 pony.DropHoofItem();
                 return true;
             }
             data.Put(DataTargetTile, targetTile.Value);
+            data.Put(DataAttempt, ++attempt);
         }
 
         ActionResult result = this.WalkTo(targetTile.Value);
         if (result == ActionResult.Busy)
             return false;
-        if (result == ActionResult.Failed)
-            return true;
+        if (result == ActionResult.Failed) {
+            // Try again next tick.
+            data.Put(DataTargetTile, null);
+            return false;
+        }
 
         // Find any free surface from the destination tile and put the item there.
         // This is definitely not optimal for performance, but will save us a LOT of state inconsistency bugs.
