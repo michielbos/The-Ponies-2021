@@ -69,6 +69,7 @@ public abstract class PonyAction {
     /// Called every ingame second to execute this action's behaviour.
     /// Execution will start after the action becomes active.
     /// The frequency is dependent on the game speed and execution will pause when the game is paused.
+    /// Should return true when the action is done. False if the action is still in progress.
     /// </summary>
     public abstract bool Tick();
 

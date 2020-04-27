@@ -17,9 +17,12 @@ public class FoodActionProvider : IObjectActionProvider {
     //pancakes: 000001ee-ffd5-c794-1cda-cf42be44ae72
     private const string EatIdentifier = "foodEat";
     private const string FoodType = "food";
+    
+    private const string DataFoodLeft = "foodLeft";
+    private const string DataNutrition = "nutrition";
 
     public IEnumerable<ObjectAction> GetActions(Pony pony, PropertyObject target) {
-        if (target.Type == FoodType) {
+        if (target.Type == FoodType && target.data.GetFloat(DataFoodLeft, 1f) > 0) {
             return new[] {new EatAction(pony, target)};
         }
         return new ObjectAction[0];
@@ -30,6 +33,7 @@ public class FoodActionProvider : IObjectActionProvider {
     }
 
     private class EatAction : ObjectAction {
+        
         public EatAction(Pony pony, PropertyObject target) : base(EatIdentifier, pony, target, "Eat") { }
 
         public override bool Tick() {
@@ -69,18 +73,18 @@ public class FoodActionProvider : IObjectActionProvider {
             DataMap data = target.data;
 
             const float timeToEat = 30f;
-            float foodLeft = data.GetFloat("foodLeft", 1f);
-            float nutrition = data.GetFloat("nutrition", 0.60f);
-
-            pony.needs.Hunger += nutrition / timeToEat;
-            foodLeft -= 1f / timeToEat;
+            float foodLeft = data.GetFloat(DataFoodLeft, 1f);
+            float nutrition = data.GetFloat(DataNutrition, 0.60f);
             
-            data.Put("foodLeft", foodLeft);
-
             if (foodLeft <= 0) {
                 pony.DropHoofItem();
                 return true;
             }
+
+            pony.needs.Hunger += nutrition / timeToEat;
+            foodLeft -= 1f / timeToEat;
+            
+            data.Put(DataFoodLeft, foodLeft);
 
             return false;
         }
