@@ -10,6 +10,7 @@ public static class PonyActions {
             new ShowerBathActionProvider(),
             new BedActionProvider(),
             new FoodActionProvider(),
+            new PrepareFoodActionProvider(),
         });
         ActionManager.AddTileActionProviders(new [] {
             new MoveActionProvider()

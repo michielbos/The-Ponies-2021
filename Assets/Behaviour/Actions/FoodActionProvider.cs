@@ -8,7 +8,7 @@ using ThePoniesBehaviour.Extensions;
 namespace ThePoniesBehaviour.Actions {
 
 /// <summary>
-/// Provides actions for toilets.
+/// Provides actions for food items.
 /// </summary>
 public class FoodActionProvider : IObjectActionProvider {
     //board: 0000418e-663a-c38b-4deb-182df032981e
@@ -43,9 +43,15 @@ public class FoodActionProvider : IObjectActionProvider {
         return null;
     }
 
-    private class EatAction : ObjectAction {
+    internal class EatAction : ObjectAction {
         
         public EatAction(Pony pony, PropertyObject target) : base(EatIdentifier, pony, target, "Eat") { }
+
+        protected override void OnStart() {
+            if (pony.HoofSlot.SlotObject == target && !target.users.Contains(pony)) {
+                target.users.Add(pony);
+            }
+        }
 
         public override bool Tick() {
             if (!target.users.Contains(pony)) {

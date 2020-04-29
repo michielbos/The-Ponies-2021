@@ -104,9 +104,9 @@ public class Property : MonoBehaviour {
     /// Place a property object with only the necessary fields. Other fields will receive a calculated/default value.
     /// This is useful when placing new objects via the buy tool.
     /// </summary>
-    public void PlacePropertyObject(IObjectSlot targetSlot, ObjectRotation objectRotation, FurniturePreset preset,
-        int skin) {
-        PlacePropertyObject(nextObjectId++, targetSlot, objectRotation, preset, skin, preset.price, null, new ChildObjectData[0]);
+    public PropertyObject PlacePropertyObject(IObjectSlot targetSlot, ObjectRotation objectRotation, FurniturePreset preset,
+        int skin = 0) {
+        return PlacePropertyObject(nextObjectId++, targetSlot, objectRotation, preset, skin, preset.price, null, new ChildObjectData[0]);
     }
 
     /// <summary>
@@ -114,7 +114,7 @@ public class Property : MonoBehaviour {
     /// This should be used when loading an existing property object from a save.
     /// This also instantiates all children of this object.
     /// </summary>
-    private void PlacePropertyObject(int id, IObjectSlot targetSlot, ObjectRotation objectRotation, FurniturePreset preset,
+    private PropertyObject PlacePropertyObject(int id, IObjectSlot targetSlot, ObjectRotation objectRotation, FurniturePreset preset,
         int skin, int value, string animation, ChildObjectData[] children) {
         if (id >= nextObjectId) {
             nextObjectId = id + 1;
@@ -134,6 +134,8 @@ public class Property : MonoBehaviour {
             PlacePropertyObject(cd.id, childSlot, cd.GetObjectRotation(), childPreset, cd.skin, cd.value, cd.animation,
                 new ChildObjectData[0]);
         }
+
+        return propertyObject;
     }
 
     public void RemoveFloor(FloorTile floorTile) {
