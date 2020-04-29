@@ -114,7 +114,7 @@ public class WallTool : MonoBehaviour, ITool {
     private void HandlePlacementHolding(Vector2Int? target) {
         bool validTargets = currentTarget != null && target != null;
         bool destroyMode = Input.GetKey(KeyCode.LeftControl);
-        bool roomMode = !destroyMode && Input.GetKey(KeyCode.LeftShift);
+        bool roomMode = Input.GetKey(KeyCode.LeftShift);
 
         if (validTargets) {
             Vector2Int start = currentTarget.Value;
