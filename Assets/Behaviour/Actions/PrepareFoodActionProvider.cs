@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using Controllers.Singletons;
 using JetBrains.Annotations;
 using Model;
 using Model.Actions;
@@ -16,9 +17,11 @@ namespace ThePoniesBehaviour.Actions {
 public class PrepareFoodActionProvider : IObjectActionProvider {
     //board: 0000418e-663a-c38b-4deb-182df032981e
     //pancakes: 000001ee-ffd5-c794-1cda-cf42be44ae72
+    private const string FridgePrepareIdentifier = "fridgePrepare";
     private const string PrepareIdentifier = "rawFoodPrepare";
     private const string PutAwayIdentifier = "rawFoodPutAway";
     private const string CleanUpIdentifier = "rawFoodCleanUp";
+    private const string FridgeType = "fridge";
     private const string StoveType = "stove";
     
     private const string BoardUuid = "0000418e-663a-c38b-4deb-182df032981e";
@@ -30,6 +33,9 @@ public class PrepareFoodActionProvider : IObjectActionProvider {
     private const int MaxAttempts = 3;
     
     public IEnumerable<ObjectAction> GetActions(Pony pony, PropertyObject target) {
+        if (target.Type == FridgeType) {
+            return new [] {new FridgePrepareAction(pony, target)};
+        }
         if (target.preset.guid == new Guid(BoardUuid)) {
             List<ObjectAction> actions = new List<ObjectAction>(2);
             actions.Add(new PrepareAction(pony, target));
@@ -40,6 +46,8 @@ public class PrepareFoodActionProvider : IObjectActionProvider {
     }
 
     public ObjectAction LoadAction(string identifier, Pony pony, PropertyObject target) {
+        if (identifier == FridgePrepareIdentifier)
+            return new PrepareAction(pony, target);
         if (identifier == PrepareIdentifier)
             return new PrepareAction(pony, target);
         if (identifier == PutAwayIdentifier)
@@ -47,6 +55,27 @@ public class PrepareFoodActionProvider : IObjectActionProvider {
         if (identifier == CleanUpIdentifier)
             return new CleanUpAction(CleanUpIdentifier, pony, target);
         return null;
+    }
+
+    private class FridgePrepareAction : ObjectAction {
+
+        public FridgePrepareAction(Pony pony, PropertyObject target) : base(PrepareIdentifier, pony, target, "Prepare pancakes") { }
+
+        public override bool Tick() {
+            ActionResult walkResult = this.WalkNextTo(target.TilePosition, target.Rotation, maxUsers: 1);
+            if (walkResult == ActionResult.Busy)
+                return false;
+            if (walkResult == ActionResult.Failed)
+                return true;
+
+            SoundController.Instance.PlaySound(SoundType.Buy);
+            MoneyController.Instance.ChangeFunds(-10);
+            FurniturePreset preset = FurniturePresets.Instance.GetFurniturePreset(new Guid(BoardUuid));
+            PropertyObject food = PropertyController.Property.PlacePropertyObject(pony.HoofSlot, target.Rotation, preset);
+            pony.QueueActionFirst(new PrepareAction(pony, food));
+
+            return true;
+        }
     }
 
     private class PrepareAction : ObjectAction {
@@ -94,23 +123,6 @@ public class PrepareFoodActionProvider : IObjectActionProvider {
 
             PrepareFood();
             return true;
-        }
-
-        /// <summary>
-        /// Move to the board.
-        /// </summary>
-        /// <returns>True if the action failed.</returns>
-        private bool MoveToBoard() {
-            ActionResult walkResult = this.WalkNextTo(target.TilePosition, maxUsers: 1);
-            if (walkResult == ActionResult.Busy)
-                return false;
-            if (walkResult == ActionResult.Failed)
-                return true;
-
-            target.users.Add(pony);
-            pony.PickUp(target);
-
-            return false;
         }
 
         [CanBeNull]
