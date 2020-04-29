@@ -9,9 +9,10 @@ namespace ThePoniesBehaviour.Actions {
 
 /// <summary>
 /// Reusable action for picking up an item and throwing it in the trash can, sink, or dishwasher.
-/// (but currently everything is flushed down the toilet)
 /// </summary>
 public class CleanUpAction : ObjectAction {
+    private const string TrashBin = "trashBin";
+    
     private const string DataDestination = "destination";
     private const string DataAttempt = "attempt";
 
@@ -67,7 +68,7 @@ public class CleanUpAction : ObjectAction {
     private PropertyObject FindToilet() {
         Property property = PropertyController.Property;
         return pony.GetClosestObjectWhere(
-            obj => obj.Type == "toilet" && !property.WallExists(obj.TilePosition, obj.Rotation),
+            obj => obj.Type == TrashBin && !property.WallExists(obj.TilePosition, obj.Rotation),
             obj => new[] {obj.TilePosition.GetNeighbourTile(obj.Rotation)});
     }
 }
