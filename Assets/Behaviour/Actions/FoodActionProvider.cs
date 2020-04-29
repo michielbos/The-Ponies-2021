@@ -15,14 +15,20 @@ public class FoodActionProvider : IObjectActionProvider {
     //pancakes: 000001ee-ffd5-c794-1cda-cf42be44ae72
     private const string EatIdentifier = "foodEat";
     private const string PutAwayFoodIdentifier = "foodPutAway";
+    private const string CleanUpFoodIdentifier = "foodCleanUp";
     private const string FoodType = "food";
     
     private const string DataFoodLeft = "foodLeft";
     private const string DataNutrition = "nutrition";
 
     public IEnumerable<ObjectAction> GetActions(Pony pony, PropertyObject target) {
-        if (target.Type == FoodType && target.data.GetFloat(DataFoodLeft, 1f) > 0) {
-            return new[] {new EatAction(pony, target)};
+        if (target.Type == FoodType) {
+            List<ObjectAction> actions = new List<ObjectAction>(2);
+            if (target.data.GetFloat(DataFoodLeft, 1f) > 0) {
+                actions.Add(new EatAction(pony, target));
+            }
+            actions.Add(new CleanUpAction(CleanUpFoodIdentifier, pony, target));
+            return actions;
         }
         return new ObjectAction[0];
     }
@@ -32,6 +38,8 @@ public class FoodActionProvider : IObjectActionProvider {
             return new EatAction(pony, target);
         if (identifier == PutAwayFoodIdentifier)
             return new PutAwayAction(PutAwayFoodIdentifier, pony, target);
+        if (identifier == CleanUpFoodIdentifier)
+            return new CleanUpAction(CleanUpFoodIdentifier, pony, target);
         return null;
     }
 
@@ -81,7 +89,7 @@ public class FoodActionProvider : IObjectActionProvider {
             float nutrition = data.GetFloat(DataNutrition, 0.60f);
             
             if (foodLeft <= 0) {
-                pony.DropHoofItem();
+                pony.QueueActionFirst(new CleanUpAction(CleanUpFoodIdentifier, pony, target));
                 return true;
             }
 

@@ -546,6 +546,17 @@ public class Property : MonoBehaviour {
     public bool WallExists(TileBorder tileBorder) {
         return walls.ContainsKey(tileBorder);
     }
+    
+    /// <summary>
+    /// Shorthand to check if a wall exists between two tiles.
+    /// </summary>
+    public bool WallExists(Vector2Int tile1, Vector2Int tile2) => WallExists(tile1.GetBorderBetweenTiles(tile2));
+    
+    /// <summary>
+    /// Shorthand to check if a wall exists in the direction from a tile.
+    /// </summary>
+    public bool WallExists(Vector2Int tile, ObjectRotation direction) =>
+        WallExists(tile, tile.GetNeighbourTile(direction));
 
     [CanBeNull]
     public Wall GetWall(TileBorder tileBorder) {
@@ -688,7 +699,10 @@ public class Property : MonoBehaviour {
         }
     }
     
-    private List<Vector2Int> GetConnectedTiles(Vector2Int tile) {
+    /// <summary>
+    /// Get all neighbour tiles of the given tile that are not blocked by a wall.
+    /// </summary>
+    public List<Vector2Int> GetConnectedTiles(Vector2Int tile) {
         List<Vector2Int> tiles = new List<Vector2Int>(4);
         if (tile.x > 0 && !WallExists(new TileBorder(tile.x, tile.y, WallDirection.NorthWest)))
             tiles.Add(new Vector2Int(tile.x - 1, tile.y));

@@ -81,8 +81,7 @@ public class PutAwayAction : ObjectAction {
         // Selector to get all tiles that are next to an empty surface slot, without being intersected with a wall.
         Func<PropertyObject, IEnumerable<Vector2Int>> tileSelector = obj => obj.SurfaceSlots
             .Where(slot => slot.SlotObject == null)
-            .SelectMany(slot => slot.TilePosition.GetNeighbourTiles()
-                .Where(tile => !property.WallExists(slot.TilePosition.GetBorderBetweenTiles(tile))));
+            .SelectMany(slot => property.GetConnectedTiles(slot.TilePosition));
         
         PropertyObject targetObject = pony.GetClosestObjectWhere(obj => obj.preset.IsSurface, 
             obj => tileSelector(obj).ToArray());
