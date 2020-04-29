@@ -1,6 +1,8 @@
 using System.Collections.Generic;
 using System.Linq;
+using JetBrains.Annotations;
 using Model.Data;
+using Model.Property;
 using UnityEngine;
 using Util;
 
@@ -27,6 +29,9 @@ public class DataMap {
     public Vector2Int GetVector2Int(string key, Vector2Int defaultValue) => data.GetTyped(key, defaultValue);
     
     public Vector2Int? GetVector2IntOrNull(string key) => data.GetTyped(key, (Vector2Int?) null);
+    
+    [CanBeNull]
+    public PropertyObject GetPropertyObjectOrNull(string key) => data.GetTyped(key, (PropertyObject) null);
 
     /// <summary>
     /// Generate an array of data pairs, which are used for saving the data to a file.

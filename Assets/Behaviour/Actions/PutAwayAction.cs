@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using JetBrains.Annotations;
@@ -57,10 +58,12 @@ public class PutAwayAction : ObjectAction {
         // Find any free surface from the destination tile and put the item there.
         // This is definitely not optimal for performance, but will save us a LOT of state inconsistency bugs.
         ICollection<Vector2Int> possibleSlotTiles = pony.TilePosition.GetNeighbourTiles();
-        SurfaceSlot surfaceSlot = PropertyController.Property.propertyObjects.Values
+        Property property = PropertyController.Property;
+        SurfaceSlot surfaceSlot = property.propertyObjects.Values
             .SelectMany(obj => obj.SurfaceSlots)
-            .Where(slot => slot.SlotObject == null)
-            .FirstOrDefault(slot => possibleSlotTiles.Contains(slot.TilePosition));
+            .FirstOrDefault(slot => slot.SlotObject == null && 
+                           possibleSlotTiles.Contains(slot.TilePosition) &&
+                           !property.WallExists(pony.TilePosition.GetBorderBetweenTiles(slot.TilePosition)));
         if (surfaceSlot != null) {
             surfaceSlot.PlaceObject(pony.HoofSlot.SlotObject);
             return true;
@@ -73,17 +76,22 @@ public class PutAwayAction : ObjectAction {
 
     [CanBeNull]
     private Vector2Int? FindEmptySurface() {
-        PropertyObject targetObject = pony.GetClosestObjectWhere(obj => obj.preset.IsSurface,
-            obj => obj.SurfaceSlots.Where(slot => slot.SlotObject == null)
-                .SelectMany(slot => slot.TilePosition.GetNeighbourTiles())
-                .ToArray());
+        Property property = PropertyController.Property;
+
+        // Selector to get all tiles that are next to an empty surface slot, without being intersected with a wall.
+        Func<PropertyObject, IEnumerable<Vector2Int>> tileSelector = obj => obj.SurfaceSlots
+            .Where(slot => slot.SlotObject == null)
+            .SelectMany(slot => slot.TilePosition.GetNeighbourTiles()
+                .Where(tile => !property.WallExists(slot.TilePosition.GetBorderBetweenTiles(tile))));
+        
+        PropertyObject targetObject = pony.GetClosestObjectWhere(obj => obj.preset.IsSurface, 
+            obj => tileSelector(obj).ToArray());
 
         if (targetObject == null)
             return null;
 
         // Double pathfinding. Sorry.
-        return Pathfinding.PathToNearest(pony.TilePosition,
-            targetObject.SurfaceSlots.SelectMany(slot => slot.TilePosition.GetNeighbourTiles()))?.Destination;
+        return Pathfinding.PathToNearest(pony.TilePosition, tileSelector(targetObject))?.Destination;
     }
 }
 
