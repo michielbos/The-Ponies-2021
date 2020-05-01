@@ -10,6 +10,7 @@ Shader "Cel Shading/RegularV3"
 		_DirtynessMap("DirtynessMap", 2D) = "black" {}
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
 		_DirtynessVal("DirtynessVal", Range( 0 , 1)) = 0
+		_Ref("Ref", Range( 0 , 255)) = 1
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
@@ -19,6 +20,12 @@ Shader "Cel Shading/RegularV3"
 		Tags{ "RenderType" = "Transparent"  "Queue" = "Geometry+0" "IsEmissive" = "true"  }
 		LOD 200
 		Cull Off
+		Stencil
+		{
+			Ref [_Ref]
+			CompFront NotEqual
+			PassFront Zero
+		}
 		Blend One Zero , SrcAlpha OneMinusSrcAlpha
 		BlendOp Add , Add
 		AlphaToMask On
@@ -59,6 +66,7 @@ Shader "Cel Shading/RegularV3"
 			UnityGIInput GIData;
 		};
 
+		uniform half _Ref;
 		uniform float _ShadowValue;
 		uniform sampler2D _MainTex;
 		uniform half4 _MainTex_ST;
@@ -127,8 +135,8 @@ Shader "Cel Shading/RegularV3"
 			half3 CombinedTexture110 = switchResult68;
 			float2 uv_OcclusionMap = i.uv_texcoord * _OcclusionMap_ST.xy + _OcclusionMap_ST.zw;
 			half3 temp_output_83_0 = (tex2D( _OcclusionMap, uv_OcclusionMap )).rgb;
-			half temp_output_7_0_g7 = ( ( i.uv_texcoord.y + i.uv_texcoord.x ) - ( _Time.y * 0.2 ) );
-			half ShineVar84 = ( ( ase_lightColor.a * 0.3 ) * ( step( frac( pow( ( 1.0 + 0.5 ) , sin( temp_output_7_0_g7 ) ) ) , 0.08 ) + step( frac( pow( ( 1.0 + 0.5 ) , sin( ( temp_output_7_0_g7 + 2.76 ) ) ) ) , 0.04 ) ) );
+			half temp_output_7_0_g24 = ( ( i.uv_texcoord.y + i.uv_texcoord.x ) - ( _Time.y * 0.2 ) );
+			half ShineVar84 = ( ( ase_lightColor.a * 0.3 ) * step( frac( pow( ( 1.0 + 2.18 ) , sin( temp_output_7_0_g24 ) ) ) , 0.08 ) );
 			half3 BaseColorOutput99 = ( ( temp_output_86_0 * ( CombinedTexture110 * ( 1.0 - temp_output_83_0 ) ) ) + ( ( temp_output_86_0 * ( CombinedTexture110 * temp_output_83_0 ) ) + ( temp_output_83_0 * ShineVar84 ) ) );
 			half3 temp_output_102_0 = BaseColorOutput99;
 			c.rgb = temp_output_102_0;
@@ -176,8 +184,8 @@ Shader "Cel Shading/RegularV3"
 			half3 CombinedTexture110 = switchResult68;
 			float2 uv_OcclusionMap = i.uv_texcoord * _OcclusionMap_ST.xy + _OcclusionMap_ST.zw;
 			half3 temp_output_83_0 = (tex2D( _OcclusionMap, uv_OcclusionMap )).rgb;
-			half temp_output_7_0_g7 = ( ( i.uv_texcoord.y + i.uv_texcoord.x ) - ( _Time.y * 0.2 ) );
-			half ShineVar84 = ( ( ase_lightColor.a * 0.3 ) * ( step( frac( pow( ( 1.0 + 0.5 ) , sin( temp_output_7_0_g7 ) ) ) , 0.08 ) + step( frac( pow( ( 1.0 + 0.5 ) , sin( ( temp_output_7_0_g7 + 2.76 ) ) ) ) , 0.04 ) ) );
+			half temp_output_7_0_g24 = ( ( i.uv_texcoord.y + i.uv_texcoord.x ) - ( _Time.y * 0.2 ) );
+			half ShineVar84 = ( ( ase_lightColor.a * 0.3 ) * step( frac( pow( ( 1.0 + 2.18 ) , sin( temp_output_7_0_g24 ) ) ) , 0.08 ) );
 			half3 BaseColorOutput99 = ( ( temp_output_86_0 * ( CombinedTexture110 * ( 1.0 - temp_output_83_0 ) ) ) + ( ( temp_output_86_0 * ( CombinedTexture110 * temp_output_83_0 ) ) + ( temp_output_83_0 * ShineVar84 ) ) );
 			half3 temp_output_102_0 = BaseColorOutput99;
 			o.Albedo = temp_output_102_0;

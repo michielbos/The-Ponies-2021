@@ -29,17 +29,19 @@ namespace UnityGLTF
 			_material = new Material(s);
 		}
 
-		protected StandardMap(Material mat, int MaxLOD = 1000)
-		{
-			mat.shader.maximumLOD = MaxLOD;
-			_material = mat;
+        protected StandardMap(Material mat, int MaxLOD = 1000)
+        {
+            mat.shader.maximumLOD = MaxLOD;
+            _material = mat;
+            /*
+                        if (mat.HasProperty("_Cutoff"))
+                        {
+                            _alphaCutoff = mat.GetFloat("_Cutoff");
+                        }
+                       */
 
-			if (mat.HasProperty("_Cutoff"))
-			{
-				_alphaCutoff = mat.GetFloat("_Cutoff");
-			}
-
-			switch (mat.renderQueue)
+            /*
+            switch (mat.renderQueue)
 			{
 				case (int)RenderQueue.AlphaTest:
 					_alphaMode = AlphaMode.MASK;
@@ -51,10 +53,10 @@ namespace UnityGLTF
 				default:
 					_alphaMode = AlphaMode.OPAQUE;
 					break;
-			}
-		}
+			}*/
+        }
 
-		public Material Material { get { return _material; } }
+        public Material Material { get { return _material; } }
 
 		public virtual Texture NormalTexture
 		{
@@ -70,7 +72,8 @@ namespace UnityGLTF
 				{
 					Debug.LogWarning("Tried to set a normal map texture to a material that does not support it.");
 				}
-			}
+
+            }
 		}
 
 		// not implemented by the Standard shader
@@ -213,7 +216,8 @@ namespace UnityGLTF
 				{
 					Debug.LogWarning("Tried to set an emission map to a material that does not support it.");
 				}
-			}
+
+            }
 		}
 
 		// not implemented by the Standard shader
@@ -271,13 +275,16 @@ namespace UnityGLTF
 			}
 		}
 
+
 		public virtual AlphaMode AlphaMode
 		{
 			get { return _alphaMode; }
 			set
 			{
-				if (value == AlphaMode.MASK)
+                /* might be used later, when i'll figure out of how to use it
+                if (value == AlphaMode.MASK)
 				{
+
 					_material.SetOverrideTag("RenderType", "TransparentCutout");
 					_material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
 					_material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
@@ -290,9 +297,11 @@ namespace UnityGLTF
 					{
 						_material.SetFloat("_Cutoff", (float)_alphaCutoff);
 					}
+
 				}
 				else if (value == AlphaMode.BLEND)
-				{
+                {
+
 					_material.SetOverrideTag("RenderType", "Transparent");
 					_material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.SrcAlpha);
 					_material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.OneMinusSrcAlpha);
@@ -301,9 +310,12 @@ namespace UnityGLTF
 					_material.EnableKeyword("_ALPHABLEND_ON");
 					_material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
 					_material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Transparent;
-				}
+
+
+                }
 				else
-				{
+                {
+
 					_material.SetOverrideTag("RenderType", "Opaque");
 					_material.SetInt("_SrcBlend", (int)UnityEngine.Rendering.BlendMode.One);
 					_material.SetInt("_DstBlend", (int)UnityEngine.Rendering.BlendMode.Zero);
@@ -312,10 +324,13 @@ namespace UnityGLTF
 					_material.DisableKeyword("_ALPHABLEND_ON");
 					_material.DisableKeyword("_ALPHAPREMULTIPLY_ON");
 					_material.renderQueue = (int)UnityEngine.Rendering.RenderQueue.Geometry;
-				}
 
-				_alphaMode = value;
-			}
+
+                }
+                */
+                _alphaMode = value;
+
+            }
 		}
 
 		public virtual double AlphaCutoff
@@ -323,10 +338,11 @@ namespace UnityGLTF
 			get { return _alphaCutoff; }
 			set
 			{
+            /*
 				if ((_alphaMode == AlphaMode.MASK) && _material.HasProperty("_Cutoff"))
 				{
 					_material.SetFloat("_Cutoff", (float)value);
-				}
+				}*/
 				_alphaCutoff = value;
 			}
 		}
@@ -358,17 +374,44 @@ namespace UnityGLTF
 		public virtual IUniformMap Clone()
 		{
 			var ret = new StandardMap(new Material(_material));
-			ret._alphaMode = _alphaMode;
-			ret._alphaCutoff = _alphaCutoff;
+			//ret._alphaMode = _alphaMode;
+			//ret._alphaCutoff = _alphaCutoff;
 			return ret;
 		}
 
 		protected virtual void Copy(IUniformMap o)
 		{
-			var other = (StandardMap)o;
+            if (_material.name.Contains("Sink"))
+            {
+                _material.SetFloat("_Ref", 3);
+                _material.renderQueue = 2056;       //need to set the right values, should be higher than regular object queue
+            }
+            else if (_material.name.Contains("WaterShader"))
+            {
+                _material.renderQueue = 3001;       // Transparent+1
+            }
+            else if (_material.name.Contains("MaskShader"))
+            {
+                _material.SetFloat("_Ref", 1);      //need to be changed for proper work with counters
+                _material.renderQueue = 2030;       //need to set the right values, should be lower than regular object queue
+            }
+            else
+            {
+                _material.SetFloat("_Ref", 1);		// default value, need a different one to fix a render glitch
+                _material.renderQueue = 2035;       //need to set the right values, should be higher than mask layer queue
+
+            }
+
+            //Debug.Log("Material name is : " + _material.name);
+            //Debug.Log("Material render queue is : " + _material.renderQueue);
+
+            var other = (StandardMap)o;
 			other._material = _material;
-			other._alphaCutoff = _alphaCutoff;
-			other._alphaMode = _alphaMode;
+			//other._alphaCutoff = _alphaCutoff;
+			//other._alphaMode = _alphaMode;
+
 		}
+
+
 	}
 }

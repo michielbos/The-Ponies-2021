@@ -3,8 +3,8 @@ Shader "Cel Shading/WaterV2"
 	Properties
 	{
 		_ColorFoam("Color Foam", Color) = (0,0.7803922,1,1)
-		_ColorDepth("Color Depth", Color) = (0,0.1921569,1,1)
-		_Depth("Depth", Range( 0.001 , 2)) = 0
+		_ColorDepth("Color Depth", Color) = (0,0.6666667,1,1)
+		_Depth("Depth", Range( 0.001 , 2)) = 0.2
 		_OpacityIntensity("OpacityIntensity", Range( 0 , 1)) = 0.9
 		[Toggle]_Worldspacetiling("Worldspace tiling", Float) = 1
 		_WavesSpeed("Waves Speed", Range( 0 , 10)) = 0.3
@@ -15,7 +15,7 @@ Shader "Cel Shading/WaterV2"
 		_ReflectionStrength("Reflection Strength", Range( 0 , 1)) = 0
 		_Shadermap("Shadermap", 2D) = "black" {}
 		[Toggle(_TOGGLEORTHO_ON)] _ToggleOrtho("ToggleOrtho", Float) = 1
-		_FoamSmoothstep("FoamSmoothstep", Range( 0 , 2)) = 0
+		_FoamSmoothstep("FoamSmoothstep", Range( 0 , 2)) = 1.5
 		[PerRendererData]_ReflectionTex("_ReflectionTex", 2D) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
@@ -23,6 +23,7 @@ Shader "Cel Shading/WaterV2"
 	SubShader
 	{
 		Tags{ "RenderType" = "Transparent"  "Queue" = "Transparent+0" "IgnoreProjector" = "True" }
+		LOD 200
 		Cull Off
 		CGINCLUDE
 		#include "UnityPBSLighting.cginc"
@@ -294,4 +295,5 @@ Shader "Cel Shading/WaterV2"
 		}
 	}
 	Fallback "Diffuse"
+	CustomEditor "ASEMaterialInspector"
 }

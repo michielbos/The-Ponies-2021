@@ -86,8 +86,9 @@ Material:
     - _Parallax: 0.02
     - _RampSmooth: 0.01
     - _RampThreshold: 0.05
+    - _Ref: 1
     - _ShadowBrightness: 0.3
-    - _ShadowValue: 0.15
+    - _ShadowValue: 0.3
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1

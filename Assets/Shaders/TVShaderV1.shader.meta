@@ -2,7 +2,13 @@ fileFormatVersion: 2
 guid: 7edbb93c06d4fdd419cef3e1c019bc68
 ShaderImporter:
   externalObjects: {}
-  defaultTextures: []
+  defaultTextures:
+  - _MainTexture: {instanceID: 0}
+  - _LCDPixels: {fileID: 2800000, guid: f10a988aae07d5745b8856aefe0afaaa, type: 3}
+  - _BrokenTVSideEffect: {fileID: 2800000, guid: a2efe8433dcce794188e7398519f6bea,
+      type: 3}
+  - _BrokenTvCrack: {fileID: 2800000, guid: 6cda3260e25abd94abb6345988d61f51, type: 3}
+  - _texcoord: {instanceID: 0}
   nonModifiableTextures: []
   userData: 
   assetBundleName: 

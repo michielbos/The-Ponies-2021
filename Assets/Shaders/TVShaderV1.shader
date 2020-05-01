@@ -6,7 +6,7 @@ Shader "Cel Shading/TVShaderV1"
 		_Color("Color", Color) = (0.3018868,0.3018868,0.3018868,1)
 		_MainTexture("MainTexture", 2D) = "black" {}
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
-		[Toggle(_TVON_ON)] _TVOn("TVOn", Float) = 0
+		[Toggle(_TVON_ON)] _TVOn("TVOn", Float) = 1
 		[Toggle(_TVBROKEN_ON)] _TVBroken("TVBroken", Float) = 0
 		_LCDPixels("LCD Pixels", 2D) = "white" {}
 		[Toggle(_CHANNELON_ON)] _ChannelOn("ChannelOn", Float) = 0

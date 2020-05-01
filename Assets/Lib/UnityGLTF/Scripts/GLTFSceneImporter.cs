@@ -1,4 +1,5 @@
-﻿using GLTF;
+﻿
+using GLTF;
 using GLTF.Extensions;
 using GLTF.Schema;
 using GLTF.Utilities;
@@ -146,19 +147,29 @@ namespace UnityGLTF
 		public string CustomShaderName { get; set; }
 
 		/// <summary>
-		/// Override for the shader to use on TV materials
+		/// Override for the shader to use on TV screens
 		/// </summary>
 		public string TVShaderName { get; set; }
 
 		/// <summary>
-		/// Override for the shader to use on Water materials
+		/// Override for the shader to use on Water surfaces
 		/// </summary>
-		public string WaterShader { get; set; }
+		public string WaterShaderName { get; set; }
 
-		/// <summary>
-		/// Whether to keep a CPU-side copy of the mesh after upload to GPU (for example, in case normals/tangents need recalculation)
-		/// </summary>
-		public bool KeepCPUCopyOfMesh = true;
+        /// <summary>
+        /// Override for the shader to use on Mask materials that suppose to hide geometry
+        /// </summary>
+        public string MaskShaderName { get; set; }
+
+        /// <summary>
+        /// Override for the shader to use on some unknown for now materials
+        /// </summary>
+        //public string NameShaderName { get; set; }
+
+        /// <summary>
+        /// Whether to keep a CPU-side copy of the mesh after upload to GPU (for example, in case normals/tangents need recalculation)
+        /// </summary>
+        public bool KeepCPUCopyOfMesh = true;
 
 		/// <summary>
 		/// Whether to keep a CPU-side copy of the texture after upload to GPU
@@ -1864,12 +1875,31 @@ namespace UnityGLTF
 		{
 			IUniformMap mapper;
 			const string specGlossExtName = KHR_materials_pbrSpecularGlossinessExtensionFactory.EXTENSION_NAME;
+            string ShaderName;
+
+
+            if (def.Name.Contains("TVShader") )
+            {
+                ShaderName = TVShaderName;
+            }
+            else if (def.Name.Contains ("WaterShader"))
+            {
+                ShaderName = WaterShaderName;
+            }
+            else if (def.Name.Contains("MaskShader"))
+            {
+                ShaderName = MaskShaderName;
+            }
+            else
+            {
+                ShaderName = CustomShaderName;
+            }
 			if (_gltfRoot.ExtensionsUsed != null && _gltfRoot.ExtensionsUsed.Contains(specGlossExtName)
 				&& def.Extensions != null && def.Extensions.ContainsKey(specGlossExtName))
 			{
-				if (!string.IsNullOrEmpty(CustomShaderName))
+				if (!string.IsNullOrEmpty(ShaderName))
 				{
-					mapper = new SpecGlossMap(CustomShaderName, MaximumLod);
+					mapper = new SpecGlossMap(ShaderName, MaximumLod);
 				}
 				else
 				{
@@ -1878,9 +1908,9 @@ namespace UnityGLTF
 			}
 			else
 			{
-				if (!string.IsNullOrEmpty(CustomShaderName))
+				if (!string.IsNullOrEmpty(ShaderName))
 				{
-					mapper = new MetalRoughMap(CustomShaderName, MaximumLod);
+					mapper = new MetalRoughMap(ShaderName, MaximumLod);
 				}
 				else
 				{
@@ -1889,6 +1919,7 @@ namespace UnityGLTF
 			}
 
 			mapper.Material.name = def.Name;
+			
 			mapper.AlphaMode = def.AlphaMode;
 			mapper.DoubleSided = def.DoubleSided;
 
