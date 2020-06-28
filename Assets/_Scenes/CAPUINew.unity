@@ -3738,5 +3738,13 @@ PrefabInstance:
       propertyPath: _swatchesColorToGenerate.Array.data[69].a
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 1569248371601193162, guid: 9267ac79d5f58de438efe20463af22c2,
+        type: 3}
+      propertyPath: m_Text
+      value: "Earth ponies are hardy and strong. \nThey have a special bond with the
+        Earth, allowing them to grow all kinds of special plants. \nThey can build
+        their agility and cooking skills quicker than other ponies. \nHowever, their
+        hunger and comfort needs will require extra attention."
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 9267ac79d5f58de438efe20463af22c2, type: 3}
