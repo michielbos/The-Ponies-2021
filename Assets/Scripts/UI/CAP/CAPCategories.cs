@@ -3,7 +3,7 @@
     /// <summary>
     /// The differents categories of the CAP menu.
     /// </summary>
-    internal enum CAPCategories
+    public enum CAPCategories
     {
         CreatePony,
         Head,
