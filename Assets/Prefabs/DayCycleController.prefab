@@ -145,7 +145,7 @@ MonoBehaviour:
     startingSunset: 18
     startingNight: 20
     sunriseLightIntensity: 0.6
-    endingSunriseLightIntensity: 0.8
+    endingSunriseLightIntensity: 0.85
     dayLightIntensity: 1
     sunsetLightIntensity: 0.7
     nightLightIntensity: 0.75
@@ -164,7 +164,7 @@ MonoBehaviour:
     startingSunset: 20
     startingNight: 22
     sunriseLightIntensity: 0.6
-    endingSunriseLightIntensity: 0.8
+    endingSunriseLightIntensity: 0.9
     dayLightIntensity: 1
     sunsetLightIntensity: 0.7
     nightLightIntensity: 0.75
@@ -202,7 +202,7 @@ MonoBehaviour:
     startingSunset: 20
     startingNight: 22
     sunriseLightIntensity: 0.6
-    endingSunriseLightIntensity: 0.8
+    endingSunriseLightIntensity: 0.75
     dayLightIntensity: 1
     sunsetLightIntensity: 0.7
     nightLightIntensity: 0.75

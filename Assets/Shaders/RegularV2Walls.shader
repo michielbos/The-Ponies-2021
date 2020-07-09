@@ -2,12 +2,11 @@ Shader "Cel Shading/RegularV2Walls"
 {
 	Properties
 	{
-		_Color("Color", Color) = (1,1,1,1)
+		_Color("Color", Color) = (0.8,0.8,0.8,1)
 		_MainTex("MainTex", 2D) = "white" {}
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
 		_WallMask("WallMask", 2D) = "white" {}
 		[Toggle]_MaskMirror("Mask Mirror", Float) = 0
-		[HideInInspector]_Float0("ClipValue", Range( 0 , 1)) = 1
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
@@ -17,7 +16,7 @@ Shader "Cel Shading/RegularV2Walls"
 		Tags{ "RenderType" = "TransparentCutout"  "Queue" = "Geometry+0" }
 		LOD 200
 		Cull Back
-		Blend SrcAlpha OneMinusSrcAlpha
+		Blend SrcAlpha OneMinusSrcAlpha , SrcAlpha OneMinusSrcAlpha
 		
 		AlphaToMask On
 		CGINCLUDE
@@ -61,7 +60,6 @@ Shader "Cel Shading/RegularV2Walls"
 		uniform half4 _Color;
 		uniform sampler2D _WallMask;
 		uniform half _MaskMirror;
-		uniform float _Float0;
 
 
 		inline half2 RotateUV141( half2 UV , half Angle )
@@ -123,8 +121,7 @@ Shader "Cel Shading/RegularV2Walls"
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
 			half3 temp_output_53_0 = ( ( ( indirectDiffuse30 * ase_lightColor.a * temp_output_35_0 ) + ( ase_lightColor.rgb * lerpResult38 ) ) * (( tex2D( _MainTex, uv_MainTex ) * ( _Color * float4( 0.7,0.7,0.7,0 ) ) )).rgb );
 			c.rgb = temp_output_53_0;
-			c.a = 1;
-			clip( tex2D( _WallMask, (( _MaskMirror )?( (localRotateUV146).yx ):( localRotateUV141 )) ).r - _Float0 );
+			c.a = tex2D( _WallMask, (( _MaskMirror )?( (localRotateUV146).yx ):( localRotateUV141 )) ).r;
 			return c;
 		}
 
@@ -182,6 +179,7 @@ Shader "Cel Shading/RegularV2Walls"
 			#include "UnityCG.cginc"
 			#include "Lighting.cginc"
 			#include "UnityPBSLighting.cginc"
+			sampler3D _DitherMaskLOD;
 			struct v2f
 			{
 				V2F_SHADOW_CASTER;
@@ -239,6 +237,8 @@ Shader "Cel Shading/RegularV2Walls"
 				#if defined( CAN_SKIP_VPOS )
 				float2 vpos = IN.pos;
 				#endif
+				half alphaRef = tex3D( _DitherMaskLOD, float3( vpos.xy * 0.25, o.Alpha * 0.9375 ) ).a;
+				clip( alphaRef - 0.01 );
 				SHADOW_CASTER_FRAGMENT( IN )
 			}
 			ENDCG

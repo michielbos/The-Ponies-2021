@@ -10,14 +10,14 @@ Shader "Cel Shading/RegularV3"
 		_DirtynessMap("DirtynessMap", 2D) = "black" {}
 		_ShadowValue("Shadow Value", Range( 0 , 1)) = 0.15
 		_DirtynessVal("DirtynessVal", Range( 0 , 1)) = 0
-		_Ref("Ref", Range( 0 , 255)) = 1
+		_Ref("Ref", Range( 0 , 255)) = 0
 		[HideInInspector] _texcoord( "", 2D ) = "white" {}
 		[HideInInspector] __dirty( "", Int ) = 1
 	}
 
 	SubShader
 	{
-		Tags{ "RenderType" = "Transparent"  "Queue" = "Geometry+0" "IsEmissive" = "true"  }
+		Tags{ "RenderType" = "Transparent"  "Queue" = "Geometry+0" "IsEmissive" = "true"  "Magic"="True" }
 		LOD 200
 		Cull Off
 		Stencil
@@ -124,7 +124,7 @@ Shader "Cel Shading/RegularV3"
 			half NdotL41 = dotResult39;
 			half lerpResult79 = lerp( temp_output_73_0 , ( saturate( ( NdotL41 / 0.001 ) ) * ase_lightAtten ) , _ShadowValue);
 			half3 temp_output_86_0 = ( ( IndirDiffLight74 * ase_lightColor.a * temp_output_73_0 ) + ( ase_lightColor.rgb * lerpResult79 ) );
-			half3 InputColor24 = (( tex2DNode16 * half4(0.7,0.7,0.7,1) )).rgb;
+			half3 InputColor24 = (( tex2DNode16 * half4(0.8,0.8,0.8,1) )).rgb;
 			float2 uv_DirtynessMap = i.uv_texcoord * _DirtynessMap_ST.xy + _DirtynessMap_ST.zw;
 			half4 tex2DNode26 = tex2D( _DirtynessMap, uv_DirtynessMap );
 			half ifLocalVar43 = 0;
@@ -173,7 +173,7 @@ Shader "Cel Shading/RegularV3"
 			half3 temp_output_86_0 = ( ( IndirDiffLight74 * ase_lightColor.a * temp_output_73_0 ) + ( ase_lightColor.rgb * lerpResult79 ) );
 			float2 uv_MainTex = i.uv_texcoord * _MainTex_ST.xy + _MainTex_ST.zw;
 			half4 tex2DNode16 = tex2D( _MainTex, uv_MainTex );
-			half3 InputColor24 = (( tex2DNode16 * half4(0.7,0.7,0.7,1) )).rgb;
+			half3 InputColor24 = (( tex2DNode16 * half4(0.8,0.8,0.8,1) )).rgb;
 			float2 uv_DirtynessMap = i.uv_texcoord * _DirtynessMap_ST.xy + _DirtynessMap_ST.zw;
 			half4 tex2DNode26 = tex2D( _DirtynessMap, uv_DirtynessMap );
 			half ifLocalVar43 = 0;
