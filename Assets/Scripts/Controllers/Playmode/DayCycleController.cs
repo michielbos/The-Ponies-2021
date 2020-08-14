@@ -171,19 +171,19 @@ public class DayCycleController:SingletonMonoBehaviour<DayCycleController> {
 
     private void UpdateSeasons() {
         float currMonth = TimeController.Instance.GetMonth();
-		switch (currMonth) {
-			case 1:
-				SetCurrentSeason(Seasons.SUMMER);
-            	currentSettings = summerSettings;
-            	break;
+        switch (currMonth) {
+            case 1:
+                SetCurrentSeason(Seasons.SUMMER);
+                currentSettings = summerSettings;
+                break;
             case 2:
-            	SetCurrentSeason(Seasons.AUTUMN);
-            	currentSettings = autumnSettings;
-            	break;
+                SetCurrentSeason(Seasons.AUTUMN);
+                currentSettings = autumnSettings;
+                break;
             case 3:
-            	SetCurrentSeason(Seasons.WINTER);
-            	currentSettings = winterSettings;
-            	break;
+                SetCurrentSeason(Seasons.WINTER);
+                currentSettings = winterSettings;
+                break;
             default:
                 SetCurrentSeason(Seasons.SPRING);
                 currentSettings = springSettings;
