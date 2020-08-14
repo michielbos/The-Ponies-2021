@@ -4,6 +4,8 @@ using Controllers.Global;
 using Controllers.Playmode;
 using Controllers.Singletons;
 using UnityEngine;
+using System;
+using System.Globalization;
 
 namespace Assets.Scripts.Controllers {
 
@@ -21,6 +23,7 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
     private readonly List<ITimeTickListener> tickListeners = new List<ITimeTickListener>();
     
     private bool TwelveHourClock => SettingsController.Instance.twelveHourClock.Value;
+	
 
     /// <summary>
     /// The current game time, in ingame minutes.
@@ -47,7 +50,6 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
         } else if (Time.timeScale != currentSpeed.GetMultiplier()) {
             Time.timeScale = currentSpeed.GetMultiplier();
         }
-
         timeToNextMinute += Time.deltaTime;
         // In cases of bad lag, it would be possible to have deltaTimes larger than a second
         // This could happen as soon as the framerate drops below 10 FPS at 10x speed.
@@ -102,47 +104,15 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
     }
 
     public string GetTimeText() {
-        string currMinutes;
-        string currHours;
-        string disambiguation;
-        if (GetMinuteOfHour() < 10) {
-            currMinutes = "0" + GetMinuteOfHour();
-        } else {
-            currMinutes = "" + GetMinuteOfHour();
-        }
+
+        var currTime = new DateTime(2023, 1, 13, GetHourOfDay(), GetMinuteOfHour(), 19);
+
         if (TwelveHourClock) {
-            if (GetHourOfDay() == 0) {
-                currHours = "12";
-                disambiguation = " AM";
-            } else if (GetHourOfDay() < 12) {
-                if (GetHourOfDay() < 10) {
-                    currHours = "0" + GetHourOfDay();
-                } else {
-                    currHours = "" + GetHourOfDay();
-                }
-                disambiguation = " AM";
-            } else if (GetHourOfDay() == 12) {
-                currHours = "12";
-                disambiguation = " PM";
-            } else {
-                int currHourHelper = (GetHourOfDay() - 12);
-                if (GetHourOfDay() < 20) {
-                    currHours = "0" + currHourHelper;
-                } else {
-                    currHours = "" + currHourHelper;
-                }
-                disambiguation = " PM";
-            }
+            return GetDayOfWeek().GetShortName() + " " + currTime.ToString("hh:mm tt", new CultureInfo("en-US"));
         } else {
-            if (GetHourOfDay() < 10) {
-                currHours = "0" + GetHourOfDay();
-            } else {
-                currHours = "" + GetHourOfDay();
-            }
-            disambiguation = "";
+            return GetDayOfWeek().GetShortName() + " " + currTime.ToString("HH:mm");
         }
 
-        return GetDayOfWeek().GetShortName() + " " + currHours + ":" + currMinutes + "" + disambiguation;
     }
 
     public int GetHourOfDay() {
@@ -151,6 +121,10 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
 
     public int GetMinuteOfHour() {
         return (int) (GameTime % 60);
+    }
+
+    public int GetMonth() {
+        return (int) (GameTime /60 / 24 / DaysInOneMonth % (DaysInOneYear/DaysInOneMonth));
     }
 
     public int GetDayOfYear() {

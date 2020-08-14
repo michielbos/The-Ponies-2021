@@ -170,28 +170,24 @@ public class DayCycleController:SingletonMonoBehaviour<DayCycleController> {
     }
 
     private void UpdateSeasons() {
-        float daysInOneMonth = TimeController.Instance.DaysInOneMonth;
-        float currDayOfYear = TimeController.Instance.GetDayOfYear();
-
-        if (currDayOfYear >= 0 && currDayOfYear <= daysInOneMonth && currSeason != Seasons.SPRING) {
-            SetCurrentSeason(Seasons.SPRING);
-
-            currentSettings = springSettings;
-        } else if (currDayOfYear >= daysInOneMonth && currDayOfYear <= (daysInOneMonth * 2) &&
-                    currSeason != Seasons.SUMMER) {
-            SetCurrentSeason(Seasons.SUMMER);
-
-            currentSettings = summerSettings;
-        } else if (currDayOfYear >= (daysInOneMonth * 2) && currDayOfYear <= (daysInOneMonth * 3) &&
-                    currSeason != Seasons.AUTUMN) {
-            SetCurrentSeason(Seasons.AUTUMN);
-
-            currentSettings = autumnSettings;
-        } else if (currDayOfYear >= (daysInOneMonth * 3) && currDayOfYear <= (daysInOneMonth * 4) &&
-                    currSeason != Seasons.WINTER) {
-            SetCurrentSeason(Seasons.WINTER);
-
-            currentSettings = winterSettings;
+        float currMonth = TimeController.Instance.GetMonth();
+		switch (currMonth) {
+			case 1:
+				SetCurrentSeason(Seasons.SUMMER);
+            	currentSettings = summerSettings;
+            	break;
+            case 2:
+            	SetCurrentSeason(Seasons.AUTUMN);
+            	currentSettings = autumnSettings;
+            	break;
+            case 3:
+            	SetCurrentSeason(Seasons.WINTER);
+            	currentSettings = winterSettings;
+            	break;
+            default:
+                SetCurrentSeason(Seasons.SPRING);
+                currentSettings = springSettings;
+                break;
         }
     }
 
@@ -204,21 +200,27 @@ public class DayCycleController:SingletonMonoBehaviour<DayCycleController> {
     }
     
     private void SetLightAndParticles() {
-        if (currTimeset == Timeset.SUNRISE || currTimeset == Timeset.SUNRISEENDING) {
-            if (currTimeset == Timeset.SUNRISE)
+
+        switch (currTimeset) {
+            case Timeset.SUNRISE:
                 UpdateAll(currentSettings.sunriseLightIntensity, currentSettings.sunriseLightColor, sunriseShadowStrength, currentSettings.sunriseSkyTintColor);
-            else if (currTimeset == Timeset.SUNRISEENDING)
+                break;
+            case Timeset.SUNRISEENDING:
                 UpdateAll(currentSettings.endingSunriseLightIntensity, currentSettings.dayLightColor, sunriseShadowStrength, currentSettings.daySkyTintColor);
-        } else if (currTimeset == Timeset.DAY) {
-            UpdateAll(currentSettings.dayLightIntensity, currentSettings.dayLightColor, dayShadowStrength, currentSettings.daySkyTintColor);
-
-        } else if (currTimeset == Timeset.SUNSET) {
-            UpdateAll(currentSettings.sunsetLightIntensity, currentSettings.sunsetLightColor, sunsetShadowStrength, currentSettings.sunsetSkyTintColor);
-
-        } else if (currTimeset == Timeset.NIGHT) {
-            UpdateAll(currentSettings.nightLightIntensity, currentSettings.moonNightLightColor, nightShadowStrength, currentSettings.nightSkyTintColor);
+                break;
+            case Timeset.DAY:
+                UpdateAll(currentSettings.dayLightIntensity, currentSettings.dayLightColor, dayShadowStrength, currentSettings.daySkyTintColor);
+                break;
+            case Timeset.SUNSET:
+                UpdateAll(currentSettings.sunsetLightIntensity, currentSettings.sunsetLightColor, sunsetShadowStrength, currentSettings.sunsetSkyTintColor);
+                break;
+            case Timeset.NIGHT:
+                UpdateAll(currentSettings.nightLightIntensity, currentSettings.moonNightLightColor, nightShadowStrength, currentSettings.nightSkyTintColor);
+                break;
+            default:
+                UpdateAll(currentSettings.dayLightIntensity, currentSettings.dayLightColor, dayShadowStrength, currentSettings.daySkyTintColor);
+                break;
         }
-
         SetTimesetParticleActive(sunriseParticle, currTimeset == Timeset.SUNRISE || currTimeset == Timeset.SUNRISEENDING);
         SetTimesetParticleActive(dayParticle, currTimeset == Timeset.DAY);
         SetTimesetParticleActive(sunsetParticle, currTimeset == Timeset.SUNSET);
