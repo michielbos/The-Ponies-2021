@@ -1,10 +1,15 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using Model.Data;
 using Model.Ponies;
+using UnityEngine;
 
 namespace Model.Actions {
 
+/// <summary>
+/// Base class for all queue actions that a pony can do.
+/// </summary>
 public abstract class PonyAction {
     public readonly string identifier;
     public readonly Pony pony;
@@ -13,7 +18,7 @@ public abstract class PonyAction {
     public bool canceled;
     public bool finished;
     public int tickCount;
-    public readonly IDictionary<string, object> data = new Dictionary<string, object>();
+    public readonly DataMap data = new DataMap();
 
     protected PonyAction(string identifier, Pony pony, string name) {
         this.identifier = identifier;
@@ -27,7 +32,7 @@ public abstract class PonyAction {
     /// </summary>
     internal void AddDataPairs(DataPair[] dataPairs, Property.Property property) {
         foreach (DataPair pair in dataPairs) {
-            data[pair.key] = pair.GetValue(property);
+            data.Put(pair.key, pair.GetValue(property));
         }
     }
 
@@ -41,15 +46,30 @@ public abstract class PonyAction {
         if (tickCount == 1) {
             OnStart();
         }
-        if (Tick()) {
-            Finish();
+        if (!TargetExists()) {
+            finished = true;
+            OnTargetLost();
+            return;
+        }
+        try {
+            if (Tick()) {
+                Finish();
+            }
+        } catch (Exception e) {
+            Debug.LogError("Unhandled error on action: " + identifier);
+            Debug.LogException(e);
+            finished = true;
+            OnForceCancel();
         }
     }
+
+    protected internal abstract bool TargetExists();
     
     /// <summary>
     /// Called every ingame second to execute this action's behaviour.
     /// Execution will start after the action becomes active.
     /// The frequency is dependent on the game speed and execution will pause when the game is paused.
+    /// Should return true when the action is done. False if the action is still in progress.
     /// </summary>
     public abstract bool Tick();
 
@@ -86,20 +106,33 @@ public abstract class PonyAction {
         }
     }
     
+    /// <summary>
+    /// Called when a pony has completed its action, regardless of whether it was successful, failed or canceled.
+    /// If OnForceCancel hasn't been implemented, this is also called when an action is forcefully canceled.
+    /// </summary>
     protected virtual void OnFinish() {
         // Override for additional finish behaviour.
     }
 
-    public abstract PonyActionData GetData();
-
     /// <summary>
-    /// Get the additional action data, converted to a DataPair array.
-    /// This is used by the different action type implementations to save the additional action data.
+    /// Called when the target of the pony went missing (for example, was sold by the player).
+    /// No more ticks will be called after this action.
+    /// If not implemented, this method will call OnForceCancel instead. (which calls OnFinish when not implemented)
     /// </summary>
-    /// <returns></returns>
-    protected DataPair[] GetDataPairs() {
-        return data.Select(pair => DataPair.FromValues(pair.Key, pair.Value)).ToArray();
+    protected virtual void OnTargetLost() {
+        OnForceCancel();
     }
+    
+    /// <summary>
+    /// Called when the action was forcefully canceled (for example, because of an unhandle exception or a missing target).
+    /// No more ticks will be called after this action.
+    /// If not implemented, this method will call OnFinish instead.
+    /// </summary>
+    protected virtual void OnForceCancel() {
+        OnFinish();
+    }
+
+    public abstract PonyActionData GetData();
 }
 
 }

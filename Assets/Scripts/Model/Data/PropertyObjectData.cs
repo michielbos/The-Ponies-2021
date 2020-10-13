@@ -30,6 +30,9 @@ public class PropertyObjectData {
         this.users = users;
         this.children = children;
     }
+    
+    public PropertyObjectData(ChildObjectData cod) : this(cod.id, cod.x, cod.y, cod.rotation, cod.furnitureGuid,
+        cod.skin, cod.value, cod.data, cod.animation, cod.users, new ChildObjectData[0]) { }
 
     public ObjectRotation GetObjectRotation() {
         return (ObjectRotation) rotation;

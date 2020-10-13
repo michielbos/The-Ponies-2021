@@ -51,16 +51,21 @@ public class WallCoverTool : MonoBehaviour, ITool {
             newWalls = PropertyController.Instance.property.GetWallSideLoop(wallSide) ?? new List<WallSide>();
         else
             newWalls = draggingWallStart != null
-            ? GetWallsForDragging(draggingWallStart, wall, isFrontWall)
-            : new List<WallSide>(new[] {wallSide});
+                ? GetWallsForDragging(draggingWallStart, wall, isFrontWall)
+                : new List<WallSide>(new[] {wallSide});
         
-        ClearSelectedWalls();
-        selectedWalls = newWalls;
-        newWalls.ForEach(addedWall => {
-            addedWall.wall.RemovePreviewCovers();
-            addedWall.wall.SetVisibleCoverMaterial(addedWall.front, demolishing ? null : selectedPreset);
-            addedWall.wall.UpdateVisibility(WallVisibility.Full);
-        });
+        // Only update the selected walls when the new selection is different.
+        // This saves a LOT of performance, since we don't have to refresh dozens of wall materials every frame.
+        if (!selectedWalls.SequenceEqual(newWalls)) {
+            ClearSelectedWalls();
+
+            selectedWalls = newWalls;
+            newWalls.ForEach(addedWall => {
+                addedWall.wall.RemovePreviewCovers();
+                addedWall.wall.SetVisibleCoverMaterial(addedWall.front, demolishing ? null : selectedPreset);
+                addedWall.wall.UpdateVisibility(WallVisibility.Full);
+            });
+        }
 
         if (Input.GetMouseButtonUp(0) && draggingWallStart != null) {
             if (demolishing) {
@@ -82,10 +87,10 @@ public class WallCoverTool : MonoBehaviour, ITool {
     private List<WallSide> GetWallsForDragging(Wall startWall, Wall endWall, bool front) {
         TileBorder start = startWall.TileBorder;
         TileBorder end = endWall.TileBorder;
-            
+
         // Walls can only be dragged across either the X or Y axis, depending on the wall direction.
-        if (start.wallDirection != end.wallDirection || 
-            start.wallDirection == WallDirection.NorthWest && start.x != end.x || 
+        if (start.wallDirection != end.wallDirection ||
+            start.wallDirection == WallDirection.NorthWest && start.x != end.x ||
             start.wallDirection == WallDirection.NorthEast && start.y != end.y)
             return new List<WallSide>();
 
@@ -120,14 +125,12 @@ public class WallCoverTool : MonoBehaviour, ITool {
         MoneyController.Instance.ChangeFunds(-cost);
         return true;
     }
-    
+
     private void RemoveWallCovers(List<WallSide> walls) {
         int refund = walls.Sum(wallSide => wallSide.wall.GetCoverPreset(wallSide.front)?.GetSellValue() ?? 0);
         walls.ForEach(wallSide => wallSide.ApplyCoverPreset(null));
         MoneyController.Instance.ChangeFunds(refund);
     }
-
-    
 
     public void Enable() {
         selectedPreset = null;

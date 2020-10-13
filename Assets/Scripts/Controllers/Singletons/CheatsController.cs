@@ -18,6 +18,8 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
     public Text consoleText;
     public Text fpsText;
     public bool moveObjectsMode;
+    public bool showHiddenCatalog;
+    
     private bool visible;
     private bool expanded;
     private bool hadFocus;
@@ -119,7 +121,7 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         
         // Make sure the scroll view scrolls automatically if it's at the bottom.
         ScrollRect consoleScrollRect = consolePanel.GetComponent<ScrollRect>();
-        if (Math.Abs(consoleScrollRect.verticalNormalizedPosition) < 0.0001) {
+        if (Math.Abs(consoleScrollRect.verticalNormalizedPosition) < 0.0001 && gameObject.activeInHierarchy) {
             StartCoroutine(ScrollConsoleToBottom());
         }
     }
@@ -174,6 +176,8 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         // Buying/building cheats
         else if (command == "moveobjects" && parameters.Length == 1)
             return MoveObjectsCheat(parameters[0]);
+        else if (command == "haybaconstrips")
+            ShowHiddenCatalogCheat();
         // Live cheats
         else if (command == "maxmuffins") {
             MaxNeeds();
@@ -223,6 +227,15 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
             return false;
 
         return true;
+    }
+        
+    private void ShowHiddenCatalogCheat() {
+        showHiddenCatalog = !showHiddenCatalog;
+        if (showHiddenCatalog) {
+            AddConsoleLine("And now, things get delicious.");
+        } else {
+            AddConsoleLine("Cheat deactivated.");
+        }
     }
 
     private void MaxNeeds() {

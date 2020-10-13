@@ -24,10 +24,20 @@ public class TerrainTile : MonoBehaviour, IActionTarget, IObjectSlot {
     }
 
     public Vector3 SlotPosition => transform.position;
-    
+
+    /// <summary>
+    /// Implemented for compatibility. Don't use them.
+    /// </summary>
+    public PropertyObject SlotObject {
+        get => null;
+        set { }
+    }
+
     public void PlaceObject(PropertyObject propertyObject) {
         Transform objectTransform = propertyObject.transform;
+        propertyObject.ClearParent();
         objectTransform.position = transform.position;
+        propertyObject.OnPlaced();
     }
 
     public void Init(int x, int y, int height, int type) {

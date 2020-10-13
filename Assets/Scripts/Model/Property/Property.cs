@@ -58,12 +58,24 @@ public class Property : MonoBehaviour {
     }
 
     public void SpawnObjects(PropertyData propertyData) {
+        PropertyObjectData[] childObjects = propertyData.propertyObjectDatas.SelectMany(pod => pod.children)
+            .Where(cod => cod.id > 0)
+            .Select(cod => new PropertyObjectData(cod))
+            .ToArray();
+        PropertyObjectData[] hoofObjects = propertyData.ponies.Select(pd => pd.hoofObject)
+            .Where(cod => cod.id > 0)
+            .Select(cod => new PropertyObjectData(cod))
+            .ToArray();
+        
         LoadTerrainTiles(propertyData.terrainTileDatas);
         LoadWalls(propertyData.wallDatas);
         LoadFloorTiles(propertyData.floorTileDatas);
         LoadPropertyObjects(propertyData.propertyObjectDatas);
+        LoadPropertyObjects(hoofObjects);
         LoadPonies(propertyData.ponies, propertyData.householdData);
         LoadScriptData(propertyData.propertyObjectDatas);
+        LoadScriptData(childObjects);
+        LoadScriptData(hoofObjects);
     }
 
     public void PlaceFloor(int x, int y, FloorPreset preset) {
@@ -81,6 +93,7 @@ public class Property : MonoBehaviour {
         Wall wall = Instantiate(Prefabs.Instance.wallPrefab, transform);
         wall.Init(x, y, wallDirection);
         walls.Add(wall.TileBorder, wall);
+        wall.UpdateWallCorners();
         if (updateRooms) {
             UpdateRooms();
         }
@@ -91,17 +104,17 @@ public class Property : MonoBehaviour {
     /// Place a property object with only the necessary fields. Other fields will receive a calculated/default value.
     /// This is useful when placing new objects via the buy tool.
     /// </summary>
-    public void PlacePropertyObject(IObjectSlot targetSlot, ObjectRotation objectRotation, FurniturePreset preset,
-        int skin) {
-        PlacePropertyObject(nextObjectId++, targetSlot, objectRotation, preset, skin, preset.price, null, new ChildObjectData[0]);
+    public PropertyObject PlacePropertyObject(IObjectSlot targetSlot, ObjectRotation objectRotation, FurniturePreset preset,
+        int skin = 0) {
+        return PlacePropertyObject(nextObjectId++, targetSlot, objectRotation, preset, skin, preset.price, null, new ChildObjectData[0]);
     }
 
     /// <summary>
     /// Place a property object, with all data filled in.
-    /// This should be used when loading an existing propery object from a save.
+    /// This should be used when loading an existing property object from a save.
     /// This also instantiates all children of this object.
     /// </summary>
-    private void PlacePropertyObject(int id, IObjectSlot targetSlot, ObjectRotation objectRotation, FurniturePreset preset,
+    private PropertyObject PlacePropertyObject(int id, IObjectSlot targetSlot, ObjectRotation objectRotation, FurniturePreset preset,
         int skin, int value, string animation, ChildObjectData[] children) {
         if (id >= nextObjectId) {
             nextObjectId = id + 1;
@@ -121,6 +134,8 @@ public class Property : MonoBehaviour {
             PlacePropertyObject(cd.id, childSlot, cd.GetObjectRotation(), childPreset, cd.skin, cd.value, cd.animation,
                 new ChildObjectData[0]);
         }
+
+        return propertyObject;
     }
 
     public void RemoveFloor(FloorTile floorTile) {
@@ -242,8 +257,13 @@ public class Property : MonoBehaviour {
         this.ponies = ponies;
         household = new Household(householdData.householdName, householdData.money, ponies);
         foreach (GamePonyData ponyData in ponyDatas) {
-            ponies[new Guid(ponyData.uuid)]
-                .InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), ponyData.actionQueue, this);
+            PropertyObject hoofObject = null;
+            ChildObjectData hod = ponyData.hoofObject;
+            if (hod != null && hod.id > 0) {
+                hoofObject = propertyObjects[hod.id];
+            }
+            ponies[new Guid(ponyData.uuid)].InitGamePony(ponyData.x, ponyData.y, new Needs(ponyData.needs), 
+                ponyData.actionQueue, this, hoofObject);
         }
     }
 
@@ -512,6 +532,10 @@ public class Property : MonoBehaviour {
         //TODO: Add floor level
         return floorTiles[0, y, x];
     }
+    
+    public TerrainTile GetTerrainTile(Vector2Int tile) {
+        return terrainTiles[tile.y, tile.x];
+    }
 
     public TerrainTile GetTerrainTile(int x, int y) {
         return terrainTiles[y, x];
@@ -524,6 +548,17 @@ public class Property : MonoBehaviour {
     public bool WallExists(TileBorder tileBorder) {
         return walls.ContainsKey(tileBorder);
     }
+    
+    /// <summary>
+    /// Shorthand to check if a wall exists between two tiles.
+    /// </summary>
+    public bool WallExists(Vector2Int tile1, Vector2Int tile2) => WallExists(tile1.GetBorderBetweenTiles(tile2));
+    
+    /// <summary>
+    /// Shorthand to check if a wall exists in the direction from a tile.
+    /// </summary>
+    public bool WallExists(Vector2Int tile, ObjectRotation direction) =>
+        WallExists(tile, tile.GetNeighbourTile(direction));
 
     [CanBeNull]
     public Wall GetWall(TileBorder tileBorder) {
@@ -532,6 +567,26 @@ public class Property : MonoBehaviour {
 
     public IEnumerable<Wall> GetWalls(IEnumerable<TileBorder> tileBorders) {
         return tileBorders.Select(GetWall).Where(wall => wall != null);
+    }
+
+    /// <summary>
+    /// Get all walls which touch a given corner point.
+    /// </summary>
+    public IList<Wall> GetWallsOnCorner(Vector2Int corner) {
+        IList<Wall> cornerWalls = new List<Wall>(4);
+        TileBorder[] borders = {
+            new TileBorder(corner.x, corner.y, WallDirection.NorthEast),
+            new TileBorder(corner.x, corner.y, WallDirection.NorthWest),
+            new TileBorder(corner.x - 1, corner.y, WallDirection.NorthEast),
+            new TileBorder(corner.x, corner.y - 1, WallDirection.NorthWest),
+        };
+
+        foreach (TileBorder border in borders) {
+            if (WallExists(border))
+                cornerWalls.Add(walls[border]);
+        }
+
+        return cornerWalls;
     }
 
     /// <summary>
@@ -646,7 +701,10 @@ public class Property : MonoBehaviour {
         }
     }
     
-    private List<Vector2Int> GetConnectedTiles(Vector2Int tile) {
+    /// <summary>
+    /// Get all neighbour tiles of the given tile that are not blocked by a wall.
+    /// </summary>
+    public List<Vector2Int> GetConnectedTiles(Vector2Int tile) {
         List<Vector2Int> tiles = new List<Vector2Int>(4);
         if (tile.x > 0 && !WallExists(new TileBorder(tile.x, tile.y, WallDirection.NorthWest)))
             tiles.Add(new Vector2Int(tile.x - 1, tile.y));

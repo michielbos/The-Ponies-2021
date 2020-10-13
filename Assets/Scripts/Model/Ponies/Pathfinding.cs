@@ -8,15 +8,15 @@ using UnityEngine;
 namespace Model.Ponies {
 
 public static class Pathfinding {
-    private const int MaxPathLength = 200;
+    public const int DefaultMaxPathLength = 200;
 
     /// <summary>
     /// Calculate a path from the start tile to the target tile.
     /// Returns null if no path was found.
     /// </summary>
     [CanBeNull]
-    public static Path PathToTile(Vector2Int start, Vector2Int target) {
-        return PathToNearest(start, new[] {target});
+    public static Path PathToTile(Vector2Int start, Vector2Int target, int maxPathLength = DefaultMaxPathLength) {
+        return PathToNearest(start, new[] {target}, maxPathLength);
     }
 
     /// <summary>
@@ -24,7 +24,7 @@ public static class Pathfinding {
     /// Returns null if no path was found.
     /// </summary>
     [CanBeNull]
-    public static Path PathToNearest(Vector2Int start, IEnumerable<Vector2Int> targets) {
+    public static Path PathToNearest(Vector2Int start, IEnumerable<Vector2Int> targets, int maxPathLength = DefaultMaxPathLength) {
         Property.Property property = PropertyController.Instance.property;
         int width = property.TerrainWidth;
         int height = property.TerrainHeight;
@@ -38,7 +38,7 @@ public static class Pathfinding {
         
         stepMap[start.y, start.x] = 1;
         int step;
-        for (step = 1; step <= MaxPathLength; step++) {
+        for (step = 1; step <= maxPathLength; step++) {
             for (int y = 0; y < height; y++) {
                 for (int x = 0; x < width; x++) {
                     if (stepMap[y, x] != step) {

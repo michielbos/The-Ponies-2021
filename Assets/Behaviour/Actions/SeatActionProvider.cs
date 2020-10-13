@@ -3,6 +3,7 @@ using System.Linq;
 using Model.Actions;
 using Model.Ponies;
 using Model.Property;
+using ThePoniesBehaviour.Extensions;
 using UnityEngine;
 using Util;
 
@@ -28,7 +29,7 @@ public class SeatActionProvider : IObjectActionProvider {
         public SitAction(Pony pony, PropertyObject target) : base(SitIdentifier, pony, target, "Sit") { }
 
         protected override void OnStart() {
-            data["targetSeat"] = GetClosestFreeSeatTile();
+            data.Put("targetSeat", GetClosestFreeSeatTile());
         }
 
         public override bool Tick() {
@@ -45,32 +46,48 @@ public class SeatActionProvider : IObjectActionProvider {
             if (canceled)
                 return true;
 
-            // Search for a new target seat if there is none set
-            // This happens both when starting the action and when loading a saved game.
-            Vector2Int? targetSeat = data["targetSeat"] as Vector2Int?;
+            // Quit if we have no target seat.
+            Vector2Int? targetSeat = data.GetVector2IntOrNull("targetSeat");
             if (targetSeat == null)
                 return true;
+
+            // Find a new seat if the old one was moved.
+            if (!target.GetOccupiedTiles().Contains(targetSeat.Value)) {
+                if (!FindNewSeat())
+                    return true;
+            }
 
             // If the current target seat is taken, search for a new seat.
             // If there is none, cancel the action.
             foreach (Pony user in target.users) {
                 if (user.TilePosition == targetSeat) {
-                    targetSeat = GetClosestFreeSeatTile();
-                    if (targetSeat == null)
+                    if (!FindNewSeat())
                         return true;
-                    data["targetSeat"] = targetSeat;
+                    break;
                 }
             }
 
             // Walk to the seat.
-            if (!pony.WalkTo(targetSeat.Value.GetNeighbourTile(target.Rotation))) {
-                return pony.WalkingFailed;
-            }
+            ActionResult walkResult = this.WalkNextTo(targetSeat.Value, target.Rotation);
+            if (walkResult == ActionResult.Busy)
+                return false;
+            if (walkResult == ActionResult.Failed)
+                return true;
             
             target.users.Add(pony);
             pony.TilePosition = targetSeat.Value;
 
             return false;
+        }
+
+        /// <summary>
+        /// Find a new target seat.
+        /// </summary>
+        /// <returns>Returns true if a new seat was found.</returns>
+        private bool FindNewSeat() {
+            Vector2Int? targetSeat = GetClosestFreeSeatTile();
+            data.Put("targetSeat", targetSeat);
+            return targetSeat != null;
         }
 
         /// <summary>
@@ -106,7 +123,7 @@ public class SeatActionProvider : IObjectActionProvider {
             Vector2Int cancelPosition = seatPosition.GetNeighbourTile(target.Rotation);
             if (canceled && PropertyController.Property.CanPassBorder(pony.TilePosition, cancelPosition)) {
                 target.users.Remove(pony);
-                pony.TilePosition = pony.TilePosition.GetNeighbourTile(target.Rotation);
+                pony.TilePosition = cancelPosition;
                 return true;
             }
             // Hourly comfort gain is 10% * comfort score.
@@ -115,7 +132,9 @@ public class SeatActionProvider : IObjectActionProvider {
         }
 
         protected override void OnFinish() {
-            target.users.Remove(pony);
+            if (target != null) {
+                target.users.Remove(pony);
+            }
         }
     }
 }

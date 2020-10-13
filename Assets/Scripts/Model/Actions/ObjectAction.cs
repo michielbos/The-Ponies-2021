@@ -5,7 +5,7 @@ using Model.Property;
 namespace Model.Actions {
 
 public abstract class ObjectAction : PonyAction {
-    protected readonly PropertyObject target;
+    public readonly PropertyObject target;
 
     protected ObjectAction(string identifier, Pony pony, PropertyObject target, string name) :
         base(identifier, pony, name) {
@@ -13,7 +13,11 @@ public abstract class ObjectAction : PonyAction {
     }
 
     public override PonyActionData GetData() {
-        return new PonyActionData(identifier, tickCount, canceled, target.id, GetDataPairs());
+        return new PonyActionData(identifier, tickCount, canceled, target.id, data.GetDataPairs());
+    }
+    
+    protected internal override bool TargetExists() {
+        return target != null;
     }
 }
 

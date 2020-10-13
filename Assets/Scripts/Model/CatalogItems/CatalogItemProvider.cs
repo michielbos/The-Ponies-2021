@@ -38,4 +38,14 @@ public static class CatalogItemProvider {
         }
         return new List<CatalogItem>();
     }
+
+    /// <summary>
+    /// Get catalog items that are tagged with category None.
+    /// </summary>
+    public static IList<CatalogItem> GetHiddenItems() {
+        List<CatalogItem> catalogItems = FurniturePresets.Instance.GetFurniturePresets(ObjectCategory.None)
+            .Cast<CatalogItem>().ToList();
+        catalogItems.Sort((a, b) => a.price.CompareTo(b.price));
+        return catalogItems;
+    }
 }

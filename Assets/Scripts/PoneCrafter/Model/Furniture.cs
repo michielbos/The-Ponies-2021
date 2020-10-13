@@ -7,21 +7,26 @@ using UnityGLTF;
 namespace PoneCrafter.Model {
 
 public class Furniture : BaseModel {
-    public string name;
-    public string description;
-    public int price;
-    public ObjectCategory category;
-    public bool pickupable;
-    public bool sellable;
-    public Vector2Int[] occupiedTiles;
-    public PlacementType placementType;
-    public NeedStats needStats;
-    public SkillStats skillStats;
-    public RequiredAge requiredAge;
-    public Dictionary<string, string> tags;
-    public InstantiatedGLTFObject prefab;
+    public readonly string name;
+    public readonly string description;
+    public readonly int price;
+    public readonly ObjectCategory category;
+    public readonly bool pickupable;
+    public readonly bool sellable;
+    public readonly Vector2Int[] occupiedTiles;
+    public readonly PlacementType placementType;
+    public readonly NeedStats needStats;
+    public readonly SkillStats skillStats;
+    public readonly RequiredAge requiredAge;
+    public readonly Dictionary<string, string> tags;
+    public readonly InstantiatedGLTFObject prefab;
 
-    public Furniture(JsonFurniture jsonFurniture, InstantiatedGLTFObject prefab) : base(jsonFurniture.GetUuid()) {
+    /// <summary>
+    /// The cutouts that are applied to walls if this is an object that is placed through a wall.
+    /// </summary>
+    public readonly Texture2D[] cutoutTextures;
+
+    public Furniture(JsonFurniture jsonFurniture, InstantiatedGLTFObject prefab, Texture2D[] cutoutTextures) : base(jsonFurniture.GetUuid()) {
         name = jsonFurniture.name;
         description = jsonFurniture.description;
         price = jsonFurniture.price;
@@ -35,6 +40,7 @@ public class Furniture : BaseModel {
         placementType = jsonFurniture.placementType;
         tags = jsonFurniture.tags.ToDictionary(tag => tag.name, tag => tag.value);
         this.prefab = prefab;
+        this.cutoutTextures = cutoutTextures;
     }
 }
 

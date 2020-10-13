@@ -18,7 +18,8 @@ public class FurniturePreset : Preset {
     public readonly PlacementType placementType;
     public readonly Dictionary<string, string> tags;
 
-    public InstantiatedGLTFObject prefab;
+    private readonly InstantiatedGLTFObject prefab;
+    public readonly Texture2D[] cutoutTextures;
 
     // TODO: Bring back skins.
     //private Texture2D texture;
@@ -39,6 +40,7 @@ public class FurniturePreset : Preset {
         placementType = furniture.placementType;
         tags = furniture.tags;
         prefab = furniture.prefab;
+        cutoutTextures = furniture.cutoutTextures;
     }
 
     public override Texture[] GetPreviewTextures() {
