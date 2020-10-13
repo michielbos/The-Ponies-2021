@@ -10,7 +10,6 @@ public class CreateAssetBundles {
 	private const string BUILD_BUNDLES_MENU = "Assets/Build AssetBundles/";
 	private const string WINDOWS_32 = "Windows32";
 	private const string WINDOWS_64 = "Windows64";
-	private const string LINUX_32 = "Linux32";
 	private const string LINUX_64 = "Linux64";
 	private const string MAC = "Mac";
 
@@ -18,7 +17,6 @@ public class CreateAssetBundles {
 	private static void BuildAllAssetBundles () {
 		BuildWindows32Bundles();
 		BuildWindows64Bundles();
-		BuildLinux32Bundles();
 		BuildLinux64Bundles();
 		BuildMacBundles();
 	}
@@ -31,11 +29,6 @@ public class CreateAssetBundles {
 	[MenuItem(BUILD_BUNDLES_MENU + WINDOWS_64)]
 	private static void BuildWindows64Bundles () {
 		BuildBundles(WINDOWS_64, BuildTarget.StandaloneWindows64);
-	}
-	
-	[MenuItem(BUILD_BUNDLES_MENU + LINUX_32)]
-	private static void BuildLinux32Bundles () {
-		BuildBundles(LINUX_32, BuildTarget.StandaloneLinux);
 	}
 	
 	[MenuItem(BUILD_BUNDLES_MENU + LINUX_64)]
