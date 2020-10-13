@@ -11,6 +11,7 @@ public class GamePonyData {
     public PonyActionData[] actionQueue;
     /// <summary>
     /// This is usually serialized as an empty object (with id 0) when not present, instead of null.
+    /// However, it CAN be null when it is newly created!
     /// </summary>
     public ChildObjectData hoofObject;
 

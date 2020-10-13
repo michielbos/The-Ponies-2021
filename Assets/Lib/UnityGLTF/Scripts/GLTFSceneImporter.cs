@@ -1875,10 +1875,10 @@ namespace UnityGLTF
 		{
 			IUniformMap mapper;
 			const string specGlossExtName = KHR_materials_pbrSpecularGlossinessExtensionFactory.EXTENSION_NAME;
+			
+            // TODO: Fix. Consider a solution outside GLTF.
             string ShaderName;
-
-
-            if (def.Name.Contains("TVShader") )
+            /*if (def.Name.Contains("TVShader") )
             {
                 ShaderName = TVShaderName;
             }
@@ -1893,13 +1893,13 @@ namespace UnityGLTF
             else
             {
                 ShaderName = CustomShaderName;
-            }
+            }*/
 			if (_gltfRoot.ExtensionsUsed != null && _gltfRoot.ExtensionsUsed.Contains(specGlossExtName)
 				&& def.Extensions != null && def.Extensions.ContainsKey(specGlossExtName))
 			{
-				if (!string.IsNullOrEmpty(ShaderName))
+				if (!string.IsNullOrEmpty(CustomShaderName))
 				{
-					mapper = new SpecGlossMap(ShaderName, MaximumLod);
+					mapper = new SpecGlossMap(CustomShaderName, MaximumLod);
 				}
 				else
 				{
@@ -1908,9 +1908,9 @@ namespace UnityGLTF
 			}
 			else
 			{
-				if (!string.IsNullOrEmpty(ShaderName))
+				if (!string.IsNullOrEmpty(CustomShaderName))
 				{
-					mapper = new MetalRoughMap(ShaderName, MaximumLod);
+					mapper = new MetalRoughMap(CustomShaderName, MaximumLod);
 				}
 				else
 				{

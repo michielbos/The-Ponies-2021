@@ -63,7 +63,7 @@ public class Property : MonoBehaviour {
             .Select(cod => new PropertyObjectData(cod))
             .ToArray();
         PropertyObjectData[] hoofObjects = propertyData.ponies.Select(pd => pd.hoofObject)
-            .Where(cod => cod.id > 0)
+            .Where(cod => cod?.id > 0)
             .Select(cod => new PropertyObjectData(cod))
             .ToArray();
         
