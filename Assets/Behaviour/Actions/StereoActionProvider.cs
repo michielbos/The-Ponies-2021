@@ -3,6 +3,7 @@ using Controllers;
 using Model.Actions;
 using Model.Ponies;
 using Model.Property;
+using ThePoniesBehaviour.Behaviours;
 using ThePoniesBehaviour.Extensions;
 
 namespace ThePoniesBehaviour.Actions {
@@ -11,17 +12,18 @@ public class StereoActionProvider : IObjectActionProvider {
     private const string TurnOnIdentifier = "stereoTurnOn";
     private const string TurnOffIdentifier = "stereoTurnOff";
     private const string SwitchChannelIdentifier = "stereoSwitchChannel";
+    private const string NextSongIdentifier = "stereoNextSong";
     private const string StereoType = "stereo";
 
     private const string TurnedOn = "turnedOn";
     private const string RadioChannel = "radioChannel";
-    private const string StartupChannel = "Dubstep";
 
     public IEnumerable<ObjectAction> GetActions(Pony pony, PropertyObject target) {
         if (target.Type == StereoType) {
             if (target.data.GetBool(TurnedOn, false)) {
                 List<ObjectAction> actions = new List<ObjectAction>();
                 actions.Add(new TurnOnOffAction(pony, target, false));
+                actions.Add(new NextSongAction(pony, target));
                 foreach (string folder in ContentController.Instance.GetTopLevelAudioFolders("Music/Radio/")) {
                     if (folder != target.data.GetString(RadioChannel, "")) {
                         actions.Add(new SwitchChannelAction(pony, target, folder));
@@ -42,6 +44,8 @@ public class StereoActionProvider : IObjectActionProvider {
             return new TurnOnOffAction(pony, target, false);
         if (identifier == SwitchChannelIdentifier)
             return new SwitchChannelAction(pony, target);
+        if (identifier == NextSongIdentifier)
+            return new NextSongAction(pony, target);
         return null;
     }
 
@@ -49,7 +53,7 @@ public class StereoActionProvider : IObjectActionProvider {
         private readonly bool isTurnOn;
 
         public TurnOnOffAction(Pony pony, PropertyObject target, bool turnOn) :
-            base(turnOn ? TurnOnIdentifier : TurnOffIdentifier, pony, target, turnOn ? "Turn On" : "Turn Off") {
+            base(turnOn ? TurnOnIdentifier : TurnOffIdentifier, pony, target, turnOn ? "Turn on" : "Turn off") {
             isTurnOn = turnOn;
         }
 
@@ -88,12 +92,9 @@ public class StereoActionProvider : IObjectActionProvider {
         /// <returns>True when the action was finished.</returns>
         private bool HandleTurnOnOff() {
             if (identifier == TurnOnIdentifier) {
-                target.data.Put(TurnedOn, true);
-                if (!target.data.ContainsKey(RadioChannel)) {
-                    target.data.Put(RadioChannel, StartupChannel);
-                }
+                target.GetComponent<StereoBehaviour>().TurnOn();
             } else {
-                target.data.Put(TurnedOn, false);
+                target.GetComponent<StereoBehaviour>().TurnOff();
             }
             return true;
         }
@@ -155,7 +156,60 @@ public class StereoActionProvider : IObjectActionProvider {
         /// </summary>
         /// <returns>True when the action was finished.</returns>
         private bool HandleSwitchChannel() {
-            target.data.Put(RadioChannel, data.GetString(RadioChannel, ""));
+            target.GetComponent<StereoBehaviour>().SwitchChannel(data.GetString(RadioChannel, ""));
+            return true;
+        }
+
+        protected override void OnFinish() {
+            if (target != null) {
+                target.users.Remove(pony);
+            }
+        }
+    }
+    
+    private class NextSongAction : ObjectAction {
+        /// <summary>
+        /// Create a loaded switch channel action, used when the channel is not yet known because it is loaded later.
+        /// </summary>
+        public NextSongAction(Pony pony, PropertyObject target) :
+            base(SwitchChannelIdentifier, pony, target, "Next song") {
+        }
+
+        public override bool Tick() {
+            if (target.users.Contains(pony))
+                return HandleSwitchSong();
+
+            // Quit if the stereo is off.
+            if (!target.data.GetBool(TurnedOn, false)) {
+                return true;
+            }
+
+            return MoveToStereo();
+        }
+
+        /// <summary>
+        /// Move to the stereo.
+        /// </summary>
+        /// <returns>True if the action failed.</returns>
+        private bool MoveToStereo() {
+            ActionResult walkResult = this.WalkNextTo(target.TilePosition, target.Rotation, maxUsers: 1);
+            if (walkResult == ActionResult.Busy)
+                return false;
+            if (walkResult == ActionResult.Failed)
+                return true;
+
+            // Add this pony as user when it reached the radio.
+            target.users.Add(pony);
+
+            return false;
+        }
+
+        /// <summary>
+        /// Handle switching the song.
+        /// </summary>
+        /// <returns>True when the action was finished.</returns>
+        private bool HandleSwitchSong() {
+            target.GetComponent<StereoBehaviour>().PlayNextSong();
             return true;
         }
 

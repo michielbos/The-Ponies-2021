@@ -1,6 +1,7 @@
 using Model.Actions;
+using ThePoniesBehaviour.Actions;
 
-namespace ThePoniesBehaviour.Actions {
+namespace ThePoniesBehaviour {
 
 public static class PonyActions {
     public static void RegisterActionProviders() {
