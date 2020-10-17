@@ -26,6 +26,7 @@ public class StereoBehaviour : MonoBehaviour {
         turnedOn = propertyObject.data.GetBool(TurnedOn, false);
         if (turnedOn) {
             PlayNextSong();
+            propertyObject.PlayAnimation("Playing");
         }
     }
 
@@ -36,7 +37,6 @@ public class StereoBehaviour : MonoBehaviour {
     }
 
     public void PlayNextSong() {
-        Debug.Log("next song");
         playIndex++;
         if (playIndex >= playlist.Length) {
             ShufflePlaylist();
@@ -59,12 +59,14 @@ public class StereoBehaviour : MonoBehaviour {
         turnedOn = true;
         playIndex = playlist.Length;
         PlayNextSong();
+        propertyObject.PlayAnimation("Playing");
     }
 
     public void TurnOff() {
         propertyObject.data.Put(TurnedOn, false);
         turnedOn = false;
         propertyObject.StopSound();
+        propertyObject.StopAnimation();
     }
 
     public void SwitchChannel(string channel) {

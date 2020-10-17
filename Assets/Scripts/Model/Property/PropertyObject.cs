@@ -85,9 +85,12 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             slot.MatchHeightWithOwner();
         }
         Rotation = rotation;
-        if (!string.IsNullOrEmpty(animation))
+        if (!string.IsNullOrEmpty(animation)) {
             PlayAnimation(animation);
-        
+        } else {
+            IdleAnimation();
+        }
+
         foreach (Type behaviour in BehaviourManager.GetObjectBehaviours(this)) {
             gameObject.AddComponent(behaviour);
         }
@@ -181,12 +184,31 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
 
     public bool PlayAnimation(string name) {
         Animation animation = GetComponentInChildren<Animation>();
-        if (animation == null || !animation.Play(name))
+
+        if (animation == null || animation[name] == null || !animation.Play(name))
             return false;
+        
         lastAnimation = name;
         return true;
     }
 
+    /// <summary>
+    /// Play the idle animation, or no animation if this object has no idle animation.
+    /// </summary>
+    public void IdleAnimation() {
+        if (!PlayAnimation("Idle")) {
+            StopAnimation();
+        }
+    }
+
+    public void StopAnimation() {
+        lastAnimation = "";
+        Animation animation = GetComponentInChildren<Animation>();
+        if (animation != null) {
+            animation.Stop();
+        }
+    }
+    
     public string GetAnimation() {
         Animation animation = GetComponentInChildren<Animation>();
         if (animation != null && animation.IsPlaying(lastAnimation))
