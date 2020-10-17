@@ -11,6 +11,7 @@ public static class PonyActions {
             new BedActionProvider(),
             new FoodActionProvider(),
             new PrepareFoodActionProvider(),
+            new StereoActionProvider(), 
         });
         ActionManager.AddTileActionProviders(new [] {
             new MoveActionProvider()

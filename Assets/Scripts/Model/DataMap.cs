@@ -33,6 +33,8 @@ public class DataMap {
     [CanBeNull]
     public PropertyObject GetPropertyObjectOrNull(string key) => data.GetTyped(key, (PropertyObject) null);
 
+    public bool ContainsKey(string key) => data.ContainsKey(key);
+
     /// <summary>
     /// Generate an array of data pairs, which are used for saving the data to a file.
     /// </summary>
