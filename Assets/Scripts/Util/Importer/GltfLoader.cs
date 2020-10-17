@@ -11,7 +11,7 @@ public class GltfLoader : MonoBehaviour {
 
     public int maximumLod = 300;
     public int timeout = 8;
-    public GLTFSceneImporter.ColliderType Collider = GLTFSceneImporter.ColliderType.MeshConvex;
+    public GLTFSceneImporter.ColliderType Collider = GLTFSceneImporter.ColliderType.Mesh;
     private AsyncCoroutineHelper asyncCoroutineHelper;
 
     public void Prepare() {
