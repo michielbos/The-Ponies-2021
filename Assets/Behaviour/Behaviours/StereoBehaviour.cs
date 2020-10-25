@@ -59,9 +59,13 @@ public class StereoBehaviour : MonoBehaviour {
     }
 
     private void ShufflePlaylist() {
-        string channel = propertyObject.data.GetString(RadioChannel, StartupChannel);
+        string channel = propertyObject.data.GetString(RadioChannel, "");
+        if (string.IsNullOrEmpty(channel)) {
+            propertyObject.data.Put(RadioChannel, StartupChannel);
+            channel = StartupChannel;
+        }
+        
         IEnumerable<AudioClip> clips = ContentController.Instance.GetAudioClips($"Music/Radio/{channel}");
-
         playlist = clips.OrderBy(clip => Random.value).ToArray();
         playIndex = 0;
     }
