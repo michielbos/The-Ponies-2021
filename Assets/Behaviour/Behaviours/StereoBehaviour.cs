@@ -13,6 +13,12 @@ public class StereoBehaviour : MonoBehaviour {
     private const string RadioChannel = "radioChannel";
     private const string StartupChannel = "Dubstep";
 
+    /// <summary>
+    /// The stereo that is currently playing music.
+    /// As a temporary fix for the audio glitches, we use this to ensure only 1 stereo can play music at a time.
+    /// </summary>
+    private static StereoBehaviour currentlyPlaying;
+
     private PropertyObject propertyObject;
     private AudioClip[] playlist = new AudioClip[0];
     private int playIndex;
@@ -37,6 +43,12 @@ public class StereoBehaviour : MonoBehaviour {
     }
 
     public void PlayNextSong() {
+        // Temporary fix for audio glitches, ensure only 1 stereo can play at a time. 
+        if (currentlyPlaying != null && currentlyPlaying != this) {
+            currentlyPlaying.TurnOff();
+        }
+        currentlyPlaying = this;
+        
         playIndex++;
         if (playIndex >= playlist.Length) {
             ShufflePlaylist();
