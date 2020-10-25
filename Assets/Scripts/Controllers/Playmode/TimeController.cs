@@ -6,24 +6,25 @@ using Controllers.Singletons;
 using UnityEngine;
 using System;
 using System.Globalization;
+using Model.Property;
 
 namespace Assets.Scripts.Controllers {
 
 public class TimeController : SingletonMonoBehaviour<TimeController> {
     // The time at which households start.
     public const long StartingTime = 480; // 8 AM
+
     // The time which is used when there is no household.
     private const long DefaultTime = 600; // 10 AM
-    
+
     private Speed currentSpeed;
     public int DaysInOneMonth = 25;
     public int DaysInOneYear = 100;
     private double timeToNextMinute;
     private bool forcePaused;
     private readonly List<ITimeTickListener> tickListeners = new List<ITimeTickListener>();
-    
+
     private bool TwelveHourClock => SettingsController.Instance.twelveHourClock.Value;
-	
 
     /// <summary>
     /// The current game time, in ingame minutes.
@@ -40,16 +41,10 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
     void Start() {
         currentSpeed = Speed.Normal;
         HUDController.Instance.UpdateTime();
+        UpdateSpeed();
     }
 
     public void Update() {
-        if (IsPaused()) {
-            if (Time.timeScale != 0) {
-                Time.timeScale = 0;
-            }
-        } else if (Time.timeScale != currentSpeed.GetMultiplier()) {
-            Time.timeScale = currentSpeed.GetMultiplier();
-        }
         timeToNextMinute += Time.deltaTime;
         // In cases of bad lag, it would be possible to have deltaTimes larger than a second
         // This could happen as soon as the framerate drops below 10 FPS at 10x speed.
@@ -71,16 +66,27 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
     }
 
     private void SetSpeed(Speed speed) {
-        if (forcePaused)
-            return;
-
-        int from = IsPaused() ? 0 : currentSpeed.GetIndex();
+        int from = currentSpeed.GetIndex();
         int to = speed.GetIndex();
 
         if (from != to) {
             PlaySpeedSound(from, to);
             currentSpeed = speed;
             HUDController.Instance.UpdateSpeed();
+
+            if (!forcePaused) {
+                UpdateSpeed();
+            }
+        }
+    }
+    
+    /// <summary>
+    /// Called every time the game speed or pause state changed.
+    /// </summary>
+    private void UpdateSpeed() {
+        Time.timeScale = forcePaused ? 0 : currentSpeed.GetMultiplier();
+        foreach (PropertyObject propertyObject in PropertyController.Property.propertyObjects.Values) {
+            propertyObject.OnGameSpeedChanged();
         }
     }
 
@@ -100,11 +106,13 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
     }
 
     public void ForcePause(bool paused) {
-        forcePaused = paused;
+        if (paused != forcePaused) {
+            forcePaused = paused;
+            UpdateSpeed();
+        }
     }
 
     public string GetTimeText() {
-
         var currTime = new DateTime(2023, 1, 13, GetHourOfDay(), GetMinuteOfHour(), 19);
 
         if (TwelveHourClock) {
@@ -112,7 +120,6 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
         } else {
             return GetDayOfWeek().GetShortName() + " " + currTime.ToString("HH:mm");
         }
-
     }
 
     public int GetHourOfDay() {
@@ -124,7 +131,7 @@ public class TimeController : SingletonMonoBehaviour<TimeController> {
     }
 
     public int GetMonth() {
-        return (int) (GameTime /60 / 24 / DaysInOneMonth % (DaysInOneYear/DaysInOneMonth));
+        return (int) (GameTime / 60 / 24 / DaysInOneMonth % (DaysInOneYear / DaysInOneMonth));
     }
 
     public int GetDayOfYear() {

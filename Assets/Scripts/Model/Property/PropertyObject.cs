@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Controllers;
 using Controllers;
 using JetBrains.Annotations;
 using Model.Actions;
@@ -125,6 +126,15 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
 
     public ChildObjectData GetChildObjectData() {
         return new ChildObjectData(GetPropertyObjectData());
+    }
+    
+    /// <summary>
+    /// Called by the TimeController when the game speed changed.
+    /// </summary>
+    public void OnGameSpeedChanged() {
+        if (audioSource != null) {
+            audioSource.pitch = TimeController.Instance.IsPaused() ? 0 : 1;
+        }
     }
 
     /// <summary>
