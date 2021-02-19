@@ -13,6 +13,7 @@ public class StereoActionProvider : IObjectActionProvider {
     private const string TurnOffIdentifier = "stereoTurnOff";
     private const string SwitchChannelIdentifier = "stereoSwitchChannel";
     private const string NextSongIdentifier = "stereoNextSong";
+    private const string DanceIdentifier = "stereoDance";
     private const string StereoType = "stereo";
 
     private const string TurnedOn = "turnedOn";
@@ -24,6 +25,7 @@ public class StereoActionProvider : IObjectActionProvider {
                 List<ObjectAction> actions = new List<ObjectAction>();
                 actions.Add(new TurnOnOffAction(pony, target, false));
                 actions.Add(new NextSongAction(pony, target));
+                actions.Add(new DanceAction(pony, target));
                 foreach (string folder in ContentController.Instance.GetTopLevelAudioFolders("Music/Radio/")) {
                     if (folder != target.data.GetString(RadioChannel, "")) {
                         actions.Add(new SwitchChannelAction(pony, target, folder));
@@ -46,6 +48,8 @@ public class StereoActionProvider : IObjectActionProvider {
             return new SwitchChannelAction(pony, target);
         if (identifier == NextSongIdentifier)
             return new NextSongAction(pony, target);
+        if (identifier == DanceIdentifier)
+            return new DanceAction(pony, target);
         return null;
     }
 
@@ -74,7 +78,7 @@ public class StereoActionProvider : IObjectActionProvider {
         /// </summary>
         /// <returns>True if the action failed.</returns>
         private bool MoveToStereo() {
-            ActionResult walkResult = this.WalkNextTo(target.TilePosition, target.Rotation, maxUsers: 1);
+            ActionResult walkResult = this.WalkNextTo(target.TilePosition, target.Rotation);
             if (walkResult == ActionResult.Busy)
                 return false;
             if (walkResult == ActionResult.Failed)
@@ -139,7 +143,7 @@ public class StereoActionProvider : IObjectActionProvider {
         /// </summary>
         /// <returns>True if the action failed.</returns>
         private bool MoveToStereo() {
-            ActionResult walkResult = this.WalkNextTo(target.TilePosition, target.Rotation, maxUsers: 1);
+            ActionResult walkResult = this.WalkNextTo(target.TilePosition, target.Rotation);
             if (walkResult == ActionResult.Busy)
                 return false;
             if (walkResult == ActionResult.Failed)
@@ -192,7 +196,7 @@ public class StereoActionProvider : IObjectActionProvider {
         /// </summary>
         /// <returns>True if the action failed.</returns>
         private bool MoveToStereo() {
-            ActionResult walkResult = this.WalkNextTo(target.TilePosition, target.Rotation, maxUsers: 1);
+            ActionResult walkResult = this.WalkNextTo(target.TilePosition, target.Rotation);
             if (walkResult == ActionResult.Busy)
                 return false;
             if (walkResult == ActionResult.Failed)
@@ -211,6 +215,62 @@ public class StereoActionProvider : IObjectActionProvider {
         private bool HandleSwitchSong() {
             target.GetComponent<StereoBehaviour>().PlayNextSong();
             return true;
+        }
+
+        protected override void OnFinish() {
+            if (target != null) {
+                target.users.Remove(pony);
+            }
+        }
+    }
+    
+    private class DanceAction : ObjectAction {
+        public DanceAction(Pony pony, PropertyObject target) : base(DanceIdentifier, pony, target, "Dance") { }
+
+        public override bool Tick() {
+            if (target.users.Contains(pony))
+                return HandleDancing();
+            
+            // Quit if the stereo is off.
+            if (!target.data.GetBool(TurnedOn, false)) {
+                return true;
+            }
+            
+            return MoveToStereo();
+        }
+
+        /// <summary>
+        /// Move to the stereo.
+        /// </summary>
+        /// <returns>True if the action failed.</returns>
+        private bool MoveToStereo() {
+            ActionResult walkResult = this.WalkNextTo(target.TilePosition, target.Rotation);
+            if (walkResult == ActionResult.Busy)
+                return false;
+            if (walkResult == ActionResult.Failed)
+                return true;
+
+            // Add this pony as user when it reached the stereo.
+            target.users.Add(pony);
+
+            return false;
+        }
+
+        /// <summary>
+        /// Handle the actual dancing.
+        /// </summary>
+        /// <returns>True when the action was finished.</returns>
+        private bool HandleDancing() {
+            if (canceled)
+                return true;
+
+            // Hourly fun gain is 10% * fun score.
+            pony.needs.Fun += 0.1f * target.preset.needStats.fun / 60f;
+
+            if (pony.needs.Fun >= 1f)
+                return true;
+
+            return false;
         }
 
         protected override void OnFinish() {
