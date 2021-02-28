@@ -61,25 +61,6 @@ public static class ObjectActionExtensions {
 
         return action.WalkToClosest(targetTiles, stopOnCancel, maxUsers);
     }
-    
-    /*/// <summary>
-    /// Walk to a tile within range of an object.
-    /// A range of 1 means the pony has to stand directly next to the object.
-    /// Standing diagonally next to the object requires a range of 2.
-    /// </summary>
-    public static ActionResult WalkToRange(this ObjectAction action, Vector2Int target,
-        int range, bool stopOnCancel = true, int maxUsers = -1) {
-        Vector2Int[] targetTiles = directions.Select(direction => target.GetNeighbourTile(direction))
-            .Where(tile => !PropertyController.Property.WallExists(target.GetBorderBetweenTiles(tile)))
-            .ToArray();
-
-        if (targetTiles.Length == 0) {
-            action.pony.ClearWalkTarget();
-            return ActionResult.Failed;
-        }
-
-        return action.WalkToClosest(targetTiles, stopOnCancel, maxUsers);
-    }*/
 
     /// <summary>
     /// Walks to the closest of a list of targets.

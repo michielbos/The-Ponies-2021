@@ -244,6 +244,7 @@ public class StereoActionProvider : IObjectActionProvider {
         /// </summary>
         /// <returns>True if the action failed.</returns>
         private bool MoveToStereo() {
+            // TODO: Implement "walk into range" functionality.
             ActionResult walkResult = this.WalkNextTo(target.TilePosition, target.Rotation);
             if (walkResult == ActionResult.Busy)
                 return false;
