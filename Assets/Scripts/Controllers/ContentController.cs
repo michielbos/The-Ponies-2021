@@ -34,6 +34,10 @@ public class ContentController : SingletonMonoBehaviour<ContentController> {
     public IEnumerable<string> GetAudioNames(string prefix) => loadedAudioClips.Keys
         .Where(key => key.StartsWith(prefix));
 
+    /// <summary>
+    /// Get all top level audio folders with the given prefix.
+    /// For example "Music/Radio/" returns the names of all radio channels..
+    /// </summary>
     public IEnumerable<string> GetTopLevelAudioFolders(string prefix) => loadedAudioClips.Keys
         .Where(path => path.StartsWith(prefix))
         .Select(path => path.Substring(prefix.Length))

@@ -1,6 +1,7 @@
 using Model.Actions;
+using ThePoniesBehaviour.Actions;
 
-namespace ThePoniesBehaviour.Actions {
+namespace ThePoniesBehaviour {
 
 public static class PonyActions {
     public static void RegisterActionProviders() {
@@ -11,6 +12,7 @@ public static class PonyActions {
             new BedActionProvider(),
             new FoodActionProvider(),
             new PrepareFoodActionProvider(),
+            new StereoActionProvider(), 
         });
         ActionManager.AddTileActionProviders(new [] {
             new MoveActionProvider()

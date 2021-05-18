@@ -24,18 +24,73 @@ public static class Pathfinding {
     /// Returns null if no path was found.
     /// </summary>
     [CanBeNull]
-    public static Path PathToNearest(Vector2Int start, IEnumerable<Vector2Int> targets, int maxPathLength = DefaultMaxPathLength) {
+    public static Path PathToNearest(Vector2Int start, IEnumerable<Vector2Int> targets,
+        int maxPathLength = DefaultMaxPathLength) {
         Property.Property property = PropertyController.Instance.property;
         int width = property.TerrainWidth;
         int height = property.TerrainHeight;
-        int[,] stepMap = property.GetTileOccupancyMap();
-        targets = RemoveTilesOutsideMap(targets, width, height);
         HashSet<TileBorder> occupiedBorders = property.GetImpassableBorders();
+        IList<Vector2Int> trimmedTargets = RemoveTilesOutsideMap(targets, width, height);
 
         // If we're starting on a target, return that target.
-        if (targets.Contains(start))
+        if (trimmedTargets.Contains(start))
             return new Path(new[] {start});
-        
+
+        if (BuildStepMap(start, trimmedTargets, maxPathLength, out int[,] stepMap, occupiedBorders)) {
+            foreach (Vector2Int target in trimmedTargets) {
+                if (stepMap[target.y, target.x] > 0) {
+                    return CreatePathFromStepMap(stepMap, width, height, target, occupiedBorders);
+                }
+            }
+        }
+
+        return null;
+    }
+    
+    /// <summary>
+    /// Calculate a path from the start tile to the closest tile in the targets.
+    /// Returns null if no path was found.
+    /// </summary>
+    [CanBeNull]
+    public static Path PathToRange(Vector2Int start, IEnumerable<Vector2Int> targets,
+        int maxPathLength = DefaultMaxPathLength) {
+        Property.Property property = PropertyController.Instance.property;
+        int width = property.TerrainWidth;
+        int height = property.TerrainHeight;
+        HashSet<TileBorder> occupiedBorders = property.GetImpassableBorders();
+        IList<Vector2Int> trimmedTargets = RemoveTilesOutsideMap(targets, width, height);
+
+        // If we're starting on a target, return that target.
+        if (trimmedTargets.Contains(start))
+            return new Path(new[] {start});
+
+        if (BuildStepMap(start, trimmedTargets, maxPathLength, out int[,] stepMap, occupiedBorders)) {
+            foreach (Vector2Int target in trimmedTargets) {
+                if (stepMap[target.y, target.x] > 0) {
+                    return CreatePathFromStepMap(stepMap, width, height, target, occupiedBorders);
+                }
+            }
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Build a step map
+    /// </summary>
+    /// <param name="start">The start position</param>
+    /// <param name="targets">The targets, stripped with RemoveTilesOutsideMap</param>
+    /// <param name="maxPathLength"></param>
+    /// <param name="stepMap">The generated stepmap</param>
+    /// <param name="occupiedBorders">All occupied borders from property.GetImpassableBorders. Shared for performance.</param>
+    /// <returns>True if a path was found.</returns>
+    private static bool BuildStepMap(Vector2Int start, ICollection<Vector2Int> targets, int maxPathLength,
+        out int[,] stepMap, HashSet<TileBorder> occupiedBorders) {
+        Property.Property property = PropertyController.Instance.property;
+        int width = property.TerrainWidth;
+        int height = property.TerrainHeight;
+        stepMap = property.GetTileOccupancyMap();
+
         stepMap[start.y, start.x] = 1;
         int step;
         for (step = 1; step <= maxPathLength; step++) {
@@ -65,12 +120,12 @@ public static class Pathfinding {
 
             foreach (Vector2Int target in targets) {
                 if (stepMap[target.y, target.x] > 0) {
-                    return CreatePathFromStepMap(stepMap, width, height, target, occupiedBorders);
+                    return true;
                 }
             }
         }
 
-        return null;
+        return false;
     }
 
     private static List<Vector2Int> RemoveTilesOutsideMap(IEnumerable<Vector2Int> targets, int mapWidth,

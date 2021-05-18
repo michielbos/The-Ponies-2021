@@ -1,9 +1,12 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using Assets.Scripts.Controllers;
 using Controllers;
 using JetBrains.Annotations;
 using Model.Actions;
+using Model.Behaviours;
 using Model.Data;
 using Model.Ponies;
 using UnityEngine;
@@ -27,7 +30,6 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
 
     private AudioSource audioSource;
     private string lastAnimation;
-    private string lastSound;
     public SurfaceSlot[] SurfaceSlots { get; private set; } = new SurfaceSlot[0];
 
     public Transform Model => GetComponent<ModelContainer>().Model.transform;
@@ -84,8 +86,16 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             slot.MatchHeightWithOwner();
         }
         Rotation = rotation;
-        if (!string.IsNullOrEmpty(animation))
+        if (!string.IsNullOrEmpty(animation)) {
             PlayAnimation(animation);
+        } else {
+            IdleAnimation();
+        }
+
+        foreach (Type behaviour in BehaviourManager.GetObjectBehaviours(this)) {
+            gameObject.AddComponent(behaviour);
+        }
+        
         AddCutoutsToWalls();
     }
 
@@ -116,6 +126,15 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
 
     public ChildObjectData GetChildObjectData() {
         return new ChildObjectData(GetPropertyObjectData());
+    }
+    
+    /// <summary>
+    /// Called by the TimeController when the game speed changed.
+    /// </summary>
+    public void OnGameSpeedChanged() {
+        if (audioSource != null) {
+            audioSource.pitch = TimeController.Instance.IsPaused() ? 0 : 1;
+        }
     }
 
     /// <summary>
@@ -154,15 +173,18 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         if (audioClip == null)
             return false;
         PlaySound(audioClip);
-        lastSound = name;
         return true;
     }
 
-    private void PlaySound(AudioClip clip) {
+    public void PlaySound(AudioClip clip) {
         if (audioSource == null)
             audioSource = gameObject.AddComponent<AudioSource>();
         audioSource.clip = clip;
         audioSource.Play();
+    }
+
+    public bool IsPlayingSound() {
+        return audioSource.isPlaying;
     }
 
     public void StopSound() {
@@ -170,20 +192,33 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
             audioSource.Stop();
     }
 
-    public string GetPlayingSound() {
-        if (audioSource == null || !audioSource.isPlaying)
-            return null;
-        return lastSound;
-    }
-
     public bool PlayAnimation(string name) {
         Animation animation = GetComponentInChildren<Animation>();
-        if (animation == null || !animation.Play(name))
+
+        if (animation == null || animation[name] == null || !animation.Play(name))
             return false;
+        
         lastAnimation = name;
         return true;
     }
 
+    /// <summary>
+    /// Play the idle animation, or no animation if this object has no idle animation.
+    /// </summary>
+    public void IdleAnimation() {
+        if (!PlayAnimation("Idle")) {
+            StopAnimation();
+        }
+    }
+
+    public void StopAnimation() {
+        lastAnimation = "";
+        Animation animation = GetComponentInChildren<Animation>();
+        if (animation != null) {
+            animation.Stop();
+        }
+    }
+    
     public string GetAnimation() {
         Animation animation = GetComponentInChildren<Animation>();
         if (animation != null && animation.IsPlaying(lastAnimation))
