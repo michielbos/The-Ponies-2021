@@ -44,7 +44,7 @@ public class ContentLoader {
             downloadHandler.streamAudio = true;
             yield return www.SendWebRequest();
             try {
-                if (www.isNetworkError || www.isHttpError) {
+                if (www.result != UnityWebRequest.Result.Success) {
                     throw new ContentLoaderException("Couldn't load file: " + filePath + " (" + www.error + ")");
                 }
 
