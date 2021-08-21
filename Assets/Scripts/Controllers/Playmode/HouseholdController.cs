@@ -69,7 +69,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         }
         TerrainTile terrainTile = hit.transform.GetComponent<TerrainTile>();
         if (terrainTile != null) {
-            ICollection<PonyAction> actions = terrainTile.GetActions(selectedPony);
+            ICollection<PonyAction> actions = terrainTile.GetActions(selectedPony, false);
             cursorController.SetCursor(actions.Count > 0 ? CursorType.GoHere : CursorType.Unavailable);
             HandleHover(actions);
             return;
@@ -78,14 +78,14 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         if (hitParent != null) {
             PropertyObject propertyObject = hit.transform.GetComponentInParent<PropertyObject>();
             if (propertyObject != null) {
-                ICollection<PonyAction> actions = propertyObject.GetActions(selectedPony);
+                ICollection<PonyAction> actions = propertyObject.GetActions(selectedPony, false);
                 cursorController.SetCursor(actions.Count > 0 ? CursorType.Interact : CursorType.Unavailable);
                 HandleHover(actions);
                 return;
             }
             Pony pony = hit.transform.parent.GetComponent<Pony>();
             if (pony != null) {
-                ICollection<PonyAction> actions = pony.GetActions(selectedPony);
+                ICollection<PonyAction> actions = pony.GetActions(selectedPony, false);
                 cursorController.SetCursor(actions.Count > 0 ? CursorType.InteractPony : CursorType.Unavailable);
                 HandleHover(actions);
                 return;

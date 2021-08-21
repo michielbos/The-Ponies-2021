@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using Model.Actions;
 using Model.Ponies;
 using UnityEngine;
@@ -55,8 +56,13 @@ public class TerrainTile : MonoBehaviour, IActionTarget, IObjectSlot {
         model.GetComponent<MeshRenderer>().enabled = visible;
     }
 
-    public ICollection<PonyAction> GetActions(Pony pony) {
-        return ActionManager.GetActionsForTile(pony, this);
+    /// <summary>
+    /// Get all actions that the given pony can do on this terrain tile.
+    /// If showInvisible is true, invisible actions that are normally not invokable by the player are also included.
+    /// </summary>
+    public ICollection<PonyAction> GetActions(Pony pony, bool showInvisible) {
+        ICollection<PonyAction> actions = ActionManager.GetActionsForTile(pony, this);
+        return showInvisible ? actions : actions.Where(action => action.Visible).ToList();
     }
 }
 

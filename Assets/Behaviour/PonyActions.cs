@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using Model.Actions;
 using ThePoniesBehaviour.Actions;
 
@@ -17,6 +18,7 @@ public static class PonyActions {
         ActionManager.AddTileActionProviders(new [] {
             new MoveActionProvider()
         });
+        ActionManager.AddSocialActionProviders(new ISocialActionProvider[0]);
     }
 }
 

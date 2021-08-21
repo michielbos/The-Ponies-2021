@@ -164,8 +164,13 @@ public class PropertyObject : MonoBehaviour, IActionTarget {
         return preset.GetRequiredWallBorders(GetOccupiedTiles(), Rotation);
     }
 
-    public ICollection<PonyAction> GetActions(Pony pony) {
-        return ActionManager.GetActionsForObject(pony, this);
+    /// <summary>
+    /// Get all actions that the given pony can do on this property object.
+    /// If showInvisible is true, invisible actions that are normally not invokable by the player are also included.
+    /// </summary>
+    public ICollection<PonyAction> GetActions(Pony pony, bool showInvisible) {
+        ICollection<PonyAction> actions = ActionManager.GetActionsForObject(pony, this);
+        return showInvisible ? actions : actions.Where(action => action.Visible).ToList();
     }
 
     public bool PlaySound(string name) {

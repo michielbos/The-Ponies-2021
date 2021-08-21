@@ -174,10 +174,13 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
         }
     }
     
-    public ICollection<PonyAction> GetActions(Pony pony) {
-        // TODO: Return actions.
-        return new List<PonyAction>();
-        // return ScriptManager.Instance.hooks.RequestPonyActions(pony, this);
+    /// <summary>
+    /// Get all actions that the given pony can do on this pony.
+    /// If showInvisible is true, invisible actions that are normally not invokable by the player are also included.
+    /// </summary>
+    public ICollection<PonyAction> GetActions(Pony pony, bool showInvisible) {
+        ICollection<PonyAction> actions = ActionManager.GetActionsForPony(pony, this);
+        return showInvisible ? actions : actions.Where(action => action.Visible).ToList();
     }
 
     public void CancelAction(PonyAction action) {

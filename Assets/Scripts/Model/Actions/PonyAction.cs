@@ -20,6 +20,12 @@ public abstract class PonyAction {
     public int tickCount;
     public readonly DataMap data = new DataMap();
 
+    /// <summary>
+    /// Whether this action is visible when clicking the object.
+    /// This can be set to false for actions that are only triggered by autonomy or other non-player triggers.
+    /// </summary>
+    public virtual bool Visible => true;
+
     protected PonyAction(string identifier, Pony pony, string name) {
         this.identifier = identifier;
         this.pony = pony;
