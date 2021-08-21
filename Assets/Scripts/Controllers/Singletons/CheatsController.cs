@@ -19,6 +19,7 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
     public Text fpsText;
     public bool moveObjectsMode;
     public bool showHiddenCatalog;
+    public bool showHiddenActions;
     
     private bool visible;
     private bool expanded;
@@ -176,12 +177,15 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         // Buying/building cheats
         else if (command == "moveobjects" && parameters.Length == 1)
             return MoveObjectsCheat(parameters[0]);
-        else if (command == "haybaconstrips")
-            ShowHiddenCatalogCheat();
         // Live cheats
         else if (command == "maxmuffins") {
             MaxNeeds();
         }
+        // Debug cheats
+        else if (command == "haybaconstrips")
+            ShowHiddenCatalogCheat();
+        else if (command == "wetpony")
+            ShowHiddenActionsCheat();
         // Misc cheats
         else if (command == "expand")
             SetExpanded(!expanded);
@@ -233,6 +237,15 @@ public class CheatsController : SingletonMonoBehaviour<CheatsController> {
         showHiddenCatalog = !showHiddenCatalog;
         if (showHiddenCatalog) {
             AddConsoleLine("And now, things get delicious.");
+        } else {
+            AddConsoleLine("Cheat deactivated.");
+        }
+    }
+        
+    private void ShowHiddenActionsCheat() {
+        showHiddenActions = !showHiddenActions;
+        if (showHiddenActions) {
+            AddConsoleLine("Better get a mop.");
         } else {
             AddConsoleLine("Cheat deactivated.");
         }

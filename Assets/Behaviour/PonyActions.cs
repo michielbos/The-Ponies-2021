@@ -18,7 +18,9 @@ public static class PonyActions {
         ActionManager.AddTileActionProviders(new [] {
             new MoveActionProvider()
         });
-        ActionManager.AddSocialActionProviders(new ISocialActionProvider[0]);
+        ActionManager.AddSocialActionProviders(new [] {
+            new WetSelfActionProvider()
+        });
     }
 }
 

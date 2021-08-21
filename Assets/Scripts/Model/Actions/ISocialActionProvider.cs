@@ -4,9 +4,9 @@ using Model.Ponies;
 namespace Model.Actions {
 
 public interface ISocialActionProvider {
-    IEnumerable<ObjectAction> GetActions(Pony pony, Pony target);
+    IEnumerable<SocialAction> GetActions(Pony pony, Pony target);
 
-    ObjectAction LoadAction(string identifier, Pony pony, Pony target);
+    SocialAction LoadAction(string identifier, Pony pony, Pony target);
 }
 
 }

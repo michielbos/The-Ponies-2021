@@ -61,6 +61,8 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
 
     private void HandlePlayerInteraction() {
         CursorController cursorController = CursorController.Instance;
+        bool showHiddenActions = CheatsController.Instance.showHiddenActions;
+        
         Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
         RaycastHit hit;
         if (HUDController.GetInstance().IsMouseOverGui() || !Physics.Raycast(ray, out hit, 1000, interactionLayer)) {
@@ -69,7 +71,7 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         }
         TerrainTile terrainTile = hit.transform.GetComponent<TerrainTile>();
         if (terrainTile != null) {
-            ICollection<PonyAction> actions = terrainTile.GetActions(selectedPony, false);
+            ICollection<PonyAction> actions = terrainTile.GetActions(selectedPony, showHiddenActions);
             cursorController.SetCursor(actions.Count > 0 ? CursorType.GoHere : CursorType.Unavailable);
             HandleHover(actions);
             return;
@@ -78,14 +80,14 @@ public class HouseholdController : SingletonMonoBehaviour<HouseholdController> {
         if (hitParent != null) {
             PropertyObject propertyObject = hit.transform.GetComponentInParent<PropertyObject>();
             if (propertyObject != null) {
-                ICollection<PonyAction> actions = propertyObject.GetActions(selectedPony, false);
+                ICollection<PonyAction> actions = propertyObject.GetActions(selectedPony, showHiddenActions);
                 cursorController.SetCursor(actions.Count > 0 ? CursorType.Interact : CursorType.Unavailable);
                 HandleHover(actions);
                 return;
             }
             Pony pony = hit.transform.parent.GetComponent<Pony>();
             if (pony != null) {
-                ICollection<PonyAction> actions = pony.GetActions(selectedPony, false);
+                ICollection<PonyAction> actions = pony.GetActions(selectedPony, showHiddenActions);
                 cursorController.SetCursor(actions.Count > 0 ? CursorType.InteractPony : CursorType.Unavailable);
                 HandleHover(actions);
                 return;
