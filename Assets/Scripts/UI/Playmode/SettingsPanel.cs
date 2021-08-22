@@ -11,6 +11,8 @@ namespace UI.Playmode {
 public class SettingsPanel : MonoBehaviour {
     public Toggle twelveHourClockToggle;
     public Toggle discordIntegrationToggle;
+    public FreeWillToggleGroup freeWillSelectedPonyGroup;
+    public FreeWillToggleGroup freeWillHousehold;
 
     /// <summary>
     /// Shortcut to the instance of the SettingsController.
@@ -29,6 +31,13 @@ public class SettingsPanel : MonoBehaviour {
                 DiscordController.Instance.ClearActivity();
             }
         });
+        
+        freeWillSelectedPonyGroup.onSelectionChanged.AddListener(option => {
+            Settings.freeWillSelectedPony.Value = option;
+        });
+        freeWillHousehold.onSelectionChanged.AddListener(option => {
+            Settings.freeWillHousehold.Value = option;
+        });
     }
 
     /// <summary>
@@ -37,6 +46,8 @@ public class SettingsPanel : MonoBehaviour {
     private void OnEnable() {
         twelveHourClockToggle.isOn = Settings.twelveHourClock.Value;
         discordIntegrationToggle.isOn = Settings.discordIntegration.Value;
+        freeWillSelectedPonyGroup.SetSelection(Settings.freeWillSelectedPony.Value);
+        freeWillHousehold.SetSelection(Settings.freeWillHousehold.Value);
     }
 }
 

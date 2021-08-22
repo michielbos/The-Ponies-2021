@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Assets.Scripts.Controllers;
+using Controllers.Global;
+using Controllers.Global.Settings;
 using Controllers.Playmode;
 using Controllers.Singletons;
 using JetBrains.Annotations;
@@ -62,6 +64,15 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
     }
 
     private TerrainTile CurrentTile => PropertyController.Property.GetTerrainTile(TilePosition);
+
+    /// <summary>
+    /// Get the current free will level of this pony.
+    /// This returns the corresponding setting depending on whether the pony is selected on not.
+    /// In the future, this will also return Full for guests.
+    /// </summary>
+    private FreeWillOption FreeWillLevel => IsSelected
+        ? SettingsController.Instance.freeWillSelectedPony.Value
+        : SettingsController.Instance.freeWillHousehold.Value;
 
     public void InitInfo(Guid uuid, string ponyName, PonyRace race, Gender gender, PonyAge age) {
         this.uuid = uuid;
@@ -146,16 +157,20 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
         } else {
             idleTicks++;
             if (idleTicks >= IdleTicksBeforeAutonomy) {
-                QueueAutonomousAction();
-                idleTicks = 0;
+                FreeWillOption freeWill = FreeWillLevel;
+                if (freeWill != FreeWillOption.Off) {
+                    QueueAutonomousAction(freeWill == FreeWillOption.Full ? 1 : 51);
+                    idleTicks = 0;
+                }
             }
         }
     }
 
     /// <summary>
     /// Search for the most suitable autonomous action and queue it.
+    /// The threshold determines the minimum score needed (1 for Full, 51 for Minimal).
     /// </summary>
-    private void QueueAutonomousAction() {
+    private void QueueAutonomousAction(int threshold) {
         List<PonyAction> actions = new List<PonyAction>(
             PropertyController.Property.propertyObjects.Values.SelectMany(it => it.GetActions(this, true)));
 
@@ -164,7 +179,7 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
         List<PonyAction> bestActions = new List<PonyAction>();
         foreach (PonyAction action in actions) {
             int score = Mathf.Min(action.AutonomyScore, 100);
-            if (score <= 0)
+            if (score <= threshold)
                 continue;
             if (score > maxScore) {
                 maxScore = score;
