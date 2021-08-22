@@ -10,12 +10,17 @@ using Model.Data;
 using Model.Property;
 using UnityEngine;
 using Util;
+using Random = UnityEngine.Random;
 
 namespace Model.Ponies {
-
-public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
+public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
     private const float WalkSpeed = 3f;
-    
+
+    /// <summary>
+    /// How many ticks a pony will remain idle before searching for an autonomous action.
+    /// </summary>
+    private const int IdleTicksBeforeAutonomy = 5;
+
     public GameObject indicator;
     public Material indicatorMaterial;
     public HoofSlot HoofSlot;
@@ -31,20 +36,26 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
 
     [CanBeNull] private Path walkPath;
     private Vector2Int? nextWalkTile;
+
     /// <summary>
     /// Set to true when the pony's current path is blocked by a new obstacle and cannot be completed.
     /// </summary>
     private bool pathBlocked;
 
+    /// <summary>
+    /// How many ticks this pony has been idle since its last action.
+    /// </summary>
+    private int idleTicks;
+
     public bool IsSelected => HouseholdController.Instance.selectedPony == this;
     public bool IsWalking => nextWalkTile != null || walkPath != null;
     public Vector2Int? WalkTarget => walkPath?.Destination;
-    
+
     /// <summary>
     /// Whether the last attempt to set a walk target failed (no path found).
     /// </summary>
-    public bool WalkingFailed { get; private set;  }
-    
+    public bool WalkingFailed { get; private set; }
+
     public Vector2Int TilePosition {
         get => transform.position.ToTilePosition();
         set => transform.position = value.ToWorldPosition();
@@ -123,6 +134,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
             UpdateQueue();
         }
         if (currentAction != null) {
+            idleTicks = 0;
             currentAction.TickAction();
             if (currentAction.finished) {
                 queuedActions.Remove(currentAction);
@@ -131,6 +143,41 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
                 ClearWalkTarget();
                 UpdateQueue();
             }
+        } else {
+            idleTicks++;
+            if (idleTicks >= IdleTicksBeforeAutonomy) {
+                QueueAutonomousAction();
+                idleTicks = 0;
+            }
+        }
+    }
+
+    /// <summary>
+    /// Search for the most suitable autonomous action and queue it.
+    /// </summary>
+    private void QueueAutonomousAction() {
+        List<PonyAction> actions = new List<PonyAction>(
+            PropertyController.Property.propertyObjects.Values.SelectMany(it => it.GetActions(this, true)));
+
+        // Create a list of all actions with the highest autonomy score.
+        int maxScore = 0;
+        List<PonyAction> bestActions = new List<PonyAction>();
+        foreach (PonyAction action in actions) {
+            int score = Mathf.Min(action.AutonomyScore, 100);
+            if (score <= 0)
+                continue;
+            if (score > maxScore) {
+                maxScore = score;
+                bestActions.Clear();
+            }
+            if (score == maxScore) {
+                bestActions.Add(action);
+            }
+        }
+
+        // Return a random one from the list, if any.
+        if (bestActions.Count > 0) {
+            QueueAction(bestActions[Random.Range(0, bestActions.Count)]);
         }
     }
 
@@ -140,9 +187,9 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
         return new GamePonyData(uuid.ToString(), transform.position.x, transform.position.z, needs.GetNeedsData(),
             queueData, hoofObject);
     }
-    
+
     public PonyInfoData GetPonyInfoData() {
-        return new PonyInfoData(uuid.ToString(), ponyName, (int) race, (int) gender, (int) age);
+        return new PonyInfoData(uuid.ToString(), ponyName, (int)race, (int)gender, (int)age);
     }
 
     public void SetSelected(bool selected) {
@@ -156,7 +203,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
             UpdateQueue();
         }
     }
-    
+
     /// <summary>
     /// Queue an action to the start of the queue.
     /// If an action is currently active, the new action will be queued after the active action.
@@ -167,13 +214,13 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
         } else {
             queuedActions.Insert(1, action);
         }
-        
+
         if (IsSelected) {
             SoundController.Instance.PlaySound(SoundType.QueueAdded);
             UpdateQueue();
         }
     }
-    
+
     /// <summary>
     /// Get all actions that the given pony can do on this pony.
     /// If showInvisible is true, invisible actions that are normally not invokable by the player are also included.
@@ -210,7 +257,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
         walkPath?.NextTile();
         return !WalkingFailed;
     }
-    
+
     public void ClearWalkTarget() {
         SetWalkPath(null);
     }
@@ -219,7 +266,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
         walkPath = path;
         pathBlocked = false;
     }
-    
+
     /// <summary>
     /// Set the walk target to the nearest of the provided tiles.
     /// </summary>
@@ -241,9 +288,9 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
     /// true (failed to walk to target).
     /// </summary>
     public bool WalkTo(Vector2Int target) {
-        return WalkToClosest(new[] {target});
+        return WalkToClosest(new[] { target });
     }
-    
+
     /// <summary>
     /// Can be called each tick to walk towards the closest of a given collection of targets.
     /// This method sets the current walk target to the given target and returns false until it has been reached.
@@ -277,7 +324,7 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
         Func<PropertyObject, Vector2Int[]> tileSelector, int maxDistance = Pathfinding.DefaultMaxPathLength) {
         IEnumerable<PropertyObject> suitableObjects = PropertyController.Property.propertyObjects.Values
             .Where(condition);
-        
+
         // Create a dictionary of all suitable tiles, mapped to their object.
         Dictionary<Vector2Int, PropertyObject> suitableTiles = new Dictionary<Vector2Int, PropertyObject>();
         foreach (PropertyObject propertyObject in suitableObjects) {
@@ -320,5 +367,4 @@ public class Pony: MonoBehaviour, ITimeTickListener, IActionTarget {
         }
     }
 }
-
 }

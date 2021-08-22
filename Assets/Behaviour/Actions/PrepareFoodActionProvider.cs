@@ -7,6 +7,7 @@ using Model.Actions;
 using Model.Ponies;
 using Model.Property;
 using ThePoniesBehaviour.Extensions;
+using UnityEngine;
 using Util;
 
 namespace ThePoniesBehaviour.Actions {
@@ -58,7 +59,8 @@ public class PrepareFoodActionProvider : IObjectActionProvider {
     }
 
     private class FridgePrepareAction : ObjectAction {
-
+        public override int AutonomyScore => 100 - Mathf.RoundToInt(pony.needs.Hunger * 150);
+        
         public FridgePrepareAction(Pony pony, PropertyObject target) : base(PrepareIdentifier, pony, target, "Prepare pancakes") { }
 
         public override bool Tick() {

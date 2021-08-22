@@ -28,6 +28,8 @@ public class BedActionProvider : IObjectActionProvider {
     }
 
     private class SingleBedSleepAction : ObjectAction {
+        public override int AutonomyScore => 100 - Mathf.RoundToInt(pony.needs.Energy * 150);
+        
         public SingleBedSleepAction(string identifier, Pony pony, PropertyObject target, string name) : base(identifier,
             pony, target, name) { }
 

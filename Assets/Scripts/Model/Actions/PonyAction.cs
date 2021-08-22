@@ -26,6 +26,15 @@ public abstract class PonyAction {
     /// </summary>
     public virtual bool Visible => true;
 
+    /// <summary>
+    /// How attractive this action is for ponies following free will.
+    /// 0 (or lower) means ponies will never do this action on their own.
+    /// Values from 1 to 50 are only selected when free will is set to full (and by non-selected ponies).
+    /// Values from 51 to 100 are selected in both full and minimal free will mode.
+    /// Values above 100 are rounded down to 100.
+    /// </summary>
+    public virtual int AutonomyScore => 0;
+
     protected PonyAction(string identifier, Pony pony, string name) {
         this.identifier = identifier;
         this.pony = pony;

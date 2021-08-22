@@ -3,6 +3,7 @@ using Model.Actions;
 using Model.Ponies;
 using Model.Property;
 using ThePoniesBehaviour.Extensions;
+using UnityEngine;
 using Util;
 
 namespace ThePoniesBehaviour.Actions {
@@ -17,6 +18,10 @@ public class CleanUpAction : ObjectAction {
     private const string DataAttempt = "attempt";
 
     private const int MaxAttempts = 3;
+    
+    // TODO: This should be based on the neat personality.
+    // Should maybe also consider whether the item is in the same room?
+    public override int AutonomyScore => 100 - Mathf.RoundToInt(pony.needs.Room * 150);
 
     public CleanUpAction(string identifier, Pony pony, PropertyObject target, string name = "Clean up") :
         base(identifier, pony, target, name) { }

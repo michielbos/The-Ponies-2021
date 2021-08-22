@@ -42,6 +42,8 @@ public class ShowerBathActionProvider : IObjectActionProvider {
     /// Take bath action.
     /// </summary>
     private class TakeBathAction : BaseShowerBathAction {
+        public override int AutonomyScore => 100 - Mathf.RoundToInt(pony.needs.Hygiene * 150);
+        
         public TakeBathAction(string identifier, Pony pony, PropertyObject target, string name) : base(
             identifier, pony, target, name, true) { }
     }
@@ -50,6 +52,8 @@ public class ShowerBathActionProvider : IObjectActionProvider {
     /// Shower action.
     /// </summary>
     private class TakeShowerAction : BaseShowerBathAction {
+        public override int AutonomyScore => 100 - Mathf.RoundToInt(pony.needs.Hygiene * 150);
+        
         public TakeShowerAction(string identifier, Pony pony, PropertyObject target, string name) : base(
             identifier, pony, target, name, false) { }
     }

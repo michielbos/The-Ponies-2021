@@ -5,6 +5,7 @@ using Model.Ponies;
 using Model.Property;
 using ThePoniesBehaviour.Behaviours;
 using ThePoniesBehaviour.Extensions;
+using UnityEngine;
 
 namespace ThePoniesBehaviour.Actions {
 
@@ -54,6 +55,8 @@ public class StereoActionProvider : IObjectActionProvider {
     }
 
     private class TurnOnOffAction : ObjectAction {
+        public override int AutonomyScore => isTurnOn ? 100 - Mathf.RoundToInt(pony.needs.Bladder * 150) : 0;
+        
         private readonly bool isTurnOn;
 
         public TurnOnOffAction(Pony pony, PropertyObject target, bool turnOn) :
@@ -225,6 +228,8 @@ public class StereoActionProvider : IObjectActionProvider {
     }
     
     private class DanceAction : ObjectAction {
+        public override int AutonomyScore => 100 - Mathf.RoundToInt(pony.needs.Fun * 150);
+        
         public DanceAction(Pony pony, PropertyObject target) : base(DanceIdentifier, pony, target, "Dance") { }
 
         public override bool Tick() {

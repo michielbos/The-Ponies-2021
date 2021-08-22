@@ -26,6 +26,8 @@ public class SeatActionProvider : IObjectActionProvider {
     }
 
     private class SitAction : ObjectAction {
+        public override int AutonomyScore => 100 - Mathf.RoundToInt(pony.needs.Comfort * 150);
+        
         public SitAction(Pony pony, PropertyObject target) : base(SitIdentifier, pony, target, "Sit") { }
 
         protected override void OnStart() {

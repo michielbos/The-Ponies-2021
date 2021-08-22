@@ -4,6 +4,7 @@ using Model.Actions;
 using Model.Ponies;
 using Model.Property;
 using ThePoniesBehaviour.Extensions;
+using UnityEngine;
 
 namespace ThePoniesBehaviour.Actions {
 
@@ -44,6 +45,8 @@ public class FoodActionProvider : IObjectActionProvider {
     }
 
     internal class EatAction : ObjectAction {
+        // Pre-prepared food has a bonus compared to preparing food.
+        public override int AutonomyScore => 100 - Mathf.RoundToInt(pony.needs.Hunger * 150) + 3;
         
         public EatAction(Pony pony, PropertyObject target) : base(EatIdentifier, pony, target, "Eat") { }
 

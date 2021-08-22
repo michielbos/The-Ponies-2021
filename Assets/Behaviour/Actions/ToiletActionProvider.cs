@@ -38,6 +38,8 @@ public class ToiletActionProvider : IObjectActionProvider {
     }
 
     private class UseAction : ObjectAction {
+        public override int AutonomyScore => 100 - Mathf.RoundToInt(pony.needs.Bladder * 150);
+
         public UseAction(Pony pony, PropertyObject target) : base(UseIdentifier, pony, target, "Use") { }
 
         public override bool Tick() {
