@@ -32,7 +32,9 @@ public class DiscordController : SingletonMonoBehaviour<DiscordController> {
     private void Start() {
         // This throws a ResultException that says "InternalError" when Discord is not running (on Linux editor).
         // Currently doesn't break anything. Probably a bug in the SDK?
-        discord = new Discord.Discord(ClientId, (ulong) CreateFlags.NoRequireDiscord);
+        if (Application.platform != RuntimePlatform.LinuxEditor) {
+            discord = new Discord.Discord(ClientId, (ulong) CreateFlags.NoRequireDiscord);
+        }
         if (SettingsController.Instance.discordIntegration.Value) {
             UpdateActivity(DiscordState.None);
         } else {
