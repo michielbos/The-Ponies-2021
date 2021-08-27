@@ -8,7 +8,6 @@ using Model.Property;
 using UnityEngine;
 
 namespace Model.Actions {
-
 public static class ActionManager {
     private static readonly List<IObjectActionProvider> objectActionProviders = new List<IObjectActionProvider>();
     private static readonly List<ITileActionProvider> tileActionProviders = new List<ITileActionProvider>();
@@ -21,7 +20,7 @@ public static class ActionManager {
     public static void AddTileActionProviders(IEnumerable<ITileActionProvider> actionProviders) {
         tileActionProviders.AddRange(actionProviders);
     }
-    
+
     public static void AddSocialActionProviders(IEnumerable<ISocialActionProvider> actionProviders) {
         socialActionProviders.AddRange(actionProviders);
     }
@@ -41,7 +40,7 @@ public static class ActionManager {
         }
         return tileActions;
     }
-    
+
     public static ICollection<PonyAction> GetActionsForPony(Pony pony, Pony targetPony) {
         List<PonyAction> tileActions = new List<PonyAction>();
         foreach (ISocialActionProvider actionProvider in socialActionProviders) {
@@ -71,6 +70,7 @@ public static class ActionManager {
             return null;
         }
         ponyAction.canceled = data.canceled;
+        ponyAction.trigger = (PonyActionTrigger)data.trigger;
         ponyAction.Load(data.tickCount);
         ponyAction.AddDataPairs(data.data, property);
         return ponyAction;
@@ -82,14 +82,14 @@ public static class ActionManager {
             .Select(provider => provider.LoadAction(data.identifier, pony, target))
             .FirstOrDefault(action => action != null);
     }
-    
+
     private static PonyAction LoadTileAction(Pony pony, PonyActionData data, Property.Property property) {
         TerrainTile target = property.GetTerrainTile(data.targetTileX, data.targetTileY);
         return tileActionProviders
             .Select(provider => provider.LoadAction(data.identifier, pony, target))
             .FirstOrDefault(action => action != null);
     }
-    
+
     private static PonyAction LoadSocialAction(Pony pony, PonyActionData data, Property.Property property) {
         Pony target = property.GetPony(new Guid(data.targetPonyUuid));
         return socialActionProviders
@@ -97,5 +97,4 @@ public static class ActionManager {
             .FirstOrDefault(action => action != null);
     }
 }
-
 }

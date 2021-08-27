@@ -15,7 +15,7 @@ public abstract class TileAction : PonyAction {
 
     public override PonyActionData GetData() {
         Vector2Int tilePosition = target.TilePosition;
-        return new PonyActionData(identifier, tickCount, canceled, tilePosition.x, tilePosition.y, data.GetDataPairs());
+        return new PonyActionData(identifier, tickCount, canceled, (int)trigger, tilePosition.x, tilePosition.y, data.GetDataPairs());
     }
 
     protected internal override bool TargetExists() {

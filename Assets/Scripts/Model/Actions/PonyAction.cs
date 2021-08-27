@@ -17,6 +17,7 @@ public abstract class PonyAction {
     public bool active;
     public bool canceled;
     public bool finished;
+    public PonyActionTrigger trigger = PonyActionTrigger.External;
     public int tickCount;
     public readonly DataMap data = new DataMap();
 
@@ -114,6 +115,14 @@ public abstract class PonyAction {
         // Override for additional cancel behaviour.
     }
 
+    /// <summary>
+    /// Interrupt this action because it was low priority and another action was queued by the player or another pony.
+    /// Currently does the same as Cancel, but in a separate method in case we alter behaviour in the future.
+    /// </summary>
+    public void Interrupt() {
+        Cancel();
+    }
+
     protected void Finish() {
         if (!finished) {
             finished = true;
@@ -148,6 +157,18 @@ public abstract class PonyAction {
     }
 
     public abstract PonyActionData GetData();
+
+    /// <summary>
+    /// Called when a next action was queued.
+    /// </summary>
+    public void NextActionQueued(PonyAction nextAction) {
+        // Non-essential free will actions are interrupted by any non-free will actions.
+        if (trigger == PonyActionTrigger.FreeWill && nextAction.trigger != PonyActionTrigger.FreeWill) {
+            if (AutonomyScore < 51) {
+                Interrupt();
+            }
+        }
+    }
 }
 
 }

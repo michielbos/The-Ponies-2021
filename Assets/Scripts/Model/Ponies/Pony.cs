@@ -192,7 +192,7 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
 
         // Return a random one from the list, if any.
         if (bestActions.Count > 0) {
-            QueueAction(bestActions[Random.Range(0, bestActions.Count)]);
+            QueueAction(bestActions[Random.Range(0, bestActions.Count)], PonyActionTrigger.FreeWill);
         }
     }
 
@@ -211,11 +211,17 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
         indicator.SetActive(selected);
     }
 
-    public void QueueAction(PonyAction action) {
+    public void QueueAction(PonyAction action, PonyActionTrigger trigger) {
+        action.trigger = trigger;
         queuedActions.Add(action);
+
         if (IsSelected) {
             SoundController.Instance.PlaySound(SoundType.QueueAdded);
             UpdateQueue();
+        }
+
+        if (queuedActions.Count > 1) {
+            queuedActions[queuedActions.Count - 2].NextActionQueued(action);
         }
     }
 

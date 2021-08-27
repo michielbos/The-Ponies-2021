@@ -15,7 +15,7 @@ public abstract class SocialAction : PonyAction {
     }
 
     public override PonyActionData GetData() {
-        return new PonyActionData(identifier, tickCount, canceled, target.uuid.ToString(), data.GetDataPairs());
+        return new PonyActionData(identifier, tickCount, canceled, (int)trigger, target.uuid.ToString(), data.GetDataPairs());
     }
     
     protected internal override bool TargetExists() {

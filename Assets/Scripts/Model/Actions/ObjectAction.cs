@@ -3,7 +3,6 @@ using Model.Ponies;
 using Model.Property;
 
 namespace Model.Actions {
-
 public abstract class ObjectAction : PonyAction {
     public readonly PropertyObject target;
 
@@ -13,12 +12,11 @@ public abstract class ObjectAction : PonyAction {
     }
 
     public override PonyActionData GetData() {
-        return new PonyActionData(identifier, tickCount, canceled, target.id, data.GetDataPairs());
+        return new PonyActionData(identifier, tickCount, canceled, (int)trigger, target.id, data.GetDataPairs());
     }
-    
+
     protected internal override bool TargetExists() {
         return target != null;
     }
 }
-
 }

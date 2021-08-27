@@ -1,12 +1,12 @@
 using System;
 
 namespace Model.Data {
-
 [Serializable]
 public class PonyActionData {
     public string identifier;
     public int tickCount;
     public bool canceled;
+    public int trigger;
     public int targetObjectid;
     public string targetPonyUuid;
     public int targetTileX;
@@ -19,10 +19,12 @@ public class PonyActionData {
         Tile
     }
 
-    public PonyActionData(string identifier, int tickCount, bool canceled, int targetObjectid, DataPair[] data) {
+    public PonyActionData(string identifier, int tickCount, bool canceled, int trigger, int targetObjectid,
+        DataPair[] data) {
         this.identifier = identifier;
         this.tickCount = tickCount;
         this.canceled = canceled;
+        this.trigger = trigger;
         this.targetObjectid = targetObjectid;
         this.targetPonyUuid = "";
         this.targetTileX = -1;
@@ -30,10 +32,12 @@ public class PonyActionData {
         this.data = data;
     }
 
-    public PonyActionData(string identifier, int tickCount, bool canceled, string targetPonyUuid, DataPair[] data) {
+    public PonyActionData(string identifier, int tickCount, bool canceled, int trigger, string targetPonyUuid,
+        DataPair[] data) {
         this.identifier = identifier;
         this.tickCount = tickCount;
         this.canceled = canceled;
+        this.trigger = trigger;
         this.targetObjectid = -1;
         this.targetPonyUuid = targetPonyUuid;
         this.targetTileX = -1;
@@ -41,11 +45,12 @@ public class PonyActionData {
         this.data = data;
     }
 
-    public PonyActionData(string identifier, int tickCount, bool canceled, int targetTileX, int targetTileY,
-        DataPair[] data) {
+    public PonyActionData(string identifier, int tickCount, bool canceled, int trigger, int targetTileX,
+        int targetTileY, DataPair[] data) {
         this.identifier = identifier;
         this.tickCount = tickCount;
         this.canceled = canceled;
+        this.trigger = trigger;
         this.targetObjectid = -1;
         this.targetPonyUuid = "";
         this.targetTileX = targetTileX;
@@ -61,5 +66,4 @@ public class PonyActionData {
         return TargetType.Tile;
     }
 }
-
 }

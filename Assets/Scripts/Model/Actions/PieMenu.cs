@@ -31,7 +31,7 @@ public class PieMenu : MonoBehaviour {
         text.text = action.name;
         button.onClick.AddListener(() => {
             SoundController.Instance.PlaySound(SoundType.PieSelect);
-            pony.QueueAction(action);
+            pony.QueueAction(action, PonyActionTrigger.Player);
             Destroy(gameObject);
         });
     }
