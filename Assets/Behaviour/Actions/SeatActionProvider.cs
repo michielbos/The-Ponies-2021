@@ -130,6 +130,12 @@ public class SeatActionProvider : IObjectActionProvider {
             }
             // Hourly comfort gain is 10% * comfort score.
             pony.needs.Comfort += 0.1f * target.preset.needStats.comfort / 60f;
+
+            // Anything on the queue is more important than sitting.
+            if (pony.GetActionAfter(this) != null) {
+                return true;
+            }
+            
             return false;
         }
 

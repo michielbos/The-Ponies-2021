@@ -286,6 +286,20 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
             HouseholdController.Instance.actionQueue.UpdateActions(queuedActions);
         }
     }
+    
+    /// <summary>
+    /// Get the action that is queued after the given action.
+    /// If there was no action after it on this pony, null is returned.
+    /// </summary>
+    [CanBeNull]
+    public PonyAction GetActionAfter(PonyAction action) {
+        int index = queuedActions.IndexOf(action);
+        if (index < 0) {
+            Debug.LogWarning("Pony does not have that action.");
+            return null;
+        }
+        return index < queuedActions.Count - 1 ? queuedActions[index + 1] : null;
+    }
 
     public bool SetWalkTarget(Vector2Int target) {
         SetWalkPath(Pathfinding.PathToTile(TilePosition, target));
