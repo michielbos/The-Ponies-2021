@@ -229,11 +229,14 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
     /// Queue an action to the start of the queue.
     /// If an action is currently active, the new action will be queued after the active action.
     /// </summary>
-    public void QueueActionFirst(PonyAction action) {
+    public void QueueActionFirst(PonyAction action, PonyActionTrigger trigger = PonyActionTrigger.External) {
+        action.trigger = PonyActionTrigger.External;
+
         if (queuedActions.Count == 0 || !queuedActions[0].active) {
             queuedActions.Insert(0, action);
         } else {
             queuedActions.Insert(1, action);
+            queuedActions[0].NextActionQueued(action);
         }
 
         if (IsSelected) {
@@ -257,6 +260,19 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
         } else {
             action.canceled = true;
             action.finished = true;
+
+            // If this was not the first, the previous action should be notified of the removal and any next action.
+            int index = queuedActions.IndexOf(action);
+            if (index > 0) {
+                PonyAction previousAction = queuedActions[index - 1];
+                PonyAction nextAction = queuedActions.Count > index + 1 ? queuedActions[index + 1] : null;
+
+                previousAction.NextActionRemoved(nextAction != null);
+                if (nextAction != null) {
+                    previousAction.NextActionQueued(nextAction);
+                }
+            }
+
             queuedActions.Remove(action);
         }
         if (IsSelected) {

@@ -159,7 +159,8 @@ public abstract class PonyAction {
     public abstract PonyActionData GetData();
 
     /// <summary>
-    /// Called when a next action was queued.
+    /// Called when a next action was queued, but not for actions after that
+    /// If the next action was canceled, this method will be called again if it had an action queued after it.
     /// </summary>
     public void NextActionQueued(PonyAction nextAction) {
         // Non-essential free will actions are interrupted by any non-free will actions.
@@ -168,6 +169,32 @@ public abstract class PonyAction {
                 Interrupt();
             }
         }
+        OnNextActionQueued(nextAction);
+    }
+
+    /// <summary>
+    /// Called when a next action was queued, but not for actions after that
+    /// If the next action was canceled, this method will be called again if it has another action.
+    /// It is possible that this action has already been interrupted or even removed in response to this event.
+    /// </summary>
+    public virtual void OnNextActionQueued(PonyAction nextAction) {
+        // Override for additional behaviour.
+    }
+    
+    /// <summary>
+    /// Called when the next queued action was canceled.
+    /// </summary>
+    public void NextActionRemoved(bool hasNext) {
+        OnNextActionRemoved(hasNext);
+    }
+
+    /// <summary>
+    /// Called when the next queued action was canceled.
+    /// This is generally used to cancel any behaviour invoked by OnNextActionQueued.
+    /// If hasNext is true, OnNextActionQueued will be invoked immediately after this method.
+    /// </summary>
+    public virtual void OnNextActionRemoved(bool hasNext) {
+        // Override for additional behaviour.
     }
 }
 
