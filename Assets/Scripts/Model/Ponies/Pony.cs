@@ -114,7 +114,6 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
         if (nextWalkTile == null && walkPath != null) {
             nextWalkTile = walkPath.NextTile();
             if (TilePosition == nextWalkTile.Value) {
-                // TODO: Figure out why ponies sometimes try to move to the same tile twice.
                 Debug.LogWarning("Same tile");
                 return;
             }
@@ -313,14 +312,6 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
         return index < queuedActions.Count - 1 ? queuedActions[index + 1] : null;
     }
 
-    public bool SetWalkTarget(Vector2Int target) {
-        SetWalkPath(Pathfinding.PathToTile(TilePosition, target));
-        WalkingFailed = walkPath == null;
-        // Paths always start at the current position, so skip the first tile.
-        walkPath?.NextTile();
-        return !WalkingFailed;
-    }
-
     public void ClearWalkTarget() {
         SetWalkPath(null);
     }
@@ -334,7 +325,9 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
     /// Set the walk target to the nearest of the provided tiles.
     /// </summary>
     public bool SetWalkTargetToNearest(IEnumerable<Vector2Int> targets) {
-        SetWalkPath(Pathfinding.PathToNearest(TilePosition, targets));
+        // If we were already walking, start from the next tile instead.
+        Vector2Int start = nextWalkTile ?? TilePosition;
+        SetWalkPath(Pathfinding.PathToNearest(start, targets));
         WalkingFailed = walkPath == null;
         // Paths always start at the current position, so skip the first tile.
         walkPath?.NextTile();
