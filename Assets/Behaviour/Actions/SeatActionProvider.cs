@@ -27,7 +27,11 @@ public class SeatActionProvider : IObjectActionProvider {
 
     private class SitAction : ObjectAction {
         public override int AutonomyScore => 100 - Mathf.RoundToInt(pony.needs.Comfort * 150);
-        
+
+        public override bool IsIdle => IsSitting && pony.needs.Comfort > 0.5f;
+
+        private bool IsSitting => target.users.Contains(pony);
+
         public SitAction(Pony pony, PropertyObject target) : base(SitIdentifier, pony, target, "Sit") { }
 
         protected override void OnStart() {
@@ -35,7 +39,7 @@ public class SeatActionProvider : IObjectActionProvider {
         }
 
         public override bool Tick() {
-            if (target.users.Contains(pony))
+            if (IsSitting)
                 return HandleSitting();
             return HandleMoveToSeat();
         }

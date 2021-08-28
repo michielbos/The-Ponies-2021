@@ -36,6 +36,12 @@ public abstract class PonyAction {
     /// </summary>
     public virtual int AutonomyScore => 0;
 
+    /// <summary>
+    /// Whether the pony doing this action is considered idle.
+    /// If this is true for all actions on the queue, the pony will queue autonomous actions.
+    /// </summary>
+    public virtual bool IsIdle => false;
+
     protected PonyAction(string identifier, Pony pony, string name) {
         this.identifier = identifier;
         this.pony = pony;

@@ -145,8 +145,12 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
             UpdateQueue();
         }
         if (currentAction != null) {
-            idleTicks = 0;
             currentAction.TickAction();
+            if (queuedActions.TrueForAll(action => action.IsIdle)) {
+                OnIdleTick();
+                return;
+            }
+            idleTicks = 0;
             if (currentAction.finished) {
                 queuedActions.Remove(currentAction);
                 currentAction = null;
@@ -155,13 +159,21 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
                 UpdateQueue();
             }
         } else {
-            idleTicks++;
-            if (idleTicks >= IdleTicksBeforeAutonomy) {
-                FreeWillOption freeWill = FreeWillLevel;
-                if (freeWill != FreeWillOption.Off) {
-                    QueueAutonomousAction(freeWill == FreeWillOption.Full ? 1 : 51);
-                    idleTicks = 0;
-                }
+            OnIdleTick();
+        }
+    }
+
+    /// <summary>
+    /// Called every tick that the pony was considered idle.
+    /// Idle ponies either have an empty queue, or are doing an idle action such as sitting.
+    /// </summary>
+    private void OnIdleTick() {
+        idleTicks++;
+        if (idleTicks >= IdleTicksBeforeAutonomy) {
+            FreeWillOption freeWill = FreeWillLevel;
+            if (freeWill != FreeWillOption.Off) {
+                QueueAutonomousAction(freeWill == FreeWillOption.Full ? 1 : 51);
+                idleTicks = 0;
             }
         }
     }
