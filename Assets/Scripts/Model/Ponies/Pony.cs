@@ -26,6 +26,7 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
     public GameObject indicator;
     public Material indicatorMaterial;
     public HoofSlot HoofSlot;
+    public Transform model;
     public List<PonyAction> queuedActions = new List<PonyAction>();
     [CanBeNull] public PonyAction currentAction;
 
@@ -61,6 +62,15 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
     public Vector2Int TilePosition {
         get => transform.position.ToTilePosition();
         set => transform.position = value.ToWorldPosition();
+    }
+
+    /// <summary>
+    /// The direction that the pony is facing.
+    /// </summary>
+    // TODO: Implement saving and loading of rotation. Postponed until we know whether rotation progress is saved by angle or by animation progress.
+    public ObjectRotation Rotation {
+        get => model.GetObjectRotation();
+        set => model.localEulerAngles = value.GetRotationVector();
     }
 
     private TerrainTile CurrentTile => PropertyController.Property.GetTerrainTile(TilePosition);
@@ -113,6 +123,7 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
             return;
         if (nextWalkTile == null && walkPath != null) {
             nextWalkTile = walkPath.NextTile();
+            Rotation = TilePosition.GetDirectionTo(nextWalkTile.Value);
             if (TilePosition == nextWalkTile.Value) {
                 Debug.LogWarning("Same tile");
                 return;
@@ -366,6 +377,16 @@ public class Pony : MonoBehaviour, ITimeTickListener, IActionTarget {
             SetWalkTargetToNearest(targets);
         }
         return false;
+    }
+
+    /// <summary>
+    /// Rotate the pony towards the given rotation.
+    /// Returns true when done.
+    /// This currently sets the rotation instantly, because the animation is not yet implemented.
+    /// </summary>
+    public bool RotateTo(ObjectRotation rotation) {
+        Rotation = rotation;
+        return true;
     }
 
     /// <summary>

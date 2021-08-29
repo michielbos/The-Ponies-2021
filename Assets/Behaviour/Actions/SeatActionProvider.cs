@@ -79,6 +79,9 @@ public class SeatActionProvider : IObjectActionProvider {
                 return false;
             if (walkResult == ActionResult.Failed)
                 return true;
+
+            if (!pony.RotateTo(target.Rotation))
+                return false;
             
             target.users.Add(pony);
             pony.TilePosition = targetSeat.Value;

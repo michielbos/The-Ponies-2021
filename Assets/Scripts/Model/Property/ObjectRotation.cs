@@ -7,10 +7,10 @@ namespace Model.Property {
 /// SouthEast is the default rotation, which is when the object faces towards the lower-right on the default camera orientation.
 /// </summary>
 public enum ObjectRotation {
-    SouthEast = 1,
-    SouthWest = 2,
-    NorthWest = 3,
-    NorthEast = 4
+    NorthWest = 1,
+    NorthEast = 2,
+    SouthEast = 3,
+    SouthWest = 4
 }
 
 /// <summary>
@@ -23,8 +23,7 @@ public static class ObjectRotationUtil {
     
     public static ObjectRotation FromRotationAngle(float angle) {
         int wholeAngle = Mathf.RoundToInt(angle);
-        // Objects are always rotated 180 degrees, because that's how Blender/Max export them.
-        return (ObjectRotation)((wholeAngle + 180) / 90 % 4 + 1);
+        return (ObjectRotation)(wholeAngle / 90 % 4 + 1);
     }
 
     public static Vector3 GetRotationVector(this ObjectRotation objectRotation) {

@@ -126,16 +126,16 @@ public static class TileUtils {
     /// Calculate the new position of a tile, assuming it was rotated as part of a tile group.
     /// </summary>
     public static Vector2Int RotateTileInGroup(this Vector2Int tile, ObjectRotation rotation) {
-        if (rotation == ObjectRotation.SouthWest) {
+        if (rotation == ObjectRotation.NorthEast) {
             return new Vector2Int(tile.y, -tile.x);
         }
-        if (rotation == ObjectRotation.NorthWest) {
+        if (rotation == ObjectRotation.SouthEast) {
             return new Vector2Int(-tile.x, -tile.y);
         }
-        if (rotation == ObjectRotation.NorthEast) {
+        if (rotation == ObjectRotation.SouthWest) {
             return new Vector2Int(-tile.y, tile.x);
         }
-        // SouthEast
+        // NorthWest
         return tile;
     }
     
@@ -155,6 +155,21 @@ public static class TileUtils {
         }
         // SouthEast
         return tile;
+    }
+
+    public static ObjectRotation GetDirectionTo(this Vector2Int source, Vector2Int target) {
+        Vector2Int distance = target - source;
+        if (distance.x > 0 && distance.x > Mathf.Abs(distance.y))
+            return ObjectRotation.NorthEast;
+        if (distance.x < 0 && -distance.x > Mathf.Abs(distance.y))
+            return ObjectRotation.SouthWest;
+        if (distance.y > 0 && distance.y > Mathf.Abs(distance.x))
+            return ObjectRotation.NorthWest;
+        if (distance.y < 0)
+            return ObjectRotation.SouthEast;
+        
+        // If the distance is zero or otherwise invalid.
+        return ObjectRotation.NorthEast;
     }
 }
 

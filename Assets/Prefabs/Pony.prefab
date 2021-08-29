@@ -48,6 +48,7 @@ MonoBehaviour:
   indicator: {fileID: 4548867815684730768}
   indicatorMaterial: {fileID: 2100000, guid: dc4669e415b39abc38d6df913941512e, type: 2}
   HoofSlot: {fileID: 1260489738516227489}
+  model: {fileID: 7692645924536716207}
   ponyName: 
   race: 0
   gender: 0

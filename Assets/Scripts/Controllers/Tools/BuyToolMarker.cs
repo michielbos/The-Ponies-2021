@@ -76,7 +76,9 @@ public class BuyToolMarker : MonoBehaviour {
         this.preset = preset;
         buildMarkerModel = GetComponent<ModelContainer>();
         preset.ApplyToModel(buildMarkerModel, skin);
-        MarkerRotation = ObjectRotation.SouthEast;
+        
+        // Set the rotation to zero to make it easier to apply the markers.
+        MarkerRotation = ObjectRotation.NorthWest;
         PlaceBuyMarkings();
         MarkerRotation = rotation;
     }
@@ -92,7 +94,9 @@ public class BuyToolMarker : MonoBehaviour {
         propertyObject.Model.parent = transform;
         buildMarkerModel.SetLayerRecursively(MarkerLayer);
         ownerRotation = propertyObject.Rotation;
-        MarkerRotation = ObjectRotation.SouthEast;
+        
+        // Set the rotation to zero to make it easier to apply the markers.
+        MarkerRotation = ObjectRotation.NorthWest;
         PlaceBuyMarkings();
         MarkerRotation = ownerRotation;
     }

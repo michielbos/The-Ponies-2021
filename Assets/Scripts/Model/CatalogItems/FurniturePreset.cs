@@ -78,8 +78,6 @@ public class FurniturePreset : Preset {
         Vector2Int tileSize = GetTileSize();
         model.localPosition = new Vector3(tileSize.x * 0.5f, 0, tileSize.y * 0.5f);
         model.rotation = Quaternion.identity;
-        // It's a bit dirty to do it here, but models from Blender and Max are rotated by 180 degrees.
-        model.Rotate(new Vector3(0, 180, 0));
         
         // For some reason, child objects don't behave properly when rotated.
         // If the local position is zero, we are dealing with a child object.
