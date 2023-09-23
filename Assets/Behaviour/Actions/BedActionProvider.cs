@@ -34,7 +34,7 @@ public class BedActionProvider : IObjectActionProvider {
             pony, target, name) { }
 
         public override bool Tick() {
-            Vector2Int headEndTile = target.TilePosition.GetNeighbourTile(target.Rotation.Inverse());
+            Vector2Int headEndTile = target.TilePosition;
             if (pony.TilePosition == headEndTile)
                 return HandleSleeping();
             
