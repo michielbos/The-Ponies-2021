@@ -7,7 +7,7 @@ The following things are missing:
 - **UI assets:** The creator of the UI assets did not grant permission to release them as open source, so they're replaced with placeholders.
 - **Sounds:** The game had no sounds yet and used sounds from The Sims as placeholders, which can not be released. New sounds can be added to the Sound Controller component.
 - **Music:** The game has a great OST, but it should be saved for the original release. It can be found on the project's YouTube channel however. New songs can be added to the compiled game in the subfolders of *ThePonies_Data/Content/Music*.
-- **Content:** Furniture, floors, etc. are also reserved for the original release. New content can be created using PoneCrafter [PoneCrafter](https://github.com/ThePonies/PoneCrafter)) and loaded by adding it to the Mods folder.
+- **Content:** Furniture, floors, etc. are also reserved for the original release. New content can be created using [PoneCrafter](https://github.com/ThePonies/PoneCrafter) and loaded by adding it to the Mods folder.
 
 # Building
 The project can be opened in Unity and should build and run as long as it's started from the LoadScreen scene.
